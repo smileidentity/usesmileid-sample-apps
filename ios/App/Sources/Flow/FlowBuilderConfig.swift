@@ -198,13 +198,7 @@ private func replay(_ steps: [FlowStep], into screens: ScreensBuilder) {
           }
         }
         if let document = config.document {
-          capture.document { target in
-            // captureBothSides stays unset: the builder defaults it per type, where this struct's default is always true.
-            target.documentType = document.documentType
-            target.allowSkipBack = document.allowSkipBack
-            target.captureMode = document.captureMode
-            target.allowGalleryUpload = document.allowGalleryUpload
-          }
+          capture.document { useSmileIDSampleApply(document, to: $0) }
         }
       }
     case .preview:
@@ -286,7 +280,15 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
   preview ? [step, .preview] : [step]
 }
 
-/// Everything the document capture step is handed; the server is told the document's code either way.
+/// Hands the step to the SDK's builder, leaving captureBothSides to its per-type default; the struct's own default is true.
+func useSmileIDSampleApply(_ document: DocumentCaptureConfig, to target: DocumentCaptureConfigBuilder) {
+  target.documentType = document.documentType
+  target.allowSkipBack = document.allowSkipBack
+  target.captureMode = document.captureMode
+  target.allowGalleryUpload = document.allowGalleryUpload
+}
+
+/// The document capture step preflight validates; the server is told the document's code either way.
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
   // The SDK refuses a skip on residency's visa page.
   let residency = snapshot.product == .residencyDocumentVerification

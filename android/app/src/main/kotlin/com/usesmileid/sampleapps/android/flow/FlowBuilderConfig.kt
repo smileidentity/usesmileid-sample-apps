@@ -234,7 +234,7 @@ private fun MutableList<FlowJourneyStep>.documentCapture(preview: Boolean) {
     if (preview) add(FlowJourneyStep.Preview)
 }
 
-/** Everything the document capture step is handed, read from the snapshot so it can be tested without the SDK's builder. */
+/** The document capture step's options, read from the snapshot; captureBothSides is left to the SDK. */
 internal data class DocumentOptions(
     val documentType: DocumentType,
     val allowSkipBack: Boolean,

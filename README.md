@@ -116,7 +116,7 @@ token scanner.
 | App | Download | On device |
 |---|---|---|
 | Android 1.0.3 | 14.29 MB | 29.38 MB |
-| iOS 1.0.3 | 5.48 MB | 13.62 MB |
+| iOS, SDK 12.2.0 release archive | 5.48 MB | 13.62 MB |
 
 [`scripts/app_size.py`](scripts/app_size.py) measures both the way the SDKs do. Android is bundletool's
 size for an arm64 phone (Android 14, 480 dpi). iOS is the release archive's app on disk, and a zip of

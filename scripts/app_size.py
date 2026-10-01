@@ -37,6 +37,7 @@ DEVICE_SPEC = {
 
 
 def die(message: str) -> None:
+    """Stops with `message` on stderr."""
     print(f"error: {message}", file=sys.stderr)
     sys.exit(1)
 
@@ -57,6 +58,7 @@ def ensure_bundletool(path: str) -> str:
 
 
 def bundletool(jar: str, *args: str) -> str:
+    """Runs one bundletool command and returns its stdout, stopping on failure."""
     result = subprocess.run(["java", "-jar", jar, *args], capture_output=True, text=True)
     if result.returncode != 0:
         die(f"bundletool {args[0]} failed:\n{result.stderr or result.stdout}")
@@ -118,10 +120,12 @@ def ios(archive: str) -> tuple[int, int]:
 
 
 def megabytes(size: int) -> str:
+    """Decimal megabytes to two places, as the SDK tables print them."""
     return f"{size / 1_000_000:.2f} MB"
 
 
 def main(argv: list[str] | None = None) -> int:
+    """Prints the download and on-device size of one release build."""
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("platform", choices=("android", "ios"))
     parser.add_argument("build", help="the release .aab, or the .xcarchive")

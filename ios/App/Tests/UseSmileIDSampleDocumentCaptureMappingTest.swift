@@ -15,9 +15,10 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
       let details = try details(item)
       let expected = try XCTUnwrap(item["expected"] as? [String: Any])
       let type = useSmileIDSampleDocumentType(details)
+      let snapshot = FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, idDetails: details)
+      XCTAssertEqual(sdkCapturesBothSides(snapshot), expected["captureBothSides"] as? Bool, name)
+      XCTAssertEqual(useSmileIDSampleDocumentCapture(snapshot).captureBothSides, sdkCapturesBothSides(snapshot), "\(name): preflight")
       XCTAssertEqual(details.resolvedCaptureAs.captureBothSides, expected["captureBothSides"] as? Bool, name)
-      let config = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, idDetails: details))
-      XCTAssertEqual(config.captureBothSides, expected["captureBothSides"] as? Bool, name)
       switch expected["documentType"] as? String {
       case "passport": XCTAssertEqual(type, .passport, name)
       case "greenBook": XCTAssertEqual(type, .southAfricaGreenBook, name)
@@ -35,7 +36,6 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
           XCTAssertEqual(try Double(XCTUnwrap(ratio)), expectedRatio, accuracy: 0.0001, name)
         }
       }
-      let snapshot = FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, idDetails: details)
       XCTAssertEqual(useSmileIDSampleIdParams(snapshot).documentVerification?.idType, expected["idType"] as? String, name)
     }
   }
@@ -66,7 +66,11 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
   func testTheSdkCapturesAPassportFrontOnlyWhetherMatchedOrChosen() {
     let passport = UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
     func captureBothSides(_ override: UseSmileIDSampleCaptureAs?, document: UseSmileIDSampleDocument? = passport) -> Bool {
-      UseSmileIDSampleIdDetails(document: document, captureAsOverride: override).resolvedCaptureAs.captureBothSides
+      sdkCapturesBothSides(FlowLaunchSnapshot(
+        product: .documentVerification,
+        route: .fullscreen,
+        idDetails: UseSmileIDSampleIdDetails(document: document, captureAsOverride: override)
+      ))
     }
     XCTAssertFalse(captureBothSides(nil))
     XCTAssertFalse(captureBothSides(.passport, document: nil))
@@ -142,5 +146,18 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
       )
     }
     return details
+  }
+
+  /// What the SDK's builder resolves once the app's options are applied, so the SDK's own default is under test.
+  private func sdkCapturesBothSides(_ snapshot: FlowLaunchSnapshot) -> Bool {
+    var resolved: Bool?
+    ScreensBuilder().capture { capture in
+      capture.captureType = .document
+      capture.document { target in
+        useSmileIDSampleApply(useSmileIDSampleDocumentCapture(snapshot), to: target)
+        resolved = target.captureBothSides
+      }
+    }
+    return resolved ?? true
   }
 }

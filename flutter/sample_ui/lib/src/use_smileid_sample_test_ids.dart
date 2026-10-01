@@ -376,8 +376,6 @@ abstract final class UseSmileIDSampleTestIds {
   /// The gallery-upload switch.
   static const String settingGalleryUpload = 'sample_setting_gallery_upload';
 
-  /// The Capture the back side switch.
-
   /// The Skip the back switch.
   static const String settingAllowSkipBack = 'sample_setting_allow_skip_back';
 

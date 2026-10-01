@@ -44,6 +44,7 @@ jobs:
         run: ./gradlew bundleRelease
 
       - name: Report the delivered size
+        shell: bash
         run: python3 scripts/app_size.py android android/app/build/outputs/bundle/release/app-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Store art is present and store-legal
