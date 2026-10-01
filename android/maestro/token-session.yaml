@@ -123,8 +123,8 @@ appId: ${APP_ID}
       - tapOn:
           id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
 # Release-on-leave: the scan screen had the camera bound moments ago, so the SDK reaching its own
-# camera journey is the host having handed it back. It proves the handoff, not that the preview
-# renders — the SDK's capture screen carries no si_* id, so a live-preview assertion has no home here.
+# camera journey is the host having handed it back. The capture screen itself, `si_capture_screen`,
+# is asserted by the document flows.
 - assertVisible:
     id: "si_instructions_screen"
 - runFlow: subflows/leave-sdk-flow.yaml

@@ -1,7 +1,6 @@
 appId: ${APP_ID}
 ---
 # The token session, on locally minted fixture tokens; nothing asserts on the token itself.
-# The consent screen is matched by its text: this SDK publishes no `si_consent_screen`.
 
 - clearState
 - runFlow:
@@ -85,7 +84,8 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_product_card_documentVerification"
 - extendedWaitUntil:
-    visible: "Deny"
+    visible:
+      id: "si_consent_screen"
     timeout: 30000
 - assertNotVisible:
     id: "sample_user_details_screen"
@@ -158,7 +158,8 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_user_details_continue"
 - extendedWaitUntil:
-    visible: "Deny"
+    visible:
+      id: "si_consent_screen"
     timeout: 30000
 - assertNotVisible:
     id: "sample_scan_token_screen"

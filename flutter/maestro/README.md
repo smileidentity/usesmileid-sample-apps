@@ -65,11 +65,10 @@ run costs whatever you had configured in the app. **ColorOS refuses `pm clear`**
 `clearState` runs, so every one of those flows dies on its first command there; reset the handset
 arm with an uninstall and reinstall instead, and drop the command for a local run.
 
-**The SDK's own screens are not all addressable here.** This SDK publishes two semantics
-identifiers — `si_preview_screen` and `si_processing_screen` — where the Android SDK also publishes
-`si_consent_screen` and `si_instructions_screen`. `sdk-flow.yaml` therefore asserts the consent
-screen by its own text. The SDK's camera permission is requested when the CAPTURE screen mounts,
-not on the way out of consent, so a conditional grant belongs after the instructions step.
+**The SDK's screens are addressed by their `si_*` ids**, such as `si_consent_screen`, as on the
+other platforms. Its buttons publish none, so Deny and Allow are tapped by their text. The SDK's
+camera permission is requested when the CAPTURE screen mounts, not on the way out of consent, so a
+conditional grant belongs after the instructions step.
 
 **Four sibling sample apps implement the same `sample_*` ids**, and this app additionally shares
 its application id with the Flutter SDK repo's own development sample (`spec/app-identity.json`,
