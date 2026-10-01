@@ -11,6 +11,13 @@ a file absent from the package, or a keep rule that fails only under minificatio
 
 The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
 
+<a href="https://apps.apple.com/app/id6811672322"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="40"></a>
+<a href="https://play.google.com/store/apps/details?id=com.usesmileid.sample.android"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60"></a>
+
+![The iOS app's App Store screenshots](ios/store/showcase.png)
+
+![The Android app's Google Play screenshots](android/play/showcase.png)
+
 ## What each app shows
 
 - **Every v12 product**: SmartSelfie™ Enrollment and Authentication, Biometric KYC, Document
@@ -87,6 +94,41 @@ ios/verify.sh
 flutter/verify.sh
 expo/verify.sh
 ```
+
+## App size
+
+Two numbers bracket what Smile ID costs your app. The smallest is the SDK on its own: each SDK's
+release pipeline builds its platform's new-project template, then adds the providers.
+
+| Platform | New project | + selfie (face provider) | + selfie and document |
+|---|---|---|---|
+| Android (ML Kit) | 0.65 MB · 1.33 MB | +2.85 MB · +5.43 MB | +9.87 MB · +20.17 MB |
+| iOS (Vision) | 0.01 MB · 0.08 MB | +4.29 MB · +10.30 MB | +4.31 MB · +10.41 MB |
+| Flutter, Android | 7.16 MB · 15.54 MB | +3.57 MB · +8.06 MB | +10.98 MB · +23.79 MB |
+| Flutter, iOS | 6.05 MB · 14.16 MB | +3.20 MB · +8.89 MB | +3.55 MB · +9.81 MB |
+| Expo, Android | 9.39 MB · 24.62 MB | +8.05 MB · +22.68 MB | +15.16 MB · +37.93 MB |
+| Expo, iOS | 8.20 MB · 27.73 MB | +8.64 MB · +22.53 MB | +8.67 MB · +22.70 MB |
+
+Each cell is download · on device, for SDK 12.2.0. The largest is a complete integration, which
+these apps are: every product, both document and selfie providers, and their own screens, fonts and
+token scanner.
+
+| App | Download | On device |
+|---|---|---|
+| Android 1.0.3 | 14.29 MB | 29.38 MB |
+| iOS 1.0.3 | 5.48 MB | 13.62 MB |
+
+[`scripts/app_size.py`](scripts/app_size.py) measures both the way the SDKs do. Android is bundletool's
+size for an arm64 phone (Android 14, 480 dpi). iOS is the release archive's app on disk, and a zip of
+it as an approximation of the App Store's compressed download. Measured on 1 October 2026; the release
+check reports the Android figure on every run.
+
+- **Models.** ML Kit's face model is downloaded on demand by Google Play services, so it is not
+  counted; ML Kit's document detection bundles its model, which is most of the document column on
+  Android. Vision is part of iOS, so neither iOS provider bundles one.
+- **Add only the providers you use.** A selfie-only app needs no document provider.
+- **What you already ship is not paid twice.** An app that already uses Compose, CameraX, or React
+  Native's peers such as Lottie pays less than these figures.
 
 ## Guides
 
