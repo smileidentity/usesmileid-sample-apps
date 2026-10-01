@@ -1,3 +1,1 @@
-Profiles are saved on your device, encrypted. A fresh install has no profile: the details you type for your first job create one, and the form fills itself from it next time. Switch or add a profile straight from the details form, so each demo runs as the right person.
-
-Every run now starts with empty ID details, so an ID number never carries over from the last run.
+Every product asks for a token first, and the scanner says where to get one. Email and phone numbers are checked before a job, with the right keyboard for each. Enhanced Document Verification lists only the documents enabled for your account. Added Residency Document Verification: a passport data page and a visa page in one job. Passports capture only the data page, and "Capture as" matches the document by default. Country and ID type lists load live from Smile ID. New profile starts empty.
