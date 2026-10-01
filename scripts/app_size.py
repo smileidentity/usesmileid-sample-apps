@@ -44,8 +44,9 @@ def die(message: str) -> None:
 def ensure_bundletool(path: str) -> str:
     """Returns a verified bundletool jar, downloading the pinned release when absent."""
     if not os.path.exists(path):
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with urllib.request.urlopen(BUNDLETOOL_URL) as response, open(path, "wb") as out:
+        if os.path.dirname(path):
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+        with urllib.request.urlopen(BUNDLETOOL_URL, timeout=120) as response, open(path, "wb") as out:
             out.write(response.read())
     with open(path, "rb") as jar:
         digest = hashlib.sha256(jar.read()).hexdigest()
@@ -101,7 +102,8 @@ def zipped_bytes(root: str) -> int:
             for directory, _, files in os.walk(root):
                 for name in files:
                     path = os.path.join(directory, name)
-                    archive.write(path, os.path.relpath(path, os.path.dirname(root)))
+                    if not os.path.islink(path):
+                        archive.write(path, os.path.relpath(path, os.path.dirname(root)))
         return os.path.getsize(target)
 
 

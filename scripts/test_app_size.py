@@ -28,6 +28,17 @@ class TestAppSize(unittest.TestCase):
             download, on_device = app_size.ios(root)
             self.assertEqual(4000, on_device)
             self.assertLess(download, on_device)
+            self.assertEqual(download, app_size.zipped_bytes(app))
+
+    def test_the_zip_leaves_out_symlinks_as_the_on_device_count_does(self):
+        with tempfile.TemporaryDirectory() as root:
+            app = os.path.join(root, "Sample.app")
+            os.makedirs(app)
+            with open(os.path.join(app, "Sample"), "wb") as out:
+                out.write(os.urandom(5000))
+            without = app_size.zipped_bytes(app)
+            os.symlink(os.path.join(app, "Sample"), os.path.join(app, "link"))
+            self.assertEqual(without, app_size.zipped_bytes(app))
 
     def test_megabytes_are_decimal_with_two_places(self):
         self.assertEqual("14.14 MB", app_size.megabytes(14_140_000))
