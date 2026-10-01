@@ -290,10 +290,13 @@ private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneySt
 func useSmileIDSampleDocumentCapture(_ snapshot: FlowLaunchSnapshot) -> DocumentCaptureConfig {
   // The SDK refuses a skip on residency's visa page.
   let residency = snapshot.product == .residencyDocumentVerification
+  let documentType: DocumentType = residency ? .passport : useSmileIDSampleDocumentType(snapshot.idDetails)
   return DocumentCaptureConfig(
-    documentType: residency ? .passport : useSmileIDSampleDocumentType(snapshot.idDetails),
+    documentType: documentType,
     captureMode: snapshot.captureMode.sdk,
     allowGalleryUpload: snapshot.galleryUpload,
+    // The builder's per-type default, which the run leaves unset, so preflight validates what runs.
+    captureBothSides: documentType != .passport,
     allowSkipBack: snapshot.allowSkipBack && !residency
   )
 }

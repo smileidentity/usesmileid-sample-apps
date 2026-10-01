@@ -16,6 +16,8 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
       let expected = try XCTUnwrap(item["expected"] as? [String: Any])
       let type = useSmileIDSampleDocumentType(details)
       XCTAssertEqual(details.resolvedCaptureAs.captureBothSides, expected["captureBothSides"] as? Bool, name)
+      let config = useSmileIDSampleDocumentCapture(FlowLaunchSnapshot(product: .documentVerification, route: .fullscreen, idDetails: details))
+      XCTAssertEqual(config.captureBothSides, expected["captureBothSides"] as? Bool, name)
       switch expected["documentType"] as? String {
       case "passport": XCTAssertEqual(type, .passport, name)
       case "greenBook": XCTAssertEqual(type, .southAfricaGreenBook, name)
