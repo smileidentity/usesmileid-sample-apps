@@ -9,14 +9,14 @@ That constraint is the point. It makes these apps both the reference integration
 test of what we publish: a defect that exists only in the published SDK, such as a missing dependency,
 a file absent from the package, or a keep rule that fails only under minification, shows up here first.
 
+## Try the apps
+
 The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
 
 <a href="https://apps.apple.com/app/id6811672322"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="40"></a>
 <a href="https://play.google.com/store/apps/details?id=com.usesmileid.sample.android"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60"></a>
 
-![The iOS app's App Store screenshots](ios/store/showcase.png)
-
-![The Android app's Google Play screenshots](android/play/showcase.png)
+![The app's store screenshots: products, token scanning, verifications, a verification's details and settings](android/play/showcase.png)
 
 ## What each app shows
 
@@ -35,7 +35,84 @@ The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
 Runs go to the Smile ID **sandbox** unless a linked token names production. **Simulate a successful
 scan** on the scan sheet reaches every screen without a real token.
 
-## Prerequisites
+## App size
+
+Adding Smile ID makes an app this much bigger to download, for SDK 12.2.0:
+
+| Your app is built with | Selfie only | Selfie and documents |
+|---|---|---|
+| Android (Kotlin) | +2.9 MB | +9.9 MB |
+| iOS (Swift) | +4.3 MB | +4.3 MB |
+| Flutter, on Android | +3.6 MB | +11.0 MB |
+| Flutter, on iOS | +3.2 MB | +3.6 MB |
+| React Native (Expo), on Android | +8.1 MB | +15.2 MB |
+| React Native (Expo), on iOS | +8.6 MB | +8.7 MB |
+
+"Selfie only" covers SmartSelfie™ and Biometric KYC. "Selfie and documents" adds document capture,
+which every document product needs.
+
+### What the numbers mean
+
+- **Download** is what a user's phone downloads from the store, compressed.
+- **On device** is the space the app takes once installed, which is always larger.
+
+Each SDK measures these against its platform's new, empty project, then adds Smile ID's packages. The
+difference is what Smile ID costs your app. The full figures, both measures:
+
+| Platform | What you add | Download | On device |
+|---|---|---|---|
+| Android | Starting point: a new Android Studio project | 0.65 MB | 1.33 MB |
+| Android | Selfie (`usesmileid` + `usesmileid-mlkit-face`) | +2.85 MB | +5.43 MB |
+| Android | Selfie and documents (+ `usesmileid-mlkit-document`) | +9.87 MB | +20.17 MB |
+| iOS | Starting point: a new Xcode project | 0.01 MB | 0.08 MB |
+| iOS | Selfie (`UseSmileID` + `UseSmileIDVisionFace`) | +4.29 MB | +10.30 MB |
+| iOS | Selfie and documents (+ `UseSmileIDVisionDocument`) | +4.31 MB | +10.41 MB |
+| Flutter, Android | Starting point: a new `flutter create` project | 7.16 MB | 15.54 MB |
+| Flutter, Android | Selfie | +3.57 MB | +8.06 MB |
+| Flutter, Android | Selfie and documents | +10.98 MB | +23.79 MB |
+| Flutter, iOS | Starting point: a new `flutter create` project | 6.05 MB | 14.16 MB |
+| Flutter, iOS | Selfie | +3.20 MB | +8.89 MB |
+| Flutter, iOS | Selfie and documents | +3.55 MB | +9.81 MB |
+| Expo, Android | Starting point: a new `create-expo-app` project | 9.39 MB | 24.62 MB |
+| Expo, Android | Selfie | +8.05 MB | +22.68 MB |
+| Expo, Android | Selfie and documents | +15.16 MB | +37.93 MB |
+| Expo, iOS | Starting point: a new `create-expo-app` project | 8.20 MB | 27.73 MB |
+| Expo, iOS | Selfie | +8.64 MB | +22.53 MB |
+| Expo, iOS | Selfie and documents | +8.67 MB | +22.70 MB |
+
+### A complete app, for comparison
+
+These apps are a complete integration: every product, selfie and document capture, and their own
+screens, fonts and token scanner. That is the most an app adds.
+
+| App | Download | On device |
+|---|---|---|
+| Android, version 1.0.3 | 14.29 MB | 29.38 MB |
+| iOS, on SDK 12.2.0 | 5.48 MB | 13.62 MB |
+
+### Why the numbers differ
+
+- **Document capture on Android carries a model.** ML Kit's document detection ships inside the app,
+  which is most of that column. ML Kit's face model downloads separately through Google Play services,
+  so it is not counted.
+- **iOS needs no model.** Apple's Vision framework is part of iOS, so documents add almost nothing
+  over selfie.
+- **React Native brings its own peers.** Much of each Expo row is packages the SDK needs alongside it,
+  such as Lottie. An app that already ships them pays less.
+- **You never pay twice.** An app that already uses Compose, CameraX or the same peers pays less than
+  these figures. Add only what you use: a selfie-only app needs no document package.
+
+### How it is measured
+
+[`scripts/app_size.py`](scripts/app_size.py) measures these apps the way the SDKs measure theirs.
+Android is bundletool's figure for an arm64 phone on Android 14 at 480 dpi, which is what Google Play
+delivers to that phone. iOS is the release build's size on disk, with a zip of it standing in for the
+App Store's compressed download. The apps were measured on 1 October 2026, and the release check
+reports the Android figure on every run.
+
+## Run an app
+
+### Prerequisites
 
 | Platform | Needs |
 |---|---|
@@ -44,9 +121,7 @@ scan** on the scan sheet reaches every screen without a real token.
 | Flutter | The Flutter stable channel |
 | Expo | Node 20.19 or newer, and pnpm 9 |
 
-## Run an app
-
-**Android**
+### Android
 
 ```bash
 cd android
@@ -54,7 +129,7 @@ cd android
 adb shell am start -a android.intent.action.VIEW -d "usesmileid-sample-android://products"
 ```
 
-**iOS**
+### iOS
 
 ```bash
 cd ios/App && xcodegen generate && open UseSmileIDSample.xcodeproj
@@ -63,13 +138,13 @@ cd ios/App && xcodegen generate && open UseSmileIDSample.xcodeproj
 The Xcode project is generated from `ios/App/project.yml` and is not committed. In debug builds, shake
 the device to read the app's own network traffic, with credentials redacted.
 
-**Flutter**
+### Flutter
 
 ```bash
 cd flutter/app && flutter run
 ```
 
-**Expo**
+### Expo
 
 ```bash
 cd expo && pnpm install
@@ -78,6 +153,8 @@ cd app && pnpm prebuild && pnpm android    # or: pnpm ios
 
 The Expo app needs `react-native-worklets/plugin` as the **last** Babel plugin
 (`expo/app/babel.config.js`), or capture does not run.
+
+### Deep links
 
 Every route in `spec/routes.json` opens by deep link on each app's URL scheme:
 `usesmileid-sample-android://`, `usesmileid-sample-ios://`, `usesmileid-sample-flutter://` and
@@ -94,41 +171,6 @@ ios/verify.sh
 flutter/verify.sh
 expo/verify.sh
 ```
-
-## App size
-
-Two numbers bracket what Smile ID costs your app. The smallest is the SDK on its own: each SDK's
-release pipeline builds its platform's new-project template, then adds the providers.
-
-| Platform | New project | + selfie (face provider) | + selfie and document |
-|---|---|---|---|
-| Android (ML Kit) | 0.65 MB · 1.33 MB | +2.85 MB · +5.43 MB | +9.87 MB · +20.17 MB |
-| iOS (Vision) | 0.01 MB · 0.08 MB | +4.29 MB · +10.30 MB | +4.31 MB · +10.41 MB |
-| Flutter, Android | 7.16 MB · 15.54 MB | +3.57 MB · +8.06 MB | +10.98 MB · +23.79 MB |
-| Flutter, iOS | 6.05 MB · 14.16 MB | +3.20 MB · +8.89 MB | +3.55 MB · +9.81 MB |
-| Expo, Android | 9.39 MB · 24.62 MB | +8.05 MB · +22.68 MB | +15.16 MB · +37.93 MB |
-| Expo, iOS | 8.20 MB · 27.73 MB | +8.64 MB · +22.53 MB | +8.67 MB · +22.70 MB |
-
-Each cell is download · on device, for SDK 12.2.0. The largest is a complete integration, which
-these apps are: every product, both document and selfie providers, and their own screens, fonts and
-token scanner.
-
-| App | Download | On device |
-|---|---|---|
-| Android 1.0.3 | 14.29 MB | 29.38 MB |
-| iOS, SDK 12.2.0 release archive | 5.48 MB | 13.62 MB |
-
-[`scripts/app_size.py`](scripts/app_size.py) measures both the way the SDKs do. Android is bundletool's
-size for an arm64 phone (Android 14, 480 dpi). iOS is the release archive's app on disk, and a zip of
-it as an approximation of the App Store's compressed download. Measured on 1 October 2026; the release
-check reports the Android figure on every run.
-
-- **Models.** ML Kit's face model is downloaded on demand by Google Play services, so it is not
-  counted; ML Kit's document detection bundles its model, which is most of the document column on
-  Android. Vision is part of iOS, so neither iOS provider bundles one.
-- **Add only the providers you use.** A selfie-only app needs no document provider.
-- **What you already ship is not paid twice.** An app that already uses Compose, CameraX, or React
-  Native's peers such as Lottie pays less than these figures.
 
 ## Guides
 
