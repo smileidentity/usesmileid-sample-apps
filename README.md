@@ -14,7 +14,7 @@ a file absent from the package, or a keep rule that fails only under minificatio
 The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
 
 <a href="https://apps.apple.com/app/id6811672322"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="40"></a>
-<a href="https://play.google.com/store/apps/details?id=com.usesmileid.sample.android"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png" alt="Get it on Google Play" height="60"></a>
+<a href="https://play.google.com/store/apps/details?id=com.usesmileid.sample.android"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height="40"></a>
 
 ![The app's store screenshots: products, token scanning, verifications, a verification's details and settings](android/play/showcase.png)
 
