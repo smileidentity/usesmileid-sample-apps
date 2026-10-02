@@ -292,16 +292,6 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Capture the back side"
-          supportingText="Only for a document type that has one"
-          icon="documentVerification"
-          setting={UseSmileIDSampleSetting.CaptureBothSides}
-          checked={settings.captureBothSides}
-          testID={UseSmileIDSampleTestIds.SETTING_CAPTURE_BOTH_SIDES}
-          onSettingChange={onSettingChange}
-        />
-        <UseSmileIDSampleRowDivider />
-        <SwitchRow
           title="Skip the back"
           supportingText="A Skip button on the back-side capture"
           icon="instructions"

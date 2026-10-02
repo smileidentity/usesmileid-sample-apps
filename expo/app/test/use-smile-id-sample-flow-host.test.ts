@@ -10,11 +10,11 @@ import {
   smileIDSampleTokenSession,
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
-import { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
+import { DocumentCaptureConfigBuilder, UseSmileIDFlowBuilder } from '@smileid/usesmileid';
 
 import {
+  smileIDSampleApplyDocumentOptions,
   smileIDSampleApplying,
-  smileIDSampleCapturesBothSides,
   smileIDSampleJourneyStepsFor,
   type UseSmileIDSampleFlowJourneyStep,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
@@ -61,7 +61,6 @@ const snapshot = (
   previewStep: true,
   captureMode: 'autoWithFallback',
   galleryUpload: false,
-  captureBothSides: true,
   allowSkipBack: false,
   selfieFirst: false,
   userId: 'user_1',
@@ -194,7 +193,6 @@ describe('what the SDK is handed', () => {
                 document: { code: 'IDENTITY_CARD', subType: null, name: 'Identity Card', hasBack: true, format: 1 },
                 captureAsOverride: captureAs,
               },
-              captureBothSides: flag,
               allowSkipBack: !flag,
               selfieFirst: flag,
             }),
@@ -206,7 +204,7 @@ describe('what the SDK is handed', () => {
     }
   });
 
-  it('residency builds as both sides of a passport, whatever the form or settings hold', () => {
+  it('residency builds as a passport with no skip, whatever the form or settings hold', () => {
     const builder = built(
       snapshot({
         product: productFor('residencyDocumentVerification'),
@@ -216,32 +214,22 @@ describe('what the SDK is handed', () => {
           document: { code: 'IDENTITY_CARD', subType: null, name: 'National ID', hasBack: true, format: 1 },
           captureAsOverride: UseSmileIDSampleCaptureAs.GenericDocument,
         },
-        captureBothSides: false,
         allowSkipBack: true,
       }),
     );
-    expect(
-      smileIDSampleCapturesBothSides(
-        snapshot({ product: productFor('residencyDocumentVerification'), captureBothSides: false }),
-      ),
-    ).toBe(true);
     expect(builder.residencyDocumentVerificationParams).toEqual({ country: 'NG', idType: 'PASSPORT' });
     expect(builder.documentVerificationParams).toBeUndefined();
     expect(builder.build().kind).toBe('success');
   });
 
-  it('a passport is captured front only, whatever the setting', () => {
+  it('the SDK captures a passport front only, because the app leaves the flag unset', () => {
     for (const captureAs of Object.values(UseSmileIDSampleCaptureAs)) {
-      for (const setting of [true, false]) {
-        const captured = smileIDSampleCapturesBothSides(
-          snapshot({ idDetails: { ...smileIDSampleIdDetailsDefaults, captureAsOverride: captureAs }, captureBothSides: setting }),
-        );
-        expect([captureAs, setting, captured]).toEqual([
-          captureAs,
-          setting,
-          setting && captureAs !== UseSmileIDSampleCaptureAs.Passport,
-        ]);
-      }
+      const document = new DocumentCaptureConfigBuilder();
+      smileIDSampleApplyDocumentOptions(
+        document,
+        snapshot({ idDetails: { ...smileIDSampleIdDetailsDefaults, captureAsOverride: captureAs } }),
+      );
+      expect([captureAs, document.captureBothSides]).toEqual([captureAs, captureAs !== UseSmileIDSampleCaptureAs.Passport]);
     }
   });
 

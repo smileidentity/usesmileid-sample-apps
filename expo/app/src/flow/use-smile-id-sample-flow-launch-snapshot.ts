@@ -28,7 +28,6 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly previewStep: boolean;
   readonly captureMode: UseSmileIDSampleCaptureMode;
   readonly galleryUpload: boolean;
-  readonly captureBothSides: boolean;
   readonly allowSkipBack: boolean;
   readonly selfieFirst: boolean;
   /// The id this run submits under; only authentication sends it.

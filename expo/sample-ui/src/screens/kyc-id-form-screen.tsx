@@ -37,8 +37,6 @@ export type UseSmileIDSampleKycIdFormState = {
   readonly details: UseSmileIDSampleIdDetails;
   /// Whether the chosen country's list is still arriving, which the second trigger says.
   readonly countryListLoading: boolean;
-  /// The Settings switch, which the CAPTURE AS trigger folds into "front and back" or "front only".
-  readonly captureBothSides: boolean;
 };
 
 type Props = {
@@ -78,7 +76,7 @@ export const KycIdFormScreen = ({
   const captureAsLabel =
     document === null
       ? null
-      : smileIDSampleCaptureAsTriggerText(smileIDSampleIdDetailsCaptureAs(state.details), state.captureBothSides);
+      : smileIDSampleCaptureAsTriggerText(smileIDSampleIdDetailsCaptureAs(state.details));
 
   return (
     <View

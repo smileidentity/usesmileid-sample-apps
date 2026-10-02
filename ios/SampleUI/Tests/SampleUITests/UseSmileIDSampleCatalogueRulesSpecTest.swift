@@ -123,7 +123,6 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
     for item in try cases("captureAs") {
       let name = item["name"] as? String ?? ""
       let expected = try XCTUnwrap(item["expected"] as? [String: Any])
-      let setting = item["captureBothSides"] as? Bool ?? true
       let document = try document(XCTUnwrap(item["document"] as? [String: Any]))
       let resolved = useSmileIDSampleResolvedCaptureAs(
         document: document,
@@ -137,8 +136,8 @@ final class UseSmileIDSampleCatalogueRulesSpecTest: XCTestCase {
         XCTAssertEqual(resolved.genericDocument.orientation.rawValue, expected["orientation"] as? String, name)
       }
       XCTAssertEqual(resolved.matched, expected["matched"] as? Bool, name)
-      XCTAssertEqual(resolved.captureBothSides(setting), expected["captureBothSides"] as? Bool, name)
-      XCTAssertEqual(resolved.triggerText(setting), expected["triggerText"] as? String, name)
+      XCTAssertEqual(resolved.captureBothSides, expected["captureBothSides"] as? Bool, name)
+      XCTAssertEqual(resolved.triggerText(), expected["triggerText"] as? String, name)
       let match = useSmileIDSampleResolvedCaptureAs(document: document, override: nil, genericDocument: UseSmileIDSampleGenericDocument())
       XCTAssertEqual(match.matchRowLabel, expected["matchRowLabel"] as? String, name)
     }

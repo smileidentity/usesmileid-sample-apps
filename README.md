@@ -9,7 +9,14 @@ That constraint is the point. It makes these apps both the reference integration
 test of what we publish: a defect that exists only in the published SDK, such as a missing dependency,
 a file absent from the package, or a keep rule that fails only under minification, shows up here first.
 
+## Try the apps
+
 The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
+
+<a href="https://apps.apple.com/app/id6811672322"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="40"></a>
+<a href="https://play.google.com/store/apps/details?id=com.usesmileid.sample.android"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height="40"></a>
+
+![The app's store screenshots: products, token scanning, verifications, a verification's details and settings](android/play/showcase.png)
 
 ## What each app shows
 
@@ -28,7 +35,28 @@ The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
 Runs go to the Smile ID **sandbox** unless a linked token names production. **Simulate a successful
 scan** on the scan sheet reaches every screen without a real token.
 
-## Prerequisites
+## App size
+
+Adding Smile ID makes an app this much bigger to download, for SDK 12.2.0:
+
+| Your app is built with | Selfie only | Selfie and documents |
+|---|---|---|
+| Android (Kotlin) | +2.9 MB | +9.9 MB |
+| iOS (Swift) | +4.3 MB | +4.3 MB |
+| Flutter, on Android | +3.6 MB | +11.0 MB |
+| Flutter, on iOS | +3.2 MB | +3.6 MB |
+| React Native (Expo), on Android | +8.1 MB | +15.2 MB |
+| React Native (Expo), on iOS | +8.6 MB | +8.7 MB |
+
+"Selfie only" covers SmartSelfie™ and Biometric KYC. "Selfie and documents" adds document capture,
+which every document product needs.
+
+These figures are what a user's phone downloads from the store. [App size](docs/app-size.md) has the space each
+takes once installed, these apps' own sizes for comparison, and how they are measured.
+
+## Run an app
+
+### Prerequisites
 
 | Platform | Needs |
 |---|---|
@@ -37,9 +65,7 @@ scan** on the scan sheet reaches every screen without a real token.
 | Flutter | The Flutter stable channel |
 | Expo | Node 20.19 or newer, and pnpm 9 |
 
-## Run an app
-
-**Android**
+### Android
 
 ```bash
 cd android
@@ -47,7 +73,7 @@ cd android
 adb shell am start -a android.intent.action.VIEW -d "usesmileid-sample-android://products"
 ```
 
-**iOS**
+### iOS
 
 ```bash
 cd ios/App && xcodegen generate && open UseSmileIDSample.xcodeproj
@@ -56,13 +82,13 @@ cd ios/App && xcodegen generate && open UseSmileIDSample.xcodeproj
 The Xcode project is generated from `ios/App/project.yml` and is not committed. In debug builds, shake
 the device to read the app's own network traffic, with credentials redacted.
 
-**Flutter**
+### Flutter
 
 ```bash
 cd flutter/app && flutter run
 ```
 
-**Expo**
+### Expo
 
 ```bash
 cd expo && pnpm install
@@ -71,6 +97,8 @@ cd app && pnpm prebuild && pnpm android    # or: pnpm ios
 
 The Expo app needs `react-native-worklets/plugin` as the **last** Babel plugin
 (`expo/app/babel.config.js`), or capture does not run.
+
+### Deep links
 
 Every route in `spec/routes.json` opens by deep link on each app's URL scheme:
 `usesmileid-sample-android://`, `usesmileid-sample-ios://`, `usesmileid-sample-flutter://` and
@@ -96,6 +124,7 @@ expo/verify.sh
 | [Token sessions](docs/token-session.md) | How to run verifications from a v3 token instead of an API key |
 | [Theming](docs/theming.md) | How the apps theme themselves and the SDK |
 | [Testing](docs/testing.md) | How to test an integration like this one |
+| [App size](docs/app-size.md) | What Smile ID adds to an app's size, on each platform |
 | [Submitting to the stores](docs/store-submission.md) | What the SDK means for your App Store and Google Play submission |
 | [Releasing](docs/releasing.md) | How these apps reach the stores |
 | [Backlog](docs/plan/backlog.md) | Known gaps, if you want to contribute |

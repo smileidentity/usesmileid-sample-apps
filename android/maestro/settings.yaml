@@ -358,16 +358,11 @@ appId: ${APP_ID}
       id: "sample_setting_selfie_first"
     centerElement: true
 - assertVisible:
-    id: "sample_setting_capture_both_sides"
-    checked: true
-- assertVisible:
     id: "sample_setting_allow_skip_back"
     checked: false
 - assertVisible:
     id: "sample_setting_selfie_first"
     checked: false
-- tapOn:
-    id: "sample_setting_capture_both_sides"
 - tapOn:
     id: "sample_setting_allow_skip_back"
 - tapOn:
@@ -409,9 +404,6 @@ appId: ${APP_ID}
     element:
       id: "sample_setting_selfie_first"
     centerElement: true
-- assertVisible:
-    id: "sample_setting_capture_both_sides"
-    checked: false
 - assertVisible:
     id: "sample_setting_allow_skip_back"
     checked: true

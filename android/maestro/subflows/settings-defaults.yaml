@@ -95,14 +95,6 @@ appId: ${APP_ID}
 - runFlow:
     when:
       visible:
-        id: "sample_setting_capture_both_sides"
-        checked: false
-    commands:
-      - tapOn:
-          id: "sample_setting_capture_both_sides"
-- runFlow:
-    when:
-      visible:
         id: "sample_setting_allow_skip_back"
         checked: true
     commands:
@@ -116,9 +108,6 @@ appId: ${APP_ID}
     commands:
       - tapOn:
           id: "sample_setting_selfie_first"
-- assertVisible:
-    id: "sample_setting_capture_both_sides"
-    checked: true
 - assertVisible:
     id: "sample_setting_allow_skip_back"
     checked: false

@@ -3,11 +3,6 @@ appId: ${APP_ID}
 # The SDK flow handoff, which no hostless lane can see at all: the wizard stacking above the shell,
 # the gate turning an incomplete form back, and the SDK's own first screen mounting — the assertion a
 # packaging failure fails on, conclusively. Flows stop at the capture screen, which needs a camera.
-#
-# The Flutter SDK publishes only two semantics identifiers — `si_preview_screen` and
-# `si_processing_screen` — where the Android SDK also publishes `si_consent_screen` and
-# `si_instructions_screen`. The consent screen is therefore asserted by its own text, which is what
-# the Android twin taps anyway; this repo never invents an `si_*` id of its own.
 
 - clearState
 - runFlow:
@@ -67,7 +62,8 @@ appId: ${APP_ID}
 # The SDK's consent screen: the flow host mounted, the published artifact linked, and the journey
 # reached the SDK. The host draws no chrome over it (R13).
 - extendedWaitUntil:
-    visible: "Deny"
+    visible:
+      id: "si_consent_screen"
     timeout: 30000
 - assertVisible: "Allow"
 - assertNotVisible:
@@ -91,7 +87,8 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_user_details_continue"
 - extendedWaitUntil:
-    visible: "Deny"
+    visible:
+      id: "si_consent_screen"
     timeout: 30000
 - back
 - extendedWaitUntil:

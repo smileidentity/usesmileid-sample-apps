@@ -36,9 +36,9 @@ appId: ${APP_ID}
     checked: true
 - tapOn:
     id: "sample_user_details_continue"
-# The SDK's consent screen, by its own text: the Flutter SDK publishes no `si_consent_screen`.
 - extendedWaitUntil:
-    visible: "Deny"
+    visible:
+      id: "si_consent_screen"
     timeout: 30000
 - tapOn: "Deny"
 - extendedWaitUntil:

@@ -304,13 +304,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Capture the back side',
-                icon: SmileIcons.documentVerification,
-                supportingText: 'Only for a document type that has one',
-                setting: UseSmileIDSampleSetting.captureBothSides,
-              ),
-              const UseSmileIDSampleSettingRowDivider(),
-              _switchRow(
                 title: 'Skip the back',
                 icon: SmileIcons.instructions,
                 supportingText: 'A Skip button on the back-side capture',

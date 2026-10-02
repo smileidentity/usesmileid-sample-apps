@@ -6,21 +6,17 @@ public struct UseSmileIDSampleKycIdFormState {
   public var details: UseSmileIDSampleIdDetails
   /// Whether the chosen country's list is still arriving, which is what the second trigger's placeholder says.
   public var countryListLoading: Bool
-  /// The Settings switch, which the CAPTURE AS trigger folds into "front and back" or "front only".
-  public var captureBothSides: Bool
 
   public init(
     productLabel: String,
     family: UseSmileIDSampleCatalogueFamily = .kyc,
     details: UseSmileIDSampleIdDetails = UseSmileIDSampleIdDetails(),
-    countryListLoading: Bool = false,
-    captureBothSides: Bool = true
+    countryListLoading: Bool = false
   ) {
     self.productLabel = productLabel
     self.family = family
     self.details = details
     self.countryListLoading = countryListLoading
-    self.captureBothSides = captureBothSides
   }
 }
 
@@ -157,7 +153,7 @@ public struct KycIdFormScreen: View {
 
   private var captureAsTrigger: some View {
     UseSmileIDSampleSelectTrigger(
-      value: state.details.document.map { _ in state.details.resolvedCaptureAs.triggerText(state.captureBothSides) },
+      value: state.details.document.map { _ in state.details.resolvedCaptureAs.triggerText() },
       placeholder: UseSmileIDSampleCaptureAs.matchDocumentLabel,
       enabled: state.details.document != nil,
       testId: UseSmileIDSampleTestIds.captureAsTrigger,

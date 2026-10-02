@@ -59,7 +59,6 @@ type Row = Omit<UseSmileIDSampleDocument, 'subType'> & { subType?: string };
 type CaptureAsCase = {
   name: string;
   captureAs: string;
-  captureBothSides?: boolean;
   document: Row;
   genericDocument?: UseSmileIDSampleGenericDocument;
   expected: {
@@ -164,7 +163,6 @@ describe('catalogue rules', () => {
   });
 
   it.each(rules.captureAs.cases.map((c) => [c.name, c] as const))('capture as: %s', (_, c) => {
-    const setting = c.captureBothSides ?? true;
     const resolved = smileIDSampleResolvedCaptureAs(
       row(c.document),
       override(c.captureAs),
@@ -177,8 +175,8 @@ describe('catalogue rules', () => {
       expect(resolved.genericDocument.orientation).toBe(c.expected.orientation);
     }
     expect(resolved.matched).toBe(c.expected.matched);
-    expect(smileIDSampleCaptureBothSides(resolved, setting)).toBe(c.expected.captureBothSides);
-    expect(smileIDSampleCaptureAsTriggerText(resolved, setting)).toBe(c.expected.triggerText);
+    expect(smileIDSampleCaptureBothSides(resolved)).toBe(c.expected.captureBothSides);
+    expect(smileIDSampleCaptureAsTriggerText(resolved)).toBe(c.expected.triggerText);
     expect(
       smileIDSampleMatchRowLabel(smileIDSampleResolvedCaptureAs(row(c.document), null, smileIDSampleGenericDocumentDefaults)),
     ).toBe(c.expected.matchRowLabel);

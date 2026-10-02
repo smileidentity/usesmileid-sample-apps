@@ -201,9 +201,9 @@ death needs no catalogue to resolve them. Profiles do not store ID details.
 
 **Residency.** Residency Document Verification asks for the country alone. The SDK accepts only
 `PASSPORT` as its `idType` and only its `Passport` type on the capture screen, and it rejects a skippable
-second side, so the form has no document to choose. The capture is both sides: the passport's data page,
-then its visa page. The sample sends `PASSPORT`, `Passport` and `captureBothSides` whatever the form or
-the DOCUMENT CAPTURE settings hold.
+second side, so the form has no document to choose. The capture is the passport's data page, then its visa
+page, which the job type makes the SDK ask for. The sample sends `PASSPORT` and `Passport`, and never
+`allowSkipBack`, whatever the form or the DOCUMENT CAPTURE settings hold.
 
 **Capture as.** The document products show a DOCUMENT trigger in place of the ID type, and a CAPTURE AS
 trigger under it. "Capture as" changes only how the SDK photographs the document. The server always
@@ -238,8 +238,9 @@ The three presets stay selectable as overrides, so a scenario can still pair any
 including a pair the SDK refuses, such as the Green Book preset on Enhanced Document Verification.
 Choosing a different document or country resets the override to Match document. The trigger names the
 type the SDK will get and whether it was matched or chosen, such as "Passport preset · matches document"
-or "Booklet · portrait · front and back · chosen". "Front and back" is what the SDK will do: the Settings
-switch ANDed with the type's back side, and a passport is always captured front only.
+or "Booklet · portrait · front and back · chosen". "Front and back" is what the SDK will do. The sample
+leaves `captureBothSides` unset, so the SDK's per-type default applies: a passport is captured front
+only, and any other type captures a back only when it has one.
 `spec/catalogue-rules.json` → `captureAs` holds the cases and the exact strings.
 
 **The ID-number hint.** The API gives a regex, never an example, so the hint is computed from the regex:
@@ -252,8 +253,8 @@ regex under that platform's engine.
 
 **The DOCUMENT CAPTURE settings.** Capture mode is a typed field of its own, three values rather than a
 switch, defaulting to automatic with the SDK's 10-second manual fallback. The rest are switches, each at
-the SDK's default: gallery upload off, capture the back side on (`captureBothSides`, which the SDK ANDs
-with the type's own back side), and skip the back off (`allowSkipBack`). Selfie first, off by default,
+the SDK's default: gallery upload off, and skip the back off (`allowSkipBack`). There is no back-side
+switch: Capture as matches the document, and the SDK decides from its type whether to ask for a back. Selfie first, off by default,
 orders the two captures: every document product runs document then selfie unless it is on.
 
 **Loading.** The lists have no design frames, so this is the design of record, built from components the

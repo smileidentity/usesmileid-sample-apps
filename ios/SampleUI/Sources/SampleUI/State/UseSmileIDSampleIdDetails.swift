@@ -228,14 +228,14 @@ public struct UseSmileIDSampleResolvedCaptureAs: Equatable, Sendable {
     }
   }
 
-  /// The flag the document step is handed: the Settings switch, except that a passport is captured front only.
-  public func captureBothSides(_ setting: Bool) -> Bool {
-    setting && captureAs != .passport
+  /// The SDK's captureBothSides default, which the app leaves unset: false for a passport.
+  public var captureBothSides: Bool {
+    captureAs != .passport
   }
 
   /// The trigger text from `spec/catalogue-rules.json` captureAs.
-  public func triggerText(_ setting: Bool) -> String {
-    let sides = captureBothSides(setting) && hasBackSide ? "front and back" : "front only"
+  public func triggerText() -> String {
+    let sides = captureBothSides && hasBackSide ? "front and back" : "front only"
     let orientation = genericDocument.orientation.label.lowercased()
     if captureAs != .genericDocument {
       return "\(captureAs.label) · \(matched ? "matches document" : "chosen")"

@@ -16,7 +16,7 @@ void main() {
 
   test('every case maps as the spec says', () {
     final List<Object?> cases = captureAs['cases']! as List<Object?>;
-    expect(cases.length, greaterThanOrEqualTo(12));
+    expect(cases.length, greaterThanOrEqualTo(11));
     for (final Object? raw in cases) {
       final Map<String, Object?> spec = raw! as Map<String, Object?>;
       final String name = spec['name']! as String;
@@ -42,10 +42,7 @@ void main() {
       }
       expect(_submittedIdType(details), expected['idType'], reason: name);
       expect(
-        _documentConfig(
-          details,
-          captureBothSides: spec['captureBothSides'] as bool? ?? true,
-        ).captureBothSides,
+        _documentConfig(details).captureBothSides,
         expected['captureBothSides'],
         reason: name,
       );
@@ -86,7 +83,6 @@ void main() {
           ),
           captureMode: mode,
           galleryUpload: true,
-          captureBothSides: false,
           allowSkipBack: true,
         ),
       );
@@ -106,12 +102,11 @@ void main() {
           .documentConfig!;
       expect(document.captureMode, sdk);
       expect(document.allowGalleryUpload, isTrue);
-      expect(document.captureBothSides, isFalse);
       expect(document.allowSkipBack, isTrue);
     }
   });
 
-  test('a passport is captured front only, whether matched or chosen', () {
+  test('the SDK captures a passport front only, whether matched or chosen', () {
     for (final UseSmileIDSampleCaptureAs? captureAs
         in <UseSmileIDSampleCaptureAs?>[
           null,
@@ -138,7 +133,7 @@ void main() {
   });
 
   test(
-    'residency captures both sides of a passport, whatever the form or settings hold',
+    'residency captures a passport with no skip, whatever the form or settings hold',
     () {
       for (final UseSmileIDSampleCaptureAs? captureAs
           in <UseSmileIDSampleCaptureAs?>[
@@ -153,11 +148,9 @@ void main() {
             captureAsOverride: captureAs,
           ),
           product: UseSmileIDSampleProduct.residencyDocumentVerification,
-          captureBothSides: false,
           allowSkipBack: true,
         );
         expect(document.documentType, DocumentType.passport, reason: reason);
-        expect(document.captureBothSides, isTrue, reason: reason);
         expect(document.allowSkipBack, isFalse, reason: reason);
       }
     },
@@ -194,18 +187,12 @@ DocumentCaptureConfiguration _documentConfig(
   UseSmileIDSampleIdDetails details, {
   UseSmileIDSampleProduct product =
       UseSmileIDSampleProduct.documentVerification,
-  bool captureBothSides = true,
   bool allowSkipBack = false,
 }) {
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(
     builder,
-    _snapshot(
-      details,
-      product: product,
-      captureBothSides: captureBothSides,
-      allowSkipBack: allowSkipBack,
-    ),
+    _snapshot(details, product: product, allowSkipBack: allowSkipBack),
   );
   // The SDK says to inspect this, then marks it internal.
   // ignore: invalid_use_of_internal_member
@@ -271,7 +258,6 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   UseSmileIDSampleCaptureMode captureMode =
       UseSmileIDSampleCaptureMode.autoWithFallback,
   bool galleryUpload = false,
-  bool captureBothSides = true,
   bool allowSkipBack = false,
 }) => UseSmileIDSampleFlowLaunchSnapshot(
   product: product,
@@ -292,7 +278,6 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   previewStep: true,
   captureMode: captureMode,
   galleryUpload: galleryUpload,
-  captureBothSides: captureBothSides,
   allowSkipBack: allowSkipBack,
   userId: 'user_1',
   partnerId: 'profile-1',

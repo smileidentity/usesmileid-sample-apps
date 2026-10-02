@@ -181,8 +181,7 @@ struct UseSmileIDSampleDestination: View {
       productLabel: Self.product(productId)?.label ?? productId,
       family: family,
       details: app.idDetails,
-      countryListLoading: loading,
-      captureBothSides: app.settings.captureBothSides
+      countryListLoading: loading
     )
   }
 

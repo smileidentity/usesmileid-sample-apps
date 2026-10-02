@@ -22,7 +22,6 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
     required this.family,
     required this.details,
     required this.countryListLoading,
-    required this.captureBothSides,
     required this.onBack,
     required this.onPickCountry,
     required this.onPickIdType,
@@ -45,9 +44,6 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
 
   /// Whether the chosen country's list is still arriving, which the second trigger says.
   final bool countryListLoading;
-
-  /// The Settings switch, which the CAPTURE AS trigger folds into "front and back" or "front only".
-  final bool captureBothSides;
 
   /// Leaves the form.
   final VoidCallback onBack;
@@ -189,7 +185,7 @@ class UseSmileIDSampleKycFormScreen extends StatelessWidget {
     UseSmileIDSampleSelectTrigger(
       value: details.document == null
           ? null
-          : details.resolvedCaptureAs.triggerText(captureBothSides),
+          : details.resolvedCaptureAs.triggerText(),
       placeholder: UseSmileIDSampleCaptureAs.matchDocumentLabel,
       onTap: onPickCaptureAs,
       enabled: details.document != null,

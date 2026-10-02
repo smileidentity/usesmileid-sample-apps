@@ -54,3 +54,7 @@ appId: ${APP_ID}
     element: "Next"
     direction: DOWN
 - tapOn: "Next"
+- extendedWaitUntil:
+    visible:
+      id: "si_capture_screen"
+    timeout: 10000

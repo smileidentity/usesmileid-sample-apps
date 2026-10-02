@@ -164,7 +164,7 @@
             "capture": true,
             "needsUserDetails": true,
             "needsIdDetails": true,
-            "note": "Both sides of a passport, its data page and then its visa page, and a selfie, in one job: captureBothSides is always on and the second side cannot be skipped, whatever the DOCUMENT CAPTURE settings hold. The ID form asks only for the passport's issuing country: the SDK requires idType PASSPORT and DocumentType.Passport, so the document is never chosen."
+            "note": "Both sides of a passport, its data page and then its visa page, and a selfie, in one job: the job type makes the SDK capture the visa page, and the second side cannot be skipped, whatever the DOCUMENT CAPTURE settings hold. The ID form asks only for the passport's issuing country: the SDK requires idType PASSPORT and DocumentType.Passport, so the document is never chosen."
           },
           {
             "id": "biometricKyc",

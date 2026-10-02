@@ -4,8 +4,11 @@ import com.usesmileid.presentation.flow.config.DocumentCaptureMode
 import com.usesmileid.presentation.flow.config.DocumentOrientation
 import com.usesmileid.presentation.flow.config.DocumentType
 import com.usesmileid.presentation.flow.config.DocumentVerificationParams
+import com.usesmileid.presentation.flow.dsl.DocumentCaptureConfigBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
+import com.usesmileid.sampleapps.android.flow.DocumentOptions
 import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
+import com.usesmileid.sampleapps.android.flow.applyDocumentOptions
 import com.usesmileid.sampleapps.android.flow.applying
 import com.usesmileid.sampleapps.android.flow.documentTypeFor
 import com.usesmileid.sampleapps.android.flow.documentOptionsFor
@@ -47,16 +50,15 @@ class DocumentCaptureMappingTest {
 
     @Test
     fun every_case_maps_as_the_spec_says() {
-        assertTrue(cases.size >= 12)
+        assertTrue(cases.size >= 11)
         cases.forEach { case ->
             val name = case.getValue("name").jsonPrimitive.content
             val details = detailsOf(case)
             val expected = case.getValue("expected").jsonObject
             val type = documentTypeFor(details)
-            val setting = case["captureBothSides"]?.jsonPrimitive?.boolean ?: true
-            val options = documentOptionsFor(snapshotOf(details).copy(captureBothSides = setting))
+            val options = documentOptionsFor(snapshotOf(details))
             assertEquals(name, type, options.documentType)
-            assertEquals(name, expected.getValue("captureBothSides").jsonPrimitive.boolean, options.captureBothSides)
+            assertEquals(name, expected.getValue("captureBothSides").jsonPrimitive.boolean, sdkCapturesBothSides(options))
             when (expected.getValue("documentType").jsonPrimitive.content) {
                 "passport" -> assertEquals(name, DocumentType.Passport, type)
                 "greenBook" -> assertEquals(name, DocumentType.SouthAfricaGreenBook, type)
@@ -129,40 +131,42 @@ class DocumentCaptureMappingTest {
     fun the_document_settings_reach_the_document_step() {
         val options = documentOptionsFor(
             snapshotOf(UseSmileIDSampleIdDetails(), captureMode = UseSmileIDSampleCaptureMode.Manual, galleryUpload = true)
-                .copy(captureBothSides = false, allowSkipBack = true),
+                .copy(allowSkipBack = true),
         )
         assertEquals(DocumentCaptureMode.ManualCapture, options.captureMode)
         assertTrue(options.allowGalleryUpload)
-        assertEquals(false, options.captureBothSides)
         assertTrue(options.allowSkipBack)
         val defaults = documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails()))
         assertEquals(false, defaults.allowGalleryUpload)
-        assertTrue(defaults.captureBothSides)
+        assertTrue(sdkCapturesBothSides(defaults))
         assertEquals(false, defaults.allowSkipBack)
     }
 
     @Test
-    fun a_passport_is_captured_front_only_whether_matched_or_chosen() {
+    fun the_sdk_captures_a_passport_front_only_whether_matched_or_chosen() {
         val passportRow = UseSmileIDSampleDocument(code = "PASSPORT", name = "Passport", hasBack = false, format = 3)
-        assertEquals(false, documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(document = passportRow))).captureBothSides)
+        assertEquals(false, sdkCapturesBothSides(documentOptionsFor(snapshotOf(UseSmileIDSampleIdDetails(document = passportRow)))))
         val chosen = UseSmileIDSampleIdDetails(captureAsOverride = UseSmileIDSampleCaptureAs.Passport)
-        assertEquals(false, documentOptionsFor(snapshotOf(chosen)).captureBothSides)
+        assertEquals(false, sdkCapturesBothSides(documentOptionsFor(snapshotOf(chosen))))
         for (captureAs in UseSmileIDSampleCaptureAs.entries.filter { it != UseSmileIDSampleCaptureAs.Passport }) {
             val details = UseSmileIDSampleIdDetails(document = passportRow, captureAsOverride = captureAs)
-            assertTrue(captureAs.id, documentOptionsFor(snapshotOf(details)).captureBothSides)
+            assertTrue(captureAs.id, sdkCapturesBothSides(documentOptionsFor(snapshotOf(details))))
         }
     }
 
+    /** What the SDK's builder resolves after the sample's options are applied, so the SDK's own default is under test. */
+    private fun sdkCapturesBothSides(options: DocumentOptions): Boolean =
+        DocumentCaptureConfigBuilder().apply { applyDocumentOptions(options) }.captureBothSides
+
     @Test
-    fun residency_captures_both_sides_of_a_passport_whatever_the_form_or_settings_hold() {
+    fun residency_captures_a_passport_with_no_skip_whatever_the_form_or_settings_hold() {
         (listOf(null) + UseSmileIDSampleCaptureAs.entries).forEach { captureAs ->
             val reason = captureAs?.id ?: UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_ID
             val options = documentOptionsFor(
                 snapshotOf(UseSmileIDSampleIdDetails(captureAsOverride = captureAs), product = UseSmileIDSampleProduct.ResidencyDocumentVerification)
-                    .copy(captureBothSides = false, allowSkipBack = true),
+                    .copy(allowSkipBack = true),
             )
             assertEquals(reason, DocumentType.Passport, options.documentType)
-            assertTrue(reason, options.captureBothSides)
             assertEquals(reason, false, options.allowSkipBack)
         }
     }

@@ -9,7 +9,6 @@ import {
   smileIDSampleProductFrom,
   useSmileIDSampleFormsStore,
   useSmileIDSampleSessionStore,
-  useSmileIDSampleSettingsStore,
   type UseSmileIDSampleCatalogueFamily,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
@@ -44,7 +43,6 @@ export default function IdDetailsForm() {
   const family = (product === null ? null : smileIDSampleCatalogueFamily(product)) ?? 'kyc';
   const details = useSmileIDSampleFormsStore((state) => state.idDetails);
   const setIdNumber = useSmileIDSampleFormsStore((state) => state.setIdNumber);
-  const captureBothSides = useSmileIDSampleSettingsStore((state) => state.settings.captureBothSides);
   const keepDocumentListedOn = useSmileIDSampleFormsStore((state) => state.keepDocumentListedOn);
   const store = smileIDSampleCatalogueStore(useLaunchArgs().catalogue);
   const catalogue = store();
@@ -102,7 +100,6 @@ export default function IdDetailsForm() {
         family,
         details,
         countryListLoading: countryList?.kind === 'loading',
-        captureBothSides,
       }}
       onCountryPress={() => router.push(`/flow/${productId}/id-details/country`)}
       onIdTypePress={() => router.push(`/flow/${productId}/id-details/id-type`)}

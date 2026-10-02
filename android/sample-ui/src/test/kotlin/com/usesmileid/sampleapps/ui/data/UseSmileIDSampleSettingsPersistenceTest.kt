@@ -71,16 +71,13 @@ class UseSmileIDSampleSettingsPersistenceTest {
 
     @Test
     fun `the document switches are stored under the keys the four apps share`() = runTest {
-        store.setSetting(UseSmileIDSampleSetting.CaptureBothSides, false)
         store.setSetting(UseSmileIDSampleSetting.AllowSkipBack, true)
         store.setSetting(UseSmileIDSampleSetting.SelfieFirst, true)
 
         val written = prefs.data.first()
-        assertEquals(false, written[booleanPreferencesKey("capture_both_sides")])
         assertEquals(true, written[booleanPreferencesKey("allow_skip_back")])
         assertEquals(true, written[booleanPreferencesKey("selfie_first")])
         val settings = store.settings.first()
-        assertFalse(settings.captureBothSides)
         assertTrue(settings.allowSkipBack)
         assertTrue(settings.selfieFirst)
     }

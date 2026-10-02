@@ -182,14 +182,13 @@ export const smileIDSampleResolvedHasBackSide = (resolved: UseSmileIDSampleResol
   }
 };
 
-/// The flag the document step is handed: the Settings switch, except that a passport is captured front only.
-export const smileIDSampleCaptureBothSides = (resolved: UseSmileIDSampleResolvedCaptureAs, setting: boolean): boolean =>
-  setting && resolved.captureAs !== UseSmileIDSampleCaptureAs.Passport;
+/// The SDK's captureBothSides default, which the app leaves unset: false for a passport.
+export const smileIDSampleCaptureBothSides = (resolved: UseSmileIDSampleResolvedCaptureAs): boolean =>
+  resolved.captureAs !== UseSmileIDSampleCaptureAs.Passport;
 
 /// The trigger text from `spec/catalogue-rules.json` captureAs.
-export const smileIDSampleCaptureAsTriggerText = (resolved: UseSmileIDSampleResolvedCaptureAs, setting: boolean): string => {
-  const sides =
-    smileIDSampleCaptureBothSides(resolved, setting) && smileIDSampleResolvedHasBackSide(resolved) ? 'front and back' : 'front only';
+export const smileIDSampleCaptureAsTriggerText = (resolved: UseSmileIDSampleResolvedCaptureAs): string => {
+  const sides = smileIDSampleCaptureBothSides(resolved) && smileIDSampleResolvedHasBackSide(resolved) ? 'front and back' : 'front only';
   const orientation = resolved.genericDocument.orientation;
   if (resolved.captureAs !== UseSmileIDSampleCaptureAs.GenericDocument) {
     return `${smileIDSampleCaptureAsLabel(resolved.captureAs)} · ${resolved.matched ? 'matches document' : 'chosen'}`;

@@ -19,8 +19,6 @@ data class UseSmileIDSampleSettings(
     val previewStep: Boolean = true,
     /** DocumentCaptureConfig.allowGalleryUpload; off, as the SDK defaults it. */
     val galleryUpload: Boolean = false,
-    /** DocumentCaptureConfig.captureBothSides; on, as the SDK defaults it. */
-    val captureBothSides: Boolean = true,
     /** DocumentCaptureConfig.allowSkipBack; off, as the SDK defaults it. */
     val allowSkipBack: Boolean = false,
     /** The document products capture the selfie before the document. */
@@ -37,7 +35,6 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.InstructionsStep -> instructionsStep
         UseSmileIDSampleSetting.PreviewStep -> previewStep
         UseSmileIDSampleSetting.GalleryUpload -> galleryUpload
-        UseSmileIDSampleSetting.CaptureBothSides -> captureBothSides
         UseSmileIDSampleSetting.AllowSkipBack -> allowSkipBack
         UseSmileIDSampleSetting.SelfieFirst -> selfieFirst
     }
@@ -58,7 +55,6 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.InstructionsStep -> copy(instructionsStep = enabled)
             UseSmileIDSampleSetting.PreviewStep -> copy(previewStep = enabled)
             UseSmileIDSampleSetting.GalleryUpload -> copy(galleryUpload = enabled)
-            UseSmileIDSampleSetting.CaptureBothSides -> copy(captureBothSides = enabled)
             UseSmileIDSampleSetting.AllowSkipBack -> copy(allowSkipBack = enabled)
             UseSmileIDSampleSetting.SelfieFirst -> copy(selfieFirst = enabled)
         }
@@ -73,7 +69,6 @@ enum class UseSmileIDSampleSetting {
     InstructionsStep,
     PreviewStep,
     GalleryUpload,
-    CaptureBothSides,
     AllowSkipBack,
     SelfieFirst,
 }

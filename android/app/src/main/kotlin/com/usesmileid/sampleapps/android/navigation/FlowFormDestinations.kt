@@ -121,7 +121,6 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
             family == UseSmileIDSampleCatalogueFamily.Kyc -> app.catalogue.idTypes(countryCode)
             else -> app.catalogue.documents(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification)
         },
-        captureBothSides = app.settings.captureBothSides,
         onCountryClick = { pickingCountry = true },
         onIdTypeClick = { pickingIdType = true },
         onDocumentClick = { pickingDocument = true },
