@@ -72,10 +72,10 @@
       "id": "brandDefault",
       "kind": "theme",
       "label": "Brand default",
-      "description": "Ship state: Smile ID branding, light or dark per the Settings APPEARANCE switch.",
+      "description": "Ship state: Smile ID branding, light or dark per Settings › APPEARANCE › Theme, System by default.",
       "forces": null,
       "observe": [],
-      "surface": "Settings › APPEARANCE (Dark mode)"
+      "surface": "Settings › APPEARANCE › Theme (System, Light or Dark)"
     },
     {
       "id": "clashingHost",
@@ -100,7 +100,7 @@
     "flow scenarios are selectable together with an entry route (see launch-args.json 'route'); theme scenarios apply on top of any flow scenario.",
     "Every scenario must be reachable from the drawer AND from a launch argument, because automation cannot rely on tapping through a drawer reliably on every platform.",
     "'forces' documents the mechanism so the four implementations force the same condition the same way; keep it factual, not prescriptive about code.",
-    "Theme scenarios reconciled with the design 2026-08-12: the design's Settings screen exposes only a Dark mode switch, so brandDefault is the shipped control and clashingHost/partnerOverride stay automation-only (launch arg or debug drawer). If they should become visible controls later, they become Settings rows under APPEARANCE — that is the customization surface the design already implies.",
+    "Theme scenarios reconciled with the design 2026-08-12: the design's Settings screen exposes only the appearance control (a Theme row since 2026-10-02), so brandDefault is the shipped control and clashingHost/partnerOverride stay automation-only (launch arg or debug drawer). If they should become visible controls later, they become Settings rows under APPEARANCE — that is the customization surface the design already implies.",
     "Flow scenarios compose with products: `scenario` says how the environment misbehaves, `autostart` says which product to launch. Every flow scenario must be reachable for every capture product."
   ],
   "designVersion": "2026-08-12",

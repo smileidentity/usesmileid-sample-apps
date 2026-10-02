@@ -78,6 +78,20 @@
       "notes": "Layers over Settings, the only screen that owns the row that opens it."
     },
     {
+      "id": "appearance",
+      "screen": "appearanceSheet",
+      "path": "/settings/appearance",
+      "presentation": "modalSheet",
+      "args": [],
+      "platform": {
+        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.Appearance",
+        "ios": "Sheet.appearance",
+        "flutter": "/settings/appearance",
+        "expo": "app/(settings)/settings/appearance.tsx"
+      },
+      "notes": "Layers over Settings, the only screen that owns the row that opens it."
+    },
+    {
       "id": "verificationDetails",
       "screen": "verificationDetails",
       "path": "/verifications/:jobId",

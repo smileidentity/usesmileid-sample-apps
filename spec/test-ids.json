@@ -334,8 +334,16 @@
         "description": "Agent mode switch → SelfieCaptureConfig.allowAgentMode."
       },
       {
-        "id": "sample_setting_dark_mode",
-        "description": "Dark mode switch."
+        "id": "sample_setting_appearance",
+        "description": "Theme row, a select trigger showing the current appearance: System (Light) or System (Dark) while System is selected, naming the device's own theme, else Light or Dark. Opens sample_appearance_sheet."
+      },
+      {
+        "id": "sample_appearance_sheet",
+        "description": "Appearance option sheet root."
+      },
+      {
+        "id": "sample_appearance_option",
+        "description": "One appearance row; suffixed system (the default), light or dark."
       },
       {
         "id": "sample_setting_consent_step",
