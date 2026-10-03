@@ -110,7 +110,8 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     .documentPicker: .idDetailsForm(productId: "sample-productId"),
     .captureAs: .idDetailsForm(productId: "sample-productId"),
     .genericDocument: .idDetailsForm(productId: "sample-productId"),
-    .captureMode: .settings
+    .captureMode: .settings,
+    .appearance: .settings
   ]
 
   private func binding(for route: Route) -> String {

@@ -21,6 +21,7 @@ struct UseSmileIDSampleShell: View {
       .environmentObject(router)
       .environmentObject(app)
       .modifier(UseSmileIDSampleShellEnvironment(app: app))
+      .modifier(UseSmileIDSampleDeviceScheme(app: app))
       // At the root, over whichever route is showing; a link opens the owner first, so it layers.
       .sheet(item: $router.sheet) { sheet in
         // A sheet is its own presentation and inherits none of the environment set above it.
@@ -143,6 +144,11 @@ struct UseSmileIDSampleShell: View {
         app.setCaptureMode(mode)
         router.sheet = nil
       }
+    case .appearance:
+      AppearanceSheet(selected: app.settings.appearance, deviceDark: app.deviceDark) { appearance in
+        app.setAppearance(appearance)
+        router.sheet = nil
+      }
     case .profileSwitch:
       ProfileSwitchSheet(
         profiles: app.profiles.all,
@@ -236,8 +242,7 @@ private struct UseSmileIDSampleShellEnvironment: ViewModifier {
 
   func body(content: Content) -> some View {
     content
-      // Pinned both ways, not nil: following the system leaves a dark device rendering dark while Settings reads off.
-      .preferredColorScheme(app.settings.darkMode ? .dark : .light)
+      .preferredColorScheme(app.settings.appearance.colorScheme)
       // `preferredColorScheme` moves the system's controls; only this maps the scheme onto our tokens.
       .useSmileIDSampleTheme()
       // Reaches `\.locale` in the shell's own views only; the SDK's strings follow `-AppleLanguages`.

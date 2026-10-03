@@ -5,7 +5,9 @@ import XCTest
 /// The UI suite seeds the switches by name, so a row added or a default changed must fail here rather than leaving a launch half-seeded.
 final class UseSmileIDSampleSettingsSeedSpecTest: XCTestCase {
   func testTheSeedNamesEverySwitchAtItsShippedDefault() throws {
-    let seeded = try Self.seed()
+    var seeded = try Self.seed()
+    // Pinned rather than the shipped System, so a run does not depend on the simulator's theme.
+    XCTAssertEqual(seeded.removeValue(forKey: "appearance"), "light")
     let shipped = UseSmileIDSampleSettings()
     XCTAssertEqual(
       seeded,

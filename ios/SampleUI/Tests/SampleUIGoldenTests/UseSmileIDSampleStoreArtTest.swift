@@ -112,7 +112,8 @@ final class UseSmileIDSampleStoreArtTest: XCTestCase {
           initials: Self.demo("initials"),
           versionLabel: "Smile ID 20260716.1211.61",
           consentBoundByToken: false,
-          avatarColor: useSmileIDSampleAvatarColor(profileIndex: 0)
+          avatarColor: useSmileIDSampleAvatarColor(profileIndex: 0),
+          deviceDark: false
         ),
         onSettingChange: { _, _ in },
         onProfile: {},

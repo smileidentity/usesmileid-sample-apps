@@ -25,7 +25,9 @@ public enum UseSmileIDSampleTestIds {
   public static let versionLabel = "sample_version_label"
   public static let settingEnhancedSmartSelfie = "sample_setting_enhanced_smart_selfie"
   public static let settingAgentMode = "sample_setting_agent_mode"
-  public static let settingDarkMode = "sample_setting_dark_mode"
+  public static let settingAppearance = "sample_setting_appearance"
+  public static let appearanceSheet = "sample_appearance_sheet"
+  public static let appearanceOptionPrefix = "sample_appearance_option"
   public static let settingConsentStep = "sample_setting_consent_step"
   public static let settingInstructionsStep = "sample_setting_instructions_step"
   public static let settingPreviewStep = "sample_setting_preview_step"
@@ -70,6 +72,10 @@ public enum UseSmileIDSampleTestIds {
 
   public static func captureModeOption(_ id: String) -> String {
     "\(captureModeOptionPrefix)_\(id)"
+  }
+
+  public static func appearanceOption(_ id: String) -> String {
+    "\(appearanceOptionPrefix)_\(id)"
   }
 
   public static func genericDocumentOrientation(_ id: String) -> String {
@@ -286,7 +292,7 @@ public enum UseSmileIDSampleTestIds {
     resultCard, resultActiveScenario, resultActiveTheme, resultRoute, resultEnvironment,
     resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,
     resultLastError, resultSdkVersion,
-    settingEnhancedSmartSelfie, settingAgentMode, settingDarkMode,
+    settingEnhancedSmartSelfie, settingAgentMode, settingAppearance, appearanceSheet, appearanceOptionPrefix,
     settingConsentStep, settingInstructionsStep, settingPreviewStep,
     jobRowPrefix, jobRowStatus, filterChipPrefix, filterCountPrefix, verificationsEmpty,
     selectToggle, selectionBar, selectionCheckboxPrefix, selectionCount, selectionRemove

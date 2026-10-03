@@ -23,6 +23,7 @@ enum UseSmileIDSampleDeepLinks {
 
   static let licenses = "\(scheme)://settings/licenses"
   static let captureMode = "\(scheme)://settings/capture-mode"
+  static let appearance = "\(scheme)://settings/appearance"
 
   static let scanToken = "\(scheme)://token/scan"
   static let scenarioDrawer = "\(scheme)://debug/scenarios"

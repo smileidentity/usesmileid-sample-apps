@@ -24,12 +24,12 @@ final class UseSmileIDSampleProfilesPersistenceTest: XCTestCase {
   }
 
   func testAStoreHoldingOnlyTheReleasedKeysReadsAsNoProfilesWithItsSettingsIntact() {
-    rows.setFlag(.darkMode, true)
+    rows.setFlag("dark_mode", true)
 
     let store = makeStore()
 
     XCTAssertEqual(store.profiles, UseSmileIDSampleProfiles())
-    XCTAssertTrue(store.settings.darkMode)
+    XCTAssertEqual(store.settings.appearance, .dark)
   }
 
   func testProfilesGoToTheKeychainNeverTheDefaults() {

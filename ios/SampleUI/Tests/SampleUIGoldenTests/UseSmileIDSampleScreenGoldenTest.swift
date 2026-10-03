@@ -352,6 +352,18 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("capture_mode_sheet") { CaptureModeSheet(selected: .autoWithFallback, onSelect: { _ in }).frame(height: 700) }
   }
 
+  func testAppearanceSheet() {
+    goldens("appearance_sheet") {
+      UseSmileIDSampleGoldenDeviceScheme { deviceDark in
+        AppearanceSheet(selected: .system, deviceDark: deviceDark, onSelect: { _ in }).frame(height: 700)
+      }
+    }
+  }
+
+  func testAppearanceSheetSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType { AppearanceSheet(selected: .system, deviceDark: true, onSelect: { _ in }) }
+  }
+
   func testCountryPickerSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) { countryPicker(query: "", height: 1400) }
   }
@@ -605,6 +617,19 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     profileIndex: Int = 0,
     debug: Bool = false
   ) -> some View {
+    UseSmileIDSampleGoldenDeviceScheme { deviceDark in
+      self.settingsScreen(values, consentBound: consentBound, profile: profile, profileIndex: profileIndex, debug: debug, deviceDark: deviceDark)
+    }
+  }
+
+  private func settingsScreen(
+    _ values: UseSmileIDSampleSettings,
+    consentBound: Bool,
+    profile: UseSmileIDSampleProfile?,
+    profileIndex: Int,
+    debug: Bool,
+    deviceDark: Bool
+  ) -> some View {
     SettingsScreen(
       state: .init(
         settings: values,
@@ -612,7 +637,8 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
         initials: profile?.initials ?? "KB",
         versionLabel: "Smile ID 20260716.1211.61",
         consentBoundByToken: consentBound,
-        avatarColor: useSmileIDSampleAvatarColor(profileIndex: profileIndex)
+        avatarColor: useSmileIDSampleAvatarColor(profileIndex: profileIndex),
+        deviceDark: deviceDark
       ),
       onSettingChange: { _, _ in },
       onProfile: {},

@@ -117,12 +117,14 @@ struct UseSmileIDSampleDestination: View {
           initials: app.initials,
           versionLabel: app.versionLabel,
           avatarColor: app.avatarColor,
-          hasProfile: app.profiles.active != nil
+          hasProfile: app.profiles.active != nil,
+          deviceDark: app.deviceDark
         ),
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
         onProfile: { router.open(.profiles) },
         onNavRow: { row in open(row) },
         onCaptureMode: { router.sheet = .captureMode },
+        onAppearance: { router.sheet = .appearance },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.

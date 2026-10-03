@@ -52,7 +52,6 @@ public final class UseSmileIDSampleStore {
     settings = UseSmileIDSampleSettings(
       enhancedSmartSelfie: settingsStorage.flag(.enhancedSmartSelfie) ?? defaults.enhancedSmartSelfie,
       agentMode: settingsStorage.flag(.agentMode) ?? defaults.agentMode,
-      darkMode: settingsStorage.flag(.darkMode) ?? defaults.darkMode,
       consentStep: settingsStorage.flag(.consentStep) ?? defaults.consentStep,
       instructionsStep: settingsStorage.flag(.instructionsStep) ?? defaults.instructionsStep,
       previewStep: settingsStorage.flag(.previewStep) ?? defaults.previewStep,
@@ -61,8 +60,17 @@ public final class UseSmileIDSampleStore {
       selfieFirst: settingsStorage.flag(.selfieFirst) ?? defaults.selfieFirst,
       captureMode: settingsStorage.data(Self.captureModeKey)
         .flatMap { String(data: $0, encoding: .utf8) }
-        .flatMap(UseSmileIDSampleCaptureMode.init(rawValue:)) ?? defaults.captureMode
+        .flatMap(UseSmileIDSampleCaptureMode.init(rawValue:)) ?? defaults.captureMode,
+      appearance: Self.appearance(in: settingsStorage)
     ).normalised()
+  }
+
+  /// A stored id wins; else the legacy switch, where only true proves a choice, since false was also its default.
+  private static func appearance(in storage: UseSmileIDSampleSettingsStorage) -> UseSmileIDSampleAppearance {
+    if let stored = storage.string(appearanceKey).flatMap(UseSmileIDSampleAppearance.init(rawValue:)) {
+      return stored
+    }
+    return storage.flag(legacyDarkModeKey) == true ? .dark : .system
   }
 
   /// Writes through the settings model, so the capture mutex moves the other row in the same edit; returns the result, which is also what the store now reads.
@@ -85,6 +93,17 @@ public final class UseSmileIDSampleStore {
   }
 
   static let captureModeKey = "capture_mode"
+
+  /// Two writes, not one transaction; a crash between them is safe because the stored id is read first.
+  public func setAppearance(_ appearance: UseSmileIDSampleAppearance) {
+    settingsStorage.setString(Self.appearanceKey, appearance.rawValue)
+    settingsStorage.remove(Self.legacyDarkModeKey)
+    settings.appearance = appearance
+  }
+
+  static let appearanceKey = "appearance"
+  /// The Dark mode switch that `appearance` replaced, read only to carry an installed choice over.
+  static let legacyDarkModeKey = "dark_mode"
 
   /// In the Keychain, since the record holds people's details; missing or unreadable is no profiles.
   public var profiles: UseSmileIDSampleProfiles {
@@ -202,7 +221,6 @@ public extension UseSmileIDSampleSetting {
     switch self {
     case .enhancedSmartSelfie: "enhanced_smart_selfie"
     case .agentMode: "agent_mode"
-    case .darkMode: "dark_mode"
     case .consentStep: "consent_step"
     case .instructionsStep: "instructions_step"
     case .previewStep: "preview_step"
@@ -220,6 +238,10 @@ public protocol UseSmileIDSampleSettingsStorage: AnyObject {
   func data(_ key: String) -> Data?
   /// Nil removes the value.
   func setData(_ key: String, _ value: Data?)
+  func string(_ key: String) -> String?
+  func setString(_ key: String, _ value: String)
+  /// Removes whatever the key holds.
+  func remove(_ key: String)
 }
 
 public extension UseSmileIDSampleSettingsStorage {
@@ -260,12 +282,26 @@ public final class UseSmileIDSampleDefaultsStorage: UseSmileIDSampleSettingsStor
   public func setData(_ key: String, _ value: Data?) {
     defaults.set(value, forKey: key)
   }
+
+  /// Lets the launch-argument domain through, unlike `data(_:)`: a preference, not a fixture, so `-appearance light` may seed it.
+  public func string(_ key: String) -> String? {
+    defaults.string(forKey: key)
+  }
+
+  public func setString(_ key: String, _ value: String) {
+    defaults.set(value, forKey: key)
+  }
+
+  public func remove(_ key: String) {
+    defaults.removeObject(forKey: key)
+  }
 }
 
 /// The switches held for one process, for tests and for a host that wants no persistence.
 public final class UseSmileIDSampleMemorySettingsStorage: UseSmileIDSampleSettingsStorage {
   private var flags: [String: Bool] = [:]
   private var blobs: [String: Data] = [:]
+  private var strings: [String: String] = [:]
 
   public init() {}
 
@@ -283,6 +319,20 @@ public final class UseSmileIDSampleMemorySettingsStorage: UseSmileIDSampleSettin
 
   public func setData(_ key: String, _ value: Data?) {
     blobs[key] = value
+  }
+
+  public func string(_ key: String) -> String? {
+    strings[key]
+  }
+
+  public func setString(_ key: String, _ value: String) {
+    strings[key] = value
+  }
+
+  public func remove(_ key: String) {
+    flags[key] = nil
+    blobs[key] = nil
+    strings[key] = nil
   }
 }
 

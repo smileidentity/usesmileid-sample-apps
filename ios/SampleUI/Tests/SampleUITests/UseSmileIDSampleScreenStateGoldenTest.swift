@@ -41,6 +41,7 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "captureAsSheet.default": "capture_as_sheet",
     "genericDocumentSheet.default": "generic_document_sheet",
     "captureModeSheet.default": "capture_mode_sheet",
+    "appearanceSheet.default": "appearance_sheet",
     "settings.default": "settings",
     "settings.altProfile": "settings_alt_profile",
     "settings.newlyCreatedProfile": "settings_new_profile",

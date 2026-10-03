@@ -119,3 +119,13 @@ private struct BackgroundFill: View {
     colors.background
   }
 }
+
+/// Hands content the golden's own scheme as the device's, so a System label matches the baseline it is drawn in.
+struct UseSmileIDSampleGoldenDeviceScheme<Content: View>: View {
+  @Environment(\.colorScheme) private var colorScheme
+  @ViewBuilder let content: (Bool) -> Content
+
+  var body: some View {
+    content(colorScheme == .dark)
+  }
+}
