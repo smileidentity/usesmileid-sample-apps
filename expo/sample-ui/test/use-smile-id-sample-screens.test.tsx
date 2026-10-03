@@ -3,9 +3,12 @@ import { act, fireEvent } from '@testing-library/react-native';
 import { LicensesScreen, type UseSmileIDSampleLicence } from '../src/screens/licenses-screen';
 import { ProductsScreen } from '../src/screens/products-screen';
 import { ScanTokenScreen } from '../src/screens/scan-token-screen';
+import { AppearanceSheet } from '../src/screens/appearance-sheet';
 import { SettingsScreen } from '../src/screens/settings-screen';
 import { smileIDSampleSettingsDefaults } from '../src/state/use-smile-id-sample-settings';
-import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
+import { useSmileIDSampleTheme } from '../src/theme/use-smile-id-sample-theme';
+import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
+import { UseSmileIDSampleAppearance } from '../src/model/use-smile-id-sample-appearance';
 import { renderInTheme, schemes } from './render-in-theme';
 import { expectGoldens } from './paint/pixel-golden';
 
@@ -17,6 +20,7 @@ const settingsState = {
   organisation: 'UpTech Finance',
   initials: 'KA',
   versionLabel: 'Smile ID · 1.0.0',
+  deviceDark: false,
 };
 
 const licences: readonly UseSmileIDSampleLicence[] = [
@@ -24,15 +28,21 @@ const licences: readonly UseSmileIDSampleLicence[] = [
   { component: 'zustand', version: '5.0.15', declared: 'MIT', text: 'MIT License\n\nCopyright (c) …' },
 ];
 
+/// The golden's own scheme stands in for the device's, so the System label matches it.
+const SettingsOnDevice = (props: Parameters<typeof SettingsScreen>[0]) => (
+  <SettingsScreen {...props} state={{ ...props.state, deviceDark: useSmileIDSampleTheme().dark }} />
+);
+
 const settings = (
   overrides: Partial<Parameters<typeof SettingsScreen>[0]> = {},
 ): React.ReactElement => (
-  <SettingsScreen
+  <SettingsOnDevice
     state={settingsState}
     onSettingChange={noop}
     onProfilePress={noop}
     onNavRowPress={noop}
     onCaptureModePress={noop}
+    onAppearancePress={noop}
     onSignOut={noop}
     {...overrides}
   />
@@ -147,13 +157,46 @@ describe('screen coverage', () => {
   });
 });
 
+describe('the Theme row and its sheet', () => {
+  it('names the device under System and opens the sheet', async () => {
+    const open = jest.fn();
+    const light = await renderInTheme(settings({ onAppearancePress: open }), false);
+    expect(light.getByText('System (Light)')).toBeTruthy();
+    await fireEvent.press(light.getByTestId(UseSmileIDSampleTestIds.SETTING_APPEARANCE));
+    expect(open).toHaveBeenCalledTimes(1);
+
+    const dark = await renderInTheme(settings(), true);
+    expect(dark.getByText('System (Dark)')).toBeTruthy();
+  });
+
+  // The pick itself is a device-flow assertion: a sheet's host view is inert to presses in this runner.
+  it('checks the choice and names the device on System', async () => {
+    const sheet = (deviceDark: boolean) => (
+      <AppearanceSheet
+        selected={UseSmileIDSampleAppearance.Light}
+        deviceDark={deviceDark}
+        onSelect={noop}
+        onDismiss={noop}
+      />
+    );
+    const onDark = await renderInTheme(sheet(true), false);
+    expect(onDark.getByText('System (Dark)')).toBeTruthy();
+    expect(
+      onDark.getByTestId(UseSmileIDSampleSuffixedTestIds.appearanceOption('light')).props.accessibilityState,
+    ).toMatchObject({ selected: true });
+
+    const onLight = await renderInTheme(sheet(false), false);
+    expect(onLight.getByText('System (Light)')).toBeTruthy();
+  });
+});
+
 describe('settings', () => {
   it('attaches the id every switch is driven by', async () => {
     const rendered = await renderInTheme(settings(), false);
     for (const id of [
       UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
       UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
-      UseSmileIDSampleTestIds.SETTING_DARK_MODE,
+      UseSmileIDSampleTestIds.SETTING_APPEARANCE,
       UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,

@@ -20,11 +20,18 @@ describe('sign-out', () => {
     const signOut = jest.fn();
     const rendered = await renderInTheme(
       <SettingsScreen
-        state={{ settings: smileIDSampleSettingsDefaults, organisation: 'Kobo', initials: 'AO', versionLabel: 'Smile ID · 1.0.0' }}
+        state={{
+          settings: smileIDSampleSettingsDefaults,
+          organisation: 'Kobo',
+          initials: 'AO',
+          versionLabel: 'Smile ID · 1.0.0',
+          deviceDark: false,
+        }}
         onSettingChange={noop}
         onProfilePress={noop}
         onNavRowPress={noop}
         onCaptureModePress={noop}
+        onAppearancePress={noop}
         onSignOut={signOut}
       />,
       false,

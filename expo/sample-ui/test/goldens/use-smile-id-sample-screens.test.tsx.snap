@@ -37407,6 +37407,36 @@ exports[`settings dark agentModeOn 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -37423,6 +37453,7 @@ exports[`settings dark agentModeOn 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -37553,7 +37584,7 @@ exports[`settings dark agentModeOn 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -37572,40 +37603,69 @@ exports[`settings dark agentModeOn 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Dark)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#4d88ff"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#272a35"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -41534,6 +41594,36 @@ exports[`settings dark consentBoundByToken 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -41550,6 +41640,7 @@ exports[`settings dark consentBoundByToken 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -41680,7 +41771,7 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -41699,40 +41790,69 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Dark)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#4d88ff"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#272a35"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -45661,6 +45781,36 @@ exports[`settings dark default 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -45677,6 +45827,7 @@ exports[`settings dark default 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -45807,7 +45958,7 @@ exports[`settings dark default 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -45826,40 +45977,69 @@ exports[`settings dark default 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Dark)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#4d88ff"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#272a35"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -49788,6 +49968,36 @@ exports[`settings dark withDebugSection 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -49804,6 +50014,7 @@ exports[`settings dark withDebugSection 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -49934,7 +50145,7 @@ exports[`settings dark withDebugSection 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -49953,40 +50164,69 @@ exports[`settings dark withDebugSection 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Dark)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#4d88ff"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#272a35"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -54204,6 +54444,36 @@ exports[`settings light agentModeOn 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -54220,6 +54490,7 @@ exports[`settings light agentModeOn 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -54350,7 +54621,7 @@ exports[`settings light agentModeOn 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -54369,40 +54640,69 @@ exports[`settings light agentModeOn 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Light)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#151f72"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#ffffff"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -58331,6 +58631,36 @@ exports[`settings light consentBoundByToken 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -58347,6 +58677,7 @@ exports[`settings light consentBoundByToken 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -58477,7 +58808,7 @@ exports[`settings light consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -58496,40 +58827,69 @@ exports[`settings light consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Light)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#151f72"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#ffffff"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -62458,6 +62818,36 @@ exports[`settings light default 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -62474,6 +62864,7 @@ exports[`settings light default 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -62604,7 +62995,7 @@ exports[`settings light default 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -62623,40 +63014,69 @@ exports[`settings light default 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Light)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#151f72"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#ffffff"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>
@@ -66585,6 +67005,36 @@ exports[`settings light withDebugSection 1`] = `
           }
         >
           <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -66601,6 +67051,7 @@ exports[`settings light withDebugSection 1`] = `
                 undefined,
               ]
             }
+            testID="sample_setting_appearance"
           >
             <View
               style={
@@ -66731,7 +67182,7 @@ exports[`settings light withDebugSection 1`] = `
                   ]
                 }
               >
-                Dark mode
+                Theme
               </Text>
               <Text
                 style={
@@ -66750,40 +67201,69 @@ exports[`settings light withDebugSection 1`] = `
                   ]
                 }
               >
-                Switch appearance
+                System (Light)
               </Text>
             </View>
-            <RCTSwitch
-              accessibilityRole="switch"
-              disabled={false}
-              onChange={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              onTintColor="#151f72"
+            <RNSVGSvgView
+              align="xMidYMid"
+              bbHeight={14}
+              bbWidth={14}
+              fill="none"
+              focusable={false}
+              height={14}
+              meetOrSlice={0}
+              minX={0}
+              minY={0}
               style={
                 [
                   {
-                    "alignSelf": "flex-start",
+                    "backgroundColor": "transparent",
+                    "borderWidth": 0,
                   },
-                  [
-                    [
-                      {
-                        "alignSelf": "center",
-                      },
-                      undefined,
-                    ],
-                    {
-                      "backgroundColor": "#eaecf0",
-                      "borderRadius": 16,
-                    },
-                  ],
+                  {
+                    "flex": 0,
+                    "height": 14,
+                    "width": 14,
+                  },
                 ]
               }
-              testID="sample_setting_dark_mode"
-              thumbTintColor="#ffffff"
-              tintColor="#eaecf0"
-              value={false}
-            />
+              vbHeight={14}
+              vbWidth={14}
+              width={14}
+            >
+              <RNSVGGroup
+                fill={null}
+                propList={
+                  [
+                    "fill",
+                  ]
+                }
+              >
+                <RNSVGPath
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  fill={null}
+                  opacity={1}
+                  propList={
+                    [
+                      "fill",
+                      "stroke",
+                      "strokeWidth",
+                      "strokeLinecap",
+                      "strokeLinejoin",
+                    ]
+                  }
+                  stroke={
+                    {
+                      "payload": 4286874242,
+                      "type": 0,
+                    }
+                  }
+                  strokeLinecap={1}
+                  strokeLinejoin={1}
+                  strokeWidth={1.16667}
+                />
+              </RNSVGGroup>
+            </RNSVGSvgView>
           </View>
         </View>
       </View>

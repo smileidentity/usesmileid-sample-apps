@@ -10,6 +10,7 @@ import {
   useSmileIDSampleSessionClock,
   useSmileIDSampleSessionStore,
   useSmileIDSampleSettingsStore,
+  UseSmileIDSampleAppearance,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
 import { NavigationBar } from 'expo-navigation-bar';
@@ -22,6 +23,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
+import { useSmileIDSampleDeviceScheme } from '../src/use-smile-id-sample-device-scheme';
 
 /// Every pushed route and sheet layers over the tabs, so a cold deep link lands with its owner beneath (routes.json R12).
 export const unstable_settings = { initialRouteName: '(tabs)' };
@@ -36,11 +38,13 @@ const reassertSystemBars = (dark: boolean) => {
 /// The navigation host. Every route is a file under app/, matching the expo column of spec/routes.json.
 export default function RootLayout() {
   const scheme = useColorScheme();
-  const darkMode = useSmileIDSampleSettingsStore((state) => state.settings.darkMode);
+  const appearance = useSmileIDSampleSettingsStore((state) => state.settings.appearance);
   const settingsLoaded = useSmileIDSampleSettingsStore((state) => state.loaded);
   const loadSettings = useSmileIDSampleSettingsStore((state) => state.load);
-  // Until the switch loads, the device's guess avoids a flash.
-  const dark = settingsLoaded ? darkMode : scheme === 'dark';
+  const setDeviceDark = useSmileIDSampleDeviceScheme((state) => state.setDeviceDark);
+  const following = !settingsLoaded || appearance === UseSmileIDSampleAppearance.System;
+  // Before settings load the device decides, which is right for the default and avoids a flash.
+  const dark = following ? scheme === 'dark' : appearance === UseSmileIDSampleAppearance.Dark;
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const argsLoaded = useLaunchArgsLoaded();
@@ -65,19 +69,32 @@ export default function RootLayout() {
   }, [loadSession]);
   useSmileIDSampleSessionClock();
 
-  // The SDK's useColorScheme and the native bars read this, not the theme provider.
+  // Only while nothing is pinned: a pin makes useColorScheme report the app's choice, not the device's.
   useEffect(() => {
-    if (settingsLoaded) Appearance.setColorScheme(dark ? 'dark' : 'light');
-  }, [settingsLoaded, dark]);
+    if (following) setDeviceDark(scheme === 'dark');
+  }, [following, scheme, setDeviceDark]);
 
-  // Android re-applies the window's bars after a night-mode change, so ours go again.
+  // The SDK's useColorScheme and the native bars read this, not the theme provider; 'unspecified' unpins.
+  useEffect(() => {
+    if (settingsLoaded) {
+      Appearance.setColorScheme(appearance === UseSmileIDSampleAppearance.System ? 'unspecified' : appearance);
+    }
+  }, [settingsLoaded, appearance]);
+
+  // Android re-applies the window's bars after a night-mode change, so ours go again, with the event's theme under System.
   useEffect(() => {
     if (Platform.OS !== 'android') return undefined;
-    const subscription = Appearance.addChangeListener(() =>
-      requestAnimationFrame(() => reassertSystemBars(dark)),
+    const subscription = Appearance.addChangeListener(({ colorScheme }) =>
+      requestAnimationFrame(() =>
+        reassertSystemBars(
+          appearance === UseSmileIDSampleAppearance.System
+            ? colorScheme === 'dark'
+            : appearance === UseSmileIDSampleAppearance.Dark,
+        ),
+      ),
     );
     return () => subscription.remove();
-  }, [dark]);
+  }, [appearance]);
 
   useEffect(() => {
     // Once, off the link's own arguments: the defaults before it resolves are no launch at all.
@@ -116,6 +133,14 @@ export default function RootLayout() {
             />
             <Stack.Screen
               name="(settings)/settings/capture-mode"
+              options={{
+                presentation: 'transparentModal',
+                animation: 'none',
+                contentStyle: { backgroundColor: 'transparent' },
+              }}
+            />
+            <Stack.Screen
+              name="(settings)/settings/appearance"
               options={{
                 presentation: 'transparentModal',
                 animation: 'none',

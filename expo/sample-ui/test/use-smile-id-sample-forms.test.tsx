@@ -1,7 +1,9 @@
 import { act, fireEvent } from '@testing-library/react-native';
 import { AccessibilityInfo } from 'react-native';
 
+import { UseSmileIDSampleAppearance } from '../src/model/use-smile-id-sample-appearance';
 import { UseSmileIDSampleCaptureMode } from '../src/model/use-smile-id-sample-capture-mode';
+import { useSmileIDSampleTheme } from '../src/theme/use-smile-id-sample-theme';
 import type { UseSmileIDSampleCatalogue } from '../src/state/use-smile-id-sample-catalogue';
 import {
   smileIDSampleGenericDocumentDefaults,
@@ -27,6 +29,7 @@ import {
 } from '../src/state/use-smile-id-sample-user-details-requirement';
 import { UseSmileIDSampleUserField, smileIDSampleUserFields } from '../src/model/use-smile-id-sample-user-fields';
 import { UseSmileIDSampleCataloguePicker } from '../src/components/use-smile-id-sample-catalogue-picker';
+import { AppearanceSheet } from '../src/screens/appearance-sheet';
 import { CaptureAsSheet } from '../src/screens/capture-as-sheet';
 import { CaptureModeSheet } from '../src/screens/capture-mode-sheet';
 import { CountryPickerSheet } from '../src/screens/country-picker-sheet';
@@ -197,6 +200,16 @@ const documentForm = (details: Partial<UseSmileIDSampleIdDetails>) =>
     },
   });
 
+/// The golden's own scheme stands in for the device's, so the System label matches it.
+const AppearanceOnDevice = () => (
+  <AppearanceSheet
+    selected={UseSmileIDSampleAppearance.System}
+    deviceDark={useSmileIDSampleTheme().dark}
+    onSelect={noop}
+    onDismiss={noop}
+  />
+);
+
 const cases: { screen: string; states: Record<string, Case> }[] = [
   {
     screen: 'userDetails',
@@ -345,6 +358,12 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       },
     },
   },
+  {
+    screen: 'appearanceSheet',
+    states: {
+      default: { element: () => <AppearanceOnDevice /> },
+    },
+  },
 ];
 
 describe.each(cases)('$screen', ({ states }) => {
@@ -359,7 +378,7 @@ describe.each(cases)('$screen', ({ states }) => {
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(64);
+    expect(total * schemes.length).toBe(66);
   });
 });
 
