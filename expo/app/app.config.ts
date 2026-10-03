@@ -16,6 +16,10 @@ if (!applicationId || !bundleIdentifier || !displayName || !urlScheme) {
   throw new Error(`spec/app-identity.json expo entry is missing an id, a display name or a scheme.`);
 }
 
+/// color.background per scheme, copied because the config loader cannot require a .ts module; a test holds them to the tokens.
+// eslint-disable-next-line no-restricted-syntax -- the expoSplashBackground delta in spec/design-tokens.json
+export const splashBackground = { light: '#f9fafb', dark: '#1a1c23' };
+
 /// Capture is the SDK's, but no @smileid package ships a purpose string, so the host declares it.
 const cameraUsage = 'Smile ID uses the camera to scan a session QR code and to capture your selfie and your ID document.';
 
@@ -86,6 +90,15 @@ const config: ExpoConfig = {
     '@smileid/usesmileid_mlkit_document',
     '@smileid/usesmileid_vision_face',
     '@smileid/usesmileid_vision_document',
+    // The page background in each scheme; the image is a transparent pixel because Android's splash theme requires one.
+    [
+      'expo-splash-screen',
+      {
+        image: './assets/splash-transparent.png',
+        backgroundColor: splashBackground.light,
+        dark: { backgroundColor: splashBackground.dark },
+      },
+    ],
   ],
   experiments: {
     typedRoutes: true,

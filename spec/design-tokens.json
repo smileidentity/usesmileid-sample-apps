@@ -627,6 +627,21 @@
       "workaround": "scripts/sync_design_tokens.py generates SmileMotion for Kotlin and Swift from the same tokens.flat.json, as it already generates the Compose type styles, so the value stays generated and --check still catches staleness.",
       "recommendation": "Ask upstream to emit durations from the Compose and SwiftUI emitters. Delete the generated files when it does.",
       "status": "OPEN 2026-09-28 — generated stopgap in place"
+    },
+    {
+      "id": "expoSplashBackground",
+      "severity": "the Expo app's launch splash, both platforms",
+      "designSystem": {
+        "color.background light": "#f9fafb",
+        "color.background dark": "#1a1c23"
+      },
+      "finding": "expo-splash-screen's plugin takes its colours from app.config.ts, and Expo's config loader cannot require expo/sample-ui/src/tokens.ts: an extensionless import fails to resolve, and a .ts specifier loads only through Node's own type stripping and fails tsc (TS5097).",
+      "values": {
+        "light": "#f9fafb",
+        "dark": "#1a1c23"
+      },
+      "guardedBy": "expo/app/test/use-smile-id-sample-splash.test.ts asserts both values equal color.background in the generated module, so a token change fails there rather than drifting.",
+      "status": "OPEN 2026-10-02 — copied as the fallback; delete when the config can read the generated module"
     }
   ],
   "perPlatform": {
@@ -646,7 +661,7 @@
     },
     "expo": {
       "consume": "tokens.ts — lightColors / darkColors / tokens, where the component COLOURS hang off the two colour objects (lightColors.input.border-focus) and the component DIMENSIONS and fonts hang off tokens (tokens.input.height)",
-      "wiring": "A typed token module the sample-ui package imports; no native code involved. Selected by useColorScheme, which the resolved appearance pins (System hands it back to the device), and grouped into the app's own mode-selected object, the same reason the Compose and SwiftUI themes group theirs. The splash colours in app.config.ts read color.background from the same generated module, so no hex is copied into config.",
+      "wiring": "A typed token module the sample-ui package imports; no native code involved. Selected by useColorScheme, which the resolved appearance pins (System hands it back to the device), and grouped into the app's own mode-selected object, the same reason the Compose and SwiftUI themes group theirs. The splash colours in app.config.ts are copies of color.background (see the expoSplashBackground delta), held equal to the generated module by a test.",
       "vendoredTo": "expo/sample-ui/src/tokens.ts (copied verbatim from dist/ts)",
       "generatedStopgaps": "expo/sample-ui/src/smile-product-hues.ts — the SECOND generated file, and the one a port is most likely to miss. Emitted from the same deltas as the Compose and SwiftUI twins, so the three cannot disagree about a value; a generator test asserts all three emit an identical set of hexes. Added 2026-09-17 with this platform's app.",
       "generatedHere": "expo/sample-ui/assets/fonts/DMSans-*.ttf — the five OFL faces, copied by scripts/sync_design_tokens.py --all and covered by --check. Kept at the upstream file names because TypeScript requires each face by path, so a rename silently drops a weight to the platform font.",
