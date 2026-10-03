@@ -32,10 +32,6 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.agentMode,
         defaults.agentMode,
       ),
-      darkMode: stored(
-        UseSmileIDSampleSettingsKeys.darkMode,
-        defaults.darkMode,
-      ),
       consentStep: stored(
         UseSmileIDSampleSettingsKeys.consentStep,
         defaults.consentStep,
@@ -71,7 +67,22 @@ class UseSmileIDSamplePreferencesSettingsRepository
               )
               .firstOrNull ??
           defaults.captureMode,
+      appearance: _appearance(),
     ).normalised();
+  }
+
+  /// A stored id wins; else the legacy switch, where only true proves a choice: this store wrote false on any change.
+  UseSmileIDSampleAppearance _appearance() {
+    final String? stored = _preferences.getString(
+      UseSmileIDSampleSettingsKeys.appearance,
+    );
+    for (final UseSmileIDSampleAppearance appearance
+        in UseSmileIDSampleAppearance.values) {
+      if (appearance.id == stored) return appearance;
+    }
+    return _preferences.getBool(UseSmileIDSampleSettingsKeys.darkMode) == true
+        ? UseSmileIDSampleAppearance.dark
+        : UseSmileIDSampleAppearance.system;
   }
 
   /// Serialises the writes below.
@@ -119,6 +130,28 @@ class UseSmileIDSamplePreferencesSettingsRepository
             UseSmileIDSampleSettingsKeys.captureMode,
             mode.id,
           );
+          done.complete(await read());
+        })
+        .catchError((Object error, StackTrace stack) {
+          if (!done.isCompleted) done.completeError(error, stack);
+        });
+    return done.future;
+  }
+
+  /// Two writes, not one transaction; a crash between them is safe because the stored id is read first.
+  @override
+  Future<UseSmileIDSampleSettings> setAppearance(
+    UseSmileIDSampleAppearance appearance,
+  ) {
+    final Completer<UseSmileIDSampleSettings> done =
+        Completer<UseSmileIDSampleSettings>();
+    _writes = _writes
+        .then((_) async {
+          await _preferences.setString(
+            UseSmileIDSampleSettingsKeys.appearance,
+            appearance.id,
+          );
+          await _preferences.remove(UseSmileIDSampleSettingsKeys.darkMode);
           done.complete(await read());
         })
         .catchError((Object error, StackTrace stack) {

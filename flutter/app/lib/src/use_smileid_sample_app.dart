@@ -50,9 +50,9 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp> {
 
   @override
   Widget build(BuildContext context) {
-    final bool darkMode = ref.watch(
+    final UseSmileIDSampleAppearance appearance = ref.watch(
       useSmileIDSampleSettingsProvider.select(
-        (UseSmileIDSampleSettings settings) => settings.darkMode,
+        (UseSmileIDSampleSettings settings) => settings.appearance,
       ),
     );
     return MaterialApp.router(
@@ -60,14 +60,14 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp> {
       debugShowCheckedModeBanner: false,
       theme: UseSmileIDSampleTheme.light(),
       darkTheme: UseSmileIDSampleTheme.dark(),
-      // Pinned both ways: the switch overrides the device.
-      themeMode: darkMode ? ThemeMode.dark : ThemeMode.light,
+      themeMode: switch (appearance) {
+        UseSmileIDSampleAppearance.system => ThemeMode.system,
+        UseSmileIDSampleAppearance.light => ThemeMode.light,
+        UseSmileIDSampleAppearance.dark => ThemeMode.dark,
+      },
       routerConfig: _router,
       builder: (BuildContext context, Widget? child) =>
-          UseSmileIDSampleSystemBars(
-            darkMode: darkMode,
-            child: child ?? const SizedBox.shrink(),
-          ),
+          UseSmileIDSampleSystemBars(child: child ?? const SizedBox.shrink()),
     );
   }
 }

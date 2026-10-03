@@ -88,6 +88,42 @@ class UseSmileIDSampleCaptureModeSheet extends StatelessWidget {
   );
 }
 
+/// The three appearances; System's label names [deviceDark], the device's own theme.
+class UseSmileIDSampleAppearanceSheet extends StatelessWidget {
+  /// [onSelect] both chooses and dismisses.
+  const UseSmileIDSampleAppearanceSheet({
+    required this.selected,
+    required this.deviceDark,
+    required this.onSelect,
+    super.key,
+  });
+
+  /// The appearance already chosen.
+  final UseSmileIDSampleAppearance selected;
+
+  /// The device's own theme, never the one the app renders.
+  final bool deviceDark;
+
+  /// Chooses one.
+  final ValueChanged<UseSmileIDSampleAppearance> onSelect;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      for (final UseSmileIDSampleAppearance appearance
+          in UseSmileIDSampleAppearance.values)
+        UseSmileIDSampleOptionRow(
+          label: appearance.label(deviceDark: deviceDark),
+          selected: appearance == selected,
+          onTap: () => onSelect(appearance),
+          testId: UseSmileIDSampleTestIds.appearanceOption(appearance.id),
+        ),
+    ],
+  );
+}
+
 /// Builds the generic document "Capture as: Generic document" hands the SDK; nothing is kept until Done.
 class UseSmileIDSampleGenericDocumentSheet extends StatefulWidget {
   /// [initial] seeds the draft.

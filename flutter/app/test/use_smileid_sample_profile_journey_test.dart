@@ -273,7 +273,11 @@ void main() {
         final UseSmileIDSampleSettings settings =
             await (await UseSmileIDSamplePreferencesSettingsRepository.open())
                 .read();
-        expect(settings.darkMode, isTrue, reason: 'released settings survive');
+        expect(
+          settings.appearance,
+          UseSmileIDSampleAppearance.dark,
+          reason: 'released settings survive',
+        );
       },
     );
 

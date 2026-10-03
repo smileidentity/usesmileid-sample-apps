@@ -93,22 +93,27 @@ Widget _settings({
   String initials = 'KB',
   int avatarIndex = 0,
   bool consentBoundByToken = false,
-}) => UseSmileIDSampleSettingsScreen(
-  state: UseSmileIDSampleSettingsState(
-    settings: settings,
-    organisation: organisation,
-    initials: initials,
-    versionLabel: 'Smile ID · 1.0.0',
-    consentBoundByToken: consentBoundByToken,
-    avatarColor: avatarColorForProfile(avatarIndex),
+}) => Builder(
+  // The baseline's own brightness stands in for the device's, so the System label matches it.
+  builder: (BuildContext context) => UseSmileIDSampleSettingsScreen(
+    state: UseSmileIDSampleSettingsState(
+      settings: settings,
+      organisation: organisation,
+      initials: initials,
+      versionLabel: 'Smile ID · 1.0.0',
+      consentBoundByToken: consentBoundByToken,
+      avatarColor: avatarColorForProfile(avatarIndex),
+      deviceDark: Theme.of(context).brightness == Brightness.dark,
+    ),
+    onSettingChanged: _ignoreSetting,
+    onProfileTap: () {},
+    onCaptureModeTap: () {},
+    onAppearanceTap: () {},
+    onNavRowTap: _ignoreRow,
+    onSignOut: () {},
+    // The DEBUG section is shown so the baseline records it; the host hides it on release.
+    onOpenScenarioDrawer: () {},
   ),
-  onSettingChanged: _ignoreSetting,
-  onProfileTap: () {},
-  onCaptureModeTap: () {},
-  onNavRowTap: _ignoreRow,
-  onSignOut: () {},
-  // The DEBUG section is shown so the baseline records it; the host hides it on release.
-  onOpenScenarioDrawer: () {},
 );
 
 void _ignoreSetting(UseSmileIDSampleSetting setting, bool enabled) {}

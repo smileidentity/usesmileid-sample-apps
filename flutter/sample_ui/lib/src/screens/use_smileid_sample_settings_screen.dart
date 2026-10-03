@@ -112,6 +112,7 @@ class UseSmileIDSampleSettingsState {
     this.consentBoundByToken = false,
     this.avatarColor,
     this.hasProfile = true,
+    required this.deviceDark,
   });
 
   /// The switches and the capture mode.
@@ -134,6 +135,9 @@ class UseSmileIDSampleSettingsState {
 
   /// False while there is no profile, when the card invites creating one.
   final bool hasProfile;
+
+  /// The device's own theme, which the System label names; the shell reads it where the app's choice cannot mask it.
+  final bool deviceDark;
 }
 
 /// Settings, which every other screen's configuration comes from.
@@ -147,6 +151,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onNavRowTap,
     required this.onSignOut,
     required this.onCaptureModeTap,
+    required this.onAppearanceTap,
     this.onOpenScenarioDrawer,
     this.bottomInset = 0,
     super.key,
@@ -170,6 +175,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
 
   /// Opens the capture-mode sheet.
   final VoidCallback onCaptureModeTap;
+
+  /// Opens the appearance sheet.
+  final VoidCallback onAppearanceTap;
 
   /// Opens the scenario drawer; null hides the DEBUG section entirely.
   final VoidCallback? onOpenScenarioDrawer;
@@ -245,11 +253,18 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
           _Section(
             label: 'APPEARANCE',
             children: <Widget>[
-              _switchRow(
-                title: 'Dark mode',
-                icon: SmileIcons.darkMode,
-                supportingText: 'Switch appearance',
-                setting: UseSmileIDSampleSetting.darkMode,
+              UseSmileIDSampleSettingRow(
+                title: 'Theme',
+                supportingText: state.settings.appearance.label(
+                  deviceDark: state.deviceDark,
+                ),
+                onTap: onAppearanceTap,
+                leading: (Color tint) => UseSmileIDSampleIcon(
+                  asset: SmileIcons.darkMode,
+                  tint: tint,
+                ),
+                trailing: const UseSmileIDSampleSettingRowChevron(),
+                testId: UseSmileIDSampleTestIds.settingAppearance,
               ),
             ],
           ),

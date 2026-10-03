@@ -95,6 +95,18 @@ class UseSmileIDSampleSettingsNotifier
       state = previous;
     }
   }
+
+  /// Chooses the app's appearance.
+  Future<void> setAppearance(UseSmileIDSampleAppearance appearance) async {
+    final UseSmileIDSampleSettings previous = state;
+    try {
+      state = await ref
+          .read(useSmileIDSampleSettingsRepositoryProvider)
+          .setAppearance(appearance);
+    } on Object {
+      state = previous;
+    }
+  }
 }
 
 /// Where the profiles are kept; the shell overrides this with the store that survives a restart.

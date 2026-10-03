@@ -1,17 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Keys both system bars to the Dark mode switch rather than the device.
+/// Keys both system bars to the theme the app renders, which a pinned appearance can set against the device.
 class UseSmileIDSampleSystemBars extends StatelessWidget {
-  /// Wraps the router's output.
-  const UseSmileIDSampleSystemBars({
-    required this.darkMode,
-    required this.child,
-    super.key,
-  });
-
-  /// The Dark mode switch.
-  final bool darkMode;
+  /// Wraps the router's output; sits inside `MaterialApp.builder`, where the theme is already resolved.
+  const UseSmileIDSampleSystemBars({required this.child, super.key});
 
   /// The router's output.
   final Widget child;
@@ -34,7 +27,7 @@ class UseSmileIDSampleSystemBars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AnnotatedRegion<SystemUiOverlayStyle>(
-    value: styleFor(darkMode: darkMode),
+    value: styleFor(darkMode: Theme.of(context).brightness == Brightness.dark),
     child: child,
   );
 }

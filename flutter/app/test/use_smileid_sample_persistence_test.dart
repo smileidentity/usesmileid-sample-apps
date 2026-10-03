@@ -37,16 +37,18 @@ void main() {
   });
 
   test('the store writes the keys the four apps share', () async {
-    await (await restart()).setSetting(UseSmileIDSampleSetting.darkMode, true);
+    await (await restart()).setSetting(UseSmileIDSampleSetting.agentMode, true);
+    await (await restart()).setAppearance(UseSmileIDSampleAppearance.dark);
 
     final SharedPreferences raw = await SharedPreferences.getInstance();
-    expect(raw.getBool(UseSmileIDSampleSettingsKeys.darkMode), isTrue);
+    expect(raw.getBool(UseSmileIDSampleSettingsKeys.agentMode), isTrue);
+    expect(raw.getString(UseSmileIDSampleSettingsKeys.appearance), 'dark');
     expect(
       raw.getKeys(),
       containsAll(<String>[
         UseSmileIDSampleSettingsKeys.enhancedSmartSelfie,
         UseSmileIDSampleSettingsKeys.agentMode,
-        UseSmileIDSampleSettingsKeys.darkMode,
+        UseSmileIDSampleSettingsKeys.appearance,
         UseSmileIDSampleSettingsKeys.consentStep,
         UseSmileIDSampleSettingsKeys.instructionsStep,
         UseSmileIDSampleSettingsKeys.previewStep,
@@ -144,7 +146,93 @@ void main() {
     final ProviderContainer container = ProviderScope.containerOf(
       tester.element(find.byType(MaterialApp)),
     );
-    expect(container.read(useSmileIDSampleSettingsProvider).darkMode, isTrue);
+    expect(
+      container.read(useSmileIDSampleSettingsProvider).appearance,
+      UseSmileIDSampleAppearance.dark,
+    );
+  });
+
+  group('the appearance', () {
+    Future<UseSmileIDSampleAppearance> readWith(
+      Map<String, Object> stored,
+    ) async {
+      SharedPreferences.setMockInitialValues(stored);
+      return (await (await restart()).read()).appearance;
+    }
+
+    test('follows the device when nothing is stored', () async {
+      expect(
+        await readWith(<String, Object>{}),
+        UseSmileIDSampleAppearance.system,
+      );
+    });
+
+    test('reads the released switch turned on as Dark', () async {
+      expect(
+        await readWith(<String, Object>{
+          UseSmileIDSampleSettingsKeys.darkMode: true,
+        }),
+        UseSmileIDSampleAppearance.dark,
+      );
+    });
+
+    // This store wrote every switch on any change, so false proves no one chose Light.
+    test('reads the released switch turned off as System', () async {
+      expect(
+        await readWith(<String, Object>{
+          UseSmileIDSampleSettingsKeys.darkMode: false,
+        }),
+        UseSmileIDSampleAppearance.system,
+      );
+    });
+
+    // Also the state a crash between the two writes leaves behind.
+    test('takes a stored id over the released switch', () async {
+      expect(
+        await readWith(<String, Object>{
+          UseSmileIDSampleSettingsKeys.appearance: 'light',
+          UseSmileIDSampleSettingsKeys.darkMode: true,
+        }),
+        UseSmileIDSampleAppearance.light,
+      );
+    });
+
+    test('reads an unknown id as System', () async {
+      expect(
+        await readWith(<String, Object>{
+          UseSmileIDSampleSettingsKeys.appearance: 'sepia',
+        }),
+        UseSmileIDSampleAppearance.system,
+      );
+    });
+
+    test('stores its id and retires the released switch', () async {
+      SharedPreferences.setMockInitialValues(<String, Object>{
+        UseSmileIDSampleSettingsKeys.darkMode: true,
+      });
+
+      final UseSmileIDSampleSettings written = await (await restart())
+          .setAppearance(UseSmileIDSampleAppearance.light);
+
+      final SharedPreferences raw = await SharedPreferences.getInstance();
+      expect(written.appearance, UseSmileIDSampleAppearance.light);
+      expect(raw.getString(UseSmileIDSampleSettingsKeys.appearance), 'light');
+      expect(raw.containsKey(UseSmileIDSampleSettingsKeys.darkMode), isFalse);
+      expect(
+        (await (await restart()).read()).appearance,
+        UseSmileIDSampleAppearance.light,
+      );
+    });
+
+    test('a switch write no longer stores the released key', () async {
+      await (await restart()).setSetting(
+        UseSmileIDSampleSetting.agentMode,
+        true,
+      );
+
+      final SharedPreferences raw = await SharedPreferences.getInstance();
+      expect(raw.containsKey(UseSmileIDSampleSettingsKeys.darkMode), isFalse);
+    });
   });
 
   testWidgets('the seeded profiles are reachable only through the argument', (

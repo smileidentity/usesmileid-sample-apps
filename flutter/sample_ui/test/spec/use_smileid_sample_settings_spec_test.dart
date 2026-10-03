@@ -35,7 +35,6 @@ void main() {
       <String>[
         'sample_setting_enhanced_smart_selfie',
         'sample_setting_agent_mode',
-        'sample_setting_dark_mode',
         'sample_setting_consent_step',
         'sample_setting_instructions_step',
         'sample_setting_preview_step',
@@ -56,7 +55,7 @@ void main() {
       expect(plain.consentStep, isTrue);
       expect(plain.instructionsStep, isTrue);
       expect(plain.previewStep, isTrue);
-      expect(plain.darkMode, isFalse);
+      expect(plain.appearance, UseSmileIDSampleAppearance.system);
     },
   );
 
@@ -142,4 +141,47 @@ void main() {
       <String>['terms', 'privacy'],
     );
   });
+
+  test('each appearance resolves against both device themes', () {
+    for (final (UseSmileIDSampleAppearance appearance, bool device, bool dark)
+        in <(UseSmileIDSampleAppearance, bool, bool)>[
+          (UseSmileIDSampleAppearance.system, false, false),
+          (UseSmileIDSampleAppearance.system, true, true),
+          (UseSmileIDSampleAppearance.light, false, false),
+          (UseSmileIDSampleAppearance.light, true, false),
+          (UseSmileIDSampleAppearance.dark, false, true),
+          (UseSmileIDSampleAppearance.dark, true, true),
+        ]) {
+      expect(
+        appearance.isDark(deviceDark: device),
+        dark,
+        reason: '$appearance on deviceDark $device',
+      );
+    }
+  });
+
+  test(
+    "the System label names the device's theme and the others name themselves",
+    () {
+      for (final (
+            UseSmileIDSampleAppearance appearance,
+            bool device,
+            String label,
+          )
+          in <(UseSmileIDSampleAppearance, bool, String)>[
+            (UseSmileIDSampleAppearance.system, false, 'System (Light)'),
+            (UseSmileIDSampleAppearance.system, true, 'System (Dark)'),
+            (UseSmileIDSampleAppearance.light, false, 'Light'),
+            (UseSmileIDSampleAppearance.light, true, 'Light'),
+            (UseSmileIDSampleAppearance.dark, false, 'Dark'),
+            (UseSmileIDSampleAppearance.dark, true, 'Dark'),
+          ]) {
+        expect(
+          appearance.label(deviceDark: device),
+          label,
+          reason: '$appearance on deviceDark $device',
+        );
+      }
+    },
+  );
 }
