@@ -54,6 +54,16 @@ abstract class GoldenTest {
         capture("${name}_dark", dark = true, fullWindow, interact, content)
     }
 
+    /** [goldens] for content that names the device's theme, which each baseline sets to its own. */
+    protected fun goldensOnDevice(
+        name: String,
+        fullWindow: Boolean = false,
+        content: @Composable (deviceDark: Boolean) -> Unit,
+    ) {
+        capture("${name}_light", dark = false, fullWindow, interact = {}) { content(false) }
+        capture("${name}_dark", dark = true, fullWindow, interact = {}) { content(true) }
+    }
+
     private fun capture(
         name: String,
         dark: Boolean,

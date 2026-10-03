@@ -69,8 +69,13 @@ class UseSmileIDSampleAppState(
      * the hosted SDK flow included, where the SDK re-runs `build()` on every recomposition.
      */
     private val now: State<Long>,
+    /** The device's own theme, read at the Activity, which never forces night mode. */
+    val deviceDark: Boolean,
 ) {
     val settings: UseSmileIDSampleSettings get() = settingsState.value
+
+    /** What the app renders: the theme, the bars and the SDK all read this one value. */
+    val resolvedDark: Boolean get() = settings.appearance.isDark(deviceDark)
     val session: UseSmileIDSampleTokenSession? get() = sessionState.value?.live
 
     /** Whether the stored session has been read; nothing may decide the run needs a token before it has. */
@@ -111,7 +116,8 @@ class UseSmileIDSampleAppState(
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
 @Composable
 fun rememberUseSmileIDSampleAppState(
-    launchArgs: UseSmileIDSampleLaunchArgs = UseSmileIDSampleLaunchArgs(),
+    launchArgs: UseSmileIDSampleLaunchArgs,
+    deviceDark: Boolean,
 ): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
@@ -168,6 +174,7 @@ fun rememberUseSmileIDSampleAppState(
         interruptedRun = interruptedRun,
         catalogue = catalogue,
         now = now,
+        deviceDark = deviceDark,
     )
 }
 

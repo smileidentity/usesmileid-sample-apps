@@ -30,27 +30,31 @@ class UseSmileIDSampleSystemBarsTest {
     @Test
     @Config(qualifiers = "night")
     fun `a light app on a dark device draws dark icons on the pushed window`() {
-        assertIcons(window = shell(darkMode = false), dark = false)
+        assertIcons(window = shell(dark = false), dark = false)
     }
 
     @Test
     @Config(qualifiers = "notnight")
     fun `a dark app on a light device draws light icons on the pushed window`() {
-        assertIcons(window = shell(darkMode = true), dark = true)
+        assertIcons(window = shell(dark = true), dark = true)
     }
 
     @Test
     @Config(qualifiers = "night")
-    fun `the shipped activity keeps a light app's icons dark on a dark device`() {
-        val activity = Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().get()
-        ShadowLooper.idleMainLooper()
-        assertIcons(window = activity.window, dark = false)
+    fun `the shipped activity follows a dark device under System`() {
+        assertIcons(window = shippedActivity().window, dark = true)
+    }
+
+    @Test
+    @Config(qualifiers = "notnight")
+    fun `the shipped activity follows a light device under System`() {
+        assertIcons(window = shippedActivity().window, dark = false)
     }
 
     @Test
     @Config(sdk = [25], qualifiers = "notnight")
     fun `below API 26 a light app keeps a navigation bar its white buttons show on`() {
-        val window = compose(darkMode = false) { }.window
+        val window = compose(dark = false) { }.window
         // Over a white page, so a translucent light scrim cannot pass for a dark one.
         val drawn = ColorUtils.compositeColors(window.navigationBarColor, Color.WHITE)
         assertTrue("a dark bar", ColorUtils.calculateLuminance(drawn) < 0.5)
@@ -60,29 +64,32 @@ class UseSmileIDSampleSystemBarsTest {
     @Test
     @Config(qualifiers = "night")
     fun `a light app on a dark device draws dark icons over a sheet`() {
-        assertIcons(window = sheet(darkMode = false), dark = false)
+        assertIcons(window = sheet(dark = false), dark = false)
     }
 
     @Test
     @Config(qualifiers = "notnight")
     fun `a dark app on a light device draws light icons over a sheet`() {
-        assertIcons(window = sheet(darkMode = true), dark = true)
+        assertIcons(window = sheet(dark = true), dark = true)
     }
 
-    private fun shell(darkMode: Boolean): Window = compose(darkMode) { }.window
+    private fun shippedActivity(): ComponentActivity =
+        Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().get().also { ShadowLooper.idleMainLooper() }
 
-    private fun sheet(darkMode: Boolean): Window {
-        compose(darkMode) { UseSmileIDSampleBottomSheet(onDismissRequest = {}) { Text("Sheet") } }
+    private fun shell(dark: Boolean): Window = compose(dark) { }.window
+
+    private fun sheet(dark: Boolean): Window {
+        compose(dark) { UseSmileIDSampleBottomSheet(onDismissRequest = {}) { Text("Sheet") } }
         val dialog: Dialog? = ShadowDialog.getLatestDialog()
         assertNotNull("the sheet opens a window of its own", dialog)
         return dialog!!.window!!
     }
 
-    private fun compose(darkMode: Boolean, content: @Composable () -> Unit): ComponentActivity {
+    private fun compose(dark: Boolean, content: @Composable () -> Unit): ComponentActivity {
         val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
         activity.setContent {
-            UseSmileIDSampleTheme(darkTheme = darkMode) {
-                UseSmileIDSampleSystemBars(darkMode)
+            UseSmileIDSampleTheme(darkTheme = dark) {
+                UseSmileIDSampleSystemBars(dark)
                 content()
             }
         }

@@ -3,6 +3,7 @@ package com.usesmileid.sampleapps.android
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import com.usesmileid.sampleapps.android.launch.UseSmileIDSampleAppLocale
 import com.usesmileid.sampleapps.android.launch.useSmileIDSampleLaunchArgs
@@ -18,11 +19,11 @@ class UseSmileIDSampleActivity : ComponentActivity() {
         setContent {
             // Outermost, so the override reaches the SDK's screens too.
             UseSmileIDSampleAppLocale(launchArgs.appLocale) {
-                // Collected above the theme, because the Dark mode switch is what the theme reads.
-                val appState = rememberUseSmileIDSampleAppState(launchArgs)
+                // Read here, above every override, so it is the device's theme and never the app's.
+                val appState = rememberUseSmileIDSampleAppState(launchArgs, deviceDark = isSystemInDarkTheme())
                 CompositionLocalProvider(LocalUseSmileIDSampleAppState provides appState) {
-                    UseSmileIDSampleTheme(darkTheme = appState.settings.darkMode) {
-                        UseSmileIDSampleSystemBars(appState.settings.darkMode)
+                    UseSmileIDSampleTheme(darkTheme = appState.resolvedDark) {
+                        UseSmileIDSampleSystemBars(appState.resolvedDark)
                         UseSmileIDSampleShell()
                     }
                 }

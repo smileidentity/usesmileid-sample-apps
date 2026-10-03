@@ -45,6 +45,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.usesmileid.sampleapps.ui.screens.AppearanceSheet as AppearanceContent
 import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet as CaptureModeContent
 import com.usesmileid.sampleapps.ui.screens.LicensesScreen as LicensesContent
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
@@ -59,6 +60,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     val openUrl = LocalUseSmileIDSampleUrlOpener.current
     var showScenarios by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.ScenarioDrawer)
     var pickingCaptureMode by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureMode)
+    var pickingAppearance by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.Appearance)
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -69,11 +71,13 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
             consentBoundByToken = app.tokenBindsConsent,
             hasProfile = app.profiles.active != null,
+            deviceDark = app.deviceDark,
         ),
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         // The row opens the list: configuring any profile and creating one are both reached from there.
         onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
         onCaptureModeClick = { pickingCaptureMode = true },
+        onAppearanceClick = { pickingAppearance = true },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
         onNavRowClick = { row ->
             row.url?.let { openUrl(it, row.id, row.opensInApp) } ?: navigator.navigate(LicensesScreenDestination)
@@ -106,6 +110,17 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 pickingCaptureMode = false
             },
             onDismissRequest = { pickingCaptureMode = false },
+        )
+    }
+    if (pickingAppearance) {
+        AppearanceContent(
+            selected = app.settings.appearance,
+            deviceDark = app.deviceDark,
+            onSelect = { appearance ->
+                app.storeScope.launch { app.store.setAppearance(appearance) }
+                pickingAppearance = false
+            },
+            onDismissRequest = { pickingAppearance = false },
         )
     }
 }

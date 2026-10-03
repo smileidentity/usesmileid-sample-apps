@@ -68,6 +68,8 @@ data class UseSmileIDSampleSettingsState(
     val avatarColor: Color = smileProfileHues.first(),
     /** False while there is no profile, when the card invites creating one. */
     val hasProfile: Boolean = true,
+    /** The device's own theme, which the System label names; the shell reads it where the app's choice cannot mask it. */
+    val deviceDark: Boolean,
 )
 
 /** Settings, which every other screen's configuration comes from. */
@@ -78,6 +80,7 @@ fun SettingsScreen(
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
     onCaptureModeClick: () -> Unit,
+    onAppearanceClick: () -> Unit,
     /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
     onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
@@ -147,14 +150,13 @@ fun SettingsScreen(
         }
 
         section("APPEARANCE") {
-            SwitchRow(
-                title = "Dark mode",
-                icon = R.drawable.sample_ic_setting_dark_mode,
-                supportingText = "Switch appearance",
-                checked = state.settings.darkMode,
-                setting = UseSmileIDSampleSetting.DarkMode,
-                testId = UseSmileIDSampleTestIds.SETTING_DARK_MODE,
-                onSettingChange = onSettingChange,
+            UseSmileIDSampleSettingRow(
+                title = "Theme",
+                supportingText = state.settings.appearance.label(state.deviceDark),
+                onClick = onAppearanceClick,
+                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_dark_mode, tint = tint) },
+                trailing = { UseSmileIDSampleSettingRowChevron() },
+                testId = UseSmileIDSampleTestIds.SETTING_APPEARANCE,
             )
         }
 

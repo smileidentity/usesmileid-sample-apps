@@ -48,6 +48,13 @@ appId: ${APP_ID}
     commands:
       - tapOn:
           id: "sample_setting_preview_step"
+# Appearance back to System; its label names the device's theme, so the sheet is the only check that holds.
+- tapOn:
+    id: "sample_setting_appearance"
+- tapOn:
+    id: "sample_appearance_option_system"
+- assertNotVisible:
+    id: "sample_appearance_sheet"
 - assertVisible:
     id: "sample_setting_enhanced_smart_selfie"
     checked: true

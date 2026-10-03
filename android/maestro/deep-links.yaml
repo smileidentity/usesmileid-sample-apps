@@ -68,6 +68,11 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_capture_mode_sheet"
 
+- stopApp
+- openLink: "usesmileid-sample-android://settings/appearance"
+- assertVisible:
+    id: "sample_appearance_sheet"
+
 # A cold link arrives with empty stores, so the SDK's pre-flight redirects to that product's
 # consent form and never reaches the SDK (§7.3).
 - stopApp

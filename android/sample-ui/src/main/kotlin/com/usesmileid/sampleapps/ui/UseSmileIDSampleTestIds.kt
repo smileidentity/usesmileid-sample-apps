@@ -53,7 +53,8 @@ object UseSmileIDSampleTestIds {
     const val PROFILE_SUMMARY = "sample_profile_summary"
     const val SETTING_ENHANCED_SMART_SELFIE = "sample_setting_enhanced_smart_selfie"
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
-    const val SETTING_DARK_MODE = "sample_setting_dark_mode"
+    const val SETTING_APPEARANCE = "sample_setting_appearance"
+    const val APPEARANCE_SHEET = "sample_appearance_sheet"
     const val SETTING_CONSENT_STEP = "sample_setting_consent_step"
     const val SETTING_INSTRUCTIONS_STEP = "sample_setting_instructions_step"
     const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
@@ -184,7 +185,8 @@ object UseSmileIDSampleTestIds {
         PROFILE_SUMMARY,
         SETTING_ENHANCED_SMART_SELFIE,
         SETTING_AGENT_MODE,
-        SETTING_DARK_MODE,
+        SETTING_APPEARANCE,
+        APPEARANCE_SHEET,
         SETTING_CONSENT_STEP,
         SETTING_INSTRUCTIONS_STEP,
         SETTING_PREVIEW_STEP,
@@ -275,6 +277,8 @@ object UseSmileIDSampleTestIds {
     fun captureAsOption(optionId: String) = "sample_capture_as_option_$optionId"
 
     fun captureModeOption(modeId: String) = "sample_capture_mode_option_$modeId"
+
+    fun appearanceOption(appearanceId: String) = "sample_appearance_option_$appearanceId"
 
     fun genericDocumentOrientation(orientationId: String) = "sample_generic_document_orientation_$orientationId"
 

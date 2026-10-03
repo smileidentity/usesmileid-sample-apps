@@ -29,14 +29,14 @@ class ScreenGoldenTest : GoldenTest() {
     /** The partner's screen: no DEBUG section, which is the only state the design draws. */
     @Test
     @Config(qualifiers = TALL)
-    fun settings() = goldens("screen_settings") { Settings() }
+    fun settings() = goldensOnDevice("screen_settings") { deviceDark -> Settings(deviceDark = deviceDark) }
 
     @Test
     fun settings_max_font_scale() = assertSurvivesMaxFontScale { Settings() }
 
     @Test
     @Config(qualifiers = TALL)
-    fun settings_debug_build() = goldens("screen_settings_debug") { Settings(debug = true) }
+    fun settings_debug_build() = goldensOnDevice("screen_settings_debug") { deviceDark -> Settings(debug = true, deviceDark = deviceDark) }
 
     @Test
     fun settings_debug_build_max_font_scale() = assertSurvivesMaxFontScale { Settings(debug = true) }
@@ -44,25 +44,25 @@ class ScreenGoldenTest : GoldenTest() {
     /** Agent mode on, so the mutex's two supporting lines are recorded rather than described. */
     @Test
     @Config(qualifiers = TALL)
-    fun settings_agent_mode() = goldens("screen_settings_agent_mode") {
-        Settings(settings = UseSmileIDSampleSettings(enhancedSmartSelfie = false, agentMode = true))
+    fun settings_agent_mode() = goldensOnDevice("screen_settings_agent_mode") { deviceDark ->
+        Settings(settings = UseSmileIDSampleSettings(enhancedSmartSelfie = false, agentMode = true), deviceDark = deviceDark)
     }
 
     @Test
     @Config(qualifiers = TALL)
-    fun settings_consent_bound_by_token() = goldens("screen_settings_consent_bound") {
-        Settings(consentBoundByToken = true)
+    fun settings_consent_bound_by_token() = goldensOnDevice("screen_settings_consent_bound") { deviceDark ->
+        Settings(consentBoundByToken = true, deviceDark = deviceDark)
     }
 
     /** A different profile active: the row's organisation, initials and hue all move together. */
     @Test
     @Config(qualifiers = TALL)
-    fun settings_alt_profile() = goldens("screen_settings_alt_profile") { Settings(profileIndex = 1) }
+    fun settings_alt_profile() = goldensOnDevice("screen_settings_alt_profile") { deviceDark -> Settings(profileIndex = 1, deviceDark = deviceDark) }
 
     /** The fourth hue, which is where the profile palette runs out and starts again. */
     @Test
     @Config(qualifiers = TALL)
-    fun settings_newly_created_profile() = goldens("screen_settings_new_profile") { Settings(profileIndex = 3) }
+    fun settings_newly_created_profile() = goldensOnDevice("screen_settings_new_profile") { deviceDark -> Settings(profileIndex = 3, deviceDark = deviceDark) }
 
     /** One sheet holds both sections, so the two spec states differ by which section's selection has moved. */
     @Test
@@ -213,6 +213,7 @@ private fun Settings(
     consentBoundByToken: Boolean = false,
     debug: Boolean = false,
     profileIndex: Int = 0,
+    deviceDark: Boolean = false,
 ) = SettingsScreen(
     state = UseSmileIDSampleSettingsState(
         settings = settings,
@@ -221,11 +222,13 @@ private fun Settings(
         versionLabel = "Smile ID · 1.0.0",
         consentBoundByToken = consentBoundByToken,
         avatarColor = avatarColorForProfile(profileIndex),
+        deviceDark = deviceDark,
     ),
     onSettingChange = { _, _ -> },
     onProfileClick = {},
     onNavRowClick = {},
     onCaptureModeClick = {},
+    onAppearanceClick = {},
     onOpenScenarioDrawer = if (debug) ({ }) else null,
     onSignOut = {},
 )

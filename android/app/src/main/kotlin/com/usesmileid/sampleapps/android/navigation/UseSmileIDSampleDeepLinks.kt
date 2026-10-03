@@ -29,6 +29,7 @@ internal object UseSmileIDSampleDeepLinks {
 
     const val LICENSES = "$SCHEME://settings/licenses"
     const val CAPTURE_MODE = "$SCHEME://settings/capture-mode"
+    const val APPEARANCE = "$SCHEME://settings/appearance"
 
     const val SCAN_TOKEN = "$SCHEME://token/scan"
     const val SCENARIO_DRAWER = "$SCHEME://debug/scenarios"
