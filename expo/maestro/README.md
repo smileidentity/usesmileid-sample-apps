@@ -60,5 +60,6 @@ which is a second reason the contract routes id assertions through it rather tha
 
 ## What this lane does not cover
 
-Dark mode's appearance. The testing contract forbids screenshot and coordinate assertions inside a
-device flow, and a theme change carries no id-based signal, so it stays a golden-lane concern.
+How each theme looks. The testing contract forbids screenshot and coordinate assertions inside a
+device flow, and a theme change carries no id-based signal, so `shell-wiring.yaml` asserts only the
+appearance the sheet selects and the rendering stays a golden-lane concern.

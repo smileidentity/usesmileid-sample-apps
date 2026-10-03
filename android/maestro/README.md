@@ -83,7 +83,7 @@ adb kill-server && adb start-server
 What does work:
 
 ```bash
-adb shell cmd uimode night yes|no   # dark mode, and it drives activity recreation
+adb shell cmd uimode night yes|no   # the device's theme, which System follows; it recreates the activity
 ```
 
 For font scale, use the component gallery's own override

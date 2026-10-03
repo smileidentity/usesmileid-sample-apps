@@ -27,8 +27,8 @@ The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
   in the app. When the token already carries the user's details and consent, the app skips those steps.
 - **Verifications**: every submitted job, stored on the device, with its status refreshed from
   `GET /v3/status`.
-- **Profiles** for different partners or test users, and **dark mode** carried through to the SDK's
-  screens.
+- **Profiles** for different partners or test users, and an **appearance** (System, Light or Dark)
+  carried through to the SDK's screens.
 - **Probes** for automation and debugging: a scenario drawer, an on-screen result card and callback
   counters.
 

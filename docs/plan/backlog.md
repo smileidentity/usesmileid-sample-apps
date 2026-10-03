@@ -37,6 +37,13 @@ assertions. The camera permission prompt on a fresh install is the one case it d
 
 ## Spec and code health
 
+### Android: a launch screen that matches a pinned appearance
+
+With Light or Dark pinned against the device, the launch window still follows the device, so a cold
+start flashes the opposite theme before the app draws. `UiModeManager.setApplicationNightMode` fixes it,
+but it is API 31+ while the app's `minSdk` is 24, and Flutter and Expo would each need their own bridge.
+Done looks like a pinned appearance that launches in its own theme on API 31+, on all three Android shells.
+
 ## Device suite and CI
 
 ### Document capture: the shutter and gallery by id
@@ -84,6 +91,13 @@ One workflow per platform, in this repo, with four stages:
 - Android first, then Flutter and Expo. iOS's launch-and-stay-up check is the reference.
 
 ## Store listings
+
+### Expo: the template's app icon, and a splash with no mark
+
+`app.config.ts` sets no `icon`, so the Expo app ships the Expo template's icon (the generated
+`ic_launcher.webp` and `AppIcon.appiconset`), and its splash is a flat background with no logo. Done
+looks like the Smile mark on both, from a first-party asset, and the `displayName` rename
+`spec/app-identity.json` already records for Expo.
 
 ### Store art: the camera panel
 
