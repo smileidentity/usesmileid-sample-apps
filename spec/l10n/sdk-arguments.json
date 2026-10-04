@@ -1,0 +1,8 @@
+{
+  "description": "SDK keys whose argument is positional on a platform. Any key or platform not listed keeps its named `{argument}` tokens, as the SDK's own defaults do.",
+  "si_consent_title": { "ios": { "partnerName": "%@" } },
+  "si_consent_learn_more_privacy_partner_link": {
+    "android": { "partnerName": "%1$s" },
+    "ios": { "partnerName": "%@" }
+  }
+}

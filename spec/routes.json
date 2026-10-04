@@ -92,6 +92,20 @@
       "notes": "Layers over Settings, the only screen that owns the row that opens it."
     },
     {
+      "id": "language",
+      "screen": "languageSheet",
+      "path": "/settings/language",
+      "presentation": "modalSheet",
+      "args": [],
+      "platform": {
+        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.Language",
+        "ios": "Sheet.language",
+        "flutter": "/settings/language",
+        "expo": "app/(settings)/settings/language.tsx"
+      },
+      "notes": "Layers over Settings, the only screen that owns the row that opens it."
+    },
+    {
       "id": "verificationDetails",
       "screen": "verificationDetails",
       "path": "/verifications/:jobId",
