@@ -5,6 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +31,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleInterruptedRun
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleEndedSession
@@ -121,7 +124,12 @@ fun rememberUseSmileIDSampleAppState(
 ): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
-    val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
+    // Saved across recreation: a sheet restored on the first frame fixes its bar icons then, before the store has answered.
+    var savedAppearance by rememberSaveable { mutableStateOf(UseSmileIDSampleAppearance.System) }
+    val settingsState = store.settings.collectAsStateWithLifecycle(
+        initialValue = UseSmileIDSampleSettings(appearance = savedAppearance),
+    )
+    LaunchedEffect(settingsState.value.appearance) { savedAppearance = settingsState.value.appearance }
     val sessionState = store.session.collectAsStateWithLifecycle<UseSmileIDSampleSessionRecord?>(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
