@@ -33,5 +33,18 @@ sealed interface UseSmileIDSampleStatusRefresh {
     /** Submitted by a different partner, so this session's credential is for another account. */
     data object PartnerMismatch : UseSmileIDSampleStatusRefresh
 
-    data class Failed(val reason: String) : UseSmileIDSampleStatusRefresh
+    data class Failed(val reason: Reason) : UseSmileIDSampleStatusRefresh {
+        /** A server's own wording, such as an HTTP code, which is shown as it came. */
+        constructor(detail: String) : this(Reason.Detail(detail))
+    }
+
+    /** Why a refresh failed, worded where it is shown so it follows the app's language. */
+    sealed interface Reason {
+        data object NotStored : Reason
+        data object Unreachable : Reason
+
+        /** The exception's type, never its message: a client exception carries the request URL. */
+        data class Unexpected(val type: String) : Reason
+        data class Detail(val text: String) : Reason
+    }
 }

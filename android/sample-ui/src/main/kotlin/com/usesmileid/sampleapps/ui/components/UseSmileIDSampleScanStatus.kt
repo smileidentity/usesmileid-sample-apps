@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -87,7 +88,7 @@ fun UseSmileIDSampleScanStatus(
                 exit = fadeOut() + slideOutVertically { it / 2 },
             ) {
                 Text(
-                    text = "Try again",
+                    text = UseSmileIDSampleStrings.commonTryAgain,
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = foreground,
                     modifier = Modifier
@@ -100,18 +101,20 @@ fun UseSmileIDSampleScanStatus(
     }
 }
 
+@Composable
 private fun UseSmileIDSampleScanState.headline(): String = when (this) {
-    UseSmileIDSampleScanState.Searching -> "Point at a Smile token QR"
-    UseSmileIDSampleScanState.Found -> "Token found"
-    is UseSmileIDSampleScanState.Linked -> "Session linked"
-    is UseSmileIDSampleScanState.Rejected -> "That is not a token"
+    UseSmileIDSampleScanState.Searching -> UseSmileIDSampleStrings.scanPoint
+    UseSmileIDSampleScanState.Found -> UseSmileIDSampleStrings.scanFound
+    is UseSmileIDSampleScanState.Linked -> UseSmileIDSampleStrings.scanLinked
+    is UseSmileIDSampleScanState.Rejected -> UseSmileIDSampleStrings.scanNotAToken
 }
 
+@Composable
 private fun UseSmileIDSampleScanState.detail(): String? = when (this) {
     UseSmileIDSampleScanState.Searching -> null
-    UseSmileIDSampleScanState.Found -> "Reading it now"
+    UseSmileIDSampleScanState.Found -> UseSmileIDSampleStrings.scanReading
     // The handle and the time it has left: never the token, which no surface here may show.
-    is UseSmileIDSampleScanState.Linked -> "$handle · $remaining left"
+    is UseSmileIDSampleScanState.Linked -> UseSmileIDSampleStrings.scanRemaining(handle, remaining)
     is UseSmileIDSampleScanState.Rejected -> reason
 }
 

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import com.usesmileid.sampleapps.ui.localizedTitle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +50,7 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
     LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { app.ensureCatalogue(product) }
     val profile = app.profiles.active
     UserDetailsContent(
-        productLabel = product?.label ?: productId,
+        productLabel = product?.localizedTitle() ?: productId,
         details = app.forms.userDetails,
         profile = profile,
         profileColor = avatarColorForProfile(app.profiles.activeIndex),
@@ -113,7 +114,7 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
         if (details.document == null) pickingCaptureAs = false
     }
     KycIdFormContent(
-        productLabel = product?.label ?: productId,
+        productLabel = product?.localizedTitle() ?: productId,
         family = family,
         details = details,
         countryList = when {

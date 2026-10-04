@@ -7,10 +7,10 @@ object UseSmileIDSampleIdNumberHint {
     fun example(regex: String): String? = runCatching { HintParser(regex).parse() }.getOrNull()
 
     /** What the empty field shows for the chosen type. */
-    fun placeholder(type: UseSmileIDSampleKycIdType?): String = when {
-        type == null -> "Choose an ID type first"
-        type.regex.isBlank() || compiled(type.regex) == null -> "Enter your ${type.label}"
-        else -> example(type.regex)?.let { "e.g. $it" } ?: "Enter your ${type.label}"
+    fun placeholder(type: UseSmileIDSampleKycIdType?): Placeholder = when {
+        type == null -> Placeholder.ChooseType
+        type.regex.isBlank() || compiled(type.regex) == null -> Placeholder.Enter(type.label)
+        else -> example(type.regex)?.let { Placeholder.Example(it) } ?: Placeholder.Enter(type.label)
     }
 
     /** The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing. */
@@ -22,11 +22,20 @@ object UseSmileIDSampleIdNumberHint {
     }
 
     /** The line under a non-empty number that does not fit, which repeats the example; null when it fits. */
-    fun error(type: UseSmileIDSampleKycIdType?, number: String): String? {
+    fun error(type: UseSmileIDSampleKycIdType?, number: String): Mismatch? {
         if (type == null || number.isBlank() || accepts(type.regex, number)) return null
-        return example(type.regex)?.let { "Doesn't match the ${type.label} format, e.g. $it" }
-            ?: "Doesn't match the ${type.label} format"
+        return Mismatch(type.label, example(type.regex))
     }
+
+    /** The empty field's text, worded where it is drawn. */
+    sealed interface Placeholder {
+        data object ChooseType : Placeholder
+        data class Enter(val idType: String) : Placeholder
+        data class Example(val example: String) : Placeholder
+    }
+
+    /** A number that does not fit [idType]; [example] repeats the hint when there is one. */
+    data class Mismatch(val idType: String, val example: String?)
 
     private fun compiled(regex: String): Regex? = runCatching { Regex(regex) }.getOrNull()
 }

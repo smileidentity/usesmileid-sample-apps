@@ -1,5 +1,9 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import com.usesmileid.sampleapps.ui.message
+import com.usesmileid.sampleapps.ui.R
+import androidx.compose.ui.platform.LocalResources
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import android.content.ClipData
 import android.os.Build
 import androidx.compose.foundation.layout.Box
@@ -96,11 +100,16 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Collected, not polled: the store emits each removal batch exactly once, so a removal made
         // on the details screen is confirmed here too.
+        val resources = LocalResources.current
         LaunchedEffect(Unit) {
             app.jobStore.removals.collect { count ->
                 notice.show(
-                    message = if (count == 1) "1 verification hidden from App list" else "$count verifications hidden from App list",
-                    actionLabel = "Undo",
+                    message = if (count == 1) {
+                        resources.getString(R.string.sample_verifications_hidden_one)
+                    } else {
+                        resources.getString(R.string.sample_verifications_hidden_many, count)
+                    },
+                    actionLabel = resources.getString(R.string.sample_common_undo),
                     onAction = { app.storeScope.launch { app.jobStore.undoRemove() } },
                 )
             }
@@ -125,6 +134,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
     val scope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     val notice = rememberTransientNotice()
+    val resources = LocalResources.current
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
 
@@ -139,7 +149,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                 scope.launch {
                     clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
                     // Android 13 shows its own confirmation; below it there is none.
-                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) notice.show("$label copied")
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) notice.show(resources.getString(R.string.sample_details_copied, label))
                 }
             },
             onRefresh = {
@@ -147,7 +157,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                     refreshing = true
                     val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
                     refreshing = false
-                    if (result != null) notice.show(result.label())
+                    if (result != null) notice.show(result.message(resources))
                 }
             },
             refreshing = refreshing,
@@ -165,7 +175,7 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             // Silent unless something happened: "still processing" on every visit is noise.
             val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
             refreshing = false
-            if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) notice.show(result.label())
+            if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) notice.show(result.message(resources))
         }
 
         UseSmileIDSampleTransientNoticeHost(
@@ -175,14 +185,4 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingMd),
         )
     }
-}
-
-/** One line per outcome: a refresh that changed nothing still has to say so. */
-private fun UseSmileIDSampleStatusRefresh.label(): String = when (this) {
-    is UseSmileIDSampleStatusRefresh.Updated -> "${status.label} — $message"
-    UseSmileIDSampleStatusRefresh.StillProcessing -> "Still processing"
-    UseSmileIDSampleStatusRefresh.NoSession -> "Scan a token first"
-    UseSmileIDSampleStatusRefresh.NoServerJob -> "Not submitted under a scanned token"
-    UseSmileIDSampleStatusRefresh.PartnerMismatch -> "Submitted by a different partner"
-    is UseSmileIDSampleStatusRefresh.Failed -> "Could not check status: $reason"
 }

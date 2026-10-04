@@ -34,8 +34,10 @@ class UseSmileIDSampleContactRulesSpecTest {
     fun the_errors_are_the_spec_sentences() {
         val email = file.members.getValue("email") as TokenJson.Obj
         val phone = file.members.getValue("phone") as TokenJson.Obj
-        assertEquals(email.text("error"), UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, "ada"))
-        assertEquals(phone.text("error"), UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, "0700"))
+        assertEquals(UseSmileIDSampleContactRules.EMAIL_ERROR, UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, "ada"))
+        assertEquals(UseSmileIDSampleContactRules.PHONE_ERROR, UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, "0700"))
+        assertEquals(email.text("error"), EnglishStrings("user_field_email_error"))
+        assertEquals(phone.text("error"), EnglishStrings("user_field_phone_error"))
     }
 
     @Test

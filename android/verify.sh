@@ -38,6 +38,11 @@ python3 "$REPO_ROOT/scripts/test_app_size.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_select_android_flows.py" >/dev/null
 ./gradlew :app:checkLicenses
 
+echo "==> strings are current"
+# Generated from spec/l10n/; a hand edit fails here.
+python3 "$REPO_ROOT/scripts/sync_l10n.py" --check --platform android
+python3 "$REPO_ROOT/scripts/test_sync_l10n.py" >/dev/null
+
 echo "==> icons are current"
 # Generated from design/icons/ like the iOS shapes are; a hand-edited drawable fails here.
 python3 "$REPO_ROOT/scripts/generate_android_icons.py" --check

@@ -47,7 +47,7 @@ class UseSmileIDSampleIdNumberHintSpecTest {
     fun a_regex_this_engine_cannot_compile_checks_nothing() {
         assertTrue(UseSmileIDSampleIdNumberHint.accepts("^[0-9", "anything"))
         val type = UseSmileIDSampleKycIdType("X", "X", "Tax number", "^[0-9")
-        assertEquals("Enter your Tax number", UseSmileIDSampleIdNumberHint.placeholder(type))
+        assertEquals(UseSmileIDSampleIdNumberHint.Placeholder.Enter("Tax number"), UseSmileIDSampleIdNumberHint.placeholder(type))
         assertNull(UseSmileIDSampleIdNumberHint.error(type, "anything"))
     }
 
@@ -55,15 +55,15 @@ class UseSmileIDSampleIdNumberHintSpecTest {
     fun a_type_with_no_regex_checks_nothing_rather_than_locking_continue() {
         assertTrue(UseSmileIDSampleIdNumberHint.accepts("", "12345"))
         val type = UseSmileIDSampleKycIdType("X", "X", "Tax number", "")
-        assertEquals("Enter your Tax number", UseSmileIDSampleIdNumberHint.placeholder(type))
+        assertEquals(UseSmileIDSampleIdNumberHint.Placeholder.Enter("Tax number"), UseSmileIDSampleIdNumberHint.placeholder(type))
         assertNull(UseSmileIDSampleIdNumberHint.error(type, "12345"))
     }
 
     @Test
     fun the_field_waits_for_a_type_then_shows_the_example() {
-        assertEquals("Choose an ID type first", UseSmileIDSampleIdNumberHint.placeholder(null))
+        assertEquals(UseSmileIDSampleIdNumberHint.Placeholder.ChooseType, UseSmileIDSampleIdNumberHint.placeholder(null))
         val type = UseSmileIDSampleKycIdType("NIN", "NIN", "National ID", "^[0-9]{11}$")
-        assertEquals("e.g. 00000000000", UseSmileIDSampleIdNumberHint.placeholder(type))
-        assertEquals("Doesn't match the National ID format, e.g. 00000000000", UseSmileIDSampleIdNumberHint.error(type, "123"))
+        assertEquals(UseSmileIDSampleIdNumberHint.Placeholder.Example("00000000000"), UseSmileIDSampleIdNumberHint.placeholder(type))
+        assertEquals(UseSmileIDSampleIdNumberHint.Mismatch("National ID", "00000000000"), UseSmileIDSampleIdNumberHint.error(type, "123"))
     }
 }

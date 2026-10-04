@@ -3,9 +3,9 @@ package com.usesmileid.sampleapps.ui.model
 import java.net.URI
 
 /** Sandbox or production; there is no third case, and the SDK's own `SmileIDUrls` resolves to the same two hosts. */
-enum class UseSmileIDSampleEnvironment(val id: String, val label: String, val host: String) {
-    Sandbox("sandbox", "Sandbox", "testapi.smileidentity.com"),
-    Production("production", "Production", "api.smileidentity.com"),
+enum class UseSmileIDSampleEnvironment(val id: String, val host: String) {
+    Sandbox("sandbox", "testapi.smileidentity.com"),
+    Production("production", "api.smileidentity.com"),
     ;
 
     /** Trailing slash, which is the form Retrofit and the SDK's own constants both take. */

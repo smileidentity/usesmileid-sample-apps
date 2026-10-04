@@ -6,8 +6,15 @@ import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-/** A day of jobs under one header, which is the shape the verifications list renders. */
-data class UseSmileIDSampleJobDay(val relative: String, val absolute: String, val jobs: List<UseSmileIDSampleJob>)
+/** A day of jobs under one header, which is the shape the verifications list renders; [relative] is null past yesterday. */
+data class UseSmileIDSampleJobDay(
+    val relative: UseSmileIDSampleRelativeDay?,
+    val absolute: String,
+    val jobs: List<UseSmileIDSampleJob>,
+)
+
+/** The two days a header names in words rather than by date. */
+enum class UseSmileIDSampleRelativeDay { Today, Yesterday }
 
 /** Groups jobs by calendar day, newest first. `Calendar` rather than `java.time`, because minSdk is 24 and there is no desugaring. */
 fun List<UseSmileIDSampleJob>.groupByDay(
@@ -26,9 +33,9 @@ fun List<UseSmileIDSampleJob>.groupByDay(
         .map { (day, jobs) ->
             UseSmileIDSampleJobDay(
                 relative = when (day) {
-                    today -> "TODAY"
-                    yesterday -> "YESTERDAY"
-                    else -> ""
+                    today -> UseSmileIDSampleRelativeDay.Today
+                    yesterday -> UseSmileIDSampleRelativeDay.Yesterday
+                    else -> null
                 },
                 absolute = dayFormat.format(Date(day)).uppercase(locale),
                 jobs = jobs,

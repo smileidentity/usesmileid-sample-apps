@@ -1,5 +1,8 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import androidx.compose.ui.res.stringResource
+import com.usesmileid.sampleapps.ui.R
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,6 +73,7 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
     val notice = rememberTransientNotice()
     var creating by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.NewProfile)
     val pendingId = app.profiles.lastCreatedId
+    val resources = LocalResources.current
     // Consumed on sight, so returning cannot re-show it.
     LaunchedEffect(pendingId) {
         val id = pendingId ?: return@LaunchedEffect
@@ -77,8 +81,8 @@ fun ProfilesScreen(navigator: DestinationsNavigator) {
         val created = app.profiles.find(id) ?: return@LaunchedEffect
         // A new profile is not made active by creating it, so the confirmation carries the offer.
         notice.show(
-            message = "${created.title} created",
-            actionLabel = "Make active",
+            message = resources.getString(R.string.sample_profiles_created, created.title(resources.getString(R.string.sample_profiles_unnamed))),
+            actionLabel = resources.getString(R.string.sample_profiles_make_active),
             onAction = { app.profiles.setActive(created.id) },
         )
     }
@@ -130,7 +134,7 @@ fun ProfileConfigScreen(profileId: String, navigator: DestinationsNavigator) {
         onFieldChange = { field, value -> defaults = field.write(defaults, value) },
         callbackUrl = callbackUrl,
         onCallbackUrlChange = { callbackUrl = it },
-        callbackOverride = app.session?.callbackOverrideCaption(),
+        callbackOverride = app.session?.callbackOverrideCaption()?.let { stringResource(it) },
         onBack = { navigator.navigateUp() },
         onSave = {
             app.profiles.update(profileId, organisation = name, defaults = defaults, callbackUrl = callbackUrl)

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Intent
@@ -35,7 +36,6 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
@@ -47,6 +47,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.usesmileid.sampleapps.ui.screens.AppearanceSheet as AppearanceContent
 import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet as CaptureModeContent
+import com.usesmileid.sampleapps.ui.screens.LanguageSheet as LanguageContent
 import com.usesmileid.sampleapps.ui.screens.LicensesScreen as LicensesContent
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 
@@ -61,23 +62,26 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
     var showScenarios by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.ScenarioDrawer)
     var pickingCaptureMode by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureMode)
     var pickingAppearance by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.Appearance)
+    var pickingLanguage by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.Language)
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
             settings = app.settings,
-            organisation = app.profiles.active?.title ?: UseSmileIDSampleProfiles.NO_PROFILE_LABEL,
+            organisation = app.profiles.active?.title ?: UseSmileIDSampleStrings.profilesNoProfile,
             initials = app.profiles.active?.initials.orEmpty(),
             avatarColor = avatarColorForProfile(app.profiles.activeIndex),
             versionLabel = "$APP_DISPLAY_NAME · ${BuildConfig.VERSION_NAME}",
             consentBoundByToken = app.tokenBindsConsent,
             hasProfile = app.profiles.active != null,
             deviceDark = app.deviceDark,
+            deviceLanguages = app.deviceLanguages,
         ),
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         // The row opens the list: configuring any profile and creating one are both reached from there.
         onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
         onCaptureModeClick = { pickingCaptureMode = true },
         onAppearanceClick = { pickingAppearance = true },
+        onLanguageClick = { pickingLanguage = true },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
         onNavRowClick = { row ->
             row.url?.let { openUrl(it, row.id, row.opensInApp) } ?: navigator.navigate(LicensesScreenDestination)
@@ -121,6 +125,17 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                 pickingAppearance = false
             },
             onDismissRequest = { pickingAppearance = false },
+        )
+    }
+    if (pickingLanguage) {
+        LanguageContent(
+            selected = app.settings.language,
+            deviceLanguages = app.deviceLanguages,
+            onSelect = { language ->
+                app.storeScope.launch { app.store.setLanguage(language) }
+                pickingLanguage = false
+            },
+            onDismissRequest = { pickingLanguage = false },
         )
     }
 }

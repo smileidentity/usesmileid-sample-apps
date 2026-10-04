@@ -56,8 +56,8 @@ class UseSmileIDSampleTokenDecoderTest {
     fun `a rejection names the structure that failed and never the token`() {
         val candidate = jwt("""{"iat":$IAT}""")
         val reason = (decoder(candidate) as UseSmileIDSampleTokenDecode.Rejected).reason
-        assertTrue("reason should name the claim: $reason", reason.contains("exp"))
-        assertFalse("reason must not carry the token", reason.contains(candidate.split(".")[1]))
+        assertEquals(UseSmileIDSampleTokenRejection.Expiry, reason)
+        assertFalse("reason must not carry the token", reason.toString().contains(candidate.split(".")[1]))
     }
 
     @Test
@@ -116,7 +116,7 @@ class UseSmileIDSampleTokenDecoderTest {
     @Test
     fun `an unrecognised host is refused rather than falling back, and the rejection names it`() {
         val reason = rejection(tokenWithApiUrl(""""api_url":"https://api.smileidentity.com.evil.test/v3""""))
-        assertTrue("the rejection should name the host it saw: $reason", reason.contains("api.smileidentity.com.evil.test"))
+        assertEquals(UseSmileIDSampleTokenRejection.ApiUrlUnknown("api.smileidentity.com.evil.test"), reason)
     }
 
     @Test
@@ -135,7 +135,7 @@ class UseSmileIDSampleTokenDecoderTest {
     @Test
     fun `a malformed api_url is refused, and says so without pretending to name a host`() {
         val reason = rejection(tokenWithApiUrl(""""api_url":"not a url at all""""))
-        assertTrue("reason should say it is not a URL: $reason", reason.contains("not a URL"))
+        assertEquals(UseSmileIDSampleTokenRejection.ApiUrlInvalid, reason)
     }
 
     @Test
@@ -143,7 +143,7 @@ class UseSmileIDSampleTokenDecoderTest {
         listOf(""""jti":"sess_7f2"""", """"api_url":""""", """"api_url":"  """", """"api_url":42""")
             .forEach { claim ->
                 val reason = rejection(tokenWithApiUrl(claim))
-                assertTrue("$claim should be refused for the claim: $reason", reason.contains("api_url"))
+                assertEquals(claim, UseSmileIDSampleTokenRejection.ApiUrlMissing, reason)
             }
     }
 

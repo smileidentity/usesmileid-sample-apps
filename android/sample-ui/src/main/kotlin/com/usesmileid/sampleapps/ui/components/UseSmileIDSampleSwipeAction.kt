@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,7 +68,7 @@ private fun RemoveBackdrop() {
                 TrashGlyph(tint = colors.errorFill)
             }
             Text(
-                text = "Hide",
+                text = UseSmileIDSampleStrings.commonHide,
                 style = UseSmileIDSampleTheme.type.textStyleCaption,
                 color = colors.errorFill,
             )

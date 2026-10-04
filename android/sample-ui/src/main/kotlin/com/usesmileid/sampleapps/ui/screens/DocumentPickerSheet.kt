@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -23,22 +24,23 @@ fun DocumentPickerSheet(
     modifier: Modifier = Modifier,
 ) {
     UseSmileIDSampleFullHeightBottomSheet(
-        title = "Document",
+        title = UseSmileIDSampleStrings.pickerDocumentTitle,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         testId = UseSmileIDSampleTestIds.DOCUMENT_SHEET,
     ) {
         CataloguePicker(
             catalogue = catalogue,
-            what = "documents",
+            loadingLabel = UseSmileIDSampleStrings.pickerDocumentLoading,
+            failedLabel = UseSmileIDSampleStrings.pickerDocumentLoadFailed,
             query = query,
             onQueryChange = onQueryChange,
-            searchPlaceholder = "Search document",
+            searchPlaceholder = UseSmileIDSampleStrings.pickerDocumentSearch,
             searchTestId = UseSmileIDSampleTestIds.DOCUMENT_SEARCH,
             label = { it.name },
             emptyTestId = UseSmileIDSampleTestIds.DOCUMENT_EMPTY,
-            emptyLabel = "No document matches “$query”",
-            nothingToList = "No documents for ${country?.name ?: "this country"}" to "Choose another country",
+            emptyLabel = UseSmileIDSampleStrings.pickerDocumentNoMatch(query),
+            nothingToList = UseSmileIDSampleStrings.pickerDocumentEmpty(country?.name ?: UseSmileIDSampleStrings.pickerThisCountry) to UseSmileIDSampleStrings.pickerChooseAnotherCountry,
             onRetry = onRetry,
         ) { document ->
             UseSmileIDSampleOptionRow(

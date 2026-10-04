@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.localizedTitle
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -124,7 +125,7 @@ private fun JobRowText(
     val colors = UseSmileIDSampleTheme.colors
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs)) {
         Text(
-            text = product.label,
+            text = product.localizedTitle(),
             style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
             color = colors.card.title,
             // One line at the design's scale; enlarged type wraps, because eliding it would clip.

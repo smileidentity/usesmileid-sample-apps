@@ -41,31 +41,43 @@ data class UseSmileIDSampleDocument(
 }
 
 /** How the SDK photographs the chosen document, each the SDK's own type; never what the server receives. */
-enum class UseSmileIDSampleCaptureAs(val id: String, val label: String) {
-    GenericDocument("genericDocument", "Generic document"),
-    GreenBook("greenBook", "Green Book preset"),
-    Passport("passport", "Passport preset"),
+enum class UseSmileIDSampleCaptureAs(val id: String) {
+    GenericDocument("genericDocument"),
+    GreenBook("greenBook"),
+    Passport("passport"),
     ;
 
     companion object {
         /** The sheet's first row, which clears the override so the document decides. */
         const val MATCH_DOCUMENT_ID = "matchDocument"
-        const val MATCH_DOCUMENT_LABEL = "Match document"
     }
 }
 
-enum class UseSmileIDSampleDocumentOrientation(val id: String, val label: String) {
-    Landscape("landscape", "Landscape"),
-    Portrait("portrait", "Portrait"),
+enum class UseSmileIDSampleDocumentOrientation(val id: String) {
+    Landscape("landscape"),
+    Portrait("portrait"),
 }
 
 /** The frame ratios the sheet offers, as width over height. */
-enum class UseSmileIDSampleAspectRatio(val id: String, val label: String, val ratio: Float?) {
-    Off("off", "Off", null),
-    Card("card", "Card 1.586", 1.586f),
-    Passport("passport", "Passport 1.309", 1.309f),
-    Booklet("booklet", "Booklet 0.748", 0.748f),
+enum class UseSmileIDSampleAspectRatio(val id: String, val ratio: Float?) {
+    Off("off", null),
+    Card("card", 1.586f),
+    Passport("passport", 1.309f),
+    Booklet("booklet", 0.748f),
 }
+
+/** The words the capture-as lines are built from, in one language. */
+class UseSmileIDSampleCaptureAsWording(
+    val captureAs: (UseSmileIDSampleCaptureAs) -> String,
+    val orientation: (UseSmileIDSampleDocumentOrientation) -> String,
+    val frontAndBack: String,
+    val frontOnly: String,
+    val matches: (captureAs: String) -> String,
+    val chosen: (captureAs: String) -> String,
+    val genericSummary: (captureAs: String, orientation: String, sides: String) -> String,
+    val genericNamedSummary: (name: String, orientation: String, sides: String) -> String,
+    val matchNamed: (captureAs: String) -> String,
+)
 
 /** What the generic-document sheet builds, as the SDK's GenericDocument takes it. */
 @Immutable
@@ -122,19 +134,19 @@ data class UseSmileIDSampleResolvedCaptureAs(
         get() = captureAs != UseSmileIDSampleCaptureAs.Passport
 
     /** The trigger text from `spec/catalogue-rules.json` captureAs. */
-    fun triggerText(): String {
-        val sides = if (captureBothSides && hasBackSide) "front and back" else "front only"
-        val orientation = genericDocument.orientation.label.lowercase()
+    fun triggerText(words: UseSmileIDSampleCaptureAsWording): String {
+        val sides = if (captureBothSides && hasBackSide) words.frontAndBack else words.frontOnly
+        val orientation = words.orientation(genericDocument.orientation).lowercase()
+        val name = words.captureAs(captureAs)
         return when {
-            captureAs != UseSmileIDSampleCaptureAs.GenericDocument -> "${captureAs.label} · ${if (matched) "matches document" else "chosen"}"
-            matched -> "${UseSmileIDSampleCaptureAs.GenericDocument.label} · $orientation · $sides"
-            else -> "${genericDocument.displayName} · $orientation · $sides · chosen"
+            captureAs != UseSmileIDSampleCaptureAs.GenericDocument -> if (matched) words.matches(name) else words.chosen(name)
+            matched -> words.genericSummary(name, orientation, sides)
+            else -> words.genericNamedSummary(genericDocument.displayName, orientation, sides)
         }
     }
 
     /** The sheet's Match row, naming what the document resolves to. */
-    val matchRowLabel: String
-        get() = "${UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_LABEL} (${captureAs.label})"
+    fun matchRowLabel(words: UseSmileIDSampleCaptureAsWording): String = words.matchNamed(words.captureAs(captureAs))
 }
 
 /** The one place the match table lives: keyed on sub-type and code, never format, with the row's has_back for the rest. */

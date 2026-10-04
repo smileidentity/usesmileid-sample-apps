@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -67,13 +68,13 @@ fun UseSmileIDSampleSessionCard(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                    text = "ACTIVE TOKEN SESSION",
+                    text = UseSmileIDSampleStrings.sessionActive,
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(letterSpacing = LABEL_TRACKING),
                     color = ink,
                 )
                 // The design's wording fits again at 12sp; it was shortened for an 8h countdown at 15sp.
                 Text(
-                    text = "Linked to session $sessionId",
+                    text = UseSmileIDSampleStrings.sessionLinkedTo(sessionId),
                     style = UseSmileIDSampleTheme.type.textStyleCaption
                         .copy(fontWeight = FontWeight(SMILE_CARD_FAMILY_WEIGHT)),
                     color = ink,
@@ -121,18 +122,18 @@ fun UseSmileIDSampleSessionEndedBanner(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                    text = "TOKEN SESSION ENDED",
+                    text = UseSmileIDSampleStrings.sessionEnded,
                     style = UseSmileIDSampleTheme.type.textStyleOverline,
                     color = colors.banner.text,
                 )
                 Text(
-                    text = "Scan a token to relink",
+                    text = UseSmileIDSampleStrings.sessionRelink,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
                     color = colors.banner.title,
                 )
             }
             Text(
-                text = "Scan",
+                text = UseSmileIDSampleStrings.sessionScan,
                 style = UseSmileIDSampleTheme.type.linkFont,
                 color = colors.primary,
                 softWrap = false,

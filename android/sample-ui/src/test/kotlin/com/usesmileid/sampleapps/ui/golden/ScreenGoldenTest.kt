@@ -35,6 +35,10 @@ class ScreenGoldenTest : GoldenTest() {
     fun settings_max_font_scale() = assertSurvivesMaxFontScale { Settings() }
 
     @Test
+    @Config(qualifiers = "+ar-h1600dp")
+    fun settings_arabic() = goldensOnDevice("screen_settings_ar") { deviceDark -> RightToLeft { Settings(deviceDark = deviceDark) } }
+
+    @Test
     @Config(qualifiers = TALL)
     fun settings_debug_build() = goldensOnDevice("screen_settings_debug") { deviceDark -> Settings(debug = true, deviceDark = deviceDark) }
 
@@ -229,6 +233,7 @@ private fun Settings(
     onNavRowClick = {},
     onCaptureModeClick = {},
     onAppearanceClick = {},
+    onLanguageClick = {},
     onOpenScenarioDrawer = if (debug) ({ }) else null,
     onSignOut = {},
 )

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -22,7 +23,7 @@ fun ProfileSwitchSheet(
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
-        title = "Switch profile",
+        title = UseSmileIDSampleStrings.profileSwitchTitle,
         testId = UseSmileIDSampleTestIds.PROFILE_SWITCH_SHEET,
     ) {
         profiles.forEachIndexed { index, profile ->
@@ -38,8 +39,8 @@ fun ProfileSwitchSheet(
         }
         if (onCreate != null) {
             UseSmileIDSampleProfileRow(
-                organisation = "New profile",
-                supportingText = "Run jobs as someone else",
+                organisation = UseSmileIDSampleStrings.profileSwitchNew,
+                supportingText = UseSmileIDSampleStrings.profileSwitchNewHint,
                 initials = "",
                 selected = false,
                 onClick = onCreate,

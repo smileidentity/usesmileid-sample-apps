@@ -1,5 +1,9 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.localizedCardFamily
+import com.usesmileid.sampleapps.ui.localizedCardTitle
+import com.usesmileid.sampleapps.ui.label
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -85,7 +89,7 @@ fun ProductsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
-                        text = "Smile ID",
+                        text = UseSmileIDSampleStrings.productsTitle,
                         style = UseSmileIDSampleTheme.type.textStyleHeadingPage.copy(
                             fontSize = smileHeadingPageSize,
                             lineHeight = smileHeadingPageLineHeight,
@@ -104,13 +108,13 @@ fun ProductsScreen(
                             .minimumInteractiveComponentSize()
                             .clickable(
                                 role = Role.Button,
-                                onClickLabel = "Switch profile",
+                                onClickLabel = UseSmileIDSampleStrings.productsSwitchProfile,
                                 onClick = onProfileClick,
                             ),
                     )
                 }
                 Text(
-                    text = "Try our suite of products powered by our Anti-Fraud SDKs",
+                    text = UseSmileIDSampleStrings.productsSubtitle,
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = UseSmileIDSampleTheme.colors.foreground,
                 )
@@ -151,13 +155,13 @@ fun ProductsScreen(
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                     verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                 ) {
-                    UseSmileIDSampleSectionHeader(text = section.label)
+                    UseSmileIDSampleSectionHeader(text = section.label())
                     UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
                         val product = products[index]
                         val id = product.iconRes
                         UseSmileIDSampleProductCard(
-                            title = product.cardTitle,
-                            family = product.cardFamily,
+                            title = product.localizedCardTitle(),
+                            family = product.localizedCardFamily(),
                             onClick = { onProductClick(product) },
                             hue = product.hue,
                             testId = UseSmileIDSampleTestIds.productCard(product.id),

@@ -1,5 +1,8 @@
 package com.usesmileid.sampleapps.ui.components
 
+import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
@@ -44,12 +47,12 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 /** The three destinations the nav bar switches between. The token affordance is not one of them. */
 enum class UseSmileIDSampleNavItem(
     val testId: String,
-    val label: String,
+    @StringRes val label: Int,
     @DrawableRes val icon: Int,
 ) {
-    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, "Products", R.drawable.sample_ic_products),
-    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, "Verifications", R.drawable.sample_ic_verifications),
-    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, "Settings", R.drawable.sample_ic_settings),
+    Products(UseSmileIDSampleTestIds.NAV_PRODUCTS, R.string.sample_nav_products, R.drawable.sample_ic_products),
+    Verifications(UseSmileIDSampleTestIds.NAV_VERIFICATIONS, R.string.sample_nav_verifications, R.drawable.sample_ic_verifications),
+    Settings(UseSmileIDSampleTestIds.NAV_SETTINGS, R.string.sample_nav_settings, R.drawable.sample_ic_settings),
 }
 
 /**
@@ -131,7 +134,7 @@ private fun TokenAffordance(progress: Float?, onClick: () -> Unit) {
             ) {
                 UseSmileIDSampleIcon(id = R.drawable.sample_ic_token_scan, tint = colors.foreground, size = SmileDimens.sizeIconSm)
                 Text(
-                    text = "Token",
+                    text = UseSmileIDSampleStrings.navToken,
                     style = UseSmileIDSampleTheme.type.textStyleOverline.copy(fontSize = TOKEN_LABEL_SIZE),
                     color = colors.foreground,
                 )
@@ -194,7 +197,7 @@ private fun NavBarTab(
     ) {
         UseSmileIDSampleIcon(id = item.icon, tint = tint, size = TAB_ICON_SIZE)
         Text(
-            text = item.label,
+            text = stringResource(item.label),
             style = UseSmileIDSampleTheme.type.textStyleOverline,
             color = tint,
             textAlign = TextAlign.Center,

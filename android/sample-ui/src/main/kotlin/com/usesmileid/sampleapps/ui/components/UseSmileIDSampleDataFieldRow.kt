@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -67,11 +68,12 @@ fun UseSmileIDSampleDataFieldRow(
 
 @Composable
 private fun CopyButton(label: String, onCopy: () -> Unit, testId: String?) {
+    val description = UseSmileIDSampleStrings.commonCopyNamed(label)
     Surface(
         onClick = onCopy,
         modifier = Modifier
             .size(SmileDimens.sizeIconLg)
-            .semantics { contentDescription = "Copy $label" }
+            .semantics { contentDescription = description }
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusSm),
         color = UseSmileIDSampleTheme.colors.surfaceTile,

@@ -31,11 +31,11 @@ data class UseSmileIDSampleJob(
 }
 
 /** The filters above the list. `All` is not a status, which is why this is not the status enum. */
-enum class UseSmileIDSampleJobFilter(val id: String, val label: String, val status: UseSmileIDSampleStatus?) {
-    All("all", "All", null),
-    Clear("clear", "Clear", UseSmileIDSampleStatus.Clear),
-    Attention("attention", "Attention", UseSmileIDSampleStatus.Attention),
-    Blocked("blocked", "Blocked", UseSmileIDSampleStatus.Blocked),
+enum class UseSmileIDSampleJobFilter(val id: String, val status: UseSmileIDSampleStatus?) {
+    All("all", null),
+    Clear("clear", UseSmileIDSampleStatus.Clear),
+    Attention("attention", UseSmileIDSampleStatus.Attention),
+    Blocked("blocked", UseSmileIDSampleStatus.Blocked),
     ;
 
     fun matches(job: UseSmileIDSampleJob) = status == null || job.status == status

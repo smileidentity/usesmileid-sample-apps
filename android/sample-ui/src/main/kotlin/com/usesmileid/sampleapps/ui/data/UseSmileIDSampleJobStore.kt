@@ -100,7 +100,7 @@ class UseSmileIDSampleJobStore(
         inFlightLock.withLock { if (!inFlight.add(jobId)) return null }
         try {
             val row = dao.find(jobId)
-                ?: return UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+                ?: return UseSmileIDSampleStatusRefresh.Failed(UseSmileIDSampleStatusRefresh.Reason.NotStored)
             if (row.sessionId == null) return UseSmileIDSampleStatusRefresh.NoServerJob
             val session = live?.takeUnless { it.hasExpired(nowMillis) }
                 ?: return UseSmileIDSampleStatusRefresh.NoSession
@@ -110,12 +110,13 @@ class UseSmileIDSampleJobStore(
                 // The row's environment, never the toggle: a row outlives the toggle that produced it.
                 source.check(jobId, session.token, sandbox = row.sandbox)
             } catch (e: IOException) {
-                return UseSmileIDSampleStatusRefresh.Failed("Could not reach the server")
+                return UseSmileIDSampleStatusRefresh.Failed(UseSmileIDSampleStatusRefresh.Reason.Unreachable)
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
-                // The type, never the message: this text goes on screen and a client exception carries the request URL.
-                return UseSmileIDSampleStatusRefresh.Failed("Unexpected error: ${e::class.simpleName}")
+                return UseSmileIDSampleStatusRefresh.Failed(
+                    UseSmileIDSampleStatusRefresh.Reason.Unexpected(e::class.simpleName.orEmpty()),
+                )
             }
             if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
             val written = applyStatus(
@@ -124,7 +125,7 @@ class UseSmileIDSampleJobStore(
                 message = outcome.message,
                 httpStatus = outcome.httpCode,
             )
-            return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored")
+            return if (written) outcome else UseSmileIDSampleStatusRefresh.Failed(UseSmileIDSampleStatusRefresh.Reason.NotStored)
         } finally {
             // The guard must release even on a cancelled caller, or the row is silently unrefreshable for the rest of the process.
             withContext(NonCancellable) { inFlightLock.withLock { inFlight.remove(jobId) } }

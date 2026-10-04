@@ -444,6 +444,34 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_appearance_option_system"
 
+# --- language ------------------------------------------------------------------------------------
+# A pick applies live and persists; the title proves the re-render.
+- openLink: "usesmileid-sample-android://settings/language"
+- assertVisible:
+    id: "sample_language_sheet"
+- assertVisible:
+    id: "sample_language_option_system"
+    checked: true
+- tapOn:
+    id: "sample_language_option_fr"
+- assertNotVisible:
+    id: "sample_language_sheet"
+- scrollUntilVisible:
+    element: "Réglages"
+    direction: UP
+- stopApp
+- openLink: "usesmileid-sample-android://settings/language"
+- assertVisible:
+    id: "sample_language_option_fr"
+    checked: true
+- tapOn:
+    id: "sample_language_option_system"
+- assertNotVisible:
+    id: "sample_language_sheet"
+- scrollUntilVisible:
+    element: "Settings"
+    direction: UP
+
 # --- leave the suite as it was found -------------------------------------------------------------
 - stopApp
 - launchApp:

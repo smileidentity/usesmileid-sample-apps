@@ -95,10 +95,10 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
     @Test
     fun failure_cases() {
         val section = rules.section("failures")
-        assertEquals(section.text("default"), UseSmileIDSampleCatalogueRules.DEFAULT_ADVICE)
+        assertEquals(section.text("default"), EnglishStrings(UseSmileIDSampleCatalogueRules.DEFAULT_ADVICE.key))
         section.cases().forEach { case ->
             val status = (case.members["status"] as? TokenJson.Num)?.literal?.toInt()
-            assertEquals("$status", case.text("supportingText"), UseSmileIDSampleCatalogueRules.advice(status))
+            assertEquals("$status", case.text("supportingText"), EnglishStrings(UseSmileIDSampleCatalogueRules.advice(status).key))
         }
     }
 
@@ -130,8 +130,8 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
         }
         assertEquals(name, (expected.members.getValue("matched") as TokenJson.Bool).value, resolved.matched)
         assertEquals(name, (expected.members.getValue("captureBothSides") as TokenJson.Bool).value, resolved.captureBothSides)
-        assertEquals(name, expected.text("triggerText"), resolved.triggerText())
-        assertEquals(name, expected.text("matchRowLabel"), resolvedCaptureAs(documentOf(case.members.getValue("document") as TokenJson.Obj), null, UseSmileIDSampleGenericDocument()).matchRowLabel)
+        assertEquals(name, expected.text("triggerText"), resolved.triggerText(EnglishStrings.captureAsWording))
+        assertEquals(name, expected.text("matchRowLabel"), resolvedCaptureAs(documentOf(case.members.getValue("document") as TokenJson.Obj), null, UseSmileIDSampleGenericDocument()).matchRowLabel(EnglishStrings.captureAsWording))
     }
 
     @Test
@@ -148,7 +148,7 @@ class UseSmileIDSampleCatalogueRulesSpecTest {
 
     @Test
     fun the_trigger_placeholder_is_the_specs() {
-        assertEquals(rules.section("captureAs").text("triggerPlaceholder"), UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_LABEL)
+        assertEquals(rules.section("captureAs").text("triggerPlaceholder"), EnglishStrings("capture_as_match_document"))
     }
 
     private fun captureAsOf(id: String): UseSmileIDSampleCaptureAs? =

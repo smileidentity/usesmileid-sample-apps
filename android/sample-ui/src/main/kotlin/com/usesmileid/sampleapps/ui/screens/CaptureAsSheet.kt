@@ -1,5 +1,8 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.rememberUseSmileIDSampleCaptureAsWording
+import com.usesmileid.sampleapps.ui.label
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -22,18 +25,18 @@ fun CaptureAsSheet(
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
-        title = "Capture as",
+        title = UseSmileIDSampleStrings.captureAsTitle,
         testId = UseSmileIDSampleTestIds.CAPTURE_AS_SHEET,
     ) {
         UseSmileIDSampleOptionRow(
-            label = matched.matchRowLabel,
+            label = matched.matchRowLabel(rememberUseSmileIDSampleCaptureAsWording()),
             selected = selected == null,
             onClick = { onSelect(null) },
             testId = UseSmileIDSampleTestIds.captureAsOption(UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_ID),
         )
         UseSmileIDSampleCaptureAs.entries.forEach { option ->
             UseSmileIDSampleOptionRow(
-                label = option.label,
+                label = option.label(),
                 selected = option == selected,
                 onClick = { onSelect(option) },
                 testId = UseSmileIDSampleTestIds.captureAsOption(option.id),

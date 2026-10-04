@@ -1,5 +1,8 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.rememberUseSmileIDSampleCaptureAsWording
+import com.usesmileid.sampleapps.ui.text
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -69,10 +72,10 @@ fun KycIdFormScreen(
                     .padding(horizontal = SmileDimens.spacingMd),
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             ) {
-                UseSmileIDSampleSectionLabel(text = "COUNTRY")
+                UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.kycCountry)
                 UseSmileIDSampleSelectTrigger(
                     value = details.country?.name,
-                    placeholder = "Select country",
+                    placeholder = UseSmileIDSampleStrings.kycSelectCountry,
                     onClick = onCountryClick,
                     testId = UseSmileIDSampleTestIds.COUNTRY_TRIGGER,
                     // The design leads with the chosen country's flag, falling back to a globe.
@@ -92,7 +95,7 @@ fun KycIdFormScreen(
             )
         }
         UseSmileIDSampleButton(
-            text = "Continue",
+            text = UseSmileIDSampleStrings.commonContinue,
             onClick = onContinue,
             enabled = details.isComplete(family),
             modifier = Modifier
@@ -110,25 +113,25 @@ private fun KycFields(
     onIdTypeClick: () -> Unit,
     onIdNumberChange: (String) -> Unit,
 ) {
-    UseSmileIDSampleSectionLabel(text = "ID TYPE")
+    UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.kycIdType)
     UseSmileIDSampleSelectTrigger(
         value = details.idType?.label,
-        placeholder = secondTriggerPlaceholder(details, countryList, loading = "Loading ID types…", ready = "Select ID type"),
+        placeholder = secondTriggerPlaceholder(details, countryList, loading = UseSmileIDSampleStrings.kycLoadingIdTypes, ready = UseSmileIDSampleStrings.kycSelectIdType),
         onClick = onIdTypeClick,
         enabled = details.country != null,
         testId = UseSmileIDSampleTestIds.ID_TYPE_TRIGGER,
         // Not the design's 🪪: Emoji 14 renders as tofu below Android 13, and minSdk here is 26.
         leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_biometric_kyc, tint = tint) },
     )
-    UseSmileIDSampleSectionLabel(text = "ID NUMBER")
+    UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.kycIdNumber)
     val error = UseSmileIDSampleIdNumberHint.error(details.idType, details.idNumber)
     UseSmileIDSampleTextInput(
         value = details.idNumber,
         onValueChange = onIdNumberChange,
-        placeholder = UseSmileIDSampleIdNumberHint.placeholder(details.idType),
+        placeholder = UseSmileIDSampleIdNumberHint.placeholder(details.idType).text(),
         enabled = details.idType != null,
         isError = error != null,
-        errorMessage = error,
+        errorMessage = error?.text(),
         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters),
         testId = UseSmileIDSampleTestIds.ID_NUMBER_INPUT,
         errorTestId = UseSmileIDSampleTestIds.ID_NUMBER_ERROR,
@@ -142,19 +145,19 @@ private fun DocumentFields(
     onDocumentClick: () -> Unit,
     onCaptureAsClick: () -> Unit,
 ) {
-    UseSmileIDSampleSectionLabel(text = "DOCUMENT")
+    UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.kycDocument)
     UseSmileIDSampleSelectTrigger(
         value = details.document?.name,
-        placeholder = secondTriggerPlaceholder(details, countryList, loading = "Loading documents…", ready = "Select document"),
+        placeholder = secondTriggerPlaceholder(details, countryList, loading = UseSmileIDSampleStrings.kycLoadingDocuments, ready = UseSmileIDSampleStrings.kycSelectDocument),
         onClick = onDocumentClick,
         enabled = details.country != null,
         testId = UseSmileIDSampleTestIds.DOCUMENT_TRIGGER,
         leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_document_verification, tint = tint) },
     )
-    UseSmileIDSampleSectionLabel(text = "CAPTURE AS")
+    UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.kycCaptureAs)
     UseSmileIDSampleSelectTrigger(
-        value = details.document?.let { details.resolvedCaptureAs.triggerText() },
-        placeholder = UseSmileIDSampleCaptureAs.MATCH_DOCUMENT_LABEL,
+        value = details.document?.let { details.resolvedCaptureAs.triggerText(rememberUseSmileIDSampleCaptureAsWording()) },
+        placeholder = UseSmileIDSampleStrings.captureAsMatchDocument,
         onClick = onCaptureAsClick,
         enabled = details.document != null,
         testId = UseSmileIDSampleTestIds.CAPTURE_AS_TRIGGER,
@@ -163,13 +166,14 @@ private fun DocumentFields(
 }
 
 /** Enabled while loading, with a muted "Loading…" in place of the prompt, so the form never looks stuck. */
+@Composable
 private fun secondTriggerPlaceholder(
     details: UseSmileIDSampleIdDetails,
     countryList: UseSmileIDSampleCatalogue<*>,
     loading: String,
     ready: String,
 ): String = when {
-    details.country == null -> "Choose a country first"
+    details.country == null -> UseSmileIDSampleStrings.kycChooseCountryFirst
     countryList is UseSmileIDSampleCatalogue.Loading -> loading
     else -> ready
 }

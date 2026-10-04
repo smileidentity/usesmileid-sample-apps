@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -35,7 +36,7 @@ fun UseSmileIDSampleTopAppBar(
     title: String,
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
-    backContentDescription: String = "Back",
+    backContentDescription: String = UseSmileIDSampleStrings.commonBack,
     testId: String? = null,
     action: @Composable (() -> Unit)? = null,
 ) {

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.EnglishStrings
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -66,7 +67,7 @@ class UseSmileIDSampleProfilesTest {
         val profiles = stored()
         profiles.add("", UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor"))
 
-        assertEquals("Ada Okafor", profiles.active?.title)
+        assertEquals("Ada Okafor", profiles.active?.title(EnglishStrings("profiles_unnamed")))
         assertEquals("Smile ID", profiles.partnerName)
     }
 

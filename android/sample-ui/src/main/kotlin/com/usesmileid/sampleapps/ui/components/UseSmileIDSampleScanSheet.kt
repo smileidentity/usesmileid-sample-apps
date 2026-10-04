@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.label
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -83,7 +85,7 @@ fun UseSmileIDSampleScanSheet(
             UseSmileIDSampleTextInput(
                 value = state.token,
                 onValueChange = onTokenChange,
-                placeholder = "Or enter token manually",
+                placeholder = UseSmileIDSampleStrings.scanManualEntry,
                 isError = state.rejection != null,
                 errorMessage = state.rejection,
                 // The token is a bearer credential and 900 characters long: nobody proofreads it, and
@@ -97,7 +99,7 @@ fun UseSmileIDSampleScanSheet(
                 },
                 trailing = {
                     Text(
-                        text = "Paste",
+                        text = UseSmileIDSampleStrings.scanPaste,
                         style = UseSmileIDSampleTheme.type.linkFont.copy(
                             fontSize = SHEET_ACTION_SIZE,
                             fontWeight = FontWeight.Bold,
@@ -114,7 +116,7 @@ fun UseSmileIDSampleScanSheet(
             )
             // Only once there is something to link, so the default sheet keeps the design's two rows.
             if (state.token.isNotBlank()) {
-                UseSmileIDSampleButton(text = "Link token", onClick = onLink)
+                UseSmileIDSampleButton(text = UseSmileIDSampleStrings.scanLinkToken, onClick = onLink)
             }
             // Collapsed by default, and that is the point: this is a scanner, and the mint controls are a
             // probe affordance. Expanded they took enough height to leave the viewfinder a letterbox.
@@ -126,7 +128,7 @@ fun UseSmileIDSampleScanSheet(
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                UseSmileIDSampleSectionLabel(text = "SIMULATED SCAN", modifier = Modifier.weight(1f))
+                UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.scanSimulated, modifier = Modifier.weight(1f))
                 Box(modifier = Modifier.size(SmileDimens.sizeIconMd), contentAlignment = Alignment.Center) {
                     if (state.expanded) {
                         ChevronDownGlyph(tint = colors.textMuted)
@@ -143,7 +145,7 @@ fun UseSmileIDSampleScanSheet(
             ) {
                 UseSmileIDSampleSimulatedSpan.entries.forEach { span ->
                     ScanSheetChip(
-                        label = span.label,
+                        label = span.label(),
                         selected = state.span == span,
                         role = Role.RadioButton,
                         onClick = { onSpanSelect(span) },
@@ -158,7 +160,7 @@ fun UseSmileIDSampleScanSheet(
             ) {
                 UseSmileIDSampleEnvironment.entries.forEach { environment ->
                     ScanSheetChip(
-                        label = environment.label,
+                        label = environment.label(),
                         selected = state.environment == environment,
                         role = Role.RadioButton,
                         onClick = { onEnvironmentSelect(environment) },
@@ -172,13 +174,13 @@ fun UseSmileIDSampleScanSheet(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             ) {
                 ScanSheetChip(
-                    label = "Binds consent",
+                    label = UseSmileIDSampleStrings.scanBindsConsent,
                     selected = state.bindings.consent,
                     role = Role.Checkbox,
                     onClick = { onBindingsChange(state.bindings.copy(consent = !state.bindings.consent)) },
                 )
                 ScanSheetChip(
-                    label = "Binds details",
+                    label = UseSmileIDSampleStrings.scanBindsDetails,
                     selected = state.bindings.userDetails,
                     role = Role.Checkbox,
                     onClick = { onBindingsChange(state.bindings.copy(userDetails = !state.bindings.userDetails)) },
@@ -186,7 +188,7 @@ fun UseSmileIDSampleScanSheet(
             }
             }
             UseSmileIDSampleButton(
-                text = "Simulate a successful scan",
+                text = UseSmileIDSampleStrings.scanSimulate,
                 onClick = onSimulate,
                 testId = UseSmileIDSampleTestIds.TOKEN_SIMULATE,
             )

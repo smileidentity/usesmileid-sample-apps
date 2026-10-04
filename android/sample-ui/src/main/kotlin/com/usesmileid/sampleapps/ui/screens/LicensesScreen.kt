@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -49,21 +50,23 @@ fun LicensesScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.LICENSES_SCREEN),
     ) {
-        UseSmileIDSampleTopAppBar(title = "Open-source licenses", onBack = onBack)
+        UseSmileIDSampleTopAppBar(title = UseSmileIDSampleStrings.licensesTitle, onBack = onBack)
+        val openSourceLabel = UseSmileIDSampleStrings.licensesSection(licenses.openSource.size)
+        val googleLabel = UseSmileIDSampleStrings.licensesGoogleSection(licenses.googleServices.size)
         LazyColumn(contentPadding = contentPadding) {
             if (licenses.isEmpty) {
                 item {
                     // Generated at build time, so an empty list means the asset did not ship.
                     UseSmileIDSampleEmptyState(
-                        text = "No notices bundled",
-                        supportingText = "The generated licenses.json is missing from this build",
+                        text = UseSmileIDSampleStrings.licensesEmptyTitle,
+                        supportingText = UseSmileIDSampleStrings.licensesEmptyBody,
                         testId = UseSmileIDSampleTestIds.LICENSES_EMPTY,
                     )
                 }
                 return@LazyColumn
             }
 
-            label("OPEN-SOURCE COMPONENTS — ${licenses.openSource.size}")
+            label(openSourceLabel)
             items(licenses.openSource, key = { it.artifact }) { notice ->
                 NoticeRow(
                     notice = notice,
@@ -75,7 +78,7 @@ fun LicensesScreen(
             }
 
             if (licenses.googleServices.isNotEmpty()) {
-                label("UNDER GOOGLE'S OWN TERMS — ${licenses.googleServices.size}")
+                label(googleLabel)
                 items(licenses.googleServices, key = { it.artifact }) { notice ->
                     NoticeRow(
                         notice = notice,
@@ -121,7 +124,9 @@ private fun NoticeRow(
 private fun ExpandedLicence(notice: UseSmileIDSampleNotice, text: String?, onOpenUrl: (String) -> Unit) {
     val licence = notice.licenses.firstOrNull { it.url.isNotBlank() }
     Text(
-        text = text ?: "The text ships with the component itself, at ${licence?.url}",
+        text = text
+            ?: licence?.let { UseSmileIDSampleStrings.licensesTextShipsWithComponentAt(it.url) }
+            ?: UseSmileIDSampleStrings.licensesTextShipsWithComponent,
         style = UseSmileIDSampleTheme.type.textStyleCaption,
         color = UseSmileIDSampleTheme.colors.textMuted,
         modifier = Modifier
@@ -132,7 +137,7 @@ private fun ExpandedLicence(notice: UseSmileIDSampleNotice, text: String?, onOpe
     )
     if (text != null || licence == null) return
     UseSmileIDSampleSettingRow(
-        title = "Open ${licence.name}",
+        title = UseSmileIDSampleStrings.licensesOpen(licence.name),
         onClick = { onOpenUrl(licence.url) },
         testId = UseSmileIDSampleTestIds.licenseLink(notice.artifact),
     )

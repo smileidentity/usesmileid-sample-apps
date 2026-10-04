@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -49,7 +50,7 @@ fun UseSmileIDSampleEmptyState(
         if (onRetry != null) {
             TextButton(onClick = onRetry, modifier = Modifier.tagged(retryTestId)) {
                 Text(
-                    text = "Retry",
+                    text = UseSmileIDSampleStrings.commonRetry,
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
                     color = UseSmileIDSampleTheme.colors.textLink,
                 )

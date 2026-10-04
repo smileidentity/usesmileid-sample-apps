@@ -154,7 +154,7 @@ class UseSmileIDSampleRoutesSpecTest {
             "no flat android app entry in spec/app-identity.json"
         }.value
         val strings = File(specDir(), "../android/app/src/main/res/values/strings.xml").readText()
-        val label = requireNotNull(Regex("<string name=\"app_name\">([^<]+)</string>").find(strings)) {
+        val label = requireNotNull(Regex("<string name=\"app_name\"[^>]*>([^<]+)</string>").find(strings)) {
             "no app_name in strings.xml"
         }.groupValues[1]
         assertEquals(label, entry.required("displayName"))

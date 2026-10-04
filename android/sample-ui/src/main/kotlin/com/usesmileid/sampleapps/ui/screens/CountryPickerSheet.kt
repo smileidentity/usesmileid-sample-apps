@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import androidx.compose.ui.res.stringResource
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
@@ -30,22 +32,23 @@ fun CountryPickerSheet(
     modifier: Modifier = Modifier,
 ) {
     UseSmileIDSampleFullHeightBottomSheet(
-        title = "Country",
+        title = UseSmileIDSampleStrings.pickerCountryTitle,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         testId = UseSmileIDSampleTestIds.COUNTRY_SHEET,
     ) {
         CataloguePicker(
             catalogue = catalogue,
-            what = "countries",
+            loadingLabel = UseSmileIDSampleStrings.pickerCountryLoading,
+            failedLabel = UseSmileIDSampleStrings.pickerCountryLoadFailed,
             query = query,
             onQueryChange = onQueryChange,
-            searchPlaceholder = "Search country",
+            searchPlaceholder = UseSmileIDSampleStrings.pickerCountrySearch,
             searchTestId = UseSmileIDSampleTestIds.COUNTRY_SEARCH,
             label = { it.name },
             emptyTestId = UseSmileIDSampleTestIds.COUNTRY_EMPTY,
-            emptyLabel = "No country matches “$query”",
-            nothingToList = "No countries for this product" to "Try another product",
+            emptyLabel = UseSmileIDSampleStrings.pickerCountryNoMatch(query),
+            nothingToList = UseSmileIDSampleStrings.pickerCountryEmpty to UseSmileIDSampleStrings.pickerCountryEmptyHint,
             onRetry = onRetry,
             leadingCircle = true,
         ) { country ->
@@ -64,7 +67,8 @@ fun CountryPickerSheet(
 @Composable
 internal fun <T> CataloguePicker(
     catalogue: UseSmileIDSampleCatalogue<T>,
-    what: String,
+    loadingLabel: String,
+    failedLabel: String,
     query: String,
     onQueryChange: (String) -> Unit,
     searchPlaceholder: String,
@@ -88,15 +92,15 @@ internal fun <T> CataloguePicker(
     )
     when {
         skeleton -> UseSmileIDSampleSkeletonRows(
-            announcement = "Loading $what",
+            announcement = loadingLabel,
             leadingCircle = leadingCircle,
             testId = UseSmileIDSampleTestIds.CATALOGUE_LOADING,
         )
         // The first 300 ms draw nothing, so a fast answer never flashes a skeleton.
         loading -> Unit
         catalogue is UseSmileIDSampleCatalogue.Failed -> UseSmileIDSampleEmptyState(
-            text = "Couldn't load $what",
-            supportingText = catalogue.advice,
+            text = failedLabel,
+            supportingText = stringResource(catalogue.advice.text),
             testId = UseSmileIDSampleTestIds.CATALOGUE_ERROR,
             onRetry = onRetry,
             retryTestId = UseSmileIDSampleTestIds.CATALOGUE_RETRY,
