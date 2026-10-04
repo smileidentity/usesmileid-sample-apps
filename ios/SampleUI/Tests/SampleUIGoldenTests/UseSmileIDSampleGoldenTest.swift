@@ -29,6 +29,28 @@ class UseSmileIDSampleGoldenTest: XCTestCase {
     }
   }
 
+  func goldens(
+    _ name: String,
+    language: String,
+    file: StaticString = #filePath,
+    testName: String = #function,
+    line: UInt = #line,
+    @ViewBuilder content: () -> some View
+  ) {
+    let base = UseSmileIDSampleStrings.bundle
+    defer { UseSmileIDSampleStrings.bundle = base }
+    guard let path = base.path(forResource: language, ofType: "lproj"), let strings = Bundle(path: path) else {
+      return XCTFail("no \(language).lproj in the SampleUI bundle", file: file, line: line)
+    }
+    UseSmileIDSampleStrings.bundle = strings
+    let locale = Locale(identifier: language)
+    let direction: LayoutDirection = Locale.Language(identifier: language).characterDirection == .rightToLeft
+      ? .rightToLeft : .leftToRight
+    goldens(name, file: file, testName: testName, line: line) {
+      content().environment(\.locale, locale).environment(\.layoutDirection, direction)
+    }
+  }
+
   /// The largest accessibility size: overflow past the viewport fails here, clipping within it is caught by reading the baseline.
   func assertSurvivesMaxDynamicType(
     growsWithContentSize: Bool = true,

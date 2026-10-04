@@ -10,11 +10,11 @@ public enum UseSmileIDSampleIdNumberHint {
 
   /// What the empty field shows for the chosen type.
   public static func placeholder(_ type: UseSmileIDSampleKycIdType?) -> String {
-    guard let type else { return "Choose an ID type first" }
+    guard let type else { return UseSmileIDSampleStrings.kycChooseIdTypeFirst }
     guard !type.regex.isBlank, compiled(type.regex) != nil, let example = example(type.regex) else {
-      return "Enter your \(type.label)"
+      return UseSmileIDSampleStrings.kycIdNumberPlaceholder(idType: type.label)
     }
-    return "e.g. \(example)"
+    return UseSmileIDSampleStrings.kycIdNumberExample(example: example)
   }
 
   /// The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing.
@@ -29,8 +29,8 @@ public enum UseSmileIDSampleIdNumberHint {
   /// The line under a non-empty number that does not fit, which repeats the example; nil when it fits.
   public static func error(_ type: UseSmileIDSampleKycIdType?, _ number: String) -> String? {
     guard let type, !number.isBlank, !accepts(type.regex, number) else { return nil }
-    return example(type.regex).map { "Doesn't match the \(type.label) format, e.g. \($0)" }
-      ?? "Doesn't match the \(type.label) format"
+    return example(type.regex).map { UseSmileIDSampleStrings.kycIdNumberInvalidExample(idType: type.label, example: $0) }
+      ?? UseSmileIDSampleStrings.kycIdNumberInvalid(idType: type.label)
   }
 
   static func compiled(_ regex: String) -> NSRegularExpression? {

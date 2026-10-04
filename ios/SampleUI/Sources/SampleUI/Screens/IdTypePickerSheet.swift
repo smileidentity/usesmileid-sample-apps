@@ -30,20 +30,21 @@ public struct IdTypePickerSheet: View {
 
   public var body: some View {
     UseSmileIDSampleFullHeightBottomSheet(
-      title: "ID type",
+      title: UseSmileIDSampleStrings.pickerIdTypeTitle,
       testId: UseSmileIDSampleTestIds.idTypeSheet,
       onClose: onClose
     ) {
       UseSmileIDSampleCataloguePicker(
         catalogue: catalogue,
-        what: "ID types",
+        loadingLabel: UseSmileIDSampleStrings.pickerIdTypeLoading,
+        failedLabel: UseSmileIDSampleStrings.pickerIdTypeLoadFailed,
         query: $query,
-        searchPlaceholder: "Search ID type",
+        searchPlaceholder: UseSmileIDSampleStrings.pickerIdTypeSearch,
         searchTestId: UseSmileIDSampleTestIds.idTypeSearch,
         label: \.label,
         emptyTestId: UseSmileIDSampleTestIds.idTypeEmpty,
-        emptyLabel: "No ID type matches \u{201C}\(query)\u{201D}",
-        nothingToList: ("No ID types for \(country?.name ?? "this country")", "Choose another country"),
+        emptyLabel: UseSmileIDSampleStrings.pickerIdTypeNoMatch(query: query),
+        nothingToList: (UseSmileIDSampleStrings.pickerIdTypeEmpty(country: country?.name ?? UseSmileIDSampleStrings.pickerThisCountry), UseSmileIDSampleStrings.pickerChooseAnotherCountry),
         onRetry: onRetry
       ) { idType in
         UseSmileIDSampleOptionRow(

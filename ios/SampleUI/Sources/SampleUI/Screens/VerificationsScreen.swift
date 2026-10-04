@@ -117,12 +117,12 @@ public struct VerificationsScreen: View {
 
   private var header: some View {
     HStack(spacing: SmileSpacing.spacingXs) {
-      UseSmileIDSampleText("Verifications", style: UseSmileIDSampleTheme.type.textStyleHeadingPage)
+      UseSmileIDSampleText(UseSmileIDSampleStrings.verificationsTitle, style: UseSmileIDSampleTheme.type.textStyleHeadingPage)
         .foregroundColor(colors.textTitle)
         .frame(maxWidth: .infinity, alignment: .leading)
       Button(action: { onSelectModeChange(!state.selectMode) }) {
         UseSmileIDSampleText(
-          state.selectMode ? "Cancel" : "Select",
+          state.selectMode ? UseSmileIDSampleStrings.commonCancel : UseSmileIDSampleStrings.verificationsSelect,
           style: UseSmileIDSampleTheme.type.linkFont.with(weight: 700)
         )
         .foregroundColor(colors.primary)
@@ -163,14 +163,14 @@ public struct VerificationsScreen: View {
     if let jobs = state.jobs, rows.days.isEmpty {
       if jobs.isEmpty {
         UseSmileIDSampleEmptyState(
-          text: "No verifications yet",
-          supportingText: "Start a product above and the job lands here.",
+          text: UseSmileIDSampleStrings.verificationsEmptyTitle,
+          supportingText: UseSmileIDSampleStrings.verificationsEmptyBody,
           testId: UseSmileIDSampleTestIds.verificationsEmpty
         )
       } else {
         UseSmileIDSampleEmptyState(
-          text: "Nothing \(state.filter.label.lowercased())",
-          supportingText: "Other filters still have verifications.",
+          text: UseSmileIDSampleStrings.verificationsFilteredEmptyTitle(filter: state.filter.label.lowercased()),
+          supportingText: UseSmileIDSampleStrings.verificationsFilteredEmptyBody,
           testId: UseSmileIDSampleTestIds.verificationsEmpty
         )
       }

@@ -269,8 +269,11 @@ def swift_accessors(data: dict) -> str:
         )
     out += [
         "",
+        "  /// Where the strings are read from; a right-to-left golden points it at one language's folder.",
+        "  nonisolated(unsafe) static var bundle: Bundle = .module",
+        "",
         "  private static func text(_ key: String) -> String {",
-        '    NSLocalizedString(key, bundle: .module, comment: "")',
+        '    NSLocalizedString(key, bundle: bundle, comment: "")',
         "  }",
         "}",
     ]

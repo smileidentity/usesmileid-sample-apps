@@ -60,7 +60,7 @@ public struct UseSmileIDSampleKeyValueEditRow: View {
 
   private var labelText: some View {
     UseSmileIDSampleText(
-      required ? "\(label) *" : label,
+      required ? UseSmileIDSampleStrings.commonRequiredNamed(label: label) : label,
       style: UseSmileIDSampleTheme.type.textStyleSubtitle.with(size: 13.5)
     )
     .foregroundColor(colors.textTitle)

@@ -43,6 +43,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("settings") { settings(UseSmileIDSampleSettings()) }
   }
 
+  func testSettingsArabic() {
+    goldens("settings_ar", language: "ar") { settings(UseSmileIDSampleSettings()) }
+  }
+
   func testSettingsDebugBuild() {
     goldens("settings_debug") { settings(UseSmileIDSampleSettings(), debug: true) }
   }
@@ -196,6 +200,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
 
   func testKycFormSelected() {
     goldens("kyc_form_selected") { kycForm(Self.selectedId) }
+  }
+
+  func testKycFormSelectedArabic() {
+    goldens("kyc_form_selected_ar", language: "ar") { kycForm(Self.selectedId) }
   }
 
   func testKycFormSurvivesMaxDynamicType() {
@@ -362,6 +370,16 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
 
   func testAppearanceSheetSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType { AppearanceSheet(selected: .system, deviceDark: true, onSelect: { _ in }) }
+  }
+
+  func testLanguageSheet() {
+    goldens("language_sheet") {
+      LanguageSheet(selected: .fr, deviceLanguages: ["en-US"], pending: true, onSelect: { _ in }).frame(height: 700)
+    }
+  }
+
+  func testLanguageSheetSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType { LanguageSheet(selected: .fr, deviceLanguages: ["en-US"], pending: true, onSelect: { _ in }) }
   }
 
   func testCountryPickerSurvivesMaxDynamicType() {

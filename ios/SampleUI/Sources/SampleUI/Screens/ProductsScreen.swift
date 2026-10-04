@@ -74,7 +74,7 @@ public struct ProductsScreen: View {
   private var header: some View {
     VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
       HStack(spacing: SmileSpacing.spacingXs) {
-        UseSmileIDSampleText("Smile ID", style: pageTitle)
+        UseSmileIDSampleText(UseSmileIDSampleStrings.productsTitle, style: pageTitle)
           .foregroundColor(colors.foreground)
           .frame(maxWidth: .infinity, alignment: .leading)
         // The environment chip is hidden here (node 5447:1705); the result card publishes it.
@@ -85,11 +85,11 @@ public struct ProductsScreen: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel("Switch profile")
+        .accessibilityLabel(UseSmileIDSampleStrings.productsSwitchProfile)
         .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileAvatarButton)
       }
       UseSmileIDSampleText(
-        "Try our suite of products powered by our Anti-Fraud SDKs",
+        UseSmileIDSampleStrings.productsSubtitle,
         style: UseSmileIDSampleTheme.type.textStyleCaption
       )
       .foregroundColor(colors.foreground)

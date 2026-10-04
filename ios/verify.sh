@@ -72,6 +72,11 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> strings are current"
+  # Generated from spec/l10n/; a hand edit fails here.
+  python3 "$REPO_ROOT/scripts/sync_l10n.py" --check --platform ios
+  python3 "$REPO_ROOT/scripts/test_sync_l10n.py" >/dev/null
+
   echo "==> icons are current"
   # Generated from design/icons/, which lives in this repo rather than the design system, so this
   # needs no secret and always runs.

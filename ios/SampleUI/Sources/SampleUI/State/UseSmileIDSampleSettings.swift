@@ -10,9 +10,9 @@ public enum UseSmileIDSampleCaptureMode: String, CaseIterable, Sendable {
 
   public var label: String {
     switch self {
-    case .auto: "Automatic"
-    case .manual: "Manual"
-    case .autoWithFallback: "Automatic with manual fallback"
+    case .auto: UseSmileIDSampleStrings.captureModeAuto
+    case .manual: UseSmileIDSampleStrings.captureModeManual
+    case .autoWithFallback: UseSmileIDSampleStrings.captureModeAutoWithFallback
     }
   }
 }
@@ -30,13 +30,48 @@ public enum UseSmileIDSampleAppearance: String, CaseIterable, Sendable {
     }
   }
 
-  /// System names the device's theme, never the one the app renders, so the row says why it looks the way it does.
+  /// System names the device's theme, not the one the app renders.
   public func label(deviceDark: Bool) -> String {
     switch self {
-    case .system: deviceDark ? "System (Dark)" : "System (Light)"
-    case .light: "Light"
-    case .dark: "Dark"
+    case .system: deviceDark ? UseSmileIDSampleStrings.appearanceSystemDark : UseSmileIDSampleStrings.appearanceSystemLight
+    case .light: UseSmileIDSampleStrings.appearanceLight
+    case .dark: UseSmileIDSampleStrings.appearanceDark
     }
+  }
+}
+
+/// The app's language: System follows the device; the rest are in `spec/l10n/languages.json`.
+public enum UseSmileIDSampleLanguage: String, CaseIterable, Sendable {
+  case system, en, fr, ar, he
+
+  /// The language's name in itself, which no other language translates.
+  public var endonym: String {
+    switch self {
+    case .system: ""
+    case .en: "English"
+    case .fr: "Français"
+    case .ar: "العربية"
+    case .he: "עברית"
+    }
+  }
+
+  /// System resolves to the first device language the app ships, else English.
+  public func resolved(deviceLanguages: [String]) -> UseSmileIDSampleLanguage {
+    guard self == .system else { return self }
+    return deviceLanguages.lazy.compactMap(Self.shipped).first ?? .en
+  }
+
+  /// System names the language the device resolves to; a named language is its own endonym.
+  public func label(deviceLanguages: [String]) -> String {
+    self == .system
+      ? UseSmileIDSampleStrings.languageSystem(language: resolved(deviceLanguages: deviceLanguages).endonym)
+      : endonym
+  }
+
+  /// The shipped language a BCP 47 tag names, by its language subtag.
+  public static func shipped(_ tag: String) -> UseSmileIDSampleLanguage? {
+    let language = tag.split(whereSeparator: { $0 == "-" || $0 == "_" }).first.map { $0.lowercased() } ?? ""
+    return allCases.first { $0 != .system && $0.rawValue == language }
   }
 }
 
@@ -58,6 +93,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var captureMode: UseSmileIDSampleCaptureMode
   /// This app's own appearance; the `theme` launch argument seeds a run's SDK theme scenario, which is a different axis.
   public var appearance: UseSmileIDSampleAppearance
+  /// Typed like `appearance`; System follows the device's own language.
+  public var language: UseSmileIDSampleLanguage
 
   public init(
     enhancedSmartSelfie: Bool = true,
@@ -69,7 +106,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     allowSkipBack: Bool = false,
     selfieFirst: Bool = false,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
-    appearance: UseSmileIDSampleAppearance = .system
+    appearance: UseSmileIDSampleAppearance = .system,
+    language: UseSmileIDSampleLanguage = .system
   ) {
     self.enhancedSmartSelfie = enhancedSmartSelfie
     self.agentMode = agentMode
@@ -81,6 +119,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.selfieFirst = selfieFirst
     self.captureMode = captureMode
     self.appearance = appearance
+    self.language = language
   }
 
   public subscript(setting: UseSmileIDSampleSetting) -> Bool {

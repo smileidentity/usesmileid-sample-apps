@@ -17,7 +17,7 @@ public struct AppearanceSheet: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Theme", testId: UseSmileIDSampleTestIds.appearanceSheet) {
+    UseSmileIDSampleBottomSheet(title: UseSmileIDSampleStrings.appearanceTitle, testId: UseSmileIDSampleTestIds.appearanceSheet) {
       ForEach(UseSmileIDSampleAppearance.allCases, id: \.self) { appearance in
         UseSmileIDSampleOptionRow(
           label: appearance.label(deviceDark: deviceDark),

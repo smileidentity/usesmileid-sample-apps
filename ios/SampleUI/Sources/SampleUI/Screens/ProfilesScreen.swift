@@ -46,7 +46,7 @@ public struct ProfilesScreen: View {
 
   public var body: some View {
     VStack(spacing: 0) {
-      UseSmileIDSampleTopAppBar(title: "Profiles", onBack: onBack)
+      UseSmileIDSampleTopAppBar(title: UseSmileIDSampleStrings.profilesTitle, onBack: onBack)
       ScrollView {
         VStack(spacing: SmileSpacing.spacingXs) {
           ForEach(Array(state.profiles.enumerated()), id: \.element.id) { index, profile in
@@ -83,7 +83,7 @@ public struct ProfilesScreen: View {
   }
 
   private func supportingText(_ profile: UseSmileIDSampleProfile) -> String {
-    profile.id == state.activeId ? profile.caption + " \u{00B7} active" : profile.caption
+    profile.id == state.activeId ? profile.caption + UseSmileIDSampleStrings.profilesActiveSuffix : profile.caption
   }
 
   /// The last row: no card and no border, a pale primary tile with a plus.
@@ -107,12 +107,12 @@ private struct UseSmileIDSampleCreateProfileRow: View {
           .overlay(UseSmileIDSampleIcon(SmileIcons.plus, tint: colors.primary, size: SmileSpacing.sizeIconMd))
         VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
           UseSmileIDSampleText(
-            "Create new profile",
+            UseSmileIDSampleStrings.profilesCreate,
             style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 14.5)
           )
           .foregroundColor(colors.textTitle)
           UseSmileIDSampleText(
-            "Its user details will live under it",
+            UseSmileIDSampleStrings.profilesCreateHint,
             style: UseSmileIDSampleTheme.type.textStyleCaption
           )
           .foregroundColor(colors.textMuted)

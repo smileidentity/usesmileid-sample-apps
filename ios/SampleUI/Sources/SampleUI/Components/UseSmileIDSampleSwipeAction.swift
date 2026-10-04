@@ -43,7 +43,7 @@ public struct UseSmileIDSampleSwipeAction<Content: View>: View {
   private var backdrop: some View {
     VStack(spacing: SmileSpacing.spacingXxs) {
       UseSmileIDSampleIcon(SmileIcons.trash, tint: colors.errorFill, size: SmileSpacing.sizeIconMd)
-      UseSmileIDSampleText("Hide", style: UseSmileIDSampleTheme.type.textStyleCaption)
+      UseSmileIDSampleText(UseSmileIDSampleStrings.commonHide, style: UseSmileIDSampleTheme.type.textStyleCaption)
         .foregroundColor(colors.errorFill)
     }
     .frame(width: Self.revealWidth)

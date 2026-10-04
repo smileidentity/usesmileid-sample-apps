@@ -29,8 +29,18 @@ public struct UseSmileIDSampleText: View {
   public var body: some View {
     (attributed.map { Text($0) } ?? Text(content))
       .font(UseSmileIDSampleFonts.font(style, scale: scale))
-      .tracking(style.tracking * scale)
+      .tracking(Self.tracking(style.tracking * scale, for: content))
       .underline(underlined)
       .lineSpacing(UseSmileIDSampleFonts.lineSpacing(style) * scale)
   }
+
+  /// No tracking on joined scripts: spacing Arabic letters breaks the joins.
+  static func tracking(_ tracking: CGFloat, for text: String) -> CGFloat {
+    text.unicodeScalars.contains { scalar in joinedScripts.contains { $0.contains(scalar.value) } } ? 0 : tracking
+  }
+
+  /// Arabic and its supplements and presentation forms, where letters connect.
+  private static let joinedScripts: [ClosedRange<UInt32>] = [
+    0x0600...0x06ff, 0x0750...0x077f, 0x08a0...0x08ff, 0xfb50...0xfdff, 0xfe70...0xfeff
+  ]
 }

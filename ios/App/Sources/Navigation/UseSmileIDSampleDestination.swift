@@ -118,13 +118,16 @@ struct UseSmileIDSampleDestination: View {
           versionLabel: app.versionLabel,
           avatarColor: app.avatarColor,
           hasProfile: app.profiles.active != nil,
-          deviceDark: app.deviceDark
+          deviceDark: app.deviceDark,
+          deviceLanguages: app.deviceLanguages,
+          runningLanguage: app.runningLanguage
         ),
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
         onProfile: { router.open(.profiles) },
         onNavRow: { row in open(row) },
         onCaptureMode: { router.sheet = .captureMode },
         onAppearance: { router.sheet = .appearance },
+        onLanguage: { router.sheet = .language },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
         // There is no auth to leave; the session is the local state a partner would expect gone.
@@ -296,12 +299,12 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
   /// One line per outcome, in the other three apps' words: a flow keys off these strings.
   private func label(_ outcome: UseSmileIDSampleStatusRefresh) -> String {
     switch outcome {
-    case .updated(let status, let message, _): "\(status.label) — \(message)"
-    case .stillProcessing: "Still processing"
-    case .noSession: "Scan a token first"
-    case .noServerJob: "Not submitted under a scanned token"
-    case .partnerMismatch: "Submitted by a different partner"
-    case .failed(let reason): "Could not check status: \(reason)"
+    case .updated(let status, let message, _): UseSmileIDSampleStrings.statusRefreshResult(status: status.label, message: message)
+    case .stillProcessing: UseSmileIDSampleStrings.statusRefreshProcessing
+    case .noSession: UseSmileIDSampleStrings.statusRefreshNoSession
+    case .noServerJob: UseSmileIDSampleStrings.statusRefreshNotTokenJob
+    case .partnerMismatch: UseSmileIDSampleStrings.statusRefreshOtherPartner
+    case .failed(let reason): UseSmileIDSampleStrings.statusRefreshFailed(reason: reason)
     }
   }
 
@@ -347,7 +350,7 @@ private struct UseSmileIDSampleProfilesHost: View {
       state: .init(
         profiles: app.profiles.all,
         activeId: app.profiles.activeId,
-        notice: created.map { .init(message: "\($0.title) created", actionLabel: "Make active") }
+        notice: created.map { .init(message: UseSmileIDSampleStrings.profilesCreated(profile: $0.title), actionLabel: UseSmileIDSampleStrings.profilesMakeActive) }
       ),
       onProfileTap: { router.push(.profileConfig(profileId: $0.id)) },
       onCreate: { router.sheet = .newProfile },

@@ -18,7 +18,7 @@ public struct CaptureAsSheet: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Capture as", testId: UseSmileIDSampleTestIds.captureAsSheet) {
+    UseSmileIDSampleBottomSheet(title: UseSmileIDSampleStrings.captureAsTitle, testId: UseSmileIDSampleTestIds.captureAsSheet) {
       UseSmileIDSampleOptionRow(
         label: matched.matchRowLabel,
         selected: selected == nil,

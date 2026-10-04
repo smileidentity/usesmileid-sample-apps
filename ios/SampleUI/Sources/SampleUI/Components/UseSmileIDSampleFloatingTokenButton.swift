@@ -20,7 +20,7 @@ public struct UseSmileIDSampleFloatingTokenButton: View {
         .overlay(Circle().strokeBorder(colors.border, lineWidth: smileCardStrokeWidth))
     }
     .buttonStyle(.plain)
-    .accessibilityLabel("Token session")
+    .accessibilityLabel(UseSmileIDSampleStrings.navTokenSession)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.tokenFloat)
   }
 }

@@ -61,18 +61,18 @@ public struct KycIdFormScreen: View {
       UseSmileIDSampleTopAppBar(title: state.productLabel, onBack: onBack)
       ScrollView {
         VStack(alignment: .leading, spacing: SmileSpacing.spacingSm) {
-          UseSmileIDSampleSectionLabel("COUNTRY")
+          UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.kycCountry)
           countryTrigger
           switch state.family {
           case .kyc:
-            UseSmileIDSampleSectionLabel("ID TYPE")
+            UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.kycIdType)
             idTypeTrigger
-            UseSmileIDSampleSectionLabel("ID NUMBER")
+            UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.kycIdNumber)
             idNumberInput
           case .document:
-            UseSmileIDSampleSectionLabel("DOCUMENT")
+            UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.kycDocument)
             documentTrigger
-            UseSmileIDSampleSectionLabel("CAPTURE AS")
+            UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.kycCaptureAs)
             captureAsTrigger
           case .passport:
             EmptyView()
@@ -87,7 +87,7 @@ public struct KycIdFormScreen: View {
           .padding(SmileSpacing.spacingMd)
       }
       UseSmileIDSampleButton(
-        text: "Continue",
+        text: UseSmileIDSampleStrings.commonContinue,
         enabled: state.details.isComplete(state.family),
         testId: UseSmileIDSampleTestIds.kycContinue,
         action: onContinue
@@ -101,7 +101,7 @@ public struct KycIdFormScreen: View {
   private var countryTrigger: some View {
     UseSmileIDSampleSelectTrigger(
       value: state.details.country?.name,
-      placeholder: "Select country",
+      placeholder: UseSmileIDSampleStrings.kycSelectCountry,
       testId: UseSmileIDSampleTestIds.countryTrigger,
       onTap: onCountryTap
     ) { _ in
@@ -112,7 +112,7 @@ public struct KycIdFormScreen: View {
   private var idTypeTrigger: some View {
     UseSmileIDSampleSelectTrigger(
       value: state.details.idType?.label,
-      placeholder: secondPlaceholder(loading: "Loading ID types\u{2026}", ready: "Select ID type"),
+      placeholder: secondPlaceholder(loading: UseSmileIDSampleStrings.kycLoadingIdTypes, ready: UseSmileIDSampleStrings.kycSelectIdType),
       enabled: state.details.country != nil,
       testId: UseSmileIDSampleTestIds.idTypeTrigger,
       onTap: onIdTypeTap
@@ -142,7 +142,7 @@ public struct KycIdFormScreen: View {
   private var documentTrigger: some View {
     UseSmileIDSampleSelectTrigger(
       value: state.details.document?.name,
-      placeholder: secondPlaceholder(loading: "Loading documents\u{2026}", ready: "Select document"),
+      placeholder: secondPlaceholder(loading: UseSmileIDSampleStrings.kycLoadingDocuments, ready: UseSmileIDSampleStrings.kycSelectDocument),
       enabled: state.details.country != nil,
       testId: UseSmileIDSampleTestIds.documentTrigger,
       onTap: onDocumentTap
@@ -166,7 +166,7 @@ public struct KycIdFormScreen: View {
   /// Enabled while loading, with a muted "Loading…" in place of the prompt, so the form never looks stuck.
   private func secondPlaceholder(loading: String, ready: String) -> String {
     if state.details.country == nil {
-      return "Choose a country first"
+      return UseSmileIDSampleStrings.kycChooseCountryFirst
     }
     return state.countryListLoading ? loading : ready
   }

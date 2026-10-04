@@ -21,7 +21,7 @@ public struct ProfileSwitchSheet: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Switch profile", testId: UseSmileIDSampleTestIds.profileSwitchSheet) {
+    UseSmileIDSampleBottomSheet(title: UseSmileIDSampleStrings.profileSwitchTitle, testId: UseSmileIDSampleTestIds.profileSwitchSheet) {
       ForEach(Array(profiles.enumerated()), id: \.element.id) { index, profile in
         UseSmileIDSampleProfileRow(
           organisation: profile.title,
@@ -35,8 +35,8 @@ public struct ProfileSwitchSheet: View {
       }
       if let onCreate {
         UseSmileIDSampleProfileRow(
-          organisation: "New profile",
-          supportingText: "Run jobs as someone else",
+          organisation: UseSmileIDSampleStrings.profileSwitchNew,
+          supportingText: UseSmileIDSampleStrings.profileSwitchNewHint,
           initials: "",
           selected: false,
           testId: UseSmileIDSampleTestIds.profileSwitchNew,

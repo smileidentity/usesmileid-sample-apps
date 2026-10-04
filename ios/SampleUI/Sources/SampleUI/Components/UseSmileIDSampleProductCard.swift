@@ -82,7 +82,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
         + Text(family)
         .font(UseSmileIDSampleFonts.font(familyStyle.with(size: familyStyle.size)))
     )
-    .tracking(smileCardTitleTracking)
+    .tracking(UseSmileIDSampleText.tracking(smileCardTitleTracking, for: title + family))
     .foregroundColor(ink)
     .lineLimit(sizeCategory.isAccessibilityCategory ? nil : 2)
     .minimumScaleFactor(Self.labelFloor / titleStyle.size)

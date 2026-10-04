@@ -29,7 +29,7 @@ public struct UseSmileIDSampleScanStatus: View {
       // Only a rejection is actionable: everything else resolves itself in a beat.
       if case .rejected = state {
         Button(action: onRetry) {
-          UseSmileIDSampleText("Try again", style: UseSmileIDSampleTheme.type.linkFont.with(weight: 700))
+          UseSmileIDSampleText(UseSmileIDSampleStrings.commonTryAgain, style: UseSmileIDSampleTheme.type.linkFont.with(weight: 700))
             .padding(.horizontal, SmileSpacing.spacingXs)
             .frame(minHeight: retryHeight)
             .contentShape(Rectangle())
@@ -63,19 +63,19 @@ public struct UseSmileIDSampleScanStatus: View {
 
   private var headline: String {
     switch state {
-    case .searching: "Point at a Smile token QR"
-    case .found: "Token found"
-    case .linked: "Session linked"
-    case .rejected: "That is not a token"
+    case .searching: UseSmileIDSampleStrings.scanPoint
+    case .found: UseSmileIDSampleStrings.scanFound
+    case .linked: UseSmileIDSampleStrings.scanLinked
+    case .rejected: UseSmileIDSampleStrings.scanNotAToken
     }
   }
 
   private var detail: String? {
     switch state {
     case .searching: nil
-    case .found: "Reading it now"
+    case .found: UseSmileIDSampleStrings.scanReading
     // The handle and the time it has left: never the token, which no surface here may show.
-    case .linked(let handle, let remaining): "\(handle) \u{00B7} \(remaining) left"
+    case .linked(let handle, let remaining): UseSmileIDSampleStrings.scanRemaining(handle: handle, remaining: remaining)
     case .rejected(let reason): reason
     }
   }

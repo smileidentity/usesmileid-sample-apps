@@ -27,20 +27,21 @@ public struct CountryPickerSheet: View {
 
   public var body: some View {
     UseSmileIDSampleFullHeightBottomSheet(
-      title: "Country",
+      title: UseSmileIDSampleStrings.pickerCountryTitle,
       testId: UseSmileIDSampleTestIds.countrySheet,
       onClose: onClose
     ) {
       UseSmileIDSampleCataloguePicker(
         catalogue: catalogue,
-        what: "countries",
+        loadingLabel: UseSmileIDSampleStrings.pickerCountryLoading,
+        failedLabel: UseSmileIDSampleStrings.pickerCountryLoadFailed,
         query: $query,
-        searchPlaceholder: "Search country",
+        searchPlaceholder: UseSmileIDSampleStrings.pickerCountrySearch,
         searchTestId: UseSmileIDSampleTestIds.countrySearch,
         label: \.name,
         emptyTestId: UseSmileIDSampleTestIds.countryEmpty,
-        emptyLabel: "No country matches \u{201C}\(query)\u{201D}",
-        nothingToList: ("No countries for this product", "Try another product"),
+        emptyLabel: UseSmileIDSampleStrings.pickerCountryNoMatch(query: query),
+        nothingToList: (UseSmileIDSampleStrings.pickerCountryEmpty, UseSmileIDSampleStrings.pickerCountryEmptyHint),
         leadingCircle: true,
         onRetry: onRetry
       ) { country in
@@ -59,7 +60,8 @@ public struct CountryPickerSheet: View {
 /// One picker's body: skeleton rows while loading, an error with Retry, an empty state without one, and a search.
 struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: View {
   let catalogue: UseSmileIDSampleCatalogue<Item>
-  let what: String
+  let loadingLabel: String
+  let failedLabel: String
   @Binding var query: String
   let searchPlaceholder: String
   let searchTestId: String
@@ -96,7 +98,7 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
   private var content: some View {
     if showsSkeleton {
       UseSmileIDSampleSkeletonRows(
-        announcement: "Loading \(what)",
+        announcement: loadingLabel,
         leadingCircle: leadingCircle,
         testId: UseSmileIDSampleTestIds.catalogueLoading
       )
@@ -107,7 +109,7 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
         EmptyView()
       case .failed(_, let advice):
         UseSmileIDSampleEmptyState(
-          text: "Couldn't load \(what)",
+          text: failedLabel,
           supportingText: advice,
           testId: UseSmileIDSampleTestIds.catalogueError,
           onRetry: onRetry,

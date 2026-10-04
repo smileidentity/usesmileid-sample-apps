@@ -13,7 +13,7 @@ public extension View {
     alert(title, isPresented: isPresented) {
       Button(confirmLabel, role: .destructive, action: onConfirm)
         .accessibilityIdentifier(confirmTestId)
-      Button("Cancel", role: .cancel) {}
+      Button(UseSmileIDSampleStrings.commonCancel, role: .cancel) {}
     } message: {
       Text(message)
     }

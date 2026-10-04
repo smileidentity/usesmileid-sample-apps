@@ -20,6 +20,12 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The device's own theme, which the System label names; written only by `UseSmileIDSampleDeviceScheme`.
   @Published var deviceDark = false
 
+  /// The device's languages, which the System label names.
+  let deviceLanguages: [String] = UseSmileIDSampleAppState.deviceLanguages(in: .standard)
+
+  /// The language this process started in; strings are read once, at launch.
+  let runningLanguage: UseSmileIDSampleLanguage
+
   /// The profiles the app can act as; every change is stored unless the launch seeded fixtures.
   @Published var profiles: UseSmileIDSampleProfiles {
     didSet {
@@ -104,6 +110,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     self.launchArguments = launchArguments
     catalogue = UseSmileIDSampleCatalogueStore(source: Self.catalogueSource(launchArguments.catalogue))
     settings = store.settings
+    runningLanguage = store.settings.language
     profiles = UseSmileIDSampleProfiles.forLaunch(seedProfiles: launchArguments.seedProfiles, stored: store.profiles)
     flowResult = UseSmileIDSampleFlowResult(
       scenario: launchArguments.scenario,
@@ -283,6 +290,31 @@ final class UseSmileIDSampleAppState: ObservableObject {
   func setAppearance(_ appearance: UseSmileIDSampleAppearance) {
     store.setAppearance(appearance)
     settings = store.settings
+  }
+
+  /// Stores the pick and hands it to the next launch; System clears it.
+  func setLanguage(_ language: UseSmileIDSampleLanguage) {
+    store.setLanguage(language)
+    settings = store.settings
+    if language == .system {
+      UserDefaults.standard.removeObject(forKey: Self.appleLanguagesKey)
+    } else {
+      UserDefaults.standard.set([language.rawValue], forKey: Self.appleLanguagesKey)
+    }
+  }
+
+  private static let appleLanguagesKey = "AppleLanguages"
+  private static let deviceLanguagesKey = "device_languages"
+
+  /// iOS hides the device's languages while the app sets its own, so they are cached on a launch without one.
+  static func deviceLanguages(in defaults: UserDefaults) -> [String] {
+    let overridden = Bundle.main.bundleIdentifier
+      .flatMap { defaults.persistentDomain(forName: $0)?[appleLanguagesKey] } != nil
+    if overridden {
+      return defaults.stringArray(forKey: deviceLanguagesKey) ?? Locale.preferredLanguages
+    }
+    defaults.set(Locale.preferredLanguages, forKey: deviceLanguagesKey)
+    return Locale.preferredLanguages
   }
 
   /// Where the catalogue asks: the session's environment, as status refresh chooses it.

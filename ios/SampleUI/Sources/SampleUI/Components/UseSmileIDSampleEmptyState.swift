@@ -39,7 +39,7 @@ public struct UseSmileIDSampleEmptyState: View {
       }
       if let onRetry {
         Button(action: onRetry) {
-          UseSmileIDSampleText("Retry", style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
+          UseSmileIDSampleText(UseSmileIDSampleStrings.commonRetry, style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
             .foregroundColor(colors.textLink)
             .frame(minHeight: SmileSpacing.sizeControlMd)
         }
