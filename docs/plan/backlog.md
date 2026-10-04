@@ -58,14 +58,6 @@ The capture-mode behaviour (shutter at once under manual, after 10 seconds under
 auto) is checked by Maestro on Android only. The iOS simulator has no camera, so the XCUITest stops at the
 SDK's mount. Add the same three checks to the iOS device lane.
 
-### Expo: document capture crashes with no document analyzer
-
-The Expo flow builder registers only a selfie analyzer (`expo/app/src/flow/use-smile-id-sample-flow-builder-config.tsx`),
-so opening the document capture screen throws "OrchestratedCaptureScreen: no document analyzer registered
-in the ML DSL" and the Android release app closes. No flow reaches that screen, so CI does not see it. Done
-looks like the document analyzers registered per platform, as the selfie one is, and a flow that reaches
-`si_capture_screen` for a document.
-
 ### Expo: the document form's flow stops before the SDK
 
 `expo/maestro/document-options.yaml` enters the form by link and never types, because a focused field
