@@ -11,6 +11,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// Every profile the app can act as, and the row that creates another.
@@ -57,7 +58,10 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.profilesScreen,
       child: Column(
         children: <Widget>[
-          UseSmileIDSampleTopAppBar(title: 'Profiles', onBack: onBack),
+          UseSmileIDSampleTopAppBar(
+            title: context.strings.profilesTitle,
+            onBack: onBack,
+          ),
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(
@@ -70,12 +74,12 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
                   index++
                 ) ...<Widget>[
                   UseSmileIDSampleProfileRow(
-                    organisation: profiles[index].title,
+                    organisation: profiles[index].title(context.strings),
                     // The ONLY marker of the active profile on this screen: the design gives the
                     // list no fill and no check, unlike the switch sheet.
                     supportingText: profiles[index].id == activeId
-                        ? '${profiles[index].caption}$_activeSuffix'
-                        : profiles[index].caption,
+                        ? '${profiles[index].caption(context.strings)}${context.strings.profilesActiveSuffix}'
+                        : profiles[index].caption(context.strings),
                     initials: profiles[index].initials,
                     selected: false,
                     onTap: () => onProfileTap(profiles[index]),
@@ -105,8 +109,10 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
           right: SmileDimens.spacingMd,
           bottom: MediaQuery.paddingOf(context).bottom + SmileDimens.spacingLg,
           child: UseSmileIDSampleToast(
-            message: '$createdNotice created',
-            actionLabel: 'Make active',
+            message: context.strings.profilesCreated(
+              profile: createdNotice ?? '',
+            ),
+            actionLabel: context.strings.profilesMakeActive,
             onAction: onMakeCreatedActive,
           ),
         ),
@@ -150,7 +156,7 @@ class _CreateRow extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    'Create new profile',
+                    context.strings.profilesCreate,
                     style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
                       fontSize: _createTitleSize,
                       color: colors.textTitle,
@@ -158,7 +164,7 @@ class _CreateRow extends StatelessWidget {
                   ),
                   const SizedBox(height: SmileDimens.spacingXxs),
                   Text(
-                    'Its user details will live under it',
+                    context.strings.profilesCreateHint,
                     style: UseSmileIDSampleType.textStyleCaption.copyWith(
                       color: colors.textMuted,
                     ),
@@ -172,9 +178,6 @@ class _CreateRow extends StatelessWidget {
     ),
   );
 }
-
-/// What the list appends to the active profile's caption.
-const String _activeSuffix = ' · active';
 
 /// The create row's tile, read off the board rather than the icon scale.
 const double _tileSize = 44;

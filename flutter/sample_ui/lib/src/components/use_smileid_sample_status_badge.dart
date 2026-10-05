@@ -6,6 +6,7 @@ import '../theme/use_smileid_sample_label_type.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 
 /// A status pill in the design's soft tinted treatment, generated from one spec entry rather than
 /// the design system's saturated `badge.*` pairs.
@@ -60,7 +61,7 @@ class UseSmileIDSampleStatusBadge extends StatelessWidget {
             vertical: SmileDimens.space4,
           ),
           child: Text(
-            status.label,
+            status.label(context.strings),
             style: useSmileIDSampleLabelStyle(
               UseSmileIDSampleType.textStyleOverline,
             ).copyWith(color: foreground),

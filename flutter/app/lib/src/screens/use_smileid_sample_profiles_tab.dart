@@ -41,7 +41,7 @@ class _UseSmileIDSampleProfilesTabState
         onProfileTap: (UseSmileIDSampleProfile profile) =>
             context.go(UseSmileIDSampleRoutes.profileConfig(profile.id)),
         onCreate: _create,
-        createdNotice: created?.title,
+        createdNotice: created?.title(context.strings),
         onMakeCreatedActive: created == null
             ? null
             : () {

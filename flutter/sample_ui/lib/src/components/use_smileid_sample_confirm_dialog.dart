@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
+import '../use_smileid_sample_strings_scope.dart';
 
 /// Asks before an action that deletes something, in the platform's own alert; true only when confirmed.
 Future<bool> showUseSmileIDSampleConfirmation(
@@ -22,7 +23,7 @@ Future<bool> showUseSmileIDSampleConfirmation(
         _action(
           context: context,
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(context.strings.commonCancel),
         ),
         Semantics(
           identifier: confirmTestId,

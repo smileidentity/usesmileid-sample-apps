@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_glyphs.dart';
 
@@ -22,7 +23,7 @@ class UseSmileIDSampleFloatingTokenButton extends StatelessWidget {
     return Semantics(
       identifier: UseSmileIDSampleTestIds.tokenFloat,
       button: true,
-      label: 'Token session',
+      label: context.strings.navTokenSession,
       child: Material(
         // White with a border, like the nav bar's token control — not a primary-filled FAB.
         color: colors.surface,

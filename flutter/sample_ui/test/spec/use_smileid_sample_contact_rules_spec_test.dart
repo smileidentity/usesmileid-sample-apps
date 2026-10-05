@@ -37,14 +37,14 @@ void main() {
       UseSmileIDSampleContactRules.problem(
         UseSmileIDSampleUserField.email,
         'ada',
-      ),
+      )?.message(_en),
       (file['email']! as Map<String, Object?>)['error'],
     );
     expect(
       UseSmileIDSampleContactRules.problem(
         UseSmileIDSampleUserField.phone,
         '0700',
-      ),
+      )?.message(_en),
       (file['phone']! as Map<String, Object?>)['error'],
     );
   });
@@ -87,3 +87,5 @@ void main() {
     );
   });
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

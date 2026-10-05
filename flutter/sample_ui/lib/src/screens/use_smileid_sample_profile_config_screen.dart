@@ -13,6 +13,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// One profile's page: organisation, details and callback URL, and one CTA that saves or saves and activates.
@@ -94,7 +95,9 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                 horizontal: SmileDimens.spacingMd,
               ),
               children: <Widget>[
-                const UseSmileIDSampleSectionLabel(text: 'PROFILE'),
+                UseSmileIDSampleSectionLabel(
+                  text: context.strings.profileConfigSectionProfile,
+                ),
                 const SizedBox(height: SmileDimens.spacingSm),
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -108,17 +111,17 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: UseSmileIDSampleShapes.card,
                     child: UseSmileIDSampleKeyValueEditRow(
-                      label: 'Profile name',
+                      label: context.strings.profileConfigName,
                       value: organisation,
                       onChanged: onOrganisationChanged ?? (String _) {},
-                      placeholder: 'Shown on the consent screen',
+                      placeholder: context.strings.profileConfigNameHint,
                       testId: UseSmileIDSampleTestIds.profileConfigName,
                     ),
                   ),
                 ),
                 const SizedBox(height: SmileDimens.spacingSm),
-                const UseSmileIDSampleSectionLabel(
-                  text: 'USER DETAILS — ATTACHED TO EVERY JOB',
+                UseSmileIDSampleSectionLabel(
+                  text: context.strings.profileConfigSectionDetails,
                 ),
                 const SizedBox(height: SmileDimens.spacingSm),
                 DecoratedBox(
@@ -141,7 +144,9 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                         ) ...<Widget>[
                           if (i > 0) const UseSmileIDSampleSettingRowDivider(),
                           UseSmileIDSampleKeyValueEditRow(
-                            label: UseSmileIDSampleUserField.values[i].label,
+                            label: UseSmileIDSampleUserField.values[i].label(
+                              context.strings,
+                            ),
                             value: UseSmileIDSampleUserField.values[i].valueOf(
                               details,
                             ),
@@ -149,8 +154,8 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                               UseSmileIDSampleUserField.values[i],
                               value,
                             ),
-                            placeholder:
-                                UseSmileIDSampleUserField.values[i].placeholder,
+                            placeholder: UseSmileIDSampleUserField.values[i]
+                                .placeholder(context.strings),
                             required:
                                 UseSmileIDSampleUserField.values[i].isRequired,
                             keyboardType: UseSmileIDSampleUserField
@@ -174,13 +179,14 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                   ),
                 ),
                 if (details.contactProblem
-                    case final String problem) ...<Widget>[
+                    case final UseSmileIDSampleContactProblem
+                        problem) ...<Widget>[
                   const SizedBox(height: SmileDimens.spacingXs),
                   Semantics(
                     identifier:
                         UseSmileIDSampleTestIds.profileConfigContactError,
                     child: Text(
-                      problem,
+                      problem.message(context.strings),
                       style: UseSmileIDSampleType.textStyleCaption.copyWith(
                         color: colors.input.borderError,
                       ),
@@ -189,7 +195,9 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                 ],
                 const SizedBox(height: SmileDimens.spacingSm),
                 // Its own section, not a row in the card above: a webhook URL is not a user detail.
-                const UseSmileIDSampleSectionLabel(text: 'CALLBACK URL'),
+                UseSmileIDSampleSectionLabel(
+                  text: context.strings.profileConfigSectionCallback,
+                ),
                 const SizedBox(height: SmileDimens.spacingSm),
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -203,11 +211,12 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: UseSmileIDSampleShapes.card,
                     child: UseSmileIDSampleKeyValueEditRow(
-                      label: 'Webhook URL',
+                      label: context.strings.profileConfigCallbackLabel,
                       value: callbackOverride == null ? callbackUrl : '',
                       onChanged: onCallbackUrlChanged ?? (String _) {},
                       placeholder:
-                          callbackOverride ?? 'Uses your portal default',
+                          callbackOverride ??
+                          context.strings.profileConfigCallbackHint,
                       enabled: callbackOverride == null,
                       keyboardType: TextInputType.url,
                       testId: UseSmileIDSampleTestIds.profileConfigCallbackUrl,
@@ -217,14 +226,15 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                 if (onDelete != null) ...<Widget>[
                   const SizedBox(height: SmileDimens.spacingSm),
                   UseSmileIDSampleDestructiveRow(
-                    text: 'Delete profile',
+                    text: context.strings.profileConfigDelete,
                     onTap: () async {
                       if (await showUseSmileIDSampleConfirmation(
                         context,
-                        title: 'Delete ${title ?? organisation}?',
-                        message:
-                            'Its details and callback URL are removed from this device.',
-                        confirmLabel: 'Delete',
+                        title: context.strings.profileConfigDeleteTitle(
+                          profile: title ?? organisation,
+                        ),
+                        message: context.strings.profileConfigDeleteBody,
+                        confirmLabel: context.strings.commonDelete,
                         confirmTestId:
                             UseSmileIDSampleTestIds.profileDeleteConfirm,
                       )) {
@@ -241,7 +251,9 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(SmileDimens.spacingMd),
             child: UseSmileIDSampleButton(
-              text: isActive ? 'Save changes' : 'Use this profile',
+              text: isActive
+                  ? context.strings.profileConfigSave
+                  : context.strings.profileConfigUse,
               onPressed: onSave,
               enabled: (changed || !isActive) && details.contactProblem == null,
               testId: UseSmileIDSampleTestIds.profileConfigSave,

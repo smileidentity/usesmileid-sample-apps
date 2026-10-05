@@ -18,9 +18,9 @@ void main() {
   test(
     'every link row with a url opens it, in app unless the row says otherwise',
     () async {
-      final List<UseSmileIDSampleNavRow> rows = useSmileIDSampleNavRows
-          .where((UseSmileIDSampleNavRow row) => row.url != null)
-          .toList();
+      final List<UseSmileIDSampleNavRow> rows = useSmileIDSampleNavRows(
+        UseSmileIDSampleStrings.forLanguage('en'),
+      ).where((UseSmileIDSampleNavRow row) => row.url != null).toList();
       expect(rows, isNotEmpty);
       for (final UseSmileIDSampleNavRow row in rows) {
         await useSmileIDSampleOpenLink(

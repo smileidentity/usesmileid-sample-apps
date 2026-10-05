@@ -155,7 +155,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
       (
         UseSmileIDSampleCatalogueFailed(
           :final String reason,
-          :final String advice,
+          :final UseSmileIDSampleCatalogueAdvice advice,
         ),
         _,
       ) ||
@@ -163,7 +163,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
         _,
         UseSmileIDSampleCatalogueFailed(
           :final String reason,
-          :final String advice,
+          :final UseSmileIDSampleCatalogueAdvice advice,
         ),
       ) => UseSmileIDSampleCatalogueFailed<UseSmileIDSampleCountry>(
         reason,
@@ -197,7 +197,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
       _ready(UseSmileIDSampleCatalogueRules.idTypes(items, country)),
     UseSmileIDSampleCatalogueFailed(
       :final String reason,
-      :final String advice,
+      :final UseSmileIDSampleCatalogueAdvice advice,
     ) =>
       UseSmileIDSampleCatalogueFailed<UseSmileIDSampleKycIdType>(
         reason,
@@ -238,7 +238,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
             ),
           UseSmileIDSampleCatalogueFailed(
             :final String reason,
-            :final String advice,
+            :final UseSmileIDSampleCatalogueAdvice advice,
           ) =>
             UseSmileIDSampleCatalogueFailed<UseSmileIDSampleDocument>(
               reason,
@@ -260,7 +260,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
     (
       UseSmileIDSampleCatalogueFailed(
         :final String reason,
-        :final String advice,
+        :final UseSmileIDSampleCatalogueAdvice advice,
       ),
       _,
     ) ||
@@ -268,7 +268,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
       _,
       UseSmileIDSampleCatalogueFailed(
         :final String reason,
-        :final String advice,
+        :final UseSmileIDSampleCatalogueAdvice advice,
       ),
     ) => UseSmileIDSampleCatalogueFailed<T>(reason, advice: advice),
     (

@@ -9,6 +9,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The third-party notices, opened from the LEGAL section of settings.
@@ -50,13 +51,13 @@ class _UseSmileIDSampleLicensesScreenState
         child: Column(
           children: <Widget>[
             UseSmileIDSampleTopAppBar(
-              title: 'Open-source licenses',
+              title: context.strings.licensesTitle,
               onBack: widget.onBack,
             ),
             Expanded(
               child: widget.licenses.isEmpty
                   ? UseSmileIDSampleEmptyState(
-                      text: 'No notices bundled',
+                      text: context.strings.licensesEmptyTitle,
                       // Flutter's build step writes them, so an empty list means the asset did
                       // not reach this build rather than that nothing is licensed.
                       supportingText:

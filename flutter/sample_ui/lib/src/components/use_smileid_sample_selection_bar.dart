@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_glyphs.dart';
 
@@ -63,7 +64,9 @@ class UseSmileIDSampleSelectionBar extends StatelessWidget {
                   Semantics(
                     identifier: UseSmileIDSampleTestIds.selectionCount,
                     child: Text(
-                      '$selectedCount selected',
+                      context.strings.verificationsSelected(
+                        count: selectedCount,
+                      ),
                       style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
                         fontSize: _countSize,
                         fontWeight: FontWeight.w700,
@@ -74,8 +77,8 @@ class UseSmileIDSampleSelectionBar extends StatelessWidget {
                   const SizedBox(height: SmileDimens.spacingXxs),
                   Text(
                     selectedCount == 0
-                        ? 'Tap rows to select'
-                        : 'Tap "Hide from List" to confirm',
+                        ? context.strings.verificationsTapRows
+                        : context.strings.verificationsTapHide,
                     style: UseSmileIDSampleType.textStyleBodySm.copyWith(
                       fontSize: _hintSize,
                       color: colors.textMuted,
@@ -138,7 +141,7 @@ class _RemoveAction extends StatelessWidget {
                   ),
                   const SizedBox(width: SmileDimens.spacingXs),
                   Text(
-                    'Hide from List',
+                    context.strings.verificationsHideFromList,
                     style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
                       fontSize: _removeSize,
                       fontWeight: FontWeight.w700,

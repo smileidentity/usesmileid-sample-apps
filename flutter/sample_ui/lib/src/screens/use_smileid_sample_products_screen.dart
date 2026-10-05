@@ -14,6 +14,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// What the products header and session strip render, so the screen holds no clock and no store.
@@ -138,7 +139,9 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  UseSmileIDSampleSectionHeader(text: section.label),
+                  UseSmileIDSampleSectionHeader(
+                    text: section.label(context.strings),
+                  ),
                   const SizedBox(height: SmileDimens.spacingXs),
                   _Grid(section: section, onProductTap: onProductTap),
                 ],
@@ -173,7 +176,7 @@ class _Header extends StatelessWidget {
           children: <Widget>[
             Expanded(
               child: Text(
-                'Smile ID',
+                context.strings.productsTitle,
                 style: UseSmileIDSampleType.textStyleHeadingPage.copyWith(
                   fontSize: smileHeadingPageSize,
                   height: smileHeadingPageLineHeight / smileHeadingPageSize,
@@ -188,7 +191,7 @@ class _Header extends StatelessWidget {
             Semantics(
               identifier: UseSmileIDSampleTestIds.profileAvatarButton,
               button: true,
-              label: 'Switch profile',
+              label: context.strings.productsSwitchProfile,
               child: InkResponse(
                 onTap: onProfileTap,
                 radius: SmileDimens.sizeControlMd / 2,
@@ -214,7 +217,7 @@ class _Header extends StatelessWidget {
         ),
         const SizedBox(height: SmileDimens.spacingXxs),
         Text(
-          'Try our suite of products powered by our Anti-Fraud SDKs',
+          context.strings.productsSubtitle,
           style: UseSmileIDSampleType.textStyleCaption.copyWith(
             color: colors.foreground,
           ),
@@ -241,8 +244,8 @@ class _Grid extends StatelessWidget {
         final UseSmileIDSampleProduct product = products[index];
         final String asset = productIcon(product);
         return UseSmileIDSampleProductCard(
-          title: product.cardTitle,
-          family: product.cardFamily,
+          title: product.localizedCardTitle(context.strings),
+          family: product.localizedCardFamily(context.strings),
           hue: productHue(product),
           onTap: () => onProductTap(product),
           testId: UseSmileIDSampleTestIds.productCard(product.id),

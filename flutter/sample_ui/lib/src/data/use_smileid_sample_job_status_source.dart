@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../model/use_smileid_sample_status.dart';
+import '../use_smileid_sample_strings.dart';
 
 /// What a refresh did, so the screen can say so. The labels are product strings, identical across the four apps.
 sealed class UseSmileIDSampleStatusRefresh {
@@ -57,12 +58,41 @@ class UseSmileIDSampleStatusPartnerMismatch
 /// The refresh could not complete, with what to say about it.
 @immutable
 class UseSmileIDSampleStatusFailed extends UseSmileIDSampleStatusRefresh {
-  /// [reason] goes on screen, so it never carries an exception's message.
-  const UseSmileIDSampleStatusFailed(this.reason);
+  /// [reason] is the server's own wording, such as an HTTP code, shown as it came.
+  const UseSmileIDSampleStatusFailed(String this.reason) : _kind = null;
 
-  /// What the screen says happened.
-  final String reason;
+  /// The row was deleted while the request was out.
+  const UseSmileIDSampleStatusFailed.notStored()
+    : reason = null,
+      _kind = _Failure.notStored;
+
+  /// Anything else; [type] is the error's type, never its message, which carries the URL.
+  const UseSmileIDSampleStatusFailed.unexpected(String type)
+    : reason = type,
+      _kind = _Failure.unexpected;
+
+  /// The server's wording, or the error type for [UseSmileIDSampleStatusFailed.unexpected].
+  final String? reason;
+  final _Failure? _kind;
+
+  /// What the screen says happened, in the app's language.
+  String message(UseSmileIDSampleStrings strings) => switch (_kind) {
+    _Failure.notStored => strings.jobErrorNotStored,
+    _Failure.unexpected => strings.jobErrorUnexpected(type: reason ?? ''),
+    null => reason ?? '',
+  };
+
+  @override
+  bool operator ==(Object other) =>
+      other is UseSmileIDSampleStatusFailed &&
+      other.reason == reason &&
+      other._kind == _kind;
+
+  @override
+  int get hashCode => Object.hash(reason, _kind);
 }
+
+enum _Failure { notStored, unexpected }
 
 /// A live token session, as much of it as a refresh needs to decide whether it may ask.
 @immutable
@@ -97,13 +127,17 @@ abstract interface class UseSmileIDSampleJobStatusSource {
 /// What each outcome says on screen, in Android's words.
 String useSmileIDSampleRefreshLabel(
   UseSmileIDSampleStatusRefresh outcome,
+  UseSmileIDSampleStrings strings,
 ) => switch (outcome) {
-  final UseSmileIDSampleStatusUpdated updated =>
-    '${updated.status.label} — ${updated.message}',
-  UseSmileIDSampleStatusStillProcessing() => 'Still processing',
-  UseSmileIDSampleStatusNoSession() => 'Scan a token first',
-  UseSmileIDSampleStatusNoServerJob() => 'Not submitted under a scanned token',
-  UseSmileIDSampleStatusPartnerMismatch() => 'Submitted by a different partner',
-  final UseSmileIDSampleStatusFailed failed =>
-    'Could not check status: ${failed.reason}',
+  final UseSmileIDSampleStatusUpdated updated => strings.statusRefreshResult(
+    status: updated.status.label(strings),
+    message: updated.message,
+  ),
+  UseSmileIDSampleStatusStillProcessing() => strings.statusRefreshProcessing,
+  UseSmileIDSampleStatusNoSession() => strings.statusRefreshNoSession,
+  UseSmileIDSampleStatusNoServerJob() => strings.statusRefreshNotTokenJob,
+  UseSmileIDSampleStatusPartnerMismatch() => strings.statusRefreshOtherPartner,
+  final UseSmileIDSampleStatusFailed failed => strings.statusRefreshFailed(
+    reason: failed.message(strings),
+  ),
 };

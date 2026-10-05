@@ -13,6 +13,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// Switches the active profile: one tap, no confirm, and the sheet closes itself.
@@ -47,7 +48,7 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          'Switch profile',
+          context.strings.profileSwitchTitle,
           style: UseSmileIDSampleType.textStyleHeadingSection.copyWith(
             color: colors.textTitle,
           ),
@@ -56,8 +57,8 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
         for (int index = 0; index < profiles.length; index++) ...<Widget>[
           if (index > 0) const SizedBox(height: SmileDimens.spacingSm),
           UseSmileIDSampleProfileRow(
-            organisation: profiles[index].title,
-            supportingText: profiles[index].caption,
+            organisation: profiles[index].title(context.strings),
+            supportingText: profiles[index].caption(context.strings),
             initials: profiles[index].initials,
             selected: profiles[index].id == activeId,
             onTap: () => onSelect(profiles[index]),
@@ -72,8 +73,8 @@ class UseSmileIDSampleProfileSwitchSheet extends StatelessWidget {
           if (profiles.isNotEmpty)
             const SizedBox(height: SmileDimens.spacingSm),
           UseSmileIDSampleProfileRow(
-            organisation: 'New profile',
-            supportingText: 'Run jobs as someone else',
+            organisation: context.strings.profileSwitchNew,
+            supportingText: context.strings.profileSwitchNewHint,
             initials: '',
             selected: false,
             onTap: onCreate!,
@@ -120,7 +121,7 @@ class _UseSmileIDSampleNewProfileSheetState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          'New profile',
+          context.strings.profileSwitchNew,
           style: UseSmileIDSampleType.textStyleHeadingSection.copyWith(
             color: colors.textTitle,
           ),
@@ -129,11 +130,13 @@ class _UseSmileIDSampleNewProfileSheetState
         UseSmileIDSampleTextInput(
           value: _name,
           onChanged: (String value) => setState(() => _name = value),
-          placeholder: 'Profile name',
+          placeholder: context.strings.profileConfigName,
           testId: UseSmileIDSampleTestIds.newProfileName,
         ),
         const SizedBox(height: SmileDimens.spacingSm),
-        const UseSmileIDSampleSectionLabel(text: 'USER DETAILS'),
+        UseSmileIDSampleSectionLabel(
+          text: context.strings.newProfileSectionDetails,
+        ),
         const SizedBox(height: SmileDimens.spacingXs),
         for (final UseSmileIDSampleUserField field
             in UseSmileIDSampleUserField.values) ...<Widget>[
@@ -141,7 +144,7 @@ class _UseSmileIDSampleNewProfileSheetState
             value: field.valueOf(_details),
             onChanged: (String value) =>
                 setState(() => _details = field.apply(_details, value)),
-            placeholder: field.label,
+            placeholder: field.label(context.strings),
             keyboardType: field.keyboardType,
             isError:
                 UseSmileIDSampleContactRules.problem(
@@ -152,13 +155,13 @@ class _UseSmileIDSampleNewProfileSheetState
             errorMessage: UseSmileIDSampleContactRules.problem(
               field,
               field.valueOf(_details),
-            ),
+            )?.message(context.strings),
             testId: _sheetTestIds[field]!,
           ),
           const SizedBox(height: SmileDimens.spacingSm),
         ],
         UseSmileIDSampleButton(
-          text: 'Create profile',
+          text: context.strings.newProfileCreate,
           onPressed: () => widget.onCreate(_name.trim(), _details),
           enabled: _canCreate,
           testId: UseSmileIDSampleTestIds.newProfileSave,

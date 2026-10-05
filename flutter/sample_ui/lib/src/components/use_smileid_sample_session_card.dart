@@ -5,6 +5,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The active token session and its m:ss countdown.
@@ -50,7 +51,7 @@ class UseSmileIDSampleSessionCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              'ACTIVE TOKEN SESSION',
+              context.strings.sessionActive,
               style: UseSmileIDSampleType.textStyleOverline.copyWith(
                 letterSpacing: _labelTracking,
                 color: ink,
@@ -58,7 +59,7 @@ class UseSmileIDSampleSessionCard extends StatelessWidget {
             ),
             const SizedBox(height: SmileDimens.spacingXxs),
             Text(
-              'Linked to session $sessionId',
+              context.strings.sessionLinkedTo(sessionId: sessionId),
               style: UseSmileIDSampleType.textStyleCaption.copyWith(
                 fontWeight: FontWeight.values[smileCardFamilyWeight ~/ 100 - 1],
                 color: ink,
@@ -129,14 +130,14 @@ class UseSmileIDSampleSessionEndedBanner extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(
-              'TOKEN SESSION ENDED',
+              context.strings.sessionEnded,
               style: UseSmileIDSampleType.textStyleOverline.copyWith(
                 color: colors.banner.text,
               ),
             ),
             const SizedBox(height: SmileDimens.spacingXxs),
             Text(
-              'Scan a token to relink',
+              context.strings.sessionRelink,
               style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
                 color: colors.banner.title,
               ),
@@ -159,7 +160,7 @@ class UseSmileIDSampleSessionEndedBanner extends StatelessWidget {
                 ),
                 child: Center(
                   child: Text(
-                    'Scan',
+                    context.strings.sessionScan,
                     softWrap: false,
                     style: UseSmileIDSampleType.linkFont.copyWith(
                       color: colors.primary,

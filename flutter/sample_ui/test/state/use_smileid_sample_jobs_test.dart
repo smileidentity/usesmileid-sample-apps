@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 /// The job model, its grouping and the filter counts, which the screen only renders.
@@ -58,15 +59,27 @@ void main() {
 
     test('names today and yesterday and nothing older', () {
       expect(
-        useSmileIDSampleRelativeDay(startOf(DateTime(2026, 7, 16, 1)), now),
+        useSmileIDSampleRelativeDay(
+          startOf(DateTime(2026, 7, 16, 1)),
+          now,
+          _en,
+        ),
         'TODAY',
       );
       expect(
-        useSmileIDSampleRelativeDay(startOf(DateTime(2026, 7, 15, 23)), now),
+        useSmileIDSampleRelativeDay(
+          startOf(DateTime(2026, 7, 15, 23)),
+          now,
+          _en,
+        ),
         'YESTERDAY',
       );
       expect(
-        useSmileIDSampleRelativeDay(startOf(DateTime(2026, 7, 14, 23)), now),
+        useSmileIDSampleRelativeDay(
+          startOf(DateTime(2026, 7, 14, 23)),
+          now,
+          _en,
+        ),
         isEmpty,
       );
     });
@@ -90,6 +103,7 @@ void main() {
         useSmileIDSampleRelativeDay(
           startOf(DateTime(2026, 3, 29, 12)),
           springForward,
+          _en,
         ),
         'YESTERDAY',
       );
@@ -97,8 +111,16 @@ void main() {
 
     test('is cased and ordered as the design draws it', () {
       expect(
-        useSmileIDSampleAbsoluteDay(startOf(DateTime(2026, 7, 16))),
+        useSmileIDSampleAbsoluteDay(startOf(DateTime(2026, 7, 16)), 'en'),
         'THU, 16 JUL 2026',
+      );
+    });
+
+    test('names the weekday and month in the language the app shows', () async {
+      await initializeDateFormatting('fr');
+      expect(
+        useSmileIDSampleAbsoluteDay(startOf(DateTime(2026, 7, 16)), 'fr'),
+        'JEU., 16 JUIL. 2026',
       );
     });
 
@@ -132,7 +154,7 @@ void main() {
     test('are the four the design draws, and Processing is not among them', () {
       expect(
         UseSmileIDSampleJobFilter.values.map(
-          (UseSmileIDSampleJobFilter f) => f.label,
+          (UseSmileIDSampleJobFilter f) => f.label(_en),
         ),
         <String>['All', 'Clear', 'Attention', 'Blocked'],
       );
@@ -289,3 +311,5 @@ void main() {
     expect(state.countFor(UseSmileIDSampleJobFilter.all), 0);
   });
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

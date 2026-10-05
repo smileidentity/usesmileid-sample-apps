@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import '../model/use_smileid_sample_product.dart';
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_id_details.dart';
 
 /// Which list a product's form reads: the KYC products name an ID type, the document products a document, residency a passport's country.
@@ -68,6 +69,27 @@ final class UseSmileIDSampleCatalogueEmpty<T>
   const UseSmileIDSampleCatalogueEmpty();
 }
 
+/// What a failed list tells the reader to do, worded where it is shown.
+enum UseSmileIDSampleCatalogueAdvice {
+  /// The session's token was refused.
+  unauthorised,
+
+  /// Production is off for this partner, or the network is blocked.
+  forbidden,
+
+  /// No answer.
+  offline;
+
+  /// The line in the app's language.
+  String message(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleCatalogueAdvice.unauthorised =>
+      strings.catalogueAdviceUnauthorised,
+    UseSmileIDSampleCatalogueAdvice.forbidden =>
+      strings.catalogueAdviceForbidden,
+    UseSmileIDSampleCatalogueAdvice.offline => strings.catalogueAdviceOffline,
+  };
+}
+
 /// Failed or timed out.
 final class UseSmileIDSampleCatalogueFailed<T>
     extends UseSmileIDSampleCatalogue<T> {
@@ -81,7 +103,7 @@ final class UseSmileIDSampleCatalogueFailed<T>
   final String reason;
 
   /// What the error state tells the user, per `spec/catalogue-rules.json` failures.
-  final String advice;
+  final UseSmileIDSampleCatalogueAdvice advice;
 }
 
 /// An ID type as `supported_id_types` returns it.
@@ -348,16 +370,16 @@ abstract final class UseSmileIDSampleCatalogueRules {
   }
 
   /// The error state's supporting line for an HTTP [status], or null when there was no answer.
-  static String advice(int? status) => switch (status) {
-    401 =>
-      "The server refused this session's token. Link a new session, then try again",
-    403 =>
-      'Access denied: production may not be enabled for this partner, or this network is not allowed',
-    _ => defaultAdvice,
-  };
+  static UseSmileIDSampleCatalogueAdvice advice(int? status) =>
+      switch (status) {
+        401 => UseSmileIDSampleCatalogueAdvice.unauthorised,
+        403 => UseSmileIDSampleCatalogueAdvice.forbidden,
+        _ => defaultAdvice,
+      };
 
   /// The line for every failure the status does not name.
-  static const String defaultAdvice = 'Check your connection, then try again';
+  static const UseSmileIDSampleCatalogueAdvice defaultAdvice =
+      UseSmileIDSampleCatalogueAdvice.offline;
 
   /// The countries [family] offers, named from `supported_documents`.
   static List<UseSmileIDSampleCountry> countries(

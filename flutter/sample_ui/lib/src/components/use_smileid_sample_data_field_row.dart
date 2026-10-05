@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// A label/value pair on the verification-details card, optionally with a copy control.
@@ -124,7 +125,7 @@ class _CopyButton extends StatelessWidget {
   Widget build(BuildContext context) => Semantics(
     identifier: testId,
     button: true,
-    label: 'Copy $label',
+    label: context.strings.commonCopyNamed(label: label),
     child: Material(
       color: colors.surfaceTile,
       borderRadius: BorderRadius.circular(SmileDimens.radiusSm),

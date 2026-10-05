@@ -16,6 +16,8 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The host's camera preview.
@@ -29,15 +31,16 @@ typedef UseSmileIDSampleViewfinder =
 /// Why the scanner opened.
 enum UseSmileIDSampleScanReason {
   /// The expiry gate sent a run here.
-  sessionEnded('Token session ended. Scan to continue where you left off.'),
+  sessionEnded,
 
   /// A product tap with no live session sent a run here.
-  sessionNeeded('Scan a token to start this verification.');
-
-  const UseSmileIDSampleScanReason(this.caption);
+  sessionNeeded;
 
   /// The sentence shown in place of the generic caption.
-  final String caption;
+  String caption(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleScanReason.sessionEnded => strings.scanReasonSessionEnded,
+    UseSmileIDSampleScanReason.sessionNeeded => strings.scanReasonNeeded,
+  };
 }
 
 /// Scan token: links a session from the camera, by hand, or simulated.
@@ -156,7 +159,8 @@ class _UseSmileIDSampleScanTokenScreenState
           }
         });
       // A field's error sits under the field; a scanned code answers in the pill.
-      case UseSmileIDSampleTokenRejected(:final String reason):
+      case final UseSmileIDSampleTokenRejected rejected:
+        final String reason = rejected.message(context.strings);
         unawaited(HapticFeedback.heavyImpact());
         setState(() {
           if (fromField) {
@@ -188,7 +192,7 @@ class _UseSmileIDSampleScanTokenScreenState
     }
     setState(() {
       if (pasted == null || pasted.trim().isEmpty) {
-        _rejection = 'The clipboard holds no text to paste.';
+        _rejection = context.strings.scanClipboardEmpty;
       } else {
         _token = pasted;
         _rejection = null;
@@ -201,7 +205,8 @@ class _UseSmileIDSampleScanTokenScreenState
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
-    final String caption = widget.reason?.caption ?? _scanCaption;
+    final String caption =
+        widget.reason?.caption(context.strings) ?? context.strings.scanLineUp;
     return Semantics(
       identifier: UseSmileIDSampleTestIds.scanTokenScreen,
       container: true,
@@ -210,12 +215,12 @@ class _UseSmileIDSampleScanTokenScreenState
         child: Column(
           children: <Widget>[
             UseSmileIDSampleTopAppBar(
-              title: 'Scan token',
+              title: context.strings.scanTitle,
               onBack: widget.onBack,
               action: UseSmileIDSampleTopAppBarButton(
                 semanticLabel: widget.torchOn
-                    ? 'Turn flash off'
-                    : 'Turn flash on',
+                    ? context.strings.scanFlashOff
+                    : context.strings.scanFlashOn,
                 onTap: widget.onTorchToggle ?? () {},
                 emphasis: UseSmileIDSampleTopAppBarEmphasis.filled,
                 glyph: UseSmileIDSampleGlyphs.flash,
@@ -283,7 +288,7 @@ class _UseSmileIDSampleScanTokenScreenState
             const UseSmileIDSampleScanGlyph(),
             const SizedBox(height: SmileDimens.spacingSm),
             _copy(
-              _scanTitle,
+              context.strings.scanPoint,
               UseSmileIDSampleType.textStyleTitle,
               colors.textTitle,
             ),
@@ -338,7 +343,7 @@ class _UseSmileIDSampleScanTokenScreenState
               // No container: one was a white slab over the preview.
               if (searching) ...<Widget>[
                 _copy(
-                  _scanTitle,
+                  context.strings.scanPoint,
                   UseSmileIDSampleType.textStyleTitle.copyWith(
                     shadows: overCamera,
                   ),
@@ -386,16 +391,16 @@ class _UseSmileIDSampleScanTokenScreenState
         child: Text.rich(
           TextSpan(
             children: <InlineSpan>[
-              const TextSpan(text: 'Get a v3 token from the '),
+              TextSpan(text: context.strings.scanPortalPrefix),
               TextSpan(
-                text: 'Smile ID Portal',
+                text: context.strings.scanPortalLink,
                 style: TextStyle(
                   color: colors.textLink,
                   decoration: TextDecoration.underline,
                   decorationColor: colors.textLink,
                 ),
               ),
-              const TextSpan(text: ', under Security settings.'),
+              TextSpan(text: context.strings.scanPortalSuffix),
             ],
           ),
           textAlign: TextAlign.center,
@@ -418,10 +423,6 @@ class _UseSmileIDSampleScanTokenScreenState
 final TextStyle _captionStyle = UseSmileIDSampleType.textStyleCaption.copyWith(
   fontSize: 12.5,
 );
-
-const String _scanTitle = 'Point at a Smile token QR';
-const String _scanCaption =
-    'Line up the code inside the frame to link this device to a verification session.';
 
 /// How long "Session linked" stays readable.
 const Duration _linkedDwell = Duration(milliseconds: 900);

@@ -92,6 +92,7 @@ Widget _overSettings() => _shell(
     onNavRowTap: _ignoreNavRow,
     onCaptureModeTap: () {},
     onAppearanceTap: () {},
+    onLanguageTap: () {},
     onSignOut: () {},
     bottomInset: useSmileIDSampleNavBarClearance(context),
   ),

@@ -102,6 +102,17 @@ void main() {
     );
   });
 
+  testWidgets('id details complete in arabic', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_kyc_form_complete_ar',
+      () => rightToLeft(
+        UseSmileIDSampleLanguage.ar,
+        _kycForm(details: _selected),
+      ),
+    );
+  });
+
   testWidgets('id details with a number outside the format', (
     WidgetTester tester,
   ) async {

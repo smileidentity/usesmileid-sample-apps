@@ -192,10 +192,13 @@ void main() {
   test('failure cases', () {
     final Map<String, Object?> failures =
         rules['failures']! as Map<String, Object?>;
-    expect(UseSmileIDSampleCatalogueRules.defaultAdvice, failures['default']);
+    expect(
+      UseSmileIDSampleCatalogueRules.defaultAdvice.message(_en),
+      failures['default'],
+    );
     for (final Map<String, Object?> c in cases('failures')) {
       expect(
-        UseSmileIDSampleCatalogueRules.advice(c['status'] as int?),
+        UseSmileIDSampleCatalogueRules.advice(c['status'] as int?).message(_en),
         c['supportingText'],
         reason: '${c['status']}',
       );
@@ -259,13 +262,13 @@ void main() {
         expected['captureBothSides'],
         reason: name,
       );
-      expect(resolved.triggerText(), expected['triggerText'], reason: name);
+      expect(resolved.triggerText(_en), expected['triggerText'], reason: name);
       expect(
         useSmileIDSampleResolvedCaptureAs(
           document,
           null,
           const UseSmileIDSampleGenericDocument(),
-        ).matchRowLabel,
+        ).matchRowLabel(_en),
         expected['matchRowLabel'],
         reason: name,
       );
@@ -326,10 +329,7 @@ void main() {
   });
 
   test('the trigger placeholder is the spec\'s', () {
-    expect(
-      captureAs['triggerPlaceholder'],
-      UseSmileIDSampleCaptureAs.matchDocumentLabel,
-    );
+    expect(captureAs['triggerPlaceholder'], _en.captureAsMatchDocument);
   });
 }
 
@@ -348,3 +348,5 @@ UseSmileIDSampleDocument _document(Object? raw) {
     format: row['format']! as int,
   );
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

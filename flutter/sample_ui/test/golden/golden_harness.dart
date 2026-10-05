@@ -374,3 +374,15 @@ void _expectRealFont() {
     reason: 'the sample fonts are not loaded; call loadSampleTextFonts first',
   );
 }
+
+Widget rightToLeft(UseSmileIDSampleLanguage language, Widget child) =>
+    UseSmileIDSampleStringsScope(
+      language: language,
+      deviceLanguages: const <String>[],
+      child: Directionality(
+        textDirection: language.rightToLeft
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+        child: child,
+      ),
+    );

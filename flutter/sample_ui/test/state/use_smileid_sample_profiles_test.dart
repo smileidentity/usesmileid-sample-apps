@@ -102,7 +102,7 @@ void main() {
     final UseSmileIDSampleProfiles profiles = UseSmileIDSampleProfiles()
       ..add(organisation: '', defaults: ada);
 
-    expect(profiles.active?.title, 'Ada Okafor');
+    expect(profiles.active?.title(_en), 'Ada Okafor');
     expect(profiles.partnerName, 'Smile ID');
   });
 
@@ -271,3 +271,5 @@ void main() {
     });
   });
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

@@ -191,7 +191,7 @@ void main() {
   test(
     'the redacted toString reports the environment as a value, because a host is public',
     () {
-      expect(_session(_token()).toString(), contains('Sandbox'));
+      expect(_session(_token()).toString(), contains('sandbox'));
     },
   );
 
@@ -462,7 +462,7 @@ UseSmileIDSampleTokenSession? _session(String token) =>
     UseSmileIDSampleTokenDecoder.session(token);
 
 String _rejection(String token) =>
-    (_decode(token) as UseSmileIDSampleTokenRejected).reason;
+    (_decode(token) as UseSmileIDSampleTokenRejected).message(_en);
 
 UseSmileIDSampleTokenBindings _bindings(String payloadFields) => _session(
   _jwt('{"iat":$_iat,"exp":$_exp,$_sandboxUrl,"payload":{$payloadFields}}'),
@@ -493,3 +493,5 @@ const int _exp = 1755500900;
 const String _grantedAt = '2026-08-18T09:00:00Z';
 const String _header = '{"alg":"none","typ":"JWT"}';
 const String _sandboxUrl = '"api_url":"https://testapi.smileidentity.com/v3"';
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

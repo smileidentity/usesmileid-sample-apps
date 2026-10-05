@@ -18,6 +18,16 @@ void main() {
     );
   });
 
+  testWidgets('settings in arabic', (WidgetTester tester) async {
+    await goldens(
+      tester,
+      'screen_settings_ar',
+      () => rightToLeft(UseSmileIDSampleLanguage.ar, _settings()),
+      hostHeight: goldenScreenHeight,
+      fillsHost: true,
+    );
+  });
+
   testWidgets('settings survives max text scale', (WidgetTester tester) async {
     await assertSurvivesMaxTextScale(
       tester,
@@ -109,6 +119,7 @@ Widget _settings({
     onProfileTap: () {},
     onCaptureModeTap: () {},
     onAppearanceTap: () {},
+    onLanguageTap: () {},
     onNavRowTap: _ignoreRow,
     onSignOut: () {},
     // The DEBUG section is shown so the baseline records it; the host hides it on release.

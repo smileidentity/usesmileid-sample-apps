@@ -112,7 +112,9 @@ void main() {
 
   test('the navigation rows are the ones the design draws, in order', () {
     expect(
-      useSmileIDSampleNavRows.map((UseSmileIDSampleNavRow it) => it.id),
+      useSmileIDSampleNavRows(
+        UseSmileIDSampleStrings.forLanguage('en'),
+      ).map((UseSmileIDSampleNavRow it) => it.id),
       <String>['documentation', 'support', 'terms', 'privacy', 'licenses'],
     );
   });
@@ -121,7 +123,9 @@ void main() {
     final Map<String, Object?> links =
         settingsScreen['links']! as Map<String, Object?>;
     final Map<String, String?> ours = <String, String?>{
-      for (final UseSmileIDSampleNavRow row in useSmileIDSampleNavRows)
+      for (final UseSmileIDSampleNavRow row in useSmileIDSampleNavRows(
+        UseSmileIDSampleStrings.forLanguage('en'),
+      ))
         row.id: row.url,
     };
     expect(ours['documentation'], links['documentation']);
@@ -135,7 +139,7 @@ void main() {
   test('only the two legal pages leave the app', () {
     // Both serve their document as an embedded PDF, which a mobile browser shows as a stub.
     expect(
-      useSmileIDSampleNavRows
+      useSmileIDSampleNavRows(UseSmileIDSampleStrings.forLanguage('en'))
           .where((UseSmileIDSampleNavRow it) => !it.opensInApp)
           .map((UseSmileIDSampleNavRow it) => it.id),
       <String>['terms', 'privacy'],
@@ -177,7 +181,7 @@ void main() {
             (UseSmileIDSampleAppearance.dark, true, 'Dark'),
           ]) {
         expect(
-          appearance.label(deviceDark: device),
+          appearance.label(_en, deviceDark: device),
           label,
           reason: '$appearance on deviceDark $device',
         );
@@ -185,3 +189,5 @@ void main() {
     },
   );
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

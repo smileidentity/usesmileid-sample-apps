@@ -304,6 +304,8 @@ def dart_strings(data: dict) -> str:
     ids = [language["id"] for language in data["languages"]]
     out = [
         f"// {GENERATED}",
+        "// One accessor per key, named after it, so a doc comment each would only repeat the name.",
+        "// ignore_for_file: public_member_api_docs",
         "",
         "/// The sample's own copy, one accessor per key in `spec/l10n/app/en.json`.",
         "final class UseSmileIDSampleStrings {",

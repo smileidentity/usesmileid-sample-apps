@@ -15,6 +15,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// One verification, or an honest account of why there is nothing to show.
@@ -67,14 +68,14 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
       child: Column(
         children: <Widget>[
           UseSmileIDSampleTopAppBar(
-            title: 'Verification details',
+            title: context.strings.detailsTitle,
             onBack: onBack,
             // Offered only where there is something to hide: a delete on the empty state would
             // promise an action with no object.
             action: found == null || onDelete == null
                 ? null
                 : UseSmileIDSampleTopAppBarButton(
-                    semanticLabel: 'Hide verification from the app list',
+                    semanticLabel: context.strings.detailsHide,
                     onTap: onDelete!,
                     emphasis: UseSmileIDSampleTopAppBarEmphasis.destructive,
                     glyph: UseSmileIDSampleGlyphs.trash,
@@ -93,12 +94,14 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
                       const SizedBox.shrink()
                     else if (found == null)
                       UseSmileIDSampleEmptyState(
-                        text: 'No verification here',
-                        supportingText: 'Nothing stored for jobId = $jobId',
+                        text: context.strings.detailsMissingTitle,
+                        supportingText: context.strings.detailsMissingBody(
+                          jobId: jobId,
+                        ),
                         testId: UseSmileIDSampleTestIds.detailsEmpty,
                       )
                     else
-                      ..._fields(found, colors),
+                      ..._fields(context, found, colors),
                     // Rendered even with no job: a flow that failed before submission has nothing else to show.
                     if (result != null) ...<Widget>[
                       const SizedBox(height: SmileDimens.spacingSm),
@@ -132,6 +135,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
   }
 
   List<Widget> _fields(
+    BuildContext context,
     UseSmileIDSampleJob found,
     UseSmileIDSampleColors colors,
   ) => <Widget>[
@@ -139,7 +143,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
       children: <Widget>[
         Expanded(
           child: Text(
-            found.product.label,
+            found.product.title(context.strings),
             style: UseSmileIDSampleType.textStyleTitle.copyWith(
               color: colors.textTitle,
             ),
@@ -153,7 +157,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
       ],
     ),
     const SizedBox(height: SmileDimens.spacingMd),
-    const UseSmileIDSampleSectionLabel(text: 'DETAILS'),
+    UseSmileIDSampleSectionLabel(text: context.strings.detailsSection),
     const SizedBox(height: SmileDimens.spacingXs),
     DecoratedBox(
       decoration: BoxDecoration(
@@ -168,13 +172,14 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
         borderRadius: UseSmileIDSampleShapes.card,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: _rows(found, colors),
+          children: _rows(context, found, colors),
         ),
       ),
     ),
   ];
 
   List<Widget> _rows(
+    BuildContext context,
     UseSmileIDSampleJob found,
     UseSmileIDSampleColors colors,
   ) => <Widget>[
@@ -188,17 +193,19 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
       // Shows the elided id and copies the WHOLE one: the short form is for reading, and a
       // support ticket needs the id the API answers to.
       value: found.shortId,
-      onCopy: onCopy == null ? null : () => onCopy!('Job ID', found.id),
+      onCopy: onCopy == null
+          ? null
+          : () => onCopy!(context.strings.detailsJobId, found.id),
       testId: UseSmileIDSampleTestIds.detailField('jobId'),
       copyTestId: UseSmileIDSampleTestIds.detailCopy('jobId'),
     ),
     UseSmileIDSampleDataFieldRow(
-      label: 'Message',
+      label: context.strings.detailsMessage,
       value: found.message,
       testId: UseSmileIDSampleTestIds.detailField('message'),
     ),
     UseSmileIDSampleDataFieldRow(
-      label: 'Status',
+      label: context.strings.detailsStatus,
       value: found.httpStatusLabel,
       // Coloured by the TRANSPORT, not the verdict: a cleared job that failed to submit is still
       // a red row here, and a 202 on a blocked job is still green.
@@ -212,7 +219,9 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     UseSmileIDSampleDataFieldRow(
       label: 'User_id',
       value: found.shortUserId,
-      onCopy: onCopy == null ? null : () => onCopy!('User ID', found.userId),
+      onCopy: onCopy == null
+          ? null
+          : () => onCopy!(context.strings.detailsUserId, found.userId),
       testId: UseSmileIDSampleTestIds.detailField('userId'),
       copyTestId: UseSmileIDSampleTestIds.detailCopy('userId'),
     ),

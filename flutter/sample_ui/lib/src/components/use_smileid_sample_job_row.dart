@@ -7,6 +7,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_icon.dart';
 import 'use_smileid_sample_status_badge.dart';
@@ -167,7 +168,7 @@ class _JobRowText extends StatelessWidget {
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
       Text(
-        product.label,
+        product.title(context.strings),
         // One line at the design's scale; enlarged type wraps, because eliding it would clip.
         maxLines: stacks ? null : 1,
         overflow: stacks ? null : TextOverflow.ellipsis,

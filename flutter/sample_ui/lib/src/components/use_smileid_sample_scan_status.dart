@@ -5,6 +5,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// The scanner's state over the viewfinder.
@@ -35,13 +36,13 @@ class UseSmileIDSampleScanStatus extends StatelessWidget {
     };
     final String? detail = switch (state) {
       UseSmileIDSampleScanSearching() => null,
-      UseSmileIDSampleScanFound() => 'Reading it now',
+      UseSmileIDSampleScanFound() => context.strings.scanReading,
       // Never the token.
       UseSmileIDSampleScanLinked(
         :final String handle,
         :final String remaining,
       ) =>
-        '$handle · $remaining left',
+        context.strings.scanRemaining(handle: handle, remaining: remaining),
       UseSmileIDSampleScanRejected(:final String reason) => reason,
     };
     return DecoratedBox(
@@ -66,7 +67,7 @@ class UseSmileIDSampleScanStatus extends StatelessWidget {
                 ],
                 Flexible(
                   child: Text(
-                    _headline,
+                    _headline(context),
                     textAlign: TextAlign.center,
                     style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
                       color: foreground,
@@ -103,7 +104,7 @@ class UseSmileIDSampleScanStatus extends StatelessWidget {
                       child: Center(
                         widthFactor: 1,
                         child: Text(
-                          'Try again',
+                          context.strings.commonTryAgain,
                           style: UseSmileIDSampleType.linkFont.copyWith(
                             fontWeight: FontWeight.w700,
                             color: foreground,
@@ -120,11 +121,11 @@ class UseSmileIDSampleScanStatus extends StatelessWidget {
     );
   }
 
-  String get _headline => switch (state) {
-    UseSmileIDSampleScanSearching() => 'Point at a Smile token QR',
-    UseSmileIDSampleScanFound() => 'Token found',
-    UseSmileIDSampleScanLinked() => 'Session linked',
-    UseSmileIDSampleScanRejected() => 'That is not a token',
+  String _headline(BuildContext context) => switch (state) {
+    UseSmileIDSampleScanSearching() => context.strings.scanPoint,
+    UseSmileIDSampleScanFound() => context.strings.scanFound,
+    UseSmileIDSampleScanLinked() => context.strings.scanLinked,
+    UseSmileIDSampleScanRejected() => context.strings.scanNotAToken,
   };
 }
 

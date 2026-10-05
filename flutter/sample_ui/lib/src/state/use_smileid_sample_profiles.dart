@@ -1,4 +1,5 @@
 import 'dart:convert';
+import '../use_smileid_sample_strings.dart';
 
 import 'use_smileid_sample_launch_args.dart';
 import 'use_smileid_sample_user_details_requirement.dart';
@@ -44,35 +45,45 @@ class UseSmileIDSampleUserDetails {
 /// The four fields a profile carries, in the order the design lists them.
 enum UseSmileIDSampleUserField {
   /// Given name; required.
-  firstName('firstName', 'First name', 'Add first name', true),
+  firstName('firstName', true),
 
   /// Family name; required.
-  lastName('lastName', 'Last name', 'Add last name', true),
+  lastName('lastName', true),
 
   /// Email; never gates anything.
-  email('email', 'Email', 'name@company.com', false),
+  email('email', false),
 
   /// Phone; never gates anything.
-  phone('phone', 'Phone', '+254 700 000 000', false);
+  phone('phone', false);
 
-  const UseSmileIDSampleUserField(
-    this.id,
-    this.title,
-    this.placeholder,
-    this.isRequired,
-  );
+  const UseSmileIDSampleUserField(this.id, this.isRequired);
 
   /// The id that suffixes this field's test id.
   final String id;
 
   /// The field's title, the one source every screen's label is built from.
-  final String title;
+  String title(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleUserField.firstName => strings.userFieldFirstName,
+    UseSmileIDSampleUserField.lastName => strings.userFieldLastName,
+    UseSmileIDSampleUserField.email => strings.userFieldEmail,
+    UseSmileIDSampleUserField.phone => strings.userFieldPhone,
+  };
 
   /// The row's label: the title, marked optional where the design does; the row appends any asterisk.
-  String get label => isRequired ? title : '$title (optional)';
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleUserField.email => strings.userFieldEmailOptional,
+    UseSmileIDSampleUserField.phone => strings.userFieldPhoneOptional,
+    _ => title(strings),
+  };
 
   /// Shown while the value is empty.
-  final String placeholder;
+  String placeholder(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleUserField.firstName =>
+      strings.userFieldFirstNamePlaceholder,
+    UseSmileIDSampleUserField.lastName => strings.userFieldLastNamePlaceholder,
+    UseSmileIDSampleUserField.email => strings.userFieldEmailPlaceholder,
+    UseSmileIDSampleUserField.phone => strings.userFieldPhonePlaceholder,
+  };
 
   /// Whether the design marks it required.
   final bool isRequired;
@@ -143,11 +154,12 @@ class UseSmileIDSampleProfile {
   String get person => '${defaults.firstName} ${defaults.lastName}'.trim();
 
   /// What a row calls it: the organisation, or the person when it names none.
-  String get title => organisation.trim().isNotEmpty
+  String title(UseSmileIDSampleStrings strings) =>
+      organisation.trim().isNotEmpty
       ? organisation
       : person.isNotEmpty
       ? person
-      : _unnamedProfile;
+      : strings.profilesUnnamed;
 
   /// The person's initials, as the design has them, falling back to the organisation.
   String get initials {
@@ -163,7 +175,8 @@ class UseSmileIDSampleProfile {
   }
 
   /// What a row says under the organisation: the person, or a placeholder until details are saved.
-  String get caption => person.isEmpty ? _noUserDetailsCaption : person;
+  String caption(UseSmileIDSampleStrings strings) =>
+      person.isEmpty ? strings.profilesNoDetails : person;
 
   /// A copy with the given parts replaced.
   UseSmileIDSampleProfile copyWith({
@@ -383,9 +396,6 @@ class UseSmileIDSampleProfiles {
   /// What a plain launch has always sent as the partner id, so no profile changes nothing on the wire.
   static const String firstProfileId = 'p-1';
 
-  /// What the header, settings card and form say while there is no profile.
-  static const String noProfileLabel = 'No profile yet';
-
   static List<UseSmileIDSampleProfile> _distinct(
     List<UseSmileIDSampleProfile> profiles,
   ) {
@@ -456,9 +466,3 @@ abstract final class UseSmileIDSampleProfilesCodec {
 
   static String _text(Object? value) => value is String ? value : '';
 }
-
-/// What a profile row says when no details have been saved.
-const String _noUserDetailsCaption = 'No user details yet';
-
-/// A profile naming neither an organisation nor a person, which only a token binding both names allows.
-const String _unnamedProfile = 'Unnamed profile';

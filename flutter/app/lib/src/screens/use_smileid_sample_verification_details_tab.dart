@@ -139,6 +139,11 @@ class _UseSmileIDSampleVerificationDetailsTabState
     if (onEntry && outcome is UseSmileIDSampleStatusStillProcessing) {
       return;
     }
-    setState(() => _refreshNotice = useSmileIDSampleRefreshLabel(outcome));
+    setState(
+      () => _refreshNotice = useSmileIDSampleRefreshLabel(
+        outcome,
+        context.strings,
+      ),
+    );
   }
 }

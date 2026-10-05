@@ -21,6 +21,7 @@ class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
     this.openDrawer = false,
     this.openCaptureMode = false,
     this.openAppearance = false,
+    this.openLanguage = false,
     super.key,
   });
 
@@ -32,6 +33,9 @@ class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
 
   /// Whether a link asked for the appearance sheet.
   final bool openAppearance;
+
+  /// Whether a link asked for the language sheet.
+  final bool openLanguage;
 
   @override
   ConsumerState<UseSmileIDSampleSettingsTab> createState() =>
@@ -45,15 +49,20 @@ class _UseSmileIDSampleSettingsTabState
     super.initState();
     // After the first frame, because a sheet cannot be presented while this is still building —
     // and once only, so returning here later does not replay the link's sheet.
-    if (widget.openDrawer || widget.openCaptureMode || widget.openAppearance) {
+    if (widget.openDrawer ||
+        widget.openCaptureMode ||
+        widget.openAppearance ||
+        widget.openLanguage) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!mounted) return;
         if (widget.openDrawer) {
           _openScenarioDrawer();
         } else if (widget.openCaptureMode) {
           _openCaptureModeFromLink();
-        } else {
+        } else if (widget.openAppearance) {
           _openAppearanceFromLink();
+        } else {
+          _openLanguageFromLink();
         }
       });
     }
@@ -84,6 +93,13 @@ class _UseSmileIDSampleSettingsTabState
         }
       });
     }
+    if (widget.openLanguage && !oldWidget.openLanguage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _openLanguageFromLink();
+        }
+      });
+    }
   }
 
   @override
@@ -95,7 +111,8 @@ class _UseSmileIDSampleSettingsTabState
       state: UseSmileIDSampleSettingsState(
         settings: ref.watch(useSmileIDSampleSettingsProvider),
         organisation:
-            profiles.active?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
+            profiles.active?.title(context.strings) ??
+            context.strings.profilesNoProfile,
         initials: profiles.active?.initials ?? '',
         versionLabel: useSmileIDSampleVersionLabel,
         avatarColor: avatarColorForProfile(profiles.activeIndex),
@@ -117,6 +134,7 @@ class _UseSmileIDSampleSettingsTabState
       onNavRowTap: _openNavRow,
       onCaptureModeTap: _showCaptureMode,
       onAppearanceTap: _showAppearance,
+      onLanguageTap: _showLanguage,
       // Debug builds only; every flow reaches the drawer by its deep link instead.
       onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
       onSignOut: () {
@@ -162,7 +180,7 @@ class _UseSmileIDSampleSettingsTabState
 
   Future<void> _showCaptureMode() => showUseSmileIDSampleSheet<void>(
     context: context,
-    title: 'Capture mode',
+    title: context.strings.captureModeTitle,
     testId: UseSmileIDSampleTestIds.captureModeSheet,
     builder: (BuildContext sheetContext) => Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) =>
@@ -190,9 +208,42 @@ class _UseSmileIDSampleSettingsTabState
     }
   }
 
+  /// Hands the route back on dismiss, as the drawer's link does.
+  Future<void> _openLanguageFromLink() async {
+    final GoRouter router = GoRouter.of(context);
+    await _showLanguage();
+    if (router.routerDelegate.currentConfiguration.uri.path ==
+        UseSmileIDSampleRoutes.language) {
+      router.go(UseSmileIDSampleRoutes.settings);
+    }
+  }
+
+  Future<void> _showLanguage() => showUseSmileIDSampleSheet<void>(
+    context: context,
+    title: context.strings.languageTitle,
+    testId: UseSmileIDSampleTestIds.languageSheet,
+    builder: (BuildContext sheetContext) => Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+          UseSmileIDSampleLanguageSheet(
+            selected: ref.watch(useSmileIDSampleSettingsProvider).language,
+            deviceLanguages: UseSmileIDSampleStringsScope.deviceLanguagesOf(
+              context,
+            ),
+            onSelect: (UseSmileIDSampleLanguage language) {
+              unawaited(
+                ref
+                    .read(useSmileIDSampleSettingsProvider.notifier)
+                    .setLanguage(language),
+              );
+              Navigator.of(sheetContext).pop();
+            },
+          ),
+    ),
+  );
+
   Future<void> _showAppearance() => showUseSmileIDSampleSheet<void>(
     context: context,
-    title: 'Theme',
+    title: context.strings.appearanceTitle,
     testId: UseSmileIDSampleTestIds.appearanceSheet,
     builder: (BuildContext sheetContext) => Consumer(
       builder: (BuildContext context, WidgetRef ref, Widget? _) =>

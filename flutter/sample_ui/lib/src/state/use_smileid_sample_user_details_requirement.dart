@@ -1,3 +1,4 @@
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_contact_rules.dart';
 import 'use_smileid_sample_profiles.dart';
 import 'use_smileid_sample_token_decoder.dart';
@@ -51,24 +52,29 @@ class UseSmileIDSampleUserDetailsRequirement {
       details.contactProblem == null;
 
   /// The row's label, which gains "(optional)" only once a token has covered contact.
-  String labelFor(UseSmileIDSampleUserField field) =>
-      contact && !field.isRequired ? field.title : field.label;
+  String labelFor(
+    UseSmileIDSampleUserField field,
+    UseSmileIDSampleStrings strings,
+  ) => contact && !field.isRequired
+      ? field.title(strings)
+      : field.label(strings);
 
   /// What this requirement still asks for; the SCREEN decides when nothing is outstanding.
-  String get prompt {
+  String prompt(UseSmileIDSampleStrings strings) {
     final List<String> outstanding = <String>[
-      if (firstName) 'first name',
-      if (lastName) 'last name',
-      if (contact) 'an email or phone number',
+      if (firstName) strings.userRequirementFirstName,
+      if (lastName) strings.userRequirementLastName,
+      if (contact) strings.userRequirementContact,
     ];
     if (outstanding.isEmpty) {
-      return 'Tap any field to edit.';
+      return strings.userDetailsEditHint;
     }
-    if (outstanding.length == 1) {
-      final String only = outstanding.single;
-      return '${only[0].toUpperCase()}${only.substring(1)} is required.';
-    }
-    return 'Required: ${outstanding.join(', ')}.';
+    final String sentence = outstanding.length == 1
+        ? strings.userRequirementOne(field: outstanding.single)
+        : strings.userRequirementMany(
+            fields: outstanding.join(strings.userRequirementSeparator),
+          );
+    return '${sentence[0].toUpperCase()}${sentence.substring(1)}';
   }
 }
 

@@ -125,7 +125,7 @@ void main() {
   test('the two section headings are the ones the ruling settled', () {
     expect(
       UseSmileIDSampleProductSection.values.map(
-        (UseSmileIDSampleProductSection it) => it.label,
+        (UseSmileIDSampleProductSection it) => it.label(_en),
       ),
       <String>['Authentication', 'Onboarding'],
     );
@@ -134,7 +134,7 @@ void main() {
   test('the four statuses are Title case, not upper-cased', () {
     expect(
       UseSmileIDSampleStatus.values.map(
-        (UseSmileIDSampleStatus it) => it.label,
+        (UseSmileIDSampleStatus it) => it.label(_en),
       ),
       <String>['Clear', 'Attention', 'Blocked', 'Processing'],
     );
@@ -147,3 +147,5 @@ void main() {
     );
   });
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

@@ -113,6 +113,7 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
   'genericDocumentSheet.default': 'sheet_generic_document',
   'captureModeSheet.default': 'sheet_capture_mode',
   'appearanceSheet.default': 'sheet_appearance',
+  'languageSheet.default': 'sheet_language',
   'settings.default': 'screen_settings',
   'settings.altProfile': 'screen_settings_alt_profile',
   'settings.newlyCreatedProfile': 'screen_settings_new_profile',

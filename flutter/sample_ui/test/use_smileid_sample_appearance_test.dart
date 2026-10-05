@@ -30,6 +30,7 @@ void main() {
         onSignOut: () {},
         onCaptureModeTap: () {},
         onAppearanceTap: () => opened = true,
+        onLanguageTap: () {},
       ),
     );
 

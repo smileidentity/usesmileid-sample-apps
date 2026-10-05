@@ -40,7 +40,7 @@ void main() {
             ),
           );
       expect(requirement.isSatisfied, isFalse);
-      expect(requirement.prompt, 'An email or phone number is required.');
+      expect(requirement.prompt(_en), 'An email or phone number is required.');
       expect(
         requirement.isSatisfiedBy(const UseSmileIDSampleUserDetails()),
         isFalse,
@@ -64,3 +64,5 @@ void main() {
     expect(requirement.contact, isFalse);
   });
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');
