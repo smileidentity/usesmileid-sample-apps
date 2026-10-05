@@ -11,7 +11,7 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
     "scenarioItemPrefix", "themeItemPrefix",
     "jobRowPrefix", "filterChipPrefix", "filterCountPrefix", "selectionCheckboxPrefix",
     "licenseRowPrefix", "licenseTextPrefix", "licenseLinkPrefix",
-    "documentOptionPrefix", "captureAsOptionPrefix", "captureModeOptionPrefix",
+    "documentOptionPrefix", "captureAsOptionPrefix", "captureModeOptionPrefix", "appearanceOptionPrefix",
     "genericDocumentOrientationPrefix", "genericDocumentAspectRatioPrefix"
   ]
 

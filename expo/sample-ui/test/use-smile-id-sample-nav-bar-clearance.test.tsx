@@ -49,11 +49,13 @@ const screens = {
         organisation: 'UpTech Finance',
         initials: 'KA',
         versionLabel: 'Smile ID · 1.0.0',
+        deviceDark: false,
       }}
       onSettingChange={noop}
       onProfilePress={noop}
       onNavRowPress={noop}
       onCaptureModePress={noop}
+      onAppearancePress={noop}
       onSignOut={noop}
       bottomInset={bottomInset}
     />

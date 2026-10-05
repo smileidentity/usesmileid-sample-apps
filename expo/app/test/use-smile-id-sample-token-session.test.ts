@@ -21,6 +21,8 @@ import { smileIDSampleStatusOutcome, smileIDSampleStatusUrl } from '../src/statu
 
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
+jest.mock('@smileid/usesmileid_mlkit_document', () => ({ useSmileIDMlkitDocument: { key: 'mlkit-document' } }));
+jest.mock('@smileid/usesmileid_vision_document', () => ({ useSmileIDVisionDocument: { key: 'vision-document' } }));
 
 const productFor = (id: string): UseSmileIDSampleProduct => smileIDSampleProducts.find((product) => product.id === id)!;
 const span = (id: string) => smileIDSampleSimulatedSpans.find((candidate) => candidate.id === id)!;

@@ -22,11 +22,29 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     assertRows([
       Self.enhancedSmartSelfie: true,
       Self.agentMode: false,
-      Self.darkMode: false,
       Self.consentStep: true,
       Self.instructionsStep: true,
       Self.previewStep: true
     ])
+  }
+
+  /// Reached by its link, as a flow reaches every sheet; the seed pins Light, and a pick holds for the process.
+  func testTheAppearanceSheetChecksTheChoiceAndAPickHolds() {
+    launch()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    open("settings/appearance")
+    XCTAssertTrue(element(Self.appearanceSheet).waitForExistence(timeout: 10))
+    XCTAssertTrue(app.buttons["sample_appearance_option_light"].isSelected, "the seeded appearance is not checked")
+    XCTAssertFalse(app.buttons["sample_appearance_option_system"].isSelected)
+
+    app.buttons["sample_appearance_option_dark"].tap()
+
+    XCTAssertTrue(element(Self.appearanceSheet).waitForNonExistence(timeout: 5))
+    XCTAssertTrue(element(Self.appearance).waitForExistence(timeout: 10))
+    open("settings/appearance")
+    XCTAssertTrue(element(Self.appearanceSheet).waitForExistence(timeout: 10))
+    XCTAssertTrue(app.buttons["sample_appearance_option_dark"].isSelected, "the pick did not hold")
+    app.buttons["sample_appearance_option_light"].tap()
   }
 
   func testOneTapOnAgentModeMovesBothCaptureRowsAndTheirSupportingLines() {
@@ -192,9 +210,20 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
   }
 
+  private func open(_ path: String) {
+    XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
+    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    let confirm = springboard.buttons["Open"]
+    if confirm.waitForExistence(timeout: 2) {
+      confirm.tap()
+    }
+    XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
+  }
+
   private static let enhancedSmartSelfie = "sample_setting_enhanced_smart_selfie"
   private static let agentMode = "sample_setting_agent_mode"
-  private static let darkMode = "sample_setting_dark_mode"
+  private static let appearance = "sample_setting_appearance"
+  private static let appearanceSheet = "sample_appearance_sheet"
   private static let consentStep = "sample_setting_consent_step"
   private static let instructionsStep = "sample_setting_instructions_step"
   private static let previewStep = "sample_setting_preview_step"

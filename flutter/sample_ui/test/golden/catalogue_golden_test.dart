@@ -210,6 +210,19 @@ void main() {
     );
   });
 
+  testWidgets('appearance survives max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      UseSmileIDSampleAppearanceSheet(
+        selected: UseSmileIDSampleAppearance.system,
+        deviceDark: true,
+        onSelect: (UseSmileIDSampleAppearance _) {},
+      ),
+    );
+  });
+
   testWidgets('capture mode', (WidgetTester tester) async {
     await goldens(
       tester,
@@ -217,6 +230,21 @@ void main() {
       () => UseSmileIDSampleCaptureModeSheet(
         selected: UseSmileIDSampleCaptureMode.autoWithFallback,
         onSelect: (UseSmileIDSampleCaptureMode _) {},
+      ),
+    );
+  });
+
+  testWidgets('appearance', (WidgetTester tester) async {
+    await goldens(
+      tester,
+      'sheet_appearance',
+      () => Builder(
+        // The baseline's own brightness stands in for the device's, so the System label matches it.
+        builder: (BuildContext context) => UseSmileIDSampleAppearanceSheet(
+          selected: UseSmileIDSampleAppearance.system,
+          deviceDark: Theme.of(context).brightness == Brightness.dark,
+          onSelect: (UseSmileIDSampleAppearance _) {},
+        ),
       ),
     );
   });

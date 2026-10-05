@@ -17,6 +17,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// Seeded from the store and written back through it, so the settings survive the process deaths the camera causes.
   @Published private(set) var settings: UseSmileIDSampleSettings
 
+  /// The device's own theme, which the System label names; written only by `UseSmileIDSampleDeviceScheme`.
+  @Published var deviceDark = false
+
   /// The profiles the app can act as; every change is stored unless the launch seeded fixtures.
   @Published var profiles: UseSmileIDSampleProfiles {
     didSet {
@@ -274,6 +277,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
 
   func setCaptureMode(_ mode: UseSmileIDSampleCaptureMode) {
     store.setCaptureMode(mode)
+    settings = store.settings
+  }
+
+  func setAppearance(_ appearance: UseSmileIDSampleAppearance) {
+    store.setAppearance(appearance)
     settings = store.settings
   }
 

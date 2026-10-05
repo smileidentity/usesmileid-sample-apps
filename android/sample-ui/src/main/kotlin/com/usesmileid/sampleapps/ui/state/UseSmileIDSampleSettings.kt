@@ -13,7 +13,6 @@ data class UseSmileIDSampleSettings(
     /** ON is the head-turn challenge, which is the default the design draws. */
     val enhancedSmartSelfie: Boolean = true,
     val agentMode: Boolean = false,
-    val darkMode: Boolean = false,
     val consentStep: Boolean = true,
     val instructionsStep: Boolean = true,
     val previewStep: Boolean = true,
@@ -25,12 +24,13 @@ data class UseSmileIDSampleSettings(
     val selfieFirst: Boolean = false,
     /** A typed field rather than one of the switches: three values, not two. */
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
+    /** Typed like [captureMode]; System follows the device. */
+    val appearance: UseSmileIDSampleAppearance = UseSmileIDSampleAppearance.System,
 ) {
     /** Reads one row, so a caller can diff two states without naming every field. */
     operator fun get(setting: UseSmileIDSampleSetting): Boolean = when (setting) {
         UseSmileIDSampleSetting.EnhancedSmartSelfie -> enhancedSmartSelfie
         UseSmileIDSampleSetting.AgentMode -> agentMode
-        UseSmileIDSampleSetting.DarkMode -> darkMode
         UseSmileIDSampleSetting.ConsentStep -> consentStep
         UseSmileIDSampleSetting.InstructionsStep -> instructionsStep
         UseSmileIDSampleSetting.PreviewStep -> previewStep
@@ -50,7 +50,6 @@ data class UseSmileIDSampleSettings(
                 copy(enhancedSmartSelfie = enabled, agentMode = agentMode && !enabled)
             UseSmileIDSampleSetting.AgentMode ->
                 copy(agentMode = enabled, enhancedSmartSelfie = enhancedSmartSelfie && !enabled)
-            UseSmileIDSampleSetting.DarkMode -> copy(darkMode = enabled)
             UseSmileIDSampleSetting.ConsentStep -> copy(consentStep = enabled)
             UseSmileIDSampleSetting.InstructionsStep -> copy(instructionsStep = enabled)
             UseSmileIDSampleSetting.PreviewStep -> copy(previewStep = enabled)
@@ -64,7 +63,6 @@ data class UseSmileIDSampleSettings(
 enum class UseSmileIDSampleSetting {
     EnhancedSmartSelfie,
     AgentMode,
-    DarkMode,
     ConsentStep,
     InstructionsStep,
     PreviewStep,
@@ -78,4 +76,26 @@ enum class UseSmileIDSampleCaptureMode(val id: String, val label: String, val su
     Auto("auto", "Automatic", "Captures when the document is held steady"),
     Manual("manual", "Manual", "The shutter shows at once"),
     AutoWithFallback("autoWithFallback", "Automatic with manual fallback", "The shutter shows after 10 seconds"),
+}
+
+/** The app's theme choice; System follows the device's own theme. */
+enum class UseSmileIDSampleAppearance(val id: String) {
+    System("system"),
+    Light("light"),
+    Dark("dark"),
+    ;
+
+    /** Whether the app renders dark, given the device's own theme. */
+    fun isDark(deviceDark: Boolean): Boolean = when (this) {
+        System -> deviceDark
+        Light -> false
+        Dark -> true
+    }
+
+    /** System names the device's theme, never the one the app renders, so the row says why it looks the way it does. */
+    fun label(deviceDark: Boolean): String = when (this) {
+        System -> if (deviceDark) "System (Dark)" else "System (Light)"
+        Light -> "Light"
+        Dark -> "Dark"
+    }
 }

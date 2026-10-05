@@ -71,6 +71,8 @@ public struct UseSmileIDSampleSettingsState: Equatable {
   public var avatarColor: Color
   /// False while there is no profile, when the card invites creating one.
   public var hasProfile: Bool
+  /// The device's own theme, which the System label names; the shell reads it where the app's choice cannot mask it.
+  public var deviceDark: Bool
 
   public init(
     settings: UseSmileIDSampleSettings,
@@ -79,7 +81,8 @@ public struct UseSmileIDSampleSettingsState: Equatable {
     versionLabel: String,
     consentBoundByToken: Bool = false,
     avatarColor: Color = smileProfileHues[0],
-    hasProfile: Bool = true
+    hasProfile: Bool = true,
+    deviceDark: Bool
   ) {
     self.settings = settings
     self.organisation = organisation
@@ -88,6 +91,7 @@ public struct UseSmileIDSampleSettingsState: Equatable {
     self.consentBoundByToken = consentBoundByToken
     self.avatarColor = avatarColor
     self.hasProfile = hasProfile
+    self.deviceDark = deviceDark
   }
 }
 
@@ -98,6 +102,7 @@ public struct SettingsScreen: View {
   private let onProfile: () -> Void
   private let onNavRow: (UseSmileIDSampleNavRow) -> Void
   private let onCaptureMode: () -> Void
+  private let onAppearance: () -> Void
   /// `nil` hides the DEBUG section: `sample-ui` may not read a host's build configuration.
   private let onOpenScenarioDrawer: (() -> Void)?
   private let onSignOut: () -> Void
@@ -111,6 +116,7 @@ public struct SettingsScreen: View {
     onProfile: @escaping () -> Void,
     onNavRow: @escaping (UseSmileIDSampleNavRow) -> Void,
     onCaptureMode: @escaping () -> Void = {},
+    onAppearance: @escaping () -> Void = {},
     onOpenScenarioDrawer: (() -> Void)? = nil,
     onSignOut: @escaping () -> Void
   ) {
@@ -119,6 +125,7 @@ public struct SettingsScreen: View {
     self.onProfile = onProfile
     self.onNavRow = onNavRow
     self.onCaptureMode = onCaptureMode
+    self.onAppearance = onAppearance
     self.onOpenScenarioDrawer = onOpenScenarioDrawer
     self.onSignOut = onSignOut
   }
@@ -204,13 +211,16 @@ public struct SettingsScreen: View {
 
   private var appearanceSection: some View {
     UseSmileIDSampleSectionSurface(label: "APPEARANCE") {
-      switchRow(
-        title: "Dark mode",
-        icon: SmileIcons.darkMode,
-        supporting: "Switch appearance",
-        setting: .darkMode,
-        testId: UseSmileIDSampleTestIds.settingDarkMode
-      )
+      UseSmileIDSampleSettingRow(
+        title: "Theme",
+        supportingText: state.settings.appearance.label(deviceDark: state.deviceDark),
+        testId: UseSmileIDSampleTestIds.settingAppearance,
+        onTap: onAppearance
+      ) {
+        UseSmileIDSampleIcon(SmileIcons.darkMode, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
+      } trailing: {
+        UseSmileIDSampleSettingRowChevron()
+      }
     }
   }
 

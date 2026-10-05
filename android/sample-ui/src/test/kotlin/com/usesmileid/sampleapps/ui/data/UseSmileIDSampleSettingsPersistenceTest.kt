@@ -5,7 +5,9 @@ import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
 import java.io.File
 import kotlinx.coroutines.flow.first
@@ -95,7 +97,58 @@ class UseSmileIDSampleSettingsPersistenceTest {
         assertFalse(settings.enhancedSmartSelfie)
     }
 
+    @Test
+    fun `no stored appearance follows the device`() = runTest {
+        assertEquals(UseSmileIDSampleAppearance.System, store.settings.first().appearance)
+    }
+
+    @Test
+    fun `the released Dark mode switch turned on reads as Dark`() = runTest {
+        prefs.edit { it[DARK_MODE] = true }
+
+        assertEquals(UseSmileIDSampleAppearance.Dark, store.settings.first().appearance)
+    }
+
+    /** False was also the switch's default, so it proves no one chose Light. */
+    @Test
+    fun `the released Dark mode switch turned off follows the device`() = runTest {
+        prefs.edit { it[DARK_MODE] = false }
+
+        assertEquals(UseSmileIDSampleAppearance.System, store.settings.first().appearance)
+    }
+
+    @Test
+    fun `a stored appearance wins over the released switch`() = runTest {
+        prefs.edit {
+            it[APPEARANCE] = "light"
+            it[DARK_MODE] = true
+        }
+
+        assertEquals(UseSmileIDSampleAppearance.Light, store.settings.first().appearance)
+    }
+
+    @Test
+    fun `an unknown appearance follows the device`() = runTest {
+        prefs.edit { it[APPEARANCE] = "sepia" }
+
+        assertEquals(UseSmileIDSampleAppearance.System, store.settings.first().appearance)
+    }
+
+    @Test
+    fun `choosing an appearance stores its id and retires the released switch`() = runTest {
+        prefs.edit { it[DARK_MODE] = true }
+
+        store.setAppearance(UseSmileIDSampleAppearance.Light)
+
+        val written = prefs.data.first()
+        assertEquals("light", written[APPEARANCE])
+        assertNull(written[DARK_MODE])
+        assertEquals(UseSmileIDSampleAppearance.Light, store.settings.first().appearance)
+    }
+
     private companion object {
+        val APPEARANCE = stringPreferencesKey("appearance")
+        val DARK_MODE = booleanPreferencesKey("dark_mode")
         val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val CONSENT_STEP = booleanPreferencesKey("consent_step")

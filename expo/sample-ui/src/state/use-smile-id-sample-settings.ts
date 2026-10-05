@@ -1,3 +1,4 @@
+import { UseSmileIDSampleAppearance } from '../model/use-smile-id-sample-appearance';
 import { UseSmileIDSampleCaptureMode } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 
@@ -6,7 +7,6 @@ export type UseSmileIDSampleSettings = {
   /// ON is the head-turn challenge, which is the default the design draws.
   readonly enhancedSmartSelfie: boolean;
   readonly agentMode: boolean;
-  readonly darkMode: boolean;
   readonly consentStep: boolean;
   readonly instructionsStep: boolean;
   readonly previewStep: boolean;
@@ -18,12 +18,13 @@ export type UseSmileIDSampleSettings = {
   readonly selfieFirst: boolean;
   /// A typed field rather than one of the switches: three values, not two.
   readonly captureMode: UseSmileIDSampleCaptureMode;
+  /// Typed like `captureMode`; System follows the device.
+  readonly appearance: UseSmileIDSampleAppearance;
 };
 
 export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   enhancedSmartSelfie: true,
   agentMode: false,
-  darkMode: false,
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
@@ -31,6 +32,7 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   allowSkipBack: false,
   selfieFirst: false,
   captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
+  appearance: UseSmileIDSampleAppearance.System,
 };
 
 /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses.

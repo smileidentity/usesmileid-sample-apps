@@ -29,6 +29,7 @@ import {
   type UseSmileIDMLBuilder,
   type UseSmileIDNetworkBuilder,
 } from '@smileid/usesmileid';
+import type { useSmileIDMlkitDocument } from '@smileid/usesmileid_mlkit_document';
 import type { useSmileIDMlkitFace } from '@smileid/usesmileid_mlkit_face';
 import { Platform } from 'react-native';
 
@@ -76,6 +77,12 @@ export const smileIDSampleApplying = (
         analyzers.forCaptureType(CaptureType.selfie, (face) => {
           face.add(selfieAnalyzer());
         });
+        // Document products only: the SDK refuses a document analyzer on a selfie job.
+        if (DOCUMENT_PRODUCTS.includes(snapshot.product.id)) {
+          analyzers.forCaptureType(CaptureType.document, (document) => {
+            document.add(documentAnalyzer());
+          });
+        }
       }),
     );
   }
@@ -252,6 +259,18 @@ const selfieAnalyzer = (): FaceAnalyzer =>
     : // eslint-disable-next-line @typescript-eslint/no-require-imports
       (require('@smileid/usesmileid_vision_face') as { useSmileIDVisionFace: FaceAnalyzer })
         .useSmileIDVisionFace;
+
+type DocumentAnalyzer = typeof useSmileIDMlkitDocument;
+
+/// Required, not imported, for the same reason as the selfie analyzer.
+const documentAnalyzer = (): DocumentAnalyzer =>
+  Platform.OS === 'android'
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+      (require('@smileid/usesmileid_mlkit_document') as { useSmileIDMlkitDocument: DocumentAnalyzer })
+        .useSmileIDMlkitDocument
+    : // eslint-disable-next-line @typescript-eslint/no-require-imports
+      (require('@smileid/usesmileid_vision_document') as { useSmileIDVisionDocument: DocumentAnalyzer })
+        .useSmileIDVisionDocument;
 
 /// The partner mark the consent screen draws, resolving its colour where the SDK mounts it.
 const PartnerMark = () => {

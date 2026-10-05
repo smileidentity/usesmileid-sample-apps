@@ -5,6 +5,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import kotlinx.coroutines.CoroutineScope
 import androidx.compose.ui.platform.LocalContext
@@ -29,6 +31,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleInterruptedRun
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleEndedSession
@@ -69,8 +72,13 @@ class UseSmileIDSampleAppState(
      * the hosted SDK flow included, where the SDK re-runs `build()` on every recomposition.
      */
     private val now: State<Long>,
+    /** The device's own theme, read at the Activity, which never forces night mode. */
+    val deviceDark: Boolean,
 ) {
     val settings: UseSmileIDSampleSettings get() = settingsState.value
+
+    /** What the app renders: the theme, the bars and the SDK all read this one value. */
+    val resolvedDark: Boolean get() = settings.appearance.isDark(deviceDark)
     val session: UseSmileIDSampleTokenSession? get() = sessionState.value?.live
 
     /** Whether the stored session has been read; nothing may decide the run needs a token before it has. */
@@ -111,11 +119,17 @@ class UseSmileIDSampleAppState(
 /** Ticks once a second while a session is live. The deadline is absolute, so a restored session needs no recomputing. */
 @Composable
 fun rememberUseSmileIDSampleAppState(
-    launchArgs: UseSmileIDSampleLaunchArgs = UseSmileIDSampleLaunchArgs(),
+    launchArgs: UseSmileIDSampleLaunchArgs,
+    deviceDark: Boolean,
 ): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
-    val settingsState = store.settings.collectAsStateWithLifecycle(initialValue = UseSmileIDSampleSettings())
+    // Saved across recreation: a sheet restored on the first frame fixes its bar icons then, before the store has answered.
+    var savedAppearance by rememberSaveable { mutableStateOf(UseSmileIDSampleAppearance.System) }
+    val settingsState = store.settings.collectAsStateWithLifecycle(
+        initialValue = UseSmileIDSampleSettings(appearance = savedAppearance),
+    )
+    LaunchedEffect(settingsState.value.appearance) { savedAppearance = settingsState.value.appearance }
     val sessionState = store.session.collectAsStateWithLifecycle<UseSmileIDSampleSessionRecord?>(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
@@ -168,6 +182,7 @@ fun rememberUseSmileIDSampleAppState(
         interruptedRun = interruptedRun,
         catalogue = catalogue,
         now = now,
+        deviceDark = deviceDark,
     )
 }
 

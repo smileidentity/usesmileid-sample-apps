@@ -19,6 +19,13 @@ final class UseSmileIDSampleSpecTest: XCTestCase {
     }
   }
 
+  /// The reverse, so an id the spec gains cannot go unbuilt here; a suffixed id is declared by its prefix.
+  func testEverySpecIdIsDeclared() {
+    let prefix = testIds["prefix"] as? String
+    let unbuilt = specIds.subtracting(UseSmileIDSampleTestIds.all).filter { $0 != prefix }.sorted()
+    XCTAssertEqual(unbuilt, [], "spec ids nothing declares")
+  }
+
   /// The card's group in the spec is the card plus one id per field; the declared set is the same set.
   func testTheResultCardIdsAreExactlyTheSpecsResultCardGroup() throws {
     let groups = try XCTUnwrap(testIds["ids"] as? [String: Any])

@@ -75,8 +75,15 @@ abstract final class UseSmileIDSampleTestIds {
   /// The Agent mode switch, which drives allowAgentMode.
   static const String settingAgentMode = 'sample_setting_agent_mode';
 
-  /// The Dark mode switch.
-  static const String settingDarkMode = 'sample_setting_dark_mode';
+  /// The Theme row that opens the appearance sheet.
+  static const String settingAppearance = 'sample_setting_appearance';
+
+  /// The appearance sheet.
+  static const String appearanceSheet = 'sample_appearance_sheet';
+
+  /// One appearance row, suffixed with its id.
+  static String appearanceOption(String appearanceId) =>
+      'sample_appearance_option_$appearanceId';
 
   /// The Consent screen switch, which includes or omits consent().
   static const String settingConsentStep = 'sample_setting_consent_step';
@@ -439,7 +446,8 @@ abstract final class UseSmileIDSampleTestIds {
     profileSummary,
     settingEnhancedSmartSelfie,
     settingAgentMode,
-    settingDarkMode,
+    settingAppearance,
+    appearanceSheet,
     settingConsentStep,
     settingInstructionsStep,
     settingPreviewStep,

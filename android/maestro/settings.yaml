@@ -411,6 +411,39 @@ appId: ${APP_ID}
     id: "sample_setting_selfie_first"
     checked: true
 
+# --- appearance ----------------------------------------------------------------------------------
+# Opened by its link, as a flow reaches every sheet; System ships selected and Dark persists.
+- openLink: "usesmileid-sample-android://settings/appearance"
+- assertVisible:
+    id: "sample_appearance_sheet"
+- assertVisible:
+    id: "sample_appearance_option_system"
+    checked: true
+- tapOn:
+    id: "sample_appearance_option_dark"
+- assertNotVisible:
+    id: "sample_appearance_sheet"
+# The list keeps the scroll the section above left it at, so the row sits above the fold.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_appearance"
+    direction: UP
+    centerElement: true
+- assertVisible:
+    text: "Dark"
+    childOf:
+      id: "sample_setting_appearance"
+- stopApp
+- openLink: "usesmileid-sample-android://settings/appearance"
+- assertVisible:
+    id: "sample_appearance_option_dark"
+    checked: true
+- assertVisible:
+    id: "sample_appearance_option_system"
+    checked: false
+- tapOn:
+    id: "sample_appearance_option_system"
+
 # --- leave the suite as it was found -------------------------------------------------------------
 - stopApp
 - launchApp:

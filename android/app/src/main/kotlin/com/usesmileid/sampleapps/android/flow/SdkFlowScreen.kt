@@ -123,17 +123,16 @@ fun SdkFlowScreen(
     DisposableEffect(Unit) { onDispose { composed.value = false } }
 
     val hostScheme = if (snapshot.theme == UseSmileIDSampleThemeScenario.ClashingHost) {
-        if (app.settings.darkMode) darkColorScheme() else lightColorScheme()
+        if (app.resolvedDark) darkColorScheme() else lightColorScheme()
     } else {
         MaterialTheme.colorScheme
     }
-    // UseSmileIDBuilder never forwards `darkMode`, so rewriting uiMode for the subtree is what makes the
-    // SDK resolve the app's own setting. A workaround for a missing knob — see docs/theming.md.
+    // UseSmileIDBuilder takes no theme input, so the subtree's uiMode carries the app's appearance; see docs/theming.md.
     val configuration = LocalConfiguration.current
-    val flowConfiguration = remember(configuration, app.settings.darkMode) {
+    val flowConfiguration = remember(configuration, app.resolvedDark) {
         Configuration(configuration).apply {
             uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
-                if (app.settings.darkMode) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
+                if (app.resolvedDark) Configuration.UI_MODE_NIGHT_YES else Configuration.UI_MODE_NIGHT_NO
         }
     }
     CompositionLocalProvider(LocalConfiguration provides flowConfiguration) {

@@ -351,7 +351,7 @@
       "usedBy": [
         "settings"
       ],
-      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover Dark mode and the three SDK-step toggles; navigation covers ABOUT/LEGAL; destructive covers Sign out. TYPE + TILE CORRECTED 2026-08-17 against node 5206:2898. The leading tile is 38 at radius 11 over SURFACE-2 (a cool grey), not surface-alt (a warm cream) — Android shipped peach tiles across the whole app from that one mistake. Supporting text is Caption 12/500, the trailing chevron is 14, and rows inside one section card are separated by a RULE, not by spacing. Each row carries its OWN icon, and the design SUPPLIES all eleven as stroke-based 19px exports — take them from design/icons/, do not substitute a Material Symbol. The card outline AND the rule between rows inside one card both take the cardStroke pair; the divider was the last thing left on the mode-invariant color.border and became the loudest element in dark.",
+      "notes": "CORRECTED 2026-08-12: the CAPTURE section has TWO switch rows — 'Smile to capture / Passive capture — smile detection' ABOVE 'Agent mode / Operator captures for the applicant'. The first is the CaptureModeRow component instance, which is why a metadata-only read missed its text. Switch rows also cover the three SDK-step toggles (APPEARANCE is a select row since 2026-10-02); navigation covers ABOUT/LEGAL; destructive covers Sign out. TYPE + TILE CORRECTED 2026-08-17 against node 5206:2898. The leading tile is 38 at radius 11 over SURFACE-2 (a cool grey), not surface-alt (a warm cream) — Android shipped peach tiles across the whole app from that one mistake. Supporting text is Caption 12/500, the trailing chevron is 14, and rows inside one section card are separated by a RULE, not by spacing. Each row carries its OWN icon, and the design SUPPLIES all eleven as stroke-based 19px exports — take them from design/icons/, do not substitute a Material Symbol. The card outline AND the rule between rows inside one card both take the cardStroke pair; the divider was the last thing left on the mode-invariant color.border and became the loudest element in dark.",
       "parts": [
         "NavRow — the ABOUT/LEGAL navigation variant with a chevron",
         "SignOutRow — the destructive variant",
@@ -1028,7 +1028,7 @@
       "usedBy": [
         "scenarioDrawer"
       ],
-      "notes": "Owned by Settings, like every other sheet — see BottomSheet.metrics.ownership. Required by AGENTS.md as a shipped probe affordance and by spec/scenarios.json, which is why it has ids in test-ids.json. NOT in the design set — the design's Settings screen covers only the controls a partner sees (dark mode, agent mode, the three SDK steps), while the flow scenarios (expiredToken, badRefresh, noCallback, throwingCallback, offlineRetry) and the two non-default theme scenarios have no other manual control. Ship it as a debug sheet reachable from a long-press or a hidden gesture, and keep launch arguments as the automation path: a drawer is for humans, arguments are for machines, and the sweep found both were needed. Placement and entry gesture need a design decision — see screens.json openQuestions.drawerPresentation."
+      "notes": "Owned by Settings, like every other sheet — see BottomSheet.metrics.ownership. Required by AGENTS.md as a shipped probe affordance and by spec/scenarios.json, which is why it has ids in test-ids.json. NOT in the design set — the design's Settings screen covers only the controls a partner sees (appearance, agent mode, the three SDK steps), while the flow scenarios (expiredToken, badRefresh, noCallback, throwingCallback, offlineRetry) and the two non-default theme scenarios have no other manual control. Ship it as a debug sheet reachable from a long-press or a hidden gesture, and keep launch arguments as the automation path: a drawer is for humans, arguments are for machines, and the sweep found both were needed. Placement and entry gesture need a design decision — see screens.json openQuestions.drawerPresentation."
     }
   ],
   "sdkOwnedSurfaces": [
@@ -1084,7 +1084,7 @@
   "settingsToSdkMapping": {
     "description": "How each Settings toggle reaches the SDK. Getting this wrong is the most likely way four apps diverge, because three of the five look like booleans and are not.",
     "Agent mode": "SelfieCaptureConfig.allowAgentMode = true (a real boolean on the capture config)",
-    "Dark mode": "app-level theme selection; the SDK follows the host's light/dark resolution",
+    "Appearance": "System, Light or Dark; the SDK follows the resolved value",
     "Consent screen": "include or omit consent() in the flow builder — there is NO showConsent boolean",
     "Instruction screen": "include or omit instructions() in the flow builder",
     "Preview screen": "include or omit preview() in the flow builder (allowRetake configures it once present)",

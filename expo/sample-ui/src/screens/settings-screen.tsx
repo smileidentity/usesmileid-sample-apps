@@ -20,6 +20,7 @@ import {
   smileIDSampleLegalRows,
   type UseSmileIDSampleNavRow,
 } from '../model/use-smile-id-sample-nav-row';
+import { smileIDSampleAppearanceLabel } from '../model/use-smile-id-sample-appearance';
 import { smileIDSampleCaptureModeLabel } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 import type { SmileIconName } from '../smile-icons';
@@ -46,6 +47,8 @@ export type UseSmileIDSampleSettingsState = {
   readonly avatarColor?: string;
   /// False while there is no profile, when the card invites creating one.
   readonly hasProfile?: boolean;
+  /// The device's own theme, which the System label names; the shell reads it where the app's choice cannot mask it.
+  readonly deviceDark: boolean;
 };
 
 /// A labelled group of rows on one surface, which is how the design draws every settings section.
@@ -134,6 +137,8 @@ type Props = {
   onNavRowPress: (row: UseSmileIDSampleNavRow) => void;
   /// Opens the capture-mode sheet.
   onCaptureModePress: () => void;
+  /// Opens the appearance sheet.
+  onAppearancePress: () => void;
   /// Absent hides the DEBUG section: this package may not read a host's build type.
   onOpenScenarioDrawer?: (() => void) | undefined;
   onSignOut: () => void;
@@ -149,6 +154,7 @@ export const SettingsScreen = ({
   onProfilePress,
   onNavRowPress,
   onCaptureModePress,
+  onAppearancePress,
   onOpenScenarioDrawer,
   onSignOut,
   bottomInset = 0,
@@ -222,14 +228,13 @@ export const SettingsScreen = ({
       </Section>
 
       <Section label="APPEARANCE">
-        <SwitchRow
-          title="Dark mode"
-          supportingText="Switch appearance"
-          icon="darkMode"
-          setting={UseSmileIDSampleSetting.DarkMode}
-          checked={settings.darkMode}
-          testID={UseSmileIDSampleTestIds.SETTING_DARK_MODE}
-          onSettingChange={onSettingChange}
+        <UseSmileIDSampleSettingRow
+          title="Theme"
+          supportingText={smileIDSampleAppearanceLabel(settings.appearance, state.deviceDark)}
+          onPress={onAppearancePress}
+          leading={(tint) => <UseSmileIDSampleIcon name="darkMode" tint={tint} />}
+          trailing={<UseSmileIDSampleSettingRowChevron />}
+          testID={UseSmileIDSampleTestIds.SETTING_APPEARANCE}
         />
       </Section>
 

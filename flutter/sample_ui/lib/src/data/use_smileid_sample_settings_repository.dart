@@ -15,6 +15,11 @@ abstract interface class UseSmileIDSampleSettingsRepository {
   Future<UseSmileIDSampleSettings> setCaptureMode(
     UseSmileIDSampleCaptureMode mode,
   );
+
+  /// Stores the appearance and returns what was stored.
+  Future<UseSmileIDSampleSettings> setAppearance(
+    UseSmileIDSampleAppearance appearance,
+  );
 }
 
 /// The keys the store writes, shared across all four apps so a device carries one set, not four.
@@ -26,7 +31,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Operator capture.
   static const String agentMode = 'agent_mode';
 
-  /// The app's dark appearance.
+  /// The Dark mode switch that [appearance] replaced, read only to carry an installed choice over.
   static const String darkMode = 'dark_mode';
 
   /// Whether the flow includes the SDK's consent step.
@@ -50,11 +55,13 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// The capture mode, stored by its id.
   static const String captureMode = 'capture_mode';
 
+  /// The appearance, stored by its id.
+  static const String appearance = 'appearance';
+
   /// The key one switch is stored under.
   static String of(UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
     UseSmileIDSampleSetting.agentMode => agentMode,
-    UseSmileIDSampleSetting.darkMode => darkMode,
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
@@ -87,4 +94,9 @@ class UseSmileIDSampleMemorySettingsRepository
   Future<UseSmileIDSampleSettings> setCaptureMode(
     UseSmileIDSampleCaptureMode mode,
   ) async => _settings = _settings.withCaptureMode(mode);
+
+  @override
+  Future<UseSmileIDSampleSettings> setAppearance(
+    UseSmileIDSampleAppearance appearance,
+  ) async => _settings = _settings.withAppearance(appearance);
 }

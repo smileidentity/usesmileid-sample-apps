@@ -79,8 +79,8 @@ validation test asserts, at minimum:
 
 - its scenario enum contains exactly the IDs in `scenarios.json`, no more and no fewer
 - its result card exposes every field in `result-card.schema.json`, with matching types
-- every ID the app declares is in `test-ids.json`; Expo also asserts the reverse, and iOS that every
-  declared ID is applied in source. No app inspects an accessibility tree for them; only a device flow
+- every ID the app declares is in `test-ids.json`, and every ID there is declared; iOS also asserts
+  that every declared ID is applied in source. No app inspects an accessibility tree for them; only a device flow
   keyed off the spec does that
 
 ## Spec debt

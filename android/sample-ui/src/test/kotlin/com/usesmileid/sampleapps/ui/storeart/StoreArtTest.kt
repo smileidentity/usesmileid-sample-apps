@@ -96,11 +96,13 @@ class StoreArtTest {
                 initials = demo("initials"),
                 versionLabel = "Smile ID · 1.0.0",
                 consentBoundByToken = false,
+                deviceDark = false,
             ),
             onSettingChange = { _, _ -> },
             onProfileClick = {},
             onNavRowClick = {},
             onCaptureModeClick = {},
+            onAppearanceClick = {},
             onOpenScenarioDrawer = null,
             onSignOut = {},
         )

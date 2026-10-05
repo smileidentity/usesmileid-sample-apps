@@ -9,6 +9,7 @@ enum Sheet: String, Identifiable, Hashable {
   case captureAs
   case genericDocument
   case captureMode
+  case appearance
 
   var id: String {
     rawValue

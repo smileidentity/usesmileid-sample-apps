@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
@@ -62,7 +63,7 @@ class UseSmileIDSampleProfilesPersistenceTest {
         val store = store()
 
         assertTrue(store.profiles.first().profiles.isEmpty())
-        assertTrue(store.settings.first().darkMode)
+        assertEquals(UseSmileIDSampleAppearance.Dark, store.settings.first().appearance)
         assertEquals("session-1", store.session.first().ended?.id)
     }
 

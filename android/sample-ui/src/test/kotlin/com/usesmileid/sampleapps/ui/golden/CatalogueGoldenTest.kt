@@ -8,11 +8,13 @@ import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.CatalogueFixtures
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.CaptureAsSheet
+import com.usesmileid.sampleapps.ui.screens.AppearanceSheet
 import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet
 import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet
 import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
@@ -129,6 +131,16 @@ class CatalogueGoldenTest : GoldenTest() {
     @Test
     fun capture_mode_sheet() = goldens("sheet_capture_mode", fullWindow = true) {
         CaptureModeSheet(selected = UseSmileIDSampleCaptureMode.AutoWithFallback, onSelect = {}, onDismissRequest = {})
+    }
+
+    @Test
+    fun appearance_sheet() = goldensOnDevice("sheet_appearance", fullWindow = true) { deviceDark ->
+        AppearanceSheet(selected = UseSmileIDSampleAppearance.System, deviceDark = deviceDark, onSelect = {}, onDismissRequest = {})
+    }
+
+    @Test
+    fun appearance_sheet_max_font_scale() = assertSurvivesMaxFontScale {
+        AppearanceSheet(selected = UseSmileIDSampleAppearance.System, deviceDark = true, onSelect = {}, onDismissRequest = {})
     }
 
     @Composable

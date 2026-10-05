@@ -29,7 +29,7 @@ RULES: tuple[tuple[str, tuple[str, ...]], ...] = (
     (r"sdkflow|flow|preflight|userdetails|product|forms|runintent|result",
      ("sdk-flow", "profile-journey", "launch-args")),
     (r"verification|job|status|selection|filterchip|swipe|dategroup|datafield", ("verifications",)),
-    (r"setting|licen|scenario", ("settings",)),
+    (r"setting|licen|scenario|appearance", ("settings",)),
     (r"shell|navigation|destinations|transition|chrome|graphs|navbar|systembars", ("shell-navigation", "deep-links")),
 )
 

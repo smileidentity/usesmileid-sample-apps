@@ -21,9 +21,9 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
     XCTAssertFalse(settings.agentMode)
   }
 
-  func testTheOtherFourSettingsDoNotDisturbTheCapturePair() {
+  func testTheOtherThreeSettingsDoNotDisturbTheCapturePair() {
     let base = UseSmileIDSampleSettings(enhancedSmartSelfie: true)
-    for setting in [UseSmileIDSampleSetting.darkMode, .consentStep, .instructionsStep, .previewStep] {
+    for setting in [UseSmileIDSampleSetting.consentStep, .instructionsStep, .previewStep] {
       let changed = base.with(setting, false)
       XCTAssertTrue(changed.enhancedSmartSelfie, "\(setting) disturbed the capture pair")
       XCTAssertFalse(changed.agentMode, "\(setting) disturbed the capture pair")
@@ -50,7 +50,6 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
     let settings = UseSmileIDSampleSettings(
       enhancedSmartSelfie: false,
       agentMode: true,
-      darkMode: true,
       consentStep: false,
       instructionsStep: true,
       previewStep: false,
@@ -60,7 +59,33 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
     )
     XCTAssertEqual(
       UseSmileIDSampleSetting.allCases.map { settings[$0] },
-      [false, true, true, false, true, false, true, true, true]
+      [false, true, false, true, false, true, true, true]
     )
+  }
+
+  func testAFreshInstallFollowsTheDevice() {
+    XCTAssertEqual(UseSmileIDSampleSettings().appearance, .system)
+  }
+
+  func testEachAppearanceResolvesAgainstBothDeviceThemes() {
+    let cases: [(UseSmileIDSampleAppearance, Bool, Bool)] = [
+      (.system, false, false), (.system, true, true),
+      (.light, false, false), (.light, true, false),
+      (.dark, false, true), (.dark, true, true)
+    ]
+    for (appearance, deviceDark, dark) in cases {
+      XCTAssertEqual(appearance.isDark(deviceDark: deviceDark), dark, "\(appearance) on deviceDark \(deviceDark)")
+    }
+  }
+
+  func testTheSystemLabelNamesTheDevicesThemeAndTheOthersNameThemselves() {
+    let cases: [(UseSmileIDSampleAppearance, Bool, String)] = [
+      (.system, false, "System (Light)"), (.system, true, "System (Dark)"),
+      (.light, false, "Light"), (.light, true, "Light"),
+      (.dark, false, "Dark"), (.dark, true, "Dark")
+    ]
+    for (appearance, deviceDark, label) in cases {
+      XCTAssertEqual(appearance.label(deviceDark: deviceDark), label, "\(appearance) on deviceDark \(deviceDark)")
+    }
   }
 }

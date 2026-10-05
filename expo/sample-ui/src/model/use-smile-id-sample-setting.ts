@@ -2,7 +2,6 @@
 export const UseSmileIDSampleSetting = {
   EnhancedSmartSelfie: 'enhancedSmartSelfie',
   AgentMode: 'agentMode',
-  DarkMode: 'darkMode',
   ConsentStep: 'consentStep',
   InstructionsStep: 'instructionsStep',
   PreviewStep: 'previewStep',
@@ -18,7 +17,6 @@ export type UseSmileIDSampleSetting =
 export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.EnhancedSmartSelfie,
   UseSmileIDSampleSetting.AgentMode,
-  UseSmileIDSampleSetting.DarkMode,
   UseSmileIDSampleSetting.ConsentStep,
   UseSmileIDSampleSetting.InstructionsStep,
   UseSmileIDSampleSetting.PreviewStep,

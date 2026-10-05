@@ -599,7 +599,7 @@
         "sample_settings_screen",
         "sample_setting_enhanced_smart_selfie",
         "sample_setting_agent_mode",
-        "sample_setting_dark_mode",
+        "sample_setting_appearance",
         "sample_setting_consent_step",
         "sample_setting_instructions_step",
         "sample_setting_preview_step",
@@ -622,7 +622,8 @@
         "licenses": "in-app, the licenses screen — not a URL"
       },
       "linkPresentation": "Per row, and split on what the destination can render (measured 2026-08-25). ABOUT — Documentation and Support open IN-APP: Custom Tabs on Android (androidx.browser), SFSafariViewController on iOS, url_launcher inAppBrowserView on Flutter, expo-web-browser on React Native. A WebView is deliberately NOT the pattern on any platform: the page would lose the user's session, autofill and password manager, and this is code partners copy. LEGAL — Terms of Service and Privacy Policy EJECT to the system browser, because both pages serve their document as an embedded PDF (a Webflow CDN asset, hash in the filename) and a mobile browser renders an embedded PDF as a stub with an Open button rather than the document; framing that inside the app makes the app look like it failed. The canonical page URLs stay as they are — linking the CDN asset directly would show the document but hard-codes a path that changes on every re-upload, and the same canonical URL is what the SDK consent screen uses. The in-app toolbar takes a colour PER SCHEME from the design tokens (primary in light, surface in dark); one shared colour left a white bar on a white page. Android warms the browser while Settings is open but does NOT pre-fetch: speculatively downloading a 649 KB docs page on a partner's mobile data is the wrong trade.",
-      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig. Sign out asks first (Decision 2026-09-25): it ends the session and deletes every profile on the device. With no profile, the PROFILE row reads 'No profile yet' and 'Tap to create one'."
+      "note": "The PROFILE row opens the profiles LIST, not the active profile's own page — configuring any profile and creating one are both reached from there. Its avatar takes the ACTIVE profile's hue from design-tokens.json profileHues, indexed by list position, so the summary, the list and the products header never draw the same profile in three colours. The ENVIRONMENT section was removed on 2026-08-24: it was never in the design, and it existed only because the sandbox launch argument was an override rather than a source. Both are gone — the token's api_url decides the environment, and a run reports it on sample_result_environment. The three SDK-step switches include or omit their screen (see components.json settingsToSdkMapping), and the CONSENT row carries one overridden supporting line: when the linked token binds consent it reads 'The token grants consent, so the screen is skipped', because a switch reading ON while the token has taken the decision away is a lie the screen tells. The switch stays live — it still decides the next run made without a bound token. The DEBUG section holding the Scenarios row renders on debug builds only (see drawerPresentation): the screen takes it as a nullable slot the host fills, because sample-ui runs under eight identities and may not read a host's BuildConfig. Sign out asks first (Decision 2026-09-25): it ends the session and deletes every profile on the device. With no profile, the PROFILE row reads 'No profile yet' and 'Tap to create one'.",
+      "divergesFromTheFrameByRuling": "The frame draws a Dark mode switch under APPEARANCE. Ruled 2026-10-02 to a Theme select row with three values, System (the default), Light and Dark, opening appearanceSheet: a two-state switch cannot follow the device. Everything else still matches the frame."
     },
     {
       "id": "captureModeSheet",
@@ -644,6 +645,28 @@
       "testIds": [
         "sample_capture_mode_sheet",
         "sample_capture_mode_option"
+      ]
+    },
+    {
+      "id": "appearanceSheet",
+      "title": "Theme",
+      "owner": "sample",
+      "board": "06",
+      "route": "sheet",
+      "states": [
+        {
+          "state": "default",
+          "design": "in-repo",
+          "note": "Three rows: System (the default), Light and Dark. The System row reads System (Light) or System (Dark), the device's own theme resolved live, never the theme the app is rendering. Ruled 2026-10-02; the design draws a switch."
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_appearance_sheet",
+        "sample_appearance_option"
       ]
     },
     {

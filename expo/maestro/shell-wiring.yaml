@@ -71,3 +71,28 @@ appId: ${APP_ID}
 - back
 - assertVisible:
     id: "sample_nav_products"
+
+# The appearance sheet by its link: System ships selected, a pick lands on the row and persists.
+- stopApp
+- openLink: "usesmileid-sample-expo:///settings/appearance?catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "sample_appearance_sheet"
+    timeout: 60000
+- assertVisible:
+    id: "sample_appearance_option_system"
+    selected: true
+- tapOn:
+    id: "sample_appearance_option_dark"
+- assertNotVisible:
+    id: "sample_appearance_sheet"
+- assertVisible:
+    text: "Dark"
+    childOf:
+      id: "sample_setting_appearance"
+- openLink: "usesmileid-sample-expo:///settings/appearance"
+- assertVisible:
+    id: "sample_appearance_option_dark"
+    selected: true
+- tapOn:
+    id: "sample_appearance_option_system"

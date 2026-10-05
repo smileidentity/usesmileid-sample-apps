@@ -42,6 +42,9 @@ abstract final class UseSmileIDSampleRoutes {
   /// The capture-mode sheet, a LAYER over settings.
   static const String captureMode = '/settings/capture-mode';
 
+  /// The appearance sheet, a LAYER over settings.
+  static const String appearance = '/settings/appearance';
+
   /// The token scanner, pushed above the shell.
   static const String scanToken = '/token/scan';
 
@@ -111,6 +114,7 @@ bool useSmileIDSampleShowsNavBar(String location) => UseSmileIDSampleRoutes
 String useSmileIDSamplePageBehind(String location) => switch (location) {
   UseSmileIDSampleRoutes.scenarioDrawer => UseSmileIDSampleRoutes.settings,
   UseSmileIDSampleRoutes.captureMode => UseSmileIDSampleRoutes.settings,
+  UseSmileIDSampleRoutes.appearance => UseSmileIDSampleRoutes.settings,
   UseSmileIDSampleRoutes.profileSwitch => UseSmileIDSampleRoutes.products,
   _ => location,
 };
@@ -217,6 +221,13 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               pageBuilder: (_, _) => _ownerPage(
                 UseSmileIDSampleRoutes.settings,
                 const UseSmileIDSampleSettingsTab(openCaptureMode: true),
+              ),
+            ),
+            GoRoute(
+              path: UseSmileIDSampleRoutes.appearance,
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.settings,
+                const UseSmileIDSampleSettingsTab(openAppearance: true),
               ),
             ),
           ],

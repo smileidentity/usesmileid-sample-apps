@@ -1,5 +1,5 @@
 ---
-description: How the sample apps theme themselves and the Smile ID SDK — the SDK's theme override, one design-token source generated per platform, semantic colours, dark mode, contrast, text scale and goldens.
+description: How the sample apps theme themselves and the Smile ID SDK — the SDK's theme override, one design-token source generated per platform, semantic colours, appearance, contrast, text scale and goldens.
 ---
 
 # Theming
@@ -66,19 +66,40 @@ Screens read semantic tokens such as `primary`, `surface` and `onSurface`, never
 hex value. A hex literal in app code fails review. Light and dark are paired per role, so dark mode is a
 lookup, not a second stylesheet.
 
-## 4. Dark mode reaches the SDK too
+## 4. Appearance reaches the SDK too
 
-Dark mode is the **Appearance** switch in Settings. Each app hands the same choice to the SDK's screens,
-so the flow never changes theme halfway through the journey:
+**Settings › APPEARANCE › Theme** offers three values: **System** (the default), **Light** and **Dark**.
+A two-state switch cannot say "follow the device", which is what most people expect, so a fresh install
+follows the device and changes with it while open. Light and Dark pin the app against the device.
 
-| Platform | How the SDK receives it |
-|---|---|
-| Android | The flow's subtree gets a rewritten `uiMode`, because the builder has no dark-mode parameter |
-| iOS | The shell's `preferredColorScheme`, which the SDK's screens inherit |
-| Flutter | The app's `themeMode` |
-| Expo | `Appearance.setColorScheme`, which the SDK's `useColorScheme` reads |
+While System is selected the row reads **System (Light)** or **System (Dark)**: the device's own theme,
+never the theme the app is rendering, so someone checking the app can see that the device decides.
 
-The system bars follow the same choice. A dark screen with light status-bar icons is the classic miss.
+Each app resolves one value at its root and hands it to everything below, so the flow always matches the
+app, including when the device changes theme mid-flow:
+
+| Platform | How the SDK receives it | Where the device's own theme is read |
+|---|---|---|
+| Android | The flow's subtree gets a rewritten `uiMode`, because the builder has no dark-mode parameter | `isSystemInDarkTheme()` at the activity, which never forces night mode; a theme change recreates the activity |
+| iOS | The shell's `preferredColorScheme`, `nil` for System, which the SDK's screens inherit | The screen's traits: a preferred scheme overrides the window scene's own traits, so the scene cannot say |
+| Flutter | The app's `themeMode`, `system` for System | `MediaQuery.platformBrightnessOf`, which the theme mode never overrides |
+| Expo | `Appearance.setColorScheme`, `'unspecified'` for System, which the SDK's `useColorScheme` reads | `useColorScheme()` while nothing is pinned, kept in a shell store |
+
+The system bars follow the resolved value. A dark screen with light status-bar icons is the classic miss.
+
+Two platform limits, both accepted:
+
+- **iOS** re-reads the device's theme when the colour scheme changes and when the app becomes active. While
+  Light or Dark is pinned, a device change made without leaving the app shows on the System option the
+  next time the app becomes active, which opening Control Center already does.
+- **Expo**: while Light or Dark is pinned, `useColorScheme()` reports the pin, so the sheet's unselected
+  System option shows the device's theme as last seen until the next launch or until System is chosen.
+
+The launch screen follows the device on every shell, so System never flashes the opposite theme on a
+cold start. A pinned value that disagrees with the device still launches in the device's theme first.
+
+Upgrades keep a choice someone made: a stored Dark mode switch turned on reads as Dark, and anything
+else reads as System, because off was the switch's default and proves nothing.
 
 ## 5. Contrast is computed
 
@@ -104,7 +125,7 @@ a laptop (see [`testing.md`](testing.md)).
 ## Verify your integration
 
 - [ ] The SDK is styled only through `theme { }`.
-- [ ] Your app's dark-mode setting reaches the SDK's screens, and the status bar matches.
+- [ ] Your app's appearance reaches the SDK's screens, and the status bar matches.
 - [ ] No raw colour literal in your screens.
 - [ ] Your screens hold at the largest text size.
 

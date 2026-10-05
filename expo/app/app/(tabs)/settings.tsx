@@ -20,6 +20,7 @@ import { useEffect } from 'react';
 import { smileIDSampleStartsExpired } from '../../src/flow/use-smile-id-sample-token-binding-rules';
 import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { openNavRow } from '../../src/use-smile-id-sample-links';
+import { useSmileIDSampleDeviceScheme } from '../../src/use-smile-id-sample-device-scheme';
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
 
 /// The Settings footer names the product and the host's own version, which only a shell can read.
@@ -34,6 +35,7 @@ export default function Settings() {
   const setSetting = useSmileIDSampleSettingsStore((state) => state.setSetting);
   const load = useSmileIDSampleSettingsStore((state) => state.load);
   const bottomInset = useSmileIDSampleListInset();
+  const deviceDark = useSmileIDSampleDeviceScheme((state) => state.deviceDark);
   const { scenario } = useLaunchArgs();
   // Clock-free: Settings must not re-render on the tick.
   const consentBound = useSmileIDSampleSessionStore((state) => state.live?.bindings.consent != null);
@@ -64,11 +66,13 @@ export default function Settings() {
         versionLabel: versionLabel(),
         avatarColor: avatarColorForProfile(index),
         consentBoundByToken: consentBound && !smileIDSampleStartsExpired(scenario),
+        deviceDark,
       }}
       onSettingChange={(setting, enabled) => void setSetting(setting, enabled)}
       onProfilePress={() => router.push('/profiles')}
       onNavRowPress={onNavRowPress}
       onCaptureModePress={() => router.push('/settings/capture-mode')}
+      onAppearancePress={() => router.push('/settings/appearance')}
       onSignOut={() => {
         clearSession().catch(() => undefined);
         clearForms();

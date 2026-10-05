@@ -10,9 +10,6 @@ enum UseSmileIDSampleSetting {
   /// ON lets an operator capture for the applicant, and it fights enhanced liveness.
   agentMode(UseSmileIDSampleTestIds.settingAgentMode),
 
-  /// The app's own appearance; the SDK follows the host.
-  darkMode(UseSmileIDSampleTestIds.settingDarkMode),
-
   /// Includes or omits `consent()` in the flow.
   consentStep(UseSmileIDSampleTestIds.settingConsentStep),
 
@@ -57,6 +54,38 @@ enum UseSmileIDSampleCaptureMode {
   final String label;
 }
 
+/// The app's theme choice; System follows the device's own theme.
+enum UseSmileIDSampleAppearance {
+  /// Follows the device.
+  system('system'),
+
+  /// Always light.
+  light('light'),
+
+  /// Always dark.
+  dark('dark');
+
+  const UseSmileIDSampleAppearance(this.id);
+
+  /// The id that suffixes this row's test id and is what the store keeps.
+  final String id;
+
+  /// Whether the app renders dark, given the device's own theme.
+  bool isDark({required bool deviceDark}) => switch (this) {
+    UseSmileIDSampleAppearance.system => deviceDark,
+    UseSmileIDSampleAppearance.light => false,
+    UseSmileIDSampleAppearance.dark => true,
+  };
+
+  /// System names the device's theme, never the one the app renders, so the row says why it looks as it does.
+  String label({required bool deviceDark}) => switch (this) {
+    UseSmileIDSampleAppearance.system =>
+      deviceDark ? 'System (Dark)' : 'System (Light)',
+    UseSmileIDSampleAppearance.light => 'Light',
+    UseSmileIDSampleAppearance.dark => 'Dark',
+  };
+}
+
 /// The Settings state. Three of these decide whether a step is composed into the SDK flow at all.
 @immutable
 class UseSmileIDSampleSettings {
@@ -64,7 +93,6 @@ class UseSmileIDSampleSettings {
   const UseSmileIDSampleSettings({
     this.enhancedSmartSelfie = true,
     this.agentMode = false,
-    this.darkMode = false,
     this.consentStep = true,
     this.instructionsStep = true,
     this.previewStep = true,
@@ -72,6 +100,7 @@ class UseSmileIDSampleSettings {
     this.allowSkipBack = false,
     this.selfieFirst = false,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
+    this.appearance = UseSmileIDSampleAppearance.system,
   });
 
   /// The head-turn challenge.
@@ -79,9 +108,6 @@ class UseSmileIDSampleSettings {
 
   /// Operator capture.
   final bool agentMode;
-
-  /// The app's dark appearance.
-  final bool darkMode;
 
   /// Whether the flow includes the SDK's consent step.
   final bool consentStep;
@@ -104,11 +130,13 @@ class UseSmileIDSampleSettings {
   /// A typed field rather than one of the switches: three values, not two.
   final UseSmileIDSampleCaptureMode captureMode;
 
+  /// Typed like [captureMode]; System follows the device.
+  final UseSmileIDSampleAppearance appearance;
+
   /// Reads one row, so a caller can diff two states without naming every field.
   bool operator [](UseSmileIDSampleSetting setting) => switch (setting) {
     UseSmileIDSampleSetting.enhancedSmartSelfie => enhancedSmartSelfie,
     UseSmileIDSampleSetting.agentMode => agentMode,
-    UseSmileIDSampleSetting.darkMode => darkMode,
     UseSmileIDSampleSetting.consentStep => consentStep,
     UseSmileIDSampleSetting.instructionsStep => instructionsStep,
     UseSmileIDSampleSetting.previewStep => previewStep,
@@ -136,7 +164,6 @@ class UseSmileIDSampleSettings {
       agentMode: enabled,
       enhancedSmartSelfie: enhancedSmartSelfie && !enabled,
     ),
-    UseSmileIDSampleSetting.darkMode => _copy(darkMode: enabled),
     UseSmileIDSampleSetting.consentStep => _copy(consentStep: enabled),
     UseSmileIDSampleSetting.instructionsStep => _copy(
       instructionsStep: enabled,
@@ -152,10 +179,14 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleCaptureMode captureMode,
   ) => _copy(captureMode: captureMode);
 
+  /// A copy with [appearance] chosen.
+  UseSmileIDSampleSettings withAppearance(
+    UseSmileIDSampleAppearance appearance,
+  ) => _copy(appearance: appearance);
+
   UseSmileIDSampleSettings _copy({
     bool? enhancedSmartSelfie,
     bool? agentMode,
-    bool? darkMode,
     bool? consentStep,
     bool? instructionsStep,
     bool? previewStep,
@@ -163,10 +194,10 @@ class UseSmileIDSampleSettings {
     bool? allowSkipBack,
     bool? selfieFirst,
     UseSmileIDSampleCaptureMode? captureMode,
+    UseSmileIDSampleAppearance? appearance,
   }) => UseSmileIDSampleSettings(
     enhancedSmartSelfie: enhancedSmartSelfie ?? this.enhancedSmartSelfie,
     agentMode: agentMode ?? this.agentMode,
-    darkMode: darkMode ?? this.darkMode,
     consentStep: consentStep ?? this.consentStep,
     instructionsStep: instructionsStep ?? this.instructionsStep,
     previewStep: previewStep ?? this.previewStep,
@@ -174,6 +205,7 @@ class UseSmileIDSampleSettings {
     allowSkipBack: allowSkipBack ?? this.allowSkipBack,
     selfieFirst: selfieFirst ?? this.selfieFirst,
     captureMode: captureMode ?? this.captureMode,
+    appearance: appearance ?? this.appearance,
   );
 
   @override
@@ -181,20 +213,19 @@ class UseSmileIDSampleSettings {
       other is UseSmileIDSampleSettings &&
       other.enhancedSmartSelfie == enhancedSmartSelfie &&
       other.agentMode == agentMode &&
-      other.darkMode == darkMode &&
       other.consentStep == consentStep &&
       other.instructionsStep == instructionsStep &&
       other.previewStep == previewStep &&
       other.galleryUpload == galleryUpload &&
       other.allowSkipBack == allowSkipBack &&
       other.selfieFirst == selfieFirst &&
-      other.captureMode == captureMode;
+      other.captureMode == captureMode &&
+      other.appearance == appearance;
 
   @override
   int get hashCode => Object.hash(
     enhancedSmartSelfie,
     agentMode,
-    darkMode,
     consentStep,
     instructionsStep,
     previewStep,
@@ -202,5 +233,6 @@ class UseSmileIDSampleSettings {
     allowSkipBack,
     selfieFirst,
     captureMode,
+    appearance,
   );
 }

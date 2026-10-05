@@ -13,10 +13,11 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 import { BottomTabBarHeightContext } from 'expo-router/tabs';
 import { useEffect } from 'react';
-import { Appearance, Text, useColorScheme } from 'react-native';
+import { Appearance, Platform, Text, useColorScheme } from 'react-native';
 
 import Verifications from '../app/(tabs)/verifications';
 import RootLayout from '../app/_layout';
+import { useSmileIDSampleDeviceScheme } from '../src/use-smile-id-sample-device-scheme';
 import { smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
@@ -24,20 +25,27 @@ jest.mock('react-native/Libraries/Utilities/useColorScheme');
 jest.mock('expo-font', () => ({ useFonts: () => [true] }));
 /// The style each StatusBar mount asked for.
 const mockStatusBarStyles: string[] = [];
+/// The style each imperative re-assert sent, which is what Android's night-mode change is answered with.
+const mockStatusBarReasserts: string[] = [];
 jest.mock('expo-status-bar', () => ({
   StatusBar: function StatusBar({ style }: { style: string }) {
     mockStatusBarStyles.push(style);
     return null;
   },
+  setStatusBarStyle: (style: string) => mockStatusBarReasserts.push(style),
 }));
 /// The style each NavigationBar mount asked for; like StatusBar's, it names the button colour.
 const mockNavigationBarStyles: string[] = [];
-jest.mock('expo-navigation-bar', () => ({
-  NavigationBar: function NavigationBar({ style }: { style: string }) {
+/// The navigation bar's imperative re-asserts, in order.
+const mockNavigationBarReasserts: string[] = [];
+jest.mock('expo-navigation-bar', () => {
+  function NavigationBar({ style }: { style: string }) {
     mockNavigationBarStyles.push(style);
     return null;
-  },
-}));
+  }
+  NavigationBar.setStyle = (style: string) => mockNavigationBarReasserts.push(style);
+  return { NavigationBar };
+});
 // Without pinned metrics the real provider withholds its children until it has measured, so nothing renders.
 jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: function SafeAreaProvider({ children }: { children?: unknown }) {
@@ -102,15 +110,20 @@ const NoticeProbe = () => {
 };
 
 const resolvedScheme = async ({
-  darkMode,
+  appearance,
+  legacyDarkMode,
   system,
 }: {
-  darkMode: boolean;
+  appearance?: 'system' | 'light' | 'dark';
+  legacyDarkMode?: boolean;
   system: 'light' | 'dark';
 }) => {
   systemScheme.mockReturnValue(system);
   // Seeded in storage, not in the store: the root's own load() runs and would overwrite a set state.
-  await AsyncStorage.setItem('sample.setting.darkMode', String(darkMode));
+  if (appearance !== undefined) await AsyncStorage.setItem('sample.setting.appearance', appearance);
+  if (legacyDarkMode !== undefined) {
+    await AsyncStorage.setItem('sample.setting.darkMode', String(legacyDarkMode));
+  }
   getInitialURL.mockResolvedValue(null);
   const { getByTestId } = await render(<RootLayout />);
   await waitFor(() => expect(useSmileIDSampleSettingsStore.getState().loaded).toBe(true));
@@ -125,6 +138,8 @@ beforeEach(async () => {
   mockProbe = SchemeProbe;
   mockStatusBarStyles.length = 0;
   mockNavigationBarStyles.length = 0;
+  mockStatusBarReasserts.length = 0;
+  mockNavigationBarReasserts.length = 0;
   imposedScheme = jest.spyOn(Appearance, 'setColorScheme').mockImplementation(() => undefined);
   await AsyncStorage.clear();
   useSmileIDSampleJobStore.getState().reset();
@@ -165,23 +180,62 @@ describe('seedJobs decides whether the verifications list has anything in it', (
   });
 });
 
-describe('the Dark Mode switch reaches the theme and the system bars', () => {
-  it('overrides a light device to dark when the switch is on', async () => {
-    expect(await resolvedScheme({ darkMode: true, system: 'light' })).toHaveTextContent('dark');
+describe('the appearance reaches the theme and the system bars', () => {
+  it('pins a light device dark when Dark is chosen', async () => {
+    expect(await resolvedScheme({ appearance: 'dark', system: 'light' })).toHaveTextContent('dark');
     expect(imposedScheme).toHaveBeenLastCalledWith('dark');
     expect(mockStatusBarStyles.at(-1)).toBe('light');
     expect(mockNavigationBarStyles.at(-1)).toBe('light');
   });
 
-  it('overrides a dark device to light when the switch is off, as Android and iOS do', async () => {
-    expect(await resolvedScheme({ darkMode: false, system: 'dark' })).toHaveTextContent('light');
+  it('pins a dark device light when Light is chosen, as Android and iOS do', async () => {
+    expect(await resolvedScheme({ appearance: 'light', system: 'dark' })).toHaveTextContent('light');
     expect(imposedScheme).toHaveBeenLastCalledWith('light');
     expect(mockStatusBarStyles.at(-1)).toBe('dark');
     expect(mockNavigationBarStyles.at(-1)).toBe('dark');
   });
 
-  it('stays light when neither asks for dark', async () => {
-    expect(await resolvedScheme({ darkMode: false, system: 'light' })).toHaveTextContent('light');
+  it('follows a dark device on a fresh install and hands the scheme back with unspecified', async () => {
+    expect(await resolvedScheme({ system: 'dark' })).toHaveTextContent('dark');
+    expect(imposedScheme).toHaveBeenLastCalledWith('unspecified');
+    expect(mockStatusBarStyles.at(-1)).toBe('light');
+  });
+
+  it('reads the released Dark mode switch turned on as Dark', async () => {
+    expect(await resolvedScheme({ legacyDarkMode: true, system: 'light' })).toHaveTextContent('dark');
+    expect(imposedScheme).toHaveBeenLastCalledWith('dark');
+  });
+
+  it('reads the released switch turned off as System, since off was also its default', async () => {
+    expect(await resolvedScheme({ legacyDarkMode: false, system: 'dark' })).toHaveTextContent('dark');
+    expect(imposedScheme).toHaveBeenLastCalledWith('unspecified');
+  });
+
+  it("keeps the device's own theme for the System label while the app pins the other", async () => {
+    useSmileIDSampleDeviceScheme.setState({ deviceDark: false });
+    expect(await resolvedScheme({ appearance: 'light', system: 'dark' })).toHaveTextContent('light');
+    expect(useSmileIDSampleDeviceScheme.getState().deviceDark).toBe(true);
+  });
+
+  it("re-asserts Android's bars with the event's theme under System, not the one it subscribed with", async () => {
+    const os = jest.replaceProperty(Platform, 'OS', 'android');
+    const listeners: ((preferences: { colorScheme: 'light' | 'dark' }) => void)[] = [];
+    const subscribe = jest.spyOn(Appearance, 'addChangeListener').mockImplementation((listener) => {
+      listeners.push(listener as (preferences: { colorScheme: 'light' | 'dark' }) => void);
+      return { remove: () => undefined } as ReturnType<typeof Appearance.addChangeListener>;
+    });
+    try {
+      expect(await resolvedScheme({ system: 'light' })).toHaveTextContent('light');
+      await act(async () => {
+        listeners.at(-1)?.({ colorScheme: 'dark' });
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+      });
+      expect(mockStatusBarReasserts.at(-1)).toBe('light');
+      expect(mockNavigationBarReasserts.at(-1)).toBe('light');
+    } finally {
+      subscribe.mockRestore();
+      os.restore();
+    }
   });
 
   it('loads the stored settings at root, or the switch has nothing to read', async () => {

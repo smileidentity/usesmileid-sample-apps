@@ -38,9 +38,9 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
   func testAnAbsentRowReadsAsTodaysDefault() {
     XCTAssertEqual(makeStore().settings, UseSmileIDSampleSettings())
 
-    makeStore().setSetting(.darkMode, true)
+    makeStore().setSetting(.agentMode, true)
 
-    XCTAssertEqual(makeStore().settings, UseSmileIDSampleSettings(darkMode: true))
+    XCTAssertEqual(makeStore().settings, UseSmileIDSampleSettings(enhancedSmartSelfie: false, agentMode: true))
   }
 
   func testAStoredPairTheSdkRefusesIsNormalisedOnRead() {
@@ -65,7 +65,6 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
       UseSmileIDSampleSettings(
         enhancedSmartSelfie: false,
         agentMode: true,
-        darkMode: true,
         consentStep: false,
         instructionsStep: false,
         previewStep: false,
@@ -81,6 +80,45 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
     XCTAssertEqual(makeStore().settings.captureMode, .autoWithFallback)
     makeStore().setCaptureMode(.manual)
     XCTAssertEqual(makeStore().settings.captureMode, .manual)
+  }
+
+  func testNoStoredAppearanceFollowsTheDevice() {
+    XCTAssertEqual(makeStore().settings.appearance, .system)
+  }
+
+  func testTheReleasedDarkModeSwitchTurnedOnReadsAsDark() {
+    rows.setFlag("dark_mode", true)
+    XCTAssertEqual(makeStore().settings.appearance, .dark)
+  }
+
+  /// False was also the switch's default, so it proves no one chose Light.
+  func testTheReleasedDarkModeSwitchTurnedOffFollowsTheDevice() {
+    rows.setFlag("dark_mode", false)
+    XCTAssertEqual(makeStore().settings.appearance, .system)
+  }
+
+  /// Also the state a crash between the two writes leaves behind.
+  func testAStoredAppearanceWinsOverTheReleasedSwitch() {
+    rows.setString("appearance", "light")
+    rows.setFlag("dark_mode", true)
+    XCTAssertEqual(makeStore().settings.appearance, .light)
+  }
+
+  func testAnUnknownAppearanceFollowsTheDevice() {
+    rows.setString("appearance", "sepia")
+    XCTAssertEqual(makeStore().settings.appearance, .system)
+  }
+
+  func testChoosingAnAppearanceStoresItsIdAndRetiresTheReleasedSwitch() {
+    rows.setFlag("dark_mode", true)
+    let store = makeStore()
+
+    store.setAppearance(.light)
+
+    XCTAssertEqual(store.settings.appearance, .light)
+    XCTAssertEqual(rows.string("appearance"), "light")
+    XCTAssertNil(rows.flag("dark_mode"))
+    XCTAssertEqual(makeStore().settings.appearance, .light)
   }
 
   func testTheKeysAreTheAndroidStoresOwn() {
@@ -112,16 +150,30 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
     let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
     let previous = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
     defer { Self.reset(defaults, suite, previous) }
-    let key = UseSmileIDSampleSetting.darkMode.storageKey
-    defaults.setVolatileDomain([key: "true"], forName: UserDefaults.argumentDomain)
+    let key = "appearance"
+    defaults.setVolatileDomain([key: "light"], forName: UserDefaults.argumentDomain)
     let launched = makeStore(defaults)
+    XCTAssertEqual(launched.settings.appearance, .light, "`-appearance light` must seed the read, which `data(_:)` would refuse")
 
-    launched.setSetting(.darkMode, false)
+    launched.setAppearance(.dark)
 
-    XCTAssertFalse(launched.settings.darkMode, "the store must answer with its own write")
-    XCTAssertEqual(defaults.persistentDomain(forName: suite)?[key] as? Bool, false)
-    // Measured: the argument domain outranks the persistent one, so a re-read would still say true.
-    XCTAssertTrue(makeStore(defaults).settings.darkMode)
+    XCTAssertEqual(launched.settings.appearance, .dark, "the store must answer with its own write")
+    XCTAssertEqual(defaults.persistentDomain(forName: suite)?[key] as? String, "dark")
+    // Measured: the argument domain outranks the persistent one, so a re-read would still say light.
+    XCTAssertEqual(makeStore(defaults).settings.appearance, .light)
+  }
+
+  func testTheArgumentDomainReachesAStringButNeverData() throws {
+    let suite = "usesmileid_sample_settings_string_test"
+    let defaults = try XCTUnwrap(UserDefaults(suiteName: suite))
+    let previous = defaults.volatileDomain(forName: UserDefaults.argumentDomain)
+    defer { Self.reset(defaults, suite, previous) }
+    defaults.setVolatileDomain(["appearance": "dark", "capture_mode": "manual"], forName: UserDefaults.argumentDomain)
+
+    let storage = UseSmileIDSampleDefaultsStorage(defaults: defaults)
+
+    XCTAssertEqual(storage.string("appearance"), "dark")
+    XCTAssertNil(storage.data("capture_mode"), "a launch argument must never seed data")
   }
 
   private func makeStore(_ defaults: UserDefaults? = nil) -> UseSmileIDSampleStore {
@@ -137,7 +189,7 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
   }
 
   private static let keys = [
-    "enhanced_smart_selfie", "agent_mode", "dark_mode", "consent_step", "instructions_step", "preview_step",
+    "enhanced_smart_selfie", "agent_mode", "consent_step", "instructions_step", "preview_step",
     "gallery_upload", "allow_skip_back", "selfie_first"
   ]
 }

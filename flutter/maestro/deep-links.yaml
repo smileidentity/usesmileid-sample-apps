@@ -57,3 +57,26 @@ appId: ${APP_ID}
 - openLink: "usesmileid-sample-flutter://verifications?seedJobs=true"
 - assertVisible:
     id: "sample_verifications_empty"
+
+# The appearance sheet by its link: System ships selected, a pick lands on the row and persists.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://settings/appearance?catalogue=fixture"
+      LANDS_ON: "sample_appearance_sheet"
+- assertVisible:
+    id: "sample_appearance_option_system"
+    selected: true
+- tapOn:
+    id: "sample_appearance_option_dark"
+- assertNotVisible:
+    id: "sample_appearance_sheet"
+# Flutter merges the row's two lines into its own label, so the pick is read back from the sheet below.
+- assertVisible:
+    id: "sample_setting_appearance"
+- openLink: "usesmileid-sample-flutter://settings/appearance"
+- assertVisible:
+    id: "sample_appearance_option_dark"
+    selected: true
+- tapOn:
+    id: "sample_appearance_option_system"

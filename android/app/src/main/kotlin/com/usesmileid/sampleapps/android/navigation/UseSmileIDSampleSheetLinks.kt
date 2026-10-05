@@ -14,7 +14,7 @@ import androidx.navigation.NavHostController
 
 /**
  * A sheet is a LAYER over the screen that owns it, never a destination that replaces it (see
- * `docs/architecture.md` §4), because a destination leaves the scrim covering a grey void. The nine
+ * `docs/architecture.md` §4), because a destination leaves the scrim covering a grey void. The ten
  * sheet paths in `spec/routes.json` stay deep-linkable: each resolves to its owner's own link plus a
  * request the owner picks up.
  */
@@ -28,6 +28,7 @@ internal enum class UseSmileIDSampleSheet {
     CaptureAs,
     GenericDocument,
     CaptureMode,
+    Appearance,
 }
 
 internal data class UseSmileIDSampleSheetLink(val sheet: UseSmileIDSampleSheet, val ownerUri: String)
@@ -55,6 +56,8 @@ internal object UseSmileIDSampleSheetLinks {
             UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.ScenarioDrawer, UseSmileIDSampleDeepLinks.SETTINGS),
         UseSmileIDSampleDeepLinks.CAPTURE_MODE to
             UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.CaptureMode, UseSmileIDSampleDeepLinks.SETTINGS),
+        UseSmileIDSampleDeepLinks.APPEARANCE to
+            UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.Appearance, UseSmileIDSampleDeepLinks.SETTINGS),
     )
 
     /** The pickers hang off the form's own path, so their owner is the link minus its last segment. */

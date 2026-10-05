@@ -627,26 +627,41 @@
       "workaround": "scripts/sync_design_tokens.py generates SmileMotion for Kotlin and Swift from the same tokens.flat.json, as it already generates the Compose type styles, so the value stays generated and --check still catches staleness.",
       "recommendation": "Ask upstream to emit durations from the Compose and SwiftUI emitters. Delete the generated files when it does.",
       "status": "OPEN 2026-09-28 — generated stopgap in place"
+    },
+    {
+      "id": "expoSplashBackground",
+      "severity": "the Expo app's launch splash, both platforms",
+      "designSystem": {
+        "color.background light": "#f9fafb",
+        "color.background dark": "#1a1c23"
+      },
+      "finding": "expo-splash-screen's plugin takes its colours from app.config.ts, and Expo's config loader cannot require expo/sample-ui/src/tokens.ts: an extensionless import fails to resolve, and a .ts specifier loads only through Node's own type stripping and fails tsc (TS5097).",
+      "values": {
+        "light": "#f9fafb",
+        "dark": "#1a1c23"
+      },
+      "guardedBy": "expo/app/test/use-smile-id-sample-splash.test.ts asserts both values equal color.background in the generated module, so a token change fails there rather than drifting.",
+      "status": "OPEN 2026-10-02 — copied as the fallback; delete when the config can read the generated module"
     }
   ],
   "perPlatform": {
     "android": {
       "consume": "SmileTokens.kt — SmileColorLight / SmileColorDark / SmileDimens (SmileType is comments only); plus the generated SmileTypeStyles.kt for the type ramp",
-      "wiring": "Feed the token objects into the app's Compose theme and select by isSystemInDarkTheme(); do not replace the SDK's own theme, which resolves the same tokens internally. Component tokens are grouped into the app's own mode-selected holder because SmileColorLight and SmileColorDark are two unrelated generated objects with no common supertype, so a component cannot choose between them itself.",
+      "wiring": "Feed the token objects into the app's Compose theme and select by the resolved appearance (System → isSystemInDarkTheme()); do not replace the SDK's own theme, which resolves the same tokens internally. Component tokens are grouped into the app's own mode-selected holder because SmileColorLight and SmileColorDark are two unrelated generated objects with no common supertype, so a component cannot choose between them itself.",
       "vendoredTo": "android/sample-ui/.../tokens/SmileTokens.kt (copied verbatim from dist/android)",
       "generatedHere": "android/sample-ui/.../tokens/SmileTypeStyles.kt — 29 real TextStyles, and the five DM Sans OFL faces in sample-ui/src/main/res/font/. Both come from scripts/sync_design_tokens.py --all and are covered by --check. The font is bundled rather than fetched through a downloadable-font provider: this file's rules say to ship it, and a provider would make text depend on Play Services and goldens depend on the network.",
       "generatedStopgaps": "android/sample-ui/.../tokens/SmileProductHues.kt — the SECOND generated file, and the one a port is most likely to miss. Everything the design system does not carry lives here: productHues and profileHues, the offBlack / navBarFill / cardStroke light-dark PAIRS, borderStrong, surface2, softBadgeFills, the token-session gradient and ring, labelTypeStyle, cardLabelRuns and productsScreenType. All of it is generated from the `deltas` in this file by scripts/sync_design_tokens.py --all and covered by --check; none of it may be hand-edited or hand-copied into a second codebase. A port that vendors only SmileTokens.kt and the type ramp has no product hues, no warm foreground and no card stroke."
     },
     "ios": {
       "consume": "SmileTokens.swift — SmileColorLight / SmileColorDark / SmileSpacing; plus the generated SmileTypeStyles.swift for the type ramp",
-      "wiring": "Select by colorScheme and expose through the app's environment. Component tokens are grouped into the app's own mode-selected UseSmileIDSampleColors because SmileColorLight and SmileColorDark are two unrelated generated enums with no common type, so a component cannot choose between them itself — the same reason the Compose theme groups them.",
+      "wiring": "Select by colorScheme, which the resolved appearance sets (System leaves it to the device), and expose through the app's environment. Component tokens are grouped into the app's own mode-selected UseSmileIDSampleColors because SmileColorLight and SmileColorDark are two unrelated generated enums with no common type, so a component cannot choose between them itself — the same reason the Compose theme groups them.",
       "vendoredTo": "ios/SampleUI/Sources/SampleUI/Tokens/SmileTokens.swift (copied verbatim from dist/ios)",
       "generatedStopgaps": "ios/SampleUI/Sources/SampleUI/Tokens/SmileProductHues.swift — the SECOND generated file, and the one a port is most likely to miss. Emitted from the same spec/design-tokens.json deltas as the Compose twin, so the two cannot disagree about a value; a generator test asserts the two emit an identical set of hexes.",
       "generatedHere": "ios/SampleUI/Sources/SampleUI/Tokens/SmileTypeStyles.swift — 29 SmileTextStyle values, and the five DM Sans OFL faces in Sources/SampleUI/Resources/Fonts/. Both come from scripts/sync_design_tokens.py --all and are covered by --check. The faces are addressed by PostScript name rather than family plus weight: DMSans-Medium, -SemiBold and -ExtraBold each declare their own family, so Font.custom(\"DM Sans\").weight(.semibold) silently returns the regular face. A package's resources are invisible to the app's UIAppFonts, so they are registered at runtime by UseSmileIDSampleFonts."
     },
     "expo": {
       "consume": "tokens.ts — lightColors / darkColors / tokens, where the component COLOURS hang off the two colour objects (lightColors.input.border-focus) and the component DIMENSIONS and fonts hang off tokens (tokens.input.height)",
-      "wiring": "A typed token module the sample-ui package imports; no native code involved. Selected by useColorScheme and grouped into the app's own mode-selected object, the same reason the Compose and SwiftUI themes group theirs.",
+      "wiring": "A typed token module the sample-ui package imports; no native code involved. Selected by useColorScheme, which the resolved appearance pins (System hands it back to the device), and grouped into the app's own mode-selected object, the same reason the Compose and SwiftUI themes group theirs. The splash colours in app.config.ts are copies of color.background (see the expoSplashBackground delta), held equal to the generated module by a test.",
       "vendoredTo": "expo/sample-ui/src/tokens.ts (copied verbatim from dist/ts)",
       "generatedStopgaps": "expo/sample-ui/src/smile-product-hues.ts — the SECOND generated file, and the one a port is most likely to miss. Emitted from the same deltas as the Compose and SwiftUI twins, so the three cannot disagree about a value; a generator test asserts all three emit an identical set of hexes. Added 2026-09-17 with this platform's app.",
       "generatedHere": "expo/sample-ui/assets/fonts/DMSans-*.ttf — the five OFL faces, copied by scripts/sync_design_tokens.py --all and covered by --check. Kept at the upstream file names because TypeScript requires each face by path, so a rename silently drops a weight to the platform font.",
@@ -655,7 +670,7 @@
     "flutter": {
       "consume": "flutter/sample_ui/lib/src/tokens/smile_tokens.dart — GENERATED (committed 2026-08-13)",
       "generatedBy": "scripts/sync_design_tokens.py, from the design system's platform-neutral dist/json/tokens.flat.json",
-      "wiring": "Feed SmileColorLight / SmileColorDark into the app's ThemeData, selected by platform brightness.",
+      "wiring": "Feed SmileColorLight / SmileColorDark into the app's ThemeData, selected by the resolved appearance (System → platform brightness).",
       "shape": "SmileColorLight (152) · SmileColorDark (152) · SmileDimens (42) · SmileType (29 TextStyles) · SmileShadows (6 BoxShadows) · SmileMotion (6 Durations)",
       "deliberateAdditions": "The upstream Compose emitter leaves typography as comments and omits shadows entirely. Dart expresses both directly, so SmileType emits real TextStyles and SmileShadows emits real BoxShadows. Naming otherwise mirrors Compose so the two are diffable. NOTE 2026-08-13: the typography half is an emitter gap rather than a Compose limitation — see deltas → composeTypeStylesAreComments. The shadow half is a genuine platform difference: Compose has no equivalent of an arbitrary offset/blur/colour shadow value.",
       "verified": "dart format canonical, generator idempotent, `dart analyze` clean in a Flutter package context, and colour membership identical to the Compose output.",

@@ -33,7 +33,7 @@ void main() {
 
   Future<void> pumpApp(
     WidgetTester tester, {
-    required bool darkMode,
+    required UseSmileIDSampleAppearance appearance,
     required Brightness device,
     String? at,
   }) async {
@@ -52,7 +52,7 @@ void main() {
             settings,
           ),
           useSmileIDSampleStoredSettingsProvider.overrideWithValue(
-            UseSmileIDSampleSettings(darkMode: darkMode),
+            UseSmileIDSampleSettings(appearance: appearance),
           ),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(jobs),
         ],
@@ -83,7 +83,7 @@ void main() {
     expect(style.statusBarColor, Colors.transparent);
   }
 
-  /// The page follows the switch and the bars last drawn contrast with it.
+  /// The page follows the appearance and the bars last drawn contrast with it.
   void expectBars(WidgetTester tester, {required bool dark}) {
     expect(themeBrightness(tester), dark ? Brightness.dark : Brightness.light);
     expectStyle(SystemChrome.latestStyle, dark: dark);
@@ -92,7 +92,11 @@ void main() {
   testWidgets('a light app on a dark device draws dark icons at a tab root', (
     WidgetTester tester,
   ) async {
-    await pumpApp(tester, darkMode: false, device: Brightness.dark);
+    await pumpApp(
+      tester,
+      appearance: UseSmileIDSampleAppearance.light,
+      device: Brightness.dark,
+    );
 
     expectBars(tester, dark: false);
   });
@@ -102,7 +106,7 @@ void main() {
   ) async {
     await pumpApp(
       tester,
-      darkMode: true,
+      appearance: UseSmileIDSampleAppearance.dark,
       device: Brightness.light,
       at: UseSmileIDSampleRoutes.licenses,
     );
@@ -115,7 +119,7 @@ void main() {
   ) async {
     await pumpApp(
       tester,
-      darkMode: false,
+      appearance: UseSmileIDSampleAppearance.light,
       device: Brightness.dark,
       at: UseSmileIDSampleRoutes.scenarioDrawer,
     );
@@ -129,7 +133,7 @@ void main() {
   ) async {
     await pumpApp(
       tester,
-      darkMode: true,
+      appearance: UseSmileIDSampleAppearance.dark,
       device: Brightness.light,
       at: UseSmileIDSampleRoutes.scenarioDrawer,
     );
@@ -141,7 +145,11 @@ void main() {
   testWidgets('a dark app on a light device hands the SDK the dark theme', (
     WidgetTester tester,
   ) async {
-    await pumpApp(tester, darkMode: true, device: Brightness.light);
+    await pumpApp(
+      tester,
+      appearance: UseSmileIDSampleAppearance.dark,
+      device: Brightness.light,
+    );
     final BuildContext context = tester.element(find.byType(Navigator).first);
     final UseSmileIDSampleFormsNotifier forms = ProviderScope.containerOf(
       context,
@@ -171,5 +179,48 @@ void main() {
       dark: true,
     );
     expectBars(tester, dark: true);
+  });
+
+  testWidgets('under System the app and its bars follow a dark device', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(
+      tester,
+      appearance: UseSmileIDSampleAppearance.system,
+      device: Brightness.dark,
+    );
+
+    expectBars(tester, dark: true);
+  });
+
+  testWidgets('under System a device change while open re-themes the app', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(
+      tester,
+      appearance: UseSmileIDSampleAppearance.system,
+      device: Brightness.light,
+    );
+    expectBars(tester, dark: false);
+
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    await tester.pumpAndSettle();
+
+    expectBars(tester, dark: true);
+  });
+
+  testWidgets('a pinned appearance holds through a device change', (
+    WidgetTester tester,
+  ) async {
+    await pumpApp(
+      tester,
+      appearance: UseSmileIDSampleAppearance.light,
+      device: Brightness.light,
+    );
+
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    await tester.pumpAndSettle();
+
+    expectBars(tester, dark: false);
   });
 }

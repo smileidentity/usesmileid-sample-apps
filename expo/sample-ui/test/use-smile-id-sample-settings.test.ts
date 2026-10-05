@@ -1,3 +1,8 @@
+import {
+  UseSmileIDSampleAppearance,
+  smileIDSampleAppearanceIsDark,
+  smileIDSampleAppearanceLabel,
+} from '../src/model/use-smile-id-sample-appearance';
 import { UseSmileIDSampleSetting, smileIDSampleSettings } from '../src/model/use-smile-id-sample-setting';
 import {
   smileIDSampleSettingsDefaults,
@@ -7,6 +12,24 @@ import {
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { smileIDSampleNavRows } from '../src/model/use-smile-id-sample-nav-row';
 import { spec } from './spec-file';
+
+describe('the appearance', () => {
+  it('follows the device on a fresh install', () => {
+    expect(smileIDSampleSettingsDefaults.appearance).toBe(UseSmileIDSampleAppearance.System);
+  });
+
+  it.each([
+    [UseSmileIDSampleAppearance.System, false, false, 'System (Light)'],
+    [UseSmileIDSampleAppearance.System, true, true, 'System (Dark)'],
+    [UseSmileIDSampleAppearance.Light, false, false, 'Light'],
+    [UseSmileIDSampleAppearance.Light, true, false, 'Light'],
+    [UseSmileIDSampleAppearance.Dark, false, true, 'Dark'],
+    [UseSmileIDSampleAppearance.Dark, true, true, 'Dark'],
+  ])('%s on deviceDark %s renders dark %s and reads %s', (appearance, deviceDark, dark, label) => {
+    expect(smileIDSampleAppearanceIsDark(appearance, deviceDark)).toBe(dark);
+    expect(smileIDSampleAppearanceLabel(appearance, deviceDark)).toBe(label);
+  });
+});
 
 describe('the settings defaults', () => {
   it('turns the head-turn challenge on, which is what the design draws', () => {
@@ -53,15 +76,13 @@ describe('the capture mutex', () => {
     expect([to.enhancedSmartSelfie, to.agentMode]).toEqual([false, false]);
   });
 
-  it('touches nothing else for the four rows that are plain booleans', () => {
+  it('touches nothing else for the three rows that are plain booleans', () => {
     for (const setting of [
-      UseSmileIDSampleSetting.DarkMode,
       UseSmileIDSampleSetting.ConsentStep,
       UseSmileIDSampleSetting.InstructionsStep,
       UseSmileIDSampleSetting.PreviewStep,
     ]) {
-      // Flipped away from its own default and put back, which is not the same as forcing it true:
-      // dark mode defaults to false and the other three to true.
+      // Flipped away from its own default and put back, which is not the same as forcing it true.
       const flipped = !smileIDSampleSettingsDefaults[setting];
       const to = smileIDSampleSettingsWith(smileIDSampleSettingsDefaults, setting, flipped);
       expect({ ...to, [setting]: smileIDSampleSettingsDefaults[setting] }).toEqual(
@@ -93,7 +114,6 @@ describe('the settings rows match spec/test-ids.json', () => {
     const switchIds = [
       UseSmileIDSampleTestIds.SETTING_ENHANCED_SMART_SELFIE,
       UseSmileIDSampleTestIds.SETTING_AGENT_MODE,
-      UseSmileIDSampleTestIds.SETTING_DARK_MODE,
       UseSmileIDSampleTestIds.SETTING_CONSENT_STEP,
       UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
       UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,

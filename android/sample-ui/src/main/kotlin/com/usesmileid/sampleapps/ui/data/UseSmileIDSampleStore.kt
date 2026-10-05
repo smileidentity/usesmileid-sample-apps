@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesCodec
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
@@ -68,6 +69,14 @@ class UseSmileIDSampleStore(
         store.edit { prefs -> prefs[CAPTURE_MODE] = mode.id }
     }
 
+    /** Retires the legacy Dark mode key in the same edit, so it never decides again. */
+    suspend fun setAppearance(appearance: UseSmileIDSampleAppearance) {
+        store.edit { prefs ->
+            prefs[APPEARANCE] = appearance.id
+            prefs.remove(DARK_MODE)
+        }
+    }
+
     /** Re-seals a token an earlier build stored in plain text, so an upgrade leaves no credential readable on disk. */
     suspend fun sealLegacyToken() {
         val stored = store.data.first()[SESSION_TOKEN] ?: return
@@ -112,7 +121,6 @@ class UseSmileIDSampleStore(
         return UseSmileIDSampleSettings(
             enhancedSmartSelfie = prefs[ENHANCED_SMART_SELFIE] ?: defaults.enhancedSmartSelfie,
             agentMode = prefs[AGENT_MODE] ?: defaults.agentMode,
-            darkMode = prefs[DARK_MODE] ?: defaults.darkMode,
             consentStep = prefs[CONSENT_STEP] ?: defaults.consentStep,
             instructionsStep = prefs[INSTRUCTIONS_STEP] ?: defaults.instructionsStep,
             previewStep = prefs[PREVIEW_STEP] ?: defaults.previewStep,
@@ -121,13 +129,18 @@ class UseSmileIDSampleStore(
             selfieFirst = prefs[SELFIE_FIRST] ?: defaults.selfieFirst,
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
                 ?: defaults.captureMode,
+            appearance = appearanceIn(prefs),
         ).normalised()
     }
+
+    /** A stored id wins; else the legacy switch, where only true proves a choice, since false was also its default. */
+    private fun appearanceIn(prefs: Preferences): UseSmileIDSampleAppearance =
+        UseSmileIDSampleAppearance.entries.firstOrNull { it.id == prefs[APPEARANCE] }
+            ?: if (prefs[DARK_MODE] == true) UseSmileIDSampleAppearance.Dark else UseSmileIDSampleAppearance.System
 
     private fun UseSmileIDSampleSetting.key(): Preferences.Key<Boolean> = when (this) {
         UseSmileIDSampleSetting.EnhancedSmartSelfie -> ENHANCED_SMART_SELFIE
         UseSmileIDSampleSetting.AgentMode -> AGENT_MODE
-        UseSmileIDSampleSetting.DarkMode -> DARK_MODE
         UseSmileIDSampleSetting.ConsentStep -> CONSENT_STEP
         UseSmileIDSampleSetting.InstructionsStep -> INSTRUCTIONS_STEP
         UseSmileIDSampleSetting.PreviewStep -> PREVIEW_STEP
@@ -140,6 +153,8 @@ class UseSmileIDSampleStore(
         // A new key, never the old one reused: `smile_to_capture = true` meant the opposite.
         val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
+        val APPEARANCE = stringPreferencesKey("appearance")
+        // The switch that APPEARANCE replaced, read only to carry an installed choice over.
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val CONSENT_STEP = booleanPreferencesKey("consent_step")
         val INSTRUCTIONS_STEP = booleanPreferencesKey("instructions_step")

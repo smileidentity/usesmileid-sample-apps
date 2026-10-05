@@ -25,6 +25,8 @@ import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flo
 // Mocked, not avoided: the host requiring exactly one provider is the thing under test.
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
+jest.mock('@smileid/usesmileid_mlkit_document', () => ({ useSmileIDMlkitDocument: { key: 'mlkit-document' } }));
+jest.mock('@smileid/usesmileid_vision_document', () => ({ useSmileIDVisionDocument: { key: 'vision-document' } }));
 
 const productFor = (id: string): UseSmileIDSampleProduct =>
   smileIDSampleProducts.find((product) => product.id === id)!;
@@ -231,6 +233,27 @@ describe('what the SDK is handed', () => {
       );
       expect([captureAs, document.captureBothSides]).toEqual([captureAs, captureAs !== UseSmileIDSampleCaptureAs.Passport]);
     }
+  });
+
+  // Without one, the document capture screen throws as it opens and takes the app down.
+  it('registers a document analyzer for every document product, and none for a selfie one', () => {
+    for (const id of ['documentVerification', 'enhancedDocumentVerification', 'residencyDocumentVerification']) {
+      const result = built(
+        snapshot({
+          product: productFor(id),
+          idDetails: {
+            ...smileIDSampleIdDetailsDefaults,
+            country: { code: 'NG', name: 'Nigeria' },
+            document: { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 },
+          },
+        }),
+      ).build();
+      expect([id, result.kind]).toEqual([id, 'success']);
+      if (result.kind === 'success') expect(result.configuration.ml?.analyzers.document).toBeDefined();
+    }
+    const selfie = built(snapshot()).build();
+    expect(selfie.kind).toBe('success');
+    if (selfie.kind === 'success') expect(selfie.configuration.ml?.analyzers.document).toBeUndefined();
   });
 
   // The regression check for the import that took the whole JS bundle down on Android.

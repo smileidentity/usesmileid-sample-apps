@@ -47,6 +47,7 @@ class ScreenStateGoldenTest {
         "captureAsSheet.default" to "sheet_capture_as",
         "genericDocumentSheet.default" to "sheet_generic_document",
         "captureModeSheet.default" to "sheet_capture_mode",
+        "appearanceSheet.default" to "sheet_appearance",
         "settings.default" to "screen_settings",
         "settings.altProfile" to "screen_settings_alt_profile",
         "settings.newlyCreatedProfile" to "screen_settings_new_profile",
@@ -146,6 +147,6 @@ class ScreenStateGoldenTest {
         val STATE_KEY = Regex("\"state\"\\s*:")
 
         /** Roborazzi names its output from this argument, so a renamed golden is a renamed baseline. */
-        val GOLDEN_CALL = Regex("goldens\\(\\s*(?:name\\s*=\\s*)?\"([a-z0-9_]+)\"")
+        val GOLDEN_CALL = Regex("goldens(?:OnDevice)?\\(\\s*(?:name\\s*=\\s*)?\"([a-z0-9_]+)\"")
     }
 }

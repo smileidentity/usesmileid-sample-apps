@@ -59,9 +59,8 @@ class UseSmileIDSampleSettingsTest {
     }
 
     @Test
-    fun `the other four rows move nothing but themselves`() {
+    fun `the other three rows move nothing but themselves`() {
         val others = listOf(
-            UseSmileIDSampleSetting.DarkMode,
             UseSmileIDSampleSetting.ConsentStep,
             UseSmileIDSampleSetting.InstructionsStep,
             UseSmileIDSampleSetting.PreviewStep,
@@ -74,5 +73,36 @@ class UseSmileIDSampleSettingsTest {
                 assertEquals("$setting moved $it", defaults[it], updated[it])
             }
         }
+    }
+
+    @Test
+    fun `a fresh install follows the device`() {
+        assertEquals(UseSmileIDSampleAppearance.System, UseSmileIDSampleSettings().appearance)
+    }
+
+    @Test
+    fun `each appearance resolves against both device themes`() {
+        val expected = mapOf(
+            (UseSmileIDSampleAppearance.System to false) to false,
+            (UseSmileIDSampleAppearance.System to true) to true,
+            (UseSmileIDSampleAppearance.Light to false) to false,
+            (UseSmileIDSampleAppearance.Light to true) to false,
+            (UseSmileIDSampleAppearance.Dark to false) to true,
+            (UseSmileIDSampleAppearance.Dark to true) to true,
+        )
+        expected.forEach { (input, dark) -> assertEquals("$input", dark, input.first.isDark(input.second)) }
+    }
+
+    @Test
+    fun `the System label names the device's theme and the others name themselves`() {
+        val expected = mapOf(
+            (UseSmileIDSampleAppearance.System to false) to "System (Light)",
+            (UseSmileIDSampleAppearance.System to true) to "System (Dark)",
+            (UseSmileIDSampleAppearance.Light to false) to "Light",
+            (UseSmileIDSampleAppearance.Light to true) to "Light",
+            (UseSmileIDSampleAppearance.Dark to false) to "Dark",
+            (UseSmileIDSampleAppearance.Dark to true) to "Dark",
+        )
+        expected.forEach { (input, label) -> assertEquals("$input", label, input.first.label(input.second)) }
     }
 }

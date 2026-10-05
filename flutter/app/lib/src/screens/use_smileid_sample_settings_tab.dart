@@ -20,6 +20,7 @@ class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
   const UseSmileIDSampleSettingsTab({
     this.openDrawer = false,
     this.openCaptureMode = false,
+    this.openAppearance = false,
     super.key,
   });
 
@@ -28,6 +29,9 @@ class UseSmileIDSampleSettingsTab extends ConsumerStatefulWidget {
 
   /// Whether a link asked for the capture-mode sheet.
   final bool openCaptureMode;
+
+  /// Whether a link asked for the appearance sheet.
+  final bool openAppearance;
 
   @override
   ConsumerState<UseSmileIDSampleSettingsTab> createState() =>
@@ -41,12 +45,15 @@ class _UseSmileIDSampleSettingsTabState
     super.initState();
     // After the first frame, because a sheet cannot be presented while this is still building —
     // and once only, so returning here later does not replay the link's sheet.
-    if (widget.openDrawer || widget.openCaptureMode) {
+    if (widget.openDrawer || widget.openCaptureMode || widget.openAppearance) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          widget.openDrawer
-              ? _openScenarioDrawer()
-              : _openCaptureModeFromLink();
+        if (!mounted) return;
+        if (widget.openDrawer) {
+          _openScenarioDrawer();
+        } else if (widget.openCaptureMode) {
+          _openCaptureModeFromLink();
+        } else {
+          _openAppearanceFromLink();
         }
       });
     }
@@ -70,6 +77,13 @@ class _UseSmileIDSampleSettingsTabState
         }
       });
     }
+    if (widget.openAppearance && !oldWidget.openAppearance) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _openAppearanceFromLink();
+        }
+      });
+    }
   }
 
   @override
@@ -86,6 +100,8 @@ class _UseSmileIDSampleSettingsTabState
         versionLabel: useSmileIDSampleVersionLabel,
         avatarColor: avatarColorForProfile(profiles.activeIndex),
         hasProfile: profiles.active != null,
+        // The platform's own brightness, which the app's theme mode never overrides.
+        deviceDark: MediaQuery.platformBrightnessOf(context) == Brightness.dark,
         consentBoundByToken:
             ref.watch(useSmileIDSampleSessionProvider).live?.bindings.consent !=
                 null &&
@@ -100,6 +116,7 @@ class _UseSmileIDSampleSettingsTabState
       onProfileTap: () => context.go(UseSmileIDSampleRoutes.profiles),
       onNavRowTap: _openNavRow,
       onCaptureModeTap: _showCaptureMode,
+      onAppearanceTap: _showAppearance,
       // Debug builds only; every flow reaches the drawer by its deep link instead.
       onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
       onSignOut: () {
@@ -156,6 +173,38 @@ class _UseSmileIDSampleSettingsTabState
                 ref
                     .read(useSmileIDSampleSettingsProvider.notifier)
                     .setCaptureMode(mode),
+              );
+              Navigator.of(sheetContext).pop();
+            },
+          ),
+    ),
+  );
+
+  /// Hands the route back on dismiss, as the drawer's link does.
+  Future<void> _openAppearanceFromLink() async {
+    final GoRouter router = GoRouter.of(context);
+    await _showAppearance();
+    if (router.routerDelegate.currentConfiguration.uri.path ==
+        UseSmileIDSampleRoutes.appearance) {
+      router.go(UseSmileIDSampleRoutes.settings);
+    }
+  }
+
+  Future<void> _showAppearance() => showUseSmileIDSampleSheet<void>(
+    context: context,
+    title: 'Theme',
+    testId: UseSmileIDSampleTestIds.appearanceSheet,
+    builder: (BuildContext sheetContext) => Consumer(
+      builder: (BuildContext context, WidgetRef ref, Widget? _) =>
+          UseSmileIDSampleAppearanceSheet(
+            selected: ref.watch(useSmileIDSampleSettingsProvider).appearance,
+            deviceDark:
+                MediaQuery.platformBrightnessOf(context) == Brightness.dark,
+            onSelect: (UseSmileIDSampleAppearance appearance) {
+              unawaited(
+                ref
+                    .read(useSmileIDSampleSettingsProvider.notifier)
+                    .setAppearance(appearance),
               );
               Navigator.of(sheetContext).pop();
             },

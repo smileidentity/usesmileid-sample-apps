@@ -80,16 +80,18 @@ Widget _overVerifications() => _shell(
 Widget _overSettings() => _shell(
   UseSmileIDSampleNavItem.settings,
   (BuildContext context) => UseSmileIDSampleSettingsScreen(
-    state: const UseSmileIDSampleSettingsState(
-      settings: UseSmileIDSampleSettings(),
+    state: UseSmileIDSampleSettingsState(
+      settings: const UseSmileIDSampleSettings(),
       organisation: 'No profile yet',
       initials: '',
       versionLabel: 'Smile ID · 1.0.0',
+      deviceDark: Theme.of(context).brightness == Brightness.dark,
     ),
     onSettingChanged: _ignoreSetting,
     onProfileTap: () {},
     onNavRowTap: _ignoreNavRow,
     onCaptureModeTap: () {},
+    onAppearanceTap: () {},
     onSignOut: () {},
     bottomInset: useSmileIDSampleNavBarClearance(context),
   ),

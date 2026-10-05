@@ -79,7 +79,8 @@ skip the question.
 build will be, and an Xcode install is not. Walk through: launch with no fixture profiles; the camera
 prompt on first capture and no location or photo prompt ever; Simulate a scan, start a flow, back out,
 and check the result card shows exactly one result; portrait everywhere except document capture, which
-rotates and holds landscape; dark mode; a deep link from Notes; an empty verifications list on a fresh
+rotates and holds landscape; appearance: System follows a device theme change while open, and Light
+and Dark hold through one; a deep link from Notes; an empty verifications list on a fresh
 install.
 
 **Review notes.** `ios/store/review-notes.txt` is the text on the version (4,000-character limit):
@@ -113,6 +114,8 @@ What cost real time:
 - Keep **only store art** in the screenshots directory. The review strip is RGBA, and a store rejects it.
 - **Review the rendered panels, not the frames.** Both layout bugs above were invisible in the frames.
 - Never show a state a release build cannot reach. The debug result card stays hidden in store art.
+- When a screen in the listing changes, refresh that screenshot on both stores in the same release. The
+  Settings panel is rendered from the golden frame, so re-render it and upload it by hand.
 
 ## The privacy answers this app declares
 

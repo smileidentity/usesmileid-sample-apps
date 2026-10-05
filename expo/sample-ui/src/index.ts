@@ -165,6 +165,12 @@ export {
   smileIDSampleCaptureModeLabel,
   smileIDSampleCaptureModes,
 } from './model/use-smile-id-sample-capture-mode';
+export {
+  UseSmileIDSampleAppearance,
+  smileIDSampleAppearanceIsDark,
+  smileIDSampleAppearanceLabel,
+  smileIDSampleAppearances,
+} from './model/use-smile-id-sample-appearance';
 export { useSmileIDSampleSettingsStore } from './state/use-smile-id-sample-settings-store';
 
 export { LicensesScreen, type UseSmileIDSampleLicence } from './screens/licenses-screen';
@@ -338,6 +344,7 @@ export { CountryPickerSheet } from './screens/country-picker-sheet';
 export { IdTypePickerSheet } from './screens/id-type-picker-sheet';
 export { DocumentPickerSheet } from './screens/document-picker-sheet';
 export { CaptureAsSheet } from './screens/capture-as-sheet';
+export { AppearanceSheet } from './screens/appearance-sheet';
 export { CaptureModeSheet } from './screens/capture-mode-sheet';
 export { GenericDocumentSheet } from './screens/generic-document-sheet';
 export { ProfilesScreen, type UseSmileIDSampleProfilesState } from './screens/profiles-screen';
