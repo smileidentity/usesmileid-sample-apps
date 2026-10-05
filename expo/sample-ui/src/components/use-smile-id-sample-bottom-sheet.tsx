@@ -6,6 +6,7 @@ import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { UseSmileIDSampleTopAppBarButton } from './use-smile-id-sample-top-app-bar';
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The design's sheet margin is 20, which no spacing token carries.
 const SHEET_PADDING_X = 20;
@@ -37,6 +38,7 @@ export const UseSmileIDSampleBottomSheet = ({
   testID,
   children,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
 
   // Removed from the tree when hidden, which is the platform's own guidance for a modal sheet.
@@ -60,7 +62,7 @@ export const UseSmileIDSampleBottomSheet = ({
         {fullHeight && title !== undefined ? (
           <View style={[styles.header, { columnGap: SHEET_HEADER_GAP, paddingVertical: theme.dimens.spacing.xs }]}>
             <UseSmileIDSampleTopAppBarButton
-              accessibilityLabel="Back"
+              accessibilityLabel={strings.commonBack}
               onPress={onDismiss}
               emphasis="Filled"
               glyph={(tint) => <UseSmileIDSampleIcon name="arrowBack" tint={tint} />}

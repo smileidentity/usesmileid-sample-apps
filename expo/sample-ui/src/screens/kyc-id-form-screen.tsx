@@ -19,13 +19,14 @@ import {
   type UseSmileIDSampleCatalogueFamily,
   type UseSmileIDSampleIdDetails,
 } from '../state/use-smile-id-sample-id-details';
-import { smileIDSampleMatchDocumentLabel } from '../model/use-smile-id-sample-capture-as';
 import {
   smileIDSampleIdNumberError,
   smileIDSampleIdNumberPlaceholder,
 } from '../state/use-smile-id-sample-id-number-hint';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The picker's leading mark before a country is chosen.
 const GLOBE_EMOJI = '🌍';
@@ -52,8 +53,13 @@ type Props = {
 };
 
 /// Enabled while loading, with "Loading…" in place of the prompt, so the form never looks stuck.
-const secondPlaceholder = (state: UseSmileIDSampleKycIdFormState, loading: string, ready: string): string => {
-  if (state.details.country === null) return 'Choose a country first';
+const secondPlaceholder = (
+  state: UseSmileIDSampleKycIdFormState,
+  strings: UseSmileIDSampleStrings,
+  loading: string,
+  ready: string,
+): string => {
+  if (state.details.country === null) return strings.kycChooseCountryFirst;
   return state.countryListLoading ? loading : ready;
 };
 
@@ -69,14 +75,15 @@ export const KycIdFormScreen = ({
   onContinue,
   onTokenPress,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const { country, idType, document, idNumber } = state.details;
-  const numberError = smileIDSampleIdNumberError(idType, idNumber);
+  const numberError = smileIDSampleIdNumberError(idType, idNumber, strings);
   const captureAsLabel =
     document === null
       ? null
-      : smileIDSampleCaptureAsTriggerText(smileIDSampleIdDetailsCaptureAs(state.details));
+      : smileIDSampleCaptureAsTriggerText(smileIDSampleIdDetailsCaptureAs(state.details), strings);
 
   return (
     <View
@@ -92,10 +99,10 @@ export const KycIdFormScreen = ({
             rowGap: theme.dimens.spacing.sm,
           }}
         >
-          <UseSmileIDSampleSectionLabel text="COUNTRY" />
+          <UseSmileIDSampleSectionLabel text={strings.kycCountry} />
           <UseSmileIDSampleSelectTrigger
             value={country?.name ?? null}
-            placeholder="Select country"
+            placeholder={strings.kycSelectCountry}
             onPress={onCountryPress}
             testID={UseSmileIDSampleTestIds.COUNTRY_TRIGGER}
             // The design leads with the chosen country's flag, falling back to a globe.
@@ -105,20 +112,20 @@ export const KycIdFormScreen = ({
           />
           {state.family === 'kyc' ? (
             <>
-              <UseSmileIDSampleSectionLabel text="ID TYPE" />
+              <UseSmileIDSampleSectionLabel text={strings.kycIdType} />
               <UseSmileIDSampleSelectTrigger
                 value={idType?.label ?? null}
-                placeholder={secondPlaceholder(state, 'Loading ID types…', 'Select ID type')}
+                placeholder={secondPlaceholder(state, strings, strings.kycLoadingIdTypes, strings.kycSelectIdType)}
                 onPress={onIdTypePress}
                 enabled={country !== null}
                 testID={UseSmileIDSampleTestIds.ID_TYPE_TRIGGER}
                 leading={(tint) => <UseSmileIDSampleIcon name="biometricKyc" tint={tint} />}
               />
-              <UseSmileIDSampleSectionLabel text="ID NUMBER" />
+              <UseSmileIDSampleSectionLabel text={strings.kycIdNumber} />
               <UseSmileIDSampleTextInput
                 value={idNumber}
                 onValueChange={onIdNumberChange}
-                placeholder={smileIDSampleIdNumberPlaceholder(idType)}
+                placeholder={smileIDSampleIdNumberPlaceholder(idType, strings)}
                 enabled={idType !== null}
                 isError={numberError !== null}
                 errorMessage={numberError}
@@ -129,19 +136,19 @@ export const KycIdFormScreen = ({
             </>
           ) : state.family === 'document' ? (
             <>
-              <UseSmileIDSampleSectionLabel text="DOCUMENT" />
+              <UseSmileIDSampleSectionLabel text={strings.kycDocument} />
               <UseSmileIDSampleSelectTrigger
                 value={document?.name ?? null}
-                placeholder={secondPlaceholder(state, 'Loading documents…', 'Select document')}
+                placeholder={secondPlaceholder(state, strings, strings.kycLoadingDocuments, strings.kycSelectDocument)}
                 onPress={onDocumentPress}
                 enabled={country !== null}
                 testID={UseSmileIDSampleTestIds.DOCUMENT_TRIGGER}
                 leading={(tint) => <UseSmileIDSampleIcon name="documentVerification" tint={tint} />}
               />
-              <UseSmileIDSampleSectionLabel text="CAPTURE AS" />
+              <UseSmileIDSampleSectionLabel text={strings.kycCaptureAs} />
               <UseSmileIDSampleSelectTrigger
                 value={captureAsLabel}
-                placeholder={smileIDSampleMatchDocumentLabel}
+                placeholder={strings.captureAsMatchDocument}
                 onPress={onCaptureAsPress}
                 enabled={document !== null}
                 testID={UseSmileIDSampleTestIds.CAPTURE_AS_TRIGGER}
@@ -156,7 +163,7 @@ export const KycIdFormScreen = ({
         />
       </View>
       <UseSmileIDSampleButton
-        text="Continue"
+        text={strings.commonContinue}
         onPress={onContinue}
         enabled={smileIDSampleIdDetailsComplete(state.details, state.family)}
         testID={UseSmileIDSampleTestIds.KYC_CONTINUE}

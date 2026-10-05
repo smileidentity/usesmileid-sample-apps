@@ -1,5 +1,6 @@
 import type { UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
 import type { UseSmileIDSampleTokenBindings } from './use-smile-id-sample-token-decoder';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// A linked session, held as an absolute deadline; only the decoder builds one.
 export type UseSmileIDSampleTokenSession = {
@@ -51,5 +52,7 @@ export const smileIDSampleCountdown = (remainingMillis: number): string => {
 };
 
 /// What the profile's callback URL row reads instead of its value while this session runs.
-export const smileIDSampleCallbackOverrideCaption = (session: UseSmileIDSampleTokenSession): string =>
-  session.bindings.callbackUrl != null ? 'Set by the scanned token' : "The scanned token's partner default applies";
+export const smileIDSampleCallbackOverrideCaption = (
+  session: UseSmileIDSampleTokenSession,
+  strings: UseSmileIDSampleStrings,
+): string => (session.bindings.callbackUrl != null ? strings.tokenCallbackSet : strings.tokenCallbackDefault);

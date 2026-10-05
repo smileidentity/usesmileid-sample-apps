@@ -7,6 +7,7 @@ import {
   smileIDSampleAppearances,
   UseSmileIDSampleAppearance,
 } from '../model/use-smile-id-sample-appearance';
+import { smileIDSampleLanguages, type UseSmileIDSampleLanguage } from '../model/use-smile-id-sample-language';
 import {
   smileIDSampleSettingsDefaults,
   smileIDSampleSettingsNormalised,
@@ -27,6 +28,7 @@ type Actions = {
   setSetting: (setting: UseSmileIDSampleSetting, enabled: boolean) => Promise<void>;
   setCaptureMode: (mode: UseSmileIDSampleCaptureMode) => Promise<void>;
   setAppearance: (appearance: UseSmileIDSampleAppearance) => Promise<void>;
+  setLanguage: (language: UseSmileIDSampleLanguage) => Promise<void>;
   reset: () => void;
 };
 
@@ -36,6 +38,8 @@ const CAPTURE_MODE_KEY = `${KEY_PREFIX}captureMode`;
 
 const APPEARANCE_KEY = `${KEY_PREFIX}appearance`;
 
+const LANGUAGE_KEY = `${KEY_PREFIX}language`;
+
 /// The Dark mode switch that the appearance replaced, read only to carry an installed choice over.
 const LEGACY_DARK_MODE_KEY = `${KEY_PREFIX}darkMode`;
 
@@ -44,6 +48,9 @@ let captureModeMovedDuringLoad = false;
 
 /// Whether the appearance moved while `load` was reading.
 let appearanceMovedDuringLoad = false;
+
+/// Whether the language moved while `load` was reading.
+let languageMovedDuringLoad = false;
 
 /// Settings the user moved while `load` was reading, which the read must not undo.
 const movedDuringLoad = new Set<UseSmileIDSampleSetting>();
@@ -60,6 +67,7 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
         ...smileIDSampleSettings.map(key),
         CAPTURE_MODE_KEY,
         APPEARANCE_KEY,
+        LANGUAGE_KEY,
         LEGACY_DARK_MODE_KEY,
       ]);
       let appearanceStored = false;
@@ -69,6 +77,10 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
         if (storedKey === CAPTURE_MODE_KEY) {
           // An id this build does not know keeps the default rather than reaching the SDK.
           if (smileIDSampleCaptureModes.some((mode) => mode.id === value)) stored.captureMode = value;
+          continue;
+        }
+        if (storedKey === LANGUAGE_KEY) {
+          if ((smileIDSampleLanguages as readonly string[]).includes(value)) stored.language = value;
           continue;
         }
         if (storedKey === APPEARANCE_KEY) {
@@ -92,9 +104,11 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     for (const setting of movedDuringLoad) stored[setting] = live[setting];
     if (captureModeMovedDuringLoad) stored.captureMode = live.captureMode;
     if (appearanceMovedDuringLoad) stored.appearance = live.appearance;
+    if (languageMovedDuringLoad) stored.language = live.language;
     movedDuringLoad.clear();
     captureModeMovedDuringLoad = false;
     appearanceMovedDuringLoad = false;
+    languageMovedDuringLoad = false;
     // Normalised on read, because a device may already hold the pair the SDK refuses.
     set({ settings: smileIDSampleSettingsNormalised(stored as UseSmileIDSampleSettings), loaded: true });
   },
@@ -113,6 +127,12 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     await AsyncStorage.removeItem(LEGACY_DARK_MODE_KEY);
   },
 
+  setLanguage: async (language) => {
+    set({ settings: { ...get().settings, language } });
+    if (!get().loaded) languageMovedDuringLoad = true;
+    await AsyncStorage.setItem(LANGUAGE_KEY, language);
+  },
+
   setSetting: async (setting, enabled) => {
     const current = get().settings;
     const updated = smileIDSampleSettingsWith(current, setting, enabled);
@@ -129,6 +149,7 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     movedDuringLoad.clear();
     captureModeMovedDuringLoad = false;
     appearanceMovedDuringLoad = false;
+    languageMovedDuringLoad = false;
     set({ settings: smileIDSampleSettingsDefaults, loaded: false });
   },
 }));

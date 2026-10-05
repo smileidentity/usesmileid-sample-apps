@@ -7,6 +7,7 @@ import { smileIDSampleNavItems, type UseSmileIDSampleNavItem } from '../model/us
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 const TAB_ICON_SIZE = 21;
 const TOKEN_SIZE = 58;
@@ -91,6 +92,7 @@ const NavBarTab = ({
   onPress: () => void;
 }) => {
   const theme = useSmileIDSampleTheme();
+  const strings = useSmileIDSampleStrings();
   // Unselected takes the warm strong foreground, not color.text.muted.
   const tint = selected ? theme.colors.primary : theme.colors.offBlack;
 
@@ -103,12 +105,13 @@ const NavBarTab = ({
       style={[styles.tab, { padding: theme.dimens.spacing.xs, rowGap: theme.dimens.spacing.xxs }]}
     >
       <UseSmileIDSampleIcon name={item.icon} tint={tint} size={TAB_ICON_SIZE} />
-      <Text style={[theme.type.textStyleOverline, styles.tabLabel, { color: tint }]}>{item.label}</Text>
+      <Text style={[theme.type.textStyleOverline, styles.tabLabel, { color: tint }]}>{item.label(strings)}</Text>
     </Pressable>
   );
 };
 
 const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPress: () => void }) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const ringSize = TOKEN_SIZE + RING_BLEED * 2;
 
@@ -124,7 +127,7 @@ const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPre
       <Pressable
         testID={UseSmileIDSampleTestIds.NAV_TOKEN}
         accessibilityRole="button"
-        accessibilityLabel="Token"
+        accessibilityLabel={strings.navToken}
         onPress={onPress}
         // A minimum rather than a fixed box, so enlarged type grows it instead of clipping "Token".
         style={[
@@ -146,7 +149,7 @@ const TokenAffordance = ({ progress, onPress }: { progress: number | null; onPre
         <Text
           style={[atSize(theme.type.textStyleOverline, TOKEN_LABEL_SIZE), { color: theme.colors.offBlack }]}
         >
-          Token
+          {strings.navToken}
         </Text>
       </Pressable>
     </View>

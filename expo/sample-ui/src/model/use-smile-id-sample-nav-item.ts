@@ -1,11 +1,12 @@
 import type { SmileIconName } from '../smile-icons';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// One nav destination: its id, its label and the design's own mark for it.
 export type UseSmileIDSampleNavItem = {
   readonly id: string;
   readonly testID: string;
-  readonly label: string;
+  readonly label: (strings: UseSmileIDSampleStrings) => string;
   readonly icon: SmileIconName;
 };
 
@@ -14,19 +15,19 @@ export const smileIDSampleNavItems: readonly UseSmileIDSampleNavItem[] = [
   {
     id: 'products',
     testID: UseSmileIDSampleTestIds.NAV_PRODUCTS,
-    label: 'Products',
+    label: (strings) => strings.navProducts,
     icon: 'products',
   },
   {
     id: 'verifications',
     testID: UseSmileIDSampleTestIds.NAV_VERIFICATIONS,
-    label: 'Verifications',
+    label: (strings) => strings.navVerifications,
     icon: 'verifications',
   },
   {
     id: 'settings',
     testID: UseSmileIDSampleTestIds.NAV_SETTINGS,
-    label: 'Settings',
+    label: (strings) => strings.navSettings,
     icon: 'settings',
   },
 ];

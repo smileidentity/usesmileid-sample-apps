@@ -6,6 +6,7 @@ import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import type { UseSmileIDSampleTopAppBarEmphasis } from '../model/use-smile-id-sample-app-bar-emphasis';
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// Pinned, not a minimum: a longer title growing the bar drops the header lower on some screens than others.
 const HEADER_ROW_HEIGHT = 40;
@@ -69,11 +70,12 @@ type Props = {
 export const UseSmileIDSampleTopAppBar = ({
   title,
   onBack,
-  backAccessibilityLabel = 'Back',
+  backAccessibilityLabel,
   testID,
   action,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const rowHeight = HEADER_ROW_HEIGHT * Math.max(1, PixelRatio.getFontScale());
@@ -94,7 +96,7 @@ export const UseSmileIDSampleTopAppBar = ({
     >
       <View style={[styles.row, { minHeight: rowHeight, columnGap: theme.dimens.spacing.xs }]}>
         <UseSmileIDSampleTopAppBarButton
-          accessibilityLabel={backAccessibilityLabel}
+          accessibilityLabel={backAccessibilityLabel ?? strings.commonBack}
           onPress={onBack}
           emphasis="Filled"
           glyph={(tint) => <UseSmileIDSampleIcon name="arrowBack" tint={tint} />}

@@ -5,10 +5,11 @@ import { UseSmileIDSampleButton } from './use-smile-id-sample-button';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { UseSmileIDSampleSectionLabel } from './use-smile-id-sample-section-label';
 import { UseSmileIDSampleTextInput } from './use-smile-id-sample-text-input';
-import { smileIDSampleEnvironmentLabels } from '../model/use-smile-id-sample-environment';
+import { smileIDSampleEnvironmentLabel } from '../model/use-smile-id-sample-environment';
 import { smileIDSampleEnvironments, type UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
 import {
   smileIDSampleSimulatedBindingsDefaults,
+  smileIDSampleSimulatedSpanLabel,
   smileIDSampleSimulatedSpans,
   type UseSmileIDSampleSimulatedBindings,
   type UseSmileIDSampleSimulatedSpan,
@@ -18,6 +19,7 @@ import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout'
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 const SHEET_ACTION_SIZE = 13;
 
@@ -70,6 +72,7 @@ export const UseSmileIDSampleScanSheet = ({
   onSimulate,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const actionFont = atSize(atWeight(theme.type.linkFont, 700), SHEET_ACTION_SIZE);
@@ -92,7 +95,7 @@ export const UseSmileIDSampleScanSheet = ({
       <UseSmileIDSampleTextInput
         value={state.token}
         onValueChange={onTokenChange}
-        placeholder="Or enter token manually"
+        placeholder={strings.scanManualEntry}
         isError={state.rejection !== null}
         errorMessage={state.rejection}
         // Masked: a bearer credential, kept out of screenshots and hierarchy dumps.
@@ -111,20 +114,20 @@ export const UseSmileIDSampleScanSheet = ({
                   style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
                 >
                   <Text numberOfLines={1} style={[actionFont, { color: theme.colors.primary }]}>
-                    Paste
+                    {strings.scanPaste}
                   </Text>
                 </Pressable>
               )
         }
       />
-      {state.token.trim().length > 0 ? <UseSmileIDSampleButton text="Link token" onPress={onLink} /> : null}
+      {state.token.trim().length > 0 ? <UseSmileIDSampleButton text={strings.scanLinkToken} onPress={onLink} /> : null}
       <Pressable
         accessibilityRole="button"
         accessibilityState={{ expanded: state.expanded }}
         onPress={onExpandToggle}
         style={[styles.row, { columnGap: theme.dimens.spacing.xs, paddingVertical: theme.dimens.spacing.xxs }]}
       >
-        <UseSmileIDSampleSectionLabel text="SIMULATED SCAN" style={styles.grow} />
+        <UseSmileIDSampleSectionLabel text={strings.scanSimulated} style={styles.grow} />
         <UseSmileIDSampleIcon
           name={state.expanded ? 'chevronDown' : 'chevron'}
           tint={theme.colors.textMuted}
@@ -137,7 +140,7 @@ export const UseSmileIDSampleScanSheet = ({
             {smileIDSampleSimulatedSpans.map((span) => (
               <ScanSheetChip
                 key={span.id}
-                label={span.label}
+                label={smileIDSampleSimulatedSpanLabel(span, strings)}
                 selected={state.span.id === span.id}
                 role="radio"
                 onPress={() => onSpanSelect(span)}
@@ -148,7 +151,7 @@ export const UseSmileIDSampleScanSheet = ({
             {smileIDSampleEnvironments.map((environment) => (
               <ScanSheetChip
                 key={environment}
-                label={smileIDSampleEnvironmentLabels[environment]}
+                label={smileIDSampleEnvironmentLabel(environment, strings)}
                 selected={state.environment === environment}
                 role="radio"
                 onPress={() => onEnvironmentSelect(environment)}
@@ -158,13 +161,13 @@ export const UseSmileIDSampleScanSheet = ({
           </View>
           <View style={[styles.flow, { gap: theme.dimens.spacing.xs }]}>
             <ScanSheetChip
-              label="Binds consent"
+              label={strings.scanBindsConsent}
               selected={state.bindings.consent}
               role="checkbox"
               onPress={() => onBindingsChange({ ...state.bindings, consent: !state.bindings.consent })}
             />
             <ScanSheetChip
-              label="Binds details"
+              label={strings.scanBindsDetails}
               selected={state.bindings.userDetails}
               role="checkbox"
               onPress={() => onBindingsChange({ ...state.bindings, userDetails: !state.bindings.userDetails })}
@@ -173,7 +176,7 @@ export const UseSmileIDSampleScanSheet = ({
         </>
       ) : null}
       <UseSmileIDSampleButton
-        text="Simulate a successful scan"
+        text={strings.scanSimulate}
         onPress={onSimulate}
         testID={UseSmileIDSampleTestIds.TOKEN_SIMULATE}
       />

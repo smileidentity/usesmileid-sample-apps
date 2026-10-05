@@ -30,6 +30,8 @@ import {
 import { UseSmileIDSampleUserField, smileIDSampleUserFields } from '../src/model/use-smile-id-sample-user-fields';
 import { UseSmileIDSampleCataloguePicker } from '../src/components/use-smile-id-sample-catalogue-picker';
 import { AppearanceSheet } from '../src/screens/appearance-sheet';
+import { LanguageSheet } from '../src/screens/language-sheet';
+import { UseSmileIDSampleLanguage } from '../src/model/use-smile-id-sample-language';
 import { CaptureAsSheet } from '../src/screens/capture-as-sheet';
 import { CaptureModeSheet } from '../src/screens/capture-mode-sheet';
 import { CountryPickerSheet } from '../src/screens/country-picker-sheet';
@@ -39,9 +41,12 @@ import { IdTypePickerSheet } from '../src/screens/id-type-picker-sheet';
 import { KycIdFormScreen } from '../src/screens/kyc-id-form-screen';
 import { UserDetailsScreen } from '../src/screens/user-details-screen';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
-import { focusField, renderInTheme, schemes, styleTree } from './render-in-theme';
+import { focusField, renderInTheme, rightToLeft, schemes, styleTree } from './render-in-theme';
 import { expectGoldens } from './paint/pixel-golden';
 import { KENYA, SOUTH_AFRICA, fixtureCountries, fixtureDocuments, fixtureIdTypes } from './catalogue-fixtures';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 const noop = () => {};
 
@@ -364,6 +369,16 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
       default: { element: () => <AppearanceOnDevice /> },
     },
   },
+  {
+    screen: 'languageSheet',
+    states: {
+      default: {
+        element: () => (
+          <LanguageSheet selected={UseSmileIDSampleLanguage.System} deviceLanguages={['en-US']} onSelect={noop} onDismiss={noop} />
+        ),
+      },
+    },
+  },
 ];
 
 describe.each(cases)('$screen', ({ states }) => {
@@ -375,10 +390,26 @@ describe.each(cases)('$screen', ({ states }) => {
   });
 });
 
+describe('the language sheet', () => {
+  it('names the device language under System', async () => {
+    const rendered = await renderInTheme(
+      <LanguageSheet selected={UseSmileIDSampleLanguage.System} deviceLanguages={['fr-FR']} onSelect={noop} onDismiss={noop} />,
+      false,
+    );
+    expect(rendered.getByText('System (Français)')).toBeTruthy();
+  });
+});
+
+describe('id details in Arabic', () => {
+  it('mirrors the form, with the catalogue names left as the server sends them', async () => {
+    await expectGoldens(rightToLeft(kycForm(kycState(SELECTED))), false, { name: 'kycIdForm.light.selected.ar' });
+  });
+});
+
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(66);
+    expect(total * schemes.length).toBe(68);
   });
 });
 
@@ -473,14 +504,14 @@ describe('the token requirement', () => {
 
   it('drops "(optional)" from a contact label only once neither half is required', () => {
     const email = smileIDSampleUserFields.find((f) => f.id === UseSmileIDSampleUserField.Email)!;
-    expect(smileIDSampleRequirementLabel(smileIDSampleRequirementDefaults, email)).toBe('Email');
-    expect(smileIDSampleRequirementLabel(smileIDSampleRequirementFrom({ email: true }), email)).toBe(
+    expect(smileIDSampleRequirementLabel(smileIDSampleRequirementDefaults, email, strings)).toBe('Email');
+    expect(smileIDSampleRequirementLabel(smileIDSampleRequirementFrom({ email: true }), email, strings)).toBe(
       'Email (optional)',
     );
   });
 
   it('names what is outstanding rather than repeating one fixed sentence', () => {
-    expect(smileIDSampleRequirementPrompt(smileIDSampleRequirementDefaults)).toBe(
+    expect(smileIDSampleRequirementPrompt(smileIDSampleRequirementDefaults, strings)).toBe(
       'Required: first name, last name, an email or phone number.',
     );
     expect(
@@ -489,7 +520,7 @@ describe('the token requirement', () => {
           givenNames: true,
           lastName: true,
           email: true,
-        }),
+        }), strings
       ),
     ).toBe('Tap any field to edit.');
   });
@@ -593,7 +624,8 @@ describe('the pickers', () => {
     const rendered = await renderInTheme(
       <UseSmileIDSampleCataloguePicker<UseSmileIDSampleCountry>
         catalogue={failed}
-        what="countries"
+        loadingLabel="Loading countries"
+        failedLabel="Couldn't load countries"
         query=""
         onQueryChange={noop}
         searchPlaceholder="Search country"

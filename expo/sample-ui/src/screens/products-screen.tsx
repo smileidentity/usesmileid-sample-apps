@@ -11,9 +11,12 @@ import { UseSmileIDSampleResultLine } from '../components/use-smile-id-sample-re
 import { UseSmileIDSampleSessionEndedBanner } from '../components/use-smile-id-sample-session-ended-banner';
 import type { UseSmileIDSampleResult } from '../model/use-smile-id-sample-result';
 import {
-  UseSmileIDSampleProductSection,
   smileIDSampleProductHue,
   smileIDSampleProductIcon,
+  UseSmileIDSampleProductSection,
+  smileIDSampleProductCardFamily,
+  smileIDSampleProductCardTitle,
+  smileIDSampleProductSectionLabel,
   smileIDSampleProductsOf,
   type UseSmileIDSampleProduct,
   type UseSmileIDSampleProductSectionKey,
@@ -32,11 +35,10 @@ import {
 import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The design draws the ghost watermark bleeding off the corner at this size.
 const GHOST_SIZE = 69;
-
-const PAGE_SUBTITLE = 'Try our suite of products powered by our Anti-Fraud SDKs';
 
 /// What the products header and session strip render, so the screen stays free of clock and store.
 export type UseSmileIDSampleProductsState = {
@@ -69,6 +71,7 @@ export const ProductsScreen = ({
   bottomInset = 0,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const sections = Object.keys(UseSmileIDSampleProductSection) as UseSmileIDSampleProductSectionKey[];
@@ -99,13 +102,13 @@ export const ProductsScreen = ({
               },
             ]}
           >
-            Smile ID
+            {strings.productsTitle}
           </Text>
           {/* The environment chip is hidden here by ruling; the result card publishes it instead. */}
           <Pressable
             testID={UseSmileIDSampleTestIds.PROFILE_AVATAR_BUTTON}
             accessibilityRole="button"
-            accessibilityLabel="Switch profile"
+            accessibilityLabel={strings.productsSwitchProfile}
             onPress={onProfilePress}
             style={[styles.avatar, touchTargetStyle(theme)]}
           >
@@ -116,7 +119,7 @@ export const ProductsScreen = ({
           </Pressable>
         </View>
         <Text style={[theme.type.textStyleCaption, { color: theme.colors.offBlack }]}>
-          {PAGE_SUBTITLE}
+          {strings.productsSubtitle}
         </Text>
       </View>
 
@@ -144,13 +147,13 @@ export const ProductsScreen = ({
             key={section}
             style={{ paddingHorizontal: theme.dimens.spacing.md, rowGap: theme.dimens.spacing.xs }}
           >
-            <UseSmileIDSampleSectionHeader text={UseSmileIDSampleProductSection[section]} />
+            <UseSmileIDSampleSectionHeader text={smileIDSampleProductSectionLabel(section, strings)} />
             <UseSmileIDSampleProductGrid
               cells={products.map((product) => (
                 <UseSmileIDSampleProductCard
                   key={product.id}
-                  title={product.cardTitle}
-                  family={product.cardFamily}
+                  title={smileIDSampleProductCardTitle(product, strings)}
+                  family={smileIDSampleProductCardFamily(product, strings)}
                   onPress={() => onProductPress(product)}
                   hue={smileIDSampleProductHue(product)}
                   testID={UseSmileIDSampleSuffixedTestIds.productCard(product.id)}

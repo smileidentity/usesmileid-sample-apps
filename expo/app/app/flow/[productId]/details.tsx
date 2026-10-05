@@ -6,6 +6,8 @@ import {
   useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleFormsStore,
   useSmileIDSampleProfileStore,
+  smileIDSampleProductTitle,
+  useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -19,6 +21,7 @@ import { useLaunchArgs } from '../../../src/use-smile-id-sample-launch';
 import { useSmileIDSampleBack } from '../../../src/use-smile-id-sample-back';
 
 export default function ConsentDetailsForm() {
+  const strings = useSmileIDSampleStrings();
   const router = useRouter();
   const back = useSmileIDSampleBack('/products');
   const { productId } = useLocalSearchParams<{ productId: string }>();
@@ -45,7 +48,7 @@ export default function ConsentDetailsForm() {
   return (
     <UserDetailsScreen
       state={{
-        productLabel: product?.label ?? productId ?? '',
+        productLabel: product === null ? (productId ?? '') : smileIDSampleProductTitle(product, strings),
         details,
         profile,
         profileIndex,

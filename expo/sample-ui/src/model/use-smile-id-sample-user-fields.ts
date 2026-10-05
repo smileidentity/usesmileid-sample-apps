@@ -1,6 +1,7 @@
 import type { KeyboardTypeOptions, TextInputProps } from 'react-native';
 
 import type { UseSmileIDSampleUserDetails } from '../state/use-smile-id-sample-profiles';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// Which user-details row changed, so a form reports one callback rather than four.
 export const UseSmileIDSampleUserField = {
@@ -17,26 +18,43 @@ export type UseSmileIDSampleUserField =
 export type UseSmileIDSampleUserFieldSpec = {
   readonly id: UseSmileIDSampleUserField;
   /// The field's title, the one source every screen's label is built from.
-  readonly title: string;
+  readonly title: (strings: UseSmileIDSampleStrings) => string;
   /// The title, marked optional where the design does; the row appends any asterisk.
-  readonly label: string;
-  readonly placeholder: string;
+  readonly label: (strings: UseSmileIDSampleStrings) => string;
+  readonly placeholder: (strings: UseSmileIDSampleStrings) => string;
   readonly required: boolean;
 };
 
 /// The four rows in the order both forms draw them.
-const field = (
-  id: UseSmileIDSampleUserField,
-  title: string,
-  placeholder: string,
-  required: boolean,
-): UseSmileIDSampleUserFieldSpec => ({ id, title, label: required ? title : `${title} (optional)`, placeholder, required });
-
 export const smileIDSampleUserFields: readonly UseSmileIDSampleUserFieldSpec[] = [
-  field(UseSmileIDSampleUserField.FirstName, 'First name', 'Add first name', true),
-  field(UseSmileIDSampleUserField.LastName, 'Last name', 'Add last name', true),
-  field(UseSmileIDSampleUserField.Email, 'Email', 'name@company.com', false),
-  field(UseSmileIDSampleUserField.Phone, 'Phone', '+254 700 000 000', false),
+  {
+    id: UseSmileIDSampleUserField.FirstName,
+    title: (strings) => strings.userFieldFirstName,
+    label: (strings) => strings.userFieldFirstName,
+    placeholder: (strings) => strings.userFieldFirstNamePlaceholder,
+    required: true,
+  },
+  {
+    id: UseSmileIDSampleUserField.LastName,
+    title: (strings) => strings.userFieldLastName,
+    label: (strings) => strings.userFieldLastName,
+    placeholder: (strings) => strings.userFieldLastNamePlaceholder,
+    required: true,
+  },
+  {
+    id: UseSmileIDSampleUserField.Email,
+    title: (strings) => strings.userFieldEmail,
+    label: (strings) => strings.userFieldEmailOptional,
+    placeholder: (strings) => strings.userFieldEmailPlaceholder,
+    required: false,
+  },
+  {
+    id: UseSmileIDSampleUserField.Phone,
+    title: (strings) => strings.userFieldPhone,
+    label: (strings) => strings.userFieldPhoneOptional,
+    placeholder: (strings) => strings.userFieldPhonePlaceholder,
+    required: false,
+  },
 ];
 
 /// One field's spec by id; every id has one.

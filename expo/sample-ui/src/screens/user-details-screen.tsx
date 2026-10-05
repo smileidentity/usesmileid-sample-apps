@@ -13,7 +13,6 @@ import { avatarColorForProfile } from '../components/use-smile-id-sample-avatar'
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleProfileRow } from '../components/use-smile-id-sample-profile-row';
 import {
-  USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL,
   smileIDSampleProfileInitials,
   smileIDSampleProfileTitle,
   smileIDSampleUserDetailsEqual,
@@ -44,8 +43,10 @@ import {
 } from '../use-smile-id-sample-test-ids';
 import {
   smileIDSampleContactProblem,
+  smileIDSampleContactProblemText,
   smileIDSampleDetailsContactProblem,
 } from '../state/use-smile-id-sample-contact-rules';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The switch line sits between the type scale's steps — spec/screens.json → userDetails.
 const REMEMBER_TEXT_SIZE = 13.5;
@@ -55,9 +56,6 @@ const CHEVRON_SIZE = 12;
 
 /// The organisation row's id suffix, beside the four user fields'.
 const ORGANISATION_FIELD_ID = 'organisation';
-
-/// Shown when a token supplied the row, which is why it is not asked for again.
-const PROVIDED_BY_TOKEN = 'Provided by token';
 
 /// Everything the Consent Details Form renders; callbacks stay parameters, like every screen.
 export type UseSmileIDSampleUserDetailsState = {
@@ -94,6 +92,7 @@ export const UserDetailsScreen = ({
   onBack,
   onContinue,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const requirement = state.requirement ?? smileIDSampleRequirementDefaults;
@@ -118,8 +117,8 @@ export const UserDetailsScreen = ({
       >
         {/* Says whose details these are, and switches in one tap: the whole reason profiles exist. */}
         <UseSmileIDSampleProfileRow
-          organisation={profile === null ? USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL : smileIDSampleProfileTitle(profile)}
-          supportingText={profile === null ? 'Your details below will create one' : 'Tap to switch profile'}
+          organisation={profile === null ? strings.profilesNoProfile : smileIDSampleProfileTitle(profile, strings)}
+          supportingText={profile === null ? strings.userDetailsNoProfile : strings.userDetailsSwitchProfile}
           initials={profile === null ? '' : smileIDSampleProfileInitials(profile)}
           selected={false}
           onPress={onProfilePress}
@@ -129,16 +128,16 @@ export const UserDetailsScreen = ({
           style={{ marginHorizontal: theme.dimens.spacing.md }}
         />
         <UseSmileIDSampleSectionSurface
-          label="YOUR DETAILS"
+          label={strings.userDetailsSection}
           style={{ marginHorizontal: theme.dimens.spacing.md }}
         >
           {profile === null ? (
             <View>
               <UseSmileIDSampleKeyValueEditRow
-                label="Profile name (optional)"
+                label={strings.userDetailsProfileName}
                 value={state.organisation ?? ''}
                 onValueChange={(value) => onOrganisationChange?.(value)}
-                placeholder="Shown on the consent screen"
+                placeholder={strings.userDetailsProfileNameHint}
                 required={false}
                 testID={UseSmileIDSampleSuffixedTestIds.userDetailsField(ORGANISATION_FIELD_ID)}
               />
@@ -152,10 +151,10 @@ export const UserDetailsScreen = ({
               <View key={field.id}>
                 {index > 0 ? <UseSmileIDSampleRowDivider /> : null}
                 <UseSmileIDSampleKeyValueEditRow
-                  label={smileIDSampleRequirementLabel(requirement, field)}
+                  label={smileIDSampleRequirementLabel(requirement, field, strings)}
                   value={supplied ? '' : smileIDSampleUserFieldRead(field.id, state.details)}
                   onValueChange={(value) => onFieldChange(field.id, value)}
-                  placeholder={supplied ? PROVIDED_BY_TOKEN : field.placeholder}
+                  placeholder={supplied ? strings.userDetailsFromToken : field.placeholder(strings)}
                   required={false}
                   enabled={!supplied}
                   {...smileIDSampleUserFieldKeyboard(field.id)}
@@ -176,7 +175,7 @@ export const UserDetailsScreen = ({
             },
           ]}
         >
-          {contactProblem ?? (satisfied ? 'Tap any field to edit.' : smileIDSampleRequirementPrompt(requirement))}
+          {(contactProblem === null ? null : smileIDSampleContactProblemText(contactProblem, strings)) ?? (satisfied ? strings.userDetailsEditHint : smileIDSampleRequirementPrompt(requirement, strings))}
         </Text>
         {offersSave ? (
           <View
@@ -204,7 +203,7 @@ export const UserDetailsScreen = ({
                 { color: theme.colors.textBody },
               ]}
             >
-              {profile === null ? 'Save as a new profile' : `Save to ${smileIDSampleProfileTitle(profile)}`}
+              {profile === null ? strings.userDetailsSaveNew : strings.userDetailsSaveTo({ profile: smileIDSampleProfileTitle(profile, strings) })}
             </Text>
             <UseSmileIDSampleSwitch
               checked={state.saveToProfile}
@@ -215,7 +214,7 @@ export const UserDetailsScreen = ({
         ) : null}
       </ScrollView>
       <UseSmileIDSampleButton
-        text="Continue"
+        text={strings.commonContinue}
         onPress={onContinue}
         enabled={satisfied}
         testID={UseSmileIDSampleTestIds.USER_DETAILS_CONTINUE}

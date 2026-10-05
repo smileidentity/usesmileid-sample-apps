@@ -12,6 +12,8 @@ import { smileCardStrokeWidth } from '../smile-product-hues';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { smileIDSampleProductTitle } from '../model/use-smile-id-sample-product';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// Both read off the verifications board rather than the scale; no token carries either.
 const TILE_SIZE = 36;
@@ -110,6 +112,7 @@ const JobRowText = ({
   stacks: boolean;
 }) => {
   const theme = useSmileIDSampleTheme();
+  const strings = useSmileIDSampleStrings();
   // One line at the design's scale; enlarged type wraps, because eliding it would clip.
   const lines = stacks ? undefined : 1;
   return (
@@ -118,7 +121,7 @@ const JobRowText = ({
         numberOfLines={lines}
         style={[theme.type.textStyleBodyStrong, { color: theme.colors.card.title }]}
       >
-        {product.label}
+        {smileIDSampleProductTitle(product, strings)}
       </Text>
       <Text
         numberOfLines={lines}

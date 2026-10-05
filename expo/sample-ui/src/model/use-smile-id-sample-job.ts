@@ -4,6 +4,7 @@ import {
   type UseSmileIDSampleProduct,
 } from './use-smile-id-sample-product';
 import { UseSmileIDSampleStatus, smileIDSampleStatusFrom } from './use-smile-id-sample-status';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 const SHORT_ID_LENGTH = 8;
 
@@ -57,15 +58,15 @@ export const smileIDSampleJobFrom = (raw: Record<string, unknown>): UseSmileIDSa
 /// The filters above the list. `All` is not a status, which is why this is not the status set.
 export type UseSmileIDSampleJobFilter = {
   readonly id: string;
-  readonly label: string;
+  readonly label: (strings: UseSmileIDSampleStrings) => string;
   readonly status: UseSmileIDSampleStatus | null;
 };
 
 export const smileIDSampleJobFilters: readonly UseSmileIDSampleJobFilter[] = [
-  { id: 'all', label: 'All', status: null },
-  { id: 'clear', label: 'Clear', status: UseSmileIDSampleStatus.Clear },
-  { id: 'attention', label: 'Attention', status: UseSmileIDSampleStatus.Attention },
-  { id: 'blocked', label: 'Blocked', status: UseSmileIDSampleStatus.Blocked },
+  { id: 'all', label: (strings) => strings.verificationsFilterAll, status: null },
+  { id: 'clear', label: (strings) => strings.statusClear, status: UseSmileIDSampleStatus.Clear },
+  { id: 'attention', label: (strings) => strings.statusAttention, status: UseSmileIDSampleStatus.Attention },
+  { id: 'blocked', label: (strings) => strings.statusBlocked, status: UseSmileIDSampleStatus.Blocked },
 ];
 
 export const smileIDSampleJobMatches = (

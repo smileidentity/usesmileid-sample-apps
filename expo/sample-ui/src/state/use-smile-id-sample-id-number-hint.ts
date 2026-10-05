@@ -1,4 +1,5 @@
 import type { UseSmileIDSampleKycIdType } from './use-smile-id-sample-id-details';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// The regex as this engine compiles it, or null when it will not.
 export const smileIDSampleCompiled = (regex: string): RegExp | null => {
@@ -28,22 +29,29 @@ export const smileIDSampleIdNumberExample = (regex: string): string | null => {
 };
 
 /// What the empty field shows for the chosen type.
-export const smileIDSampleIdNumberPlaceholder = (type: UseSmileIDSampleKycIdType | null): string => {
-  if (type === null) return 'Choose an ID type first';
+export const smileIDSampleIdNumberPlaceholder = (
+  type: UseSmileIDSampleKycIdType | null,
+  strings: UseSmileIDSampleStrings,
+): string => {
+  if (type === null) return strings.kycChooseIdTypeFirst;
   const hint =
     type.regex.trim().length === 0 || smileIDSampleCompiled(type.regex) === null
       ? null
       : smileIDSampleIdNumberExample(type.regex);
-  return hint === null ? `Enter your ${type.label}` : `e.g. ${hint}`;
+  return hint === null ? strings.kycIdNumberPlaceholder({ idType: type.label }) : strings.kycIdNumberExample({ example: hint });
 };
 
 /// The line under a non-empty number that does not fit, which repeats the example; null when it fits.
-export const smileIDSampleIdNumberError = (type: UseSmileIDSampleKycIdType | null, number: string): string | null => {
+export const smileIDSampleIdNumberError = (
+  type: UseSmileIDSampleKycIdType | null,
+  number: string,
+  strings: UseSmileIDSampleStrings,
+): string | null => {
   if (type === null || number.trim().length === 0 || smileIDSampleIdNumberAccepts(type.regex, number)) return null;
   const hint = smileIDSampleIdNumberExample(type.regex);
   return hint === null
-    ? `Doesn't match the ${type.label} format`
-    : `Doesn't match the ${type.label} format, e.g. ${hint}`;
+    ? strings.kycIdNumberInvalid({ idType: type.label })
+    : strings.kycIdNumberInvalidExample({ idType: type.label, example: hint });
 };
 
 class Unsupported extends Error {}

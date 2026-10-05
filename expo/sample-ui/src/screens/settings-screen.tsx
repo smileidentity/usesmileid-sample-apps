@@ -21,6 +21,7 @@ import {
   type UseSmileIDSampleNavRow,
 } from '../model/use-smile-id-sample-nav-row';
 import { smileIDSampleAppearanceLabel } from '../model/use-smile-id-sample-appearance';
+import { smileIDSampleLanguageLabel } from '../model/use-smile-id-sample-language';
 import { smileIDSampleCaptureModeLabel } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 import type { SmileIconName } from '../smile-icons';
@@ -31,9 +32,7 @@ import {
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
-
-/// The design marks the trademark here and nowhere else on this screen.
-const ENHANCED_SMART_SELFIE_TITLE = 'Enhanced SmartSelfie™';
+import { useSmileIDSampleDeviceLanguages, useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// Everything the settings list renders; callbacks stay parameters, like every screen.
 export type UseSmileIDSampleSettingsState = {
@@ -100,16 +99,19 @@ const NavRow = ({
 }: {
   row: UseSmileIDSampleNavRow;
   onPress: (row: UseSmileIDSampleNavRow) => void;
-}) => (
-  <UseSmileIDSampleSettingRow
-    title={row.title}
-    supportingText={row.supportingText}
-    onPress={() => onPress(row)}
-    leading={(tint) => <UseSmileIDSampleIcon name={row.icon} tint={tint} />}
-    trailing={<UseSmileIDSampleSettingRowChevron />}
-    testID={UseSmileIDSampleSuffixedTestIds.settingNav(row.id)}
-  />
-);
+}) => {
+  const strings = useSmileIDSampleStrings();
+  return (
+    <UseSmileIDSampleSettingRow
+      title={row.title(strings)}
+      supportingText={row.supportingText?.(strings)}
+      onPress={() => onPress(row)}
+      leading={(tint) => <UseSmileIDSampleIcon name={row.icon} tint={tint} />}
+      trailing={<UseSmileIDSampleSettingRowChevron />}
+      testID={UseSmileIDSampleSuffixedTestIds.settingNav(row.id)}
+    />
+  );
+};
 
 const NavSection = ({
   label,
@@ -139,6 +141,7 @@ type Props = {
   onCaptureModePress: () => void;
   /// Opens the appearance sheet.
   onAppearancePress: () => void;
+  onLanguagePress: () => void;
   /// Absent hides the DEBUG section: this package may not read a host's build type.
   onOpenScenarioDrawer?: (() => void) | undefined;
   onSignOut: () => void;
@@ -155,11 +158,14 @@ export const SettingsScreen = ({
   onNavRowPress,
   onCaptureModePress,
   onAppearancePress,
+  onLanguagePress,
   onOpenScenarioDrawer,
   onSignOut,
   bottomInset = 0,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
+  const deviceLanguages = useSmileIDSampleDeviceLanguages();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const { settings } = state;
@@ -184,13 +190,13 @@ export const SettingsScreen = ({
           },
         ]}
       >
-        Settings
+        {strings.settingsTitle}
       </Text>
 
-      <Section label="PROFILE">
+      <Section label={strings.settingsSectionProfile}>
         <UseSmileIDSampleProfileRow
           organisation={state.organisation}
-          supportingText={state.hasProfile === false ? 'Tap to create one' : 'Tap to configure'}
+          supportingText={state.hasProfile === false ? strings.settingsProfileCreate : strings.settingsProfileConfigure}
           initials={state.initials}
           selected={false}
           onPress={onProfilePress}
@@ -201,10 +207,10 @@ export const SettingsScreen = ({
       </Section>
 
       {/* Mutually exclusive, so each row says what turning it on does to the other. */}
-      <Section label="CAPTURE">
+      <Section label={strings.settingsSectionCapture}>
         <SwitchRow
-          title={ENHANCED_SMART_SELFIE_TITLE}
-          supportingText={settings.agentMode ? 'Turns Agent mode off' : 'Face capture uses head-turns'}
+          title={strings.settingsEnhancedSmartSelfie}
+          supportingText={settings.agentMode ? strings.settingsEnhancedSmartSelfieMutex : strings.settingsEnhancedSmartSelfieBody}
           icon="smile"
           setting={UseSmileIDSampleSetting.EnhancedSmartSelfie}
           checked={settings.enhancedSmartSelfie}
@@ -213,11 +219,11 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Agent mode"
+          title={strings.settingsAgentMode}
           supportingText={
             settings.enhancedSmartSelfie
-              ? `Turns ${ENHANCED_SMART_SELFIE_TITLE} off`
-              : 'Operator captures for the applicant'
+              ? strings.settingsAgentModeMutex({ setting: strings.settingsEnhancedSmartSelfie })
+              : strings.settingsAgentModeBody
           }
           icon="agent"
           setting={UseSmileIDSampleSetting.AgentMode}
@@ -227,10 +233,10 @@ export const SettingsScreen = ({
         />
       </Section>
 
-      <Section label="APPEARANCE">
+      <Section label={strings.settingsSectionAppearance}>
         <UseSmileIDSampleSettingRow
-          title="Theme"
-          supportingText={smileIDSampleAppearanceLabel(settings.appearance, state.deviceDark)}
+          title={strings.settingsTheme}
+          supportingText={smileIDSampleAppearanceLabel(settings.appearance, state.deviceDark, strings)}
           onPress={onAppearancePress}
           leading={(tint) => <UseSmileIDSampleIcon name="darkMode" tint={tint} />}
           trailing={<UseSmileIDSampleSettingRowChevron />}
@@ -238,14 +244,25 @@ export const SettingsScreen = ({
         />
       </Section>
 
-      <Section label="SDK SCREENS — SHOW OR SKIP FLOW STEPS">
+      <Section label={strings.settingsSectionLanguage}>
+        <UseSmileIDSampleSettingRow
+          title={strings.settingsLanguage}
+          supportingText={smileIDSampleLanguageLabel(settings.language, strings, deviceLanguages)}
+          onPress={onLanguagePress}
+          leading={(tint) => <UseSmileIDSampleIcon name="settingLanguage" tint={tint} />}
+          trailing={<UseSmileIDSampleSettingRowChevron />}
+          testID={UseSmileIDSampleTestIds.SETTING_LANGUAGE}
+        />
+      </Section>
+
+      <Section label={strings.settingsSectionSdkScreens}>
         <SwitchRow
-          title="Consent screen"
+          title={strings.settingsConsent}
           // A switch reading ON while the token has taken the decision away is a lie the screen tells.
           supportingText={
             state.consentBoundByToken === true
-              ? 'The token grants consent, so the screen is skipped'
-              : 'Ask permission before KYC checks'
+              ? strings.settingsConsentBound
+              : strings.settingsConsentBody
           }
           icon="consent"
           setting={UseSmileIDSampleSetting.ConsentStep}
@@ -255,8 +272,8 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Instruction screen"
-          supportingText="Prep tips before capture"
+          title={strings.settingsInstructions}
+          supportingText={strings.settingsInstructionsBody}
           icon="instructions"
           setting={UseSmileIDSampleSetting.InstructionsStep}
           checked={settings.instructionsStep}
@@ -265,8 +282,8 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Preview screen"
-          supportingText="Confirm or retake after capture"
+          title={strings.settingsPreview}
+          supportingText={strings.settingsPreviewBody}
           icon="preview"
           setting={UseSmileIDSampleSetting.PreviewStep}
           checked={settings.previewStep}
@@ -276,10 +293,10 @@ export const SettingsScreen = ({
       </Section>
 
       {/* The design draws no such section either; it sits with the other capture choices. */}
-      <Section label="DOCUMENT CAPTURE">
+      <Section label={strings.settingsSectionDocumentCapture}>
         <UseSmileIDSampleSettingRow
-          title="Capture mode"
-          supportingText={smileIDSampleCaptureModeLabel(settings.captureMode)}
+          title={strings.settingsCaptureMode}
+          supportingText={smileIDSampleCaptureModeLabel(settings.captureMode, strings)}
           onPress={onCaptureModePress}
           leading={(tint) => <UseSmileIDSampleIcon name="documentVerification" tint={tint} />}
           trailing={<UseSmileIDSampleSettingRowChevron />}
@@ -287,8 +304,8 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Gallery upload"
-          supportingText="The system picker needs no permission"
+          title={strings.settingsGalleryUpload}
+          supportingText={strings.settingsGalleryUploadBody}
           icon="preview"
           setting={UseSmileIDSampleSetting.GalleryUpload}
           checked={settings.galleryUpload}
@@ -297,8 +314,8 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Skip the back"
-          supportingText="A Skip button on the back-side capture"
+          title={strings.settingsSkipBack}
+          supportingText={strings.settingsSkipBackBody}
           icon="instructions"
           setting={UseSmileIDSampleSetting.AllowSkipBack}
           checked={settings.allowSkipBack}
@@ -307,8 +324,8 @@ export const SettingsScreen = ({
         />
         <UseSmileIDSampleRowDivider />
         <SwitchRow
-          title="Selfie first"
-          supportingText="The selfie before the document"
+          title={strings.settingsSelfieFirst}
+          supportingText={strings.settingsSelfieFirstBody}
           icon="smile"
           setting={UseSmileIDSampleSetting.SelfieFirst}
           checked={settings.selfieFirst}
@@ -331,16 +348,17 @@ export const SettingsScreen = ({
         </Section>
       ) : null}
 
-      <NavSection label="ABOUT" rows={smileIDSampleAboutRows} onPress={onNavRowPress} />
-      <NavSection label="LEGAL" rows={smileIDSampleLegalRows} onPress={onNavRowPress} />
+      <NavSection label={strings.settingsSectionAbout} rows={smileIDSampleAboutRows} onPress={onNavRowPress} />
+      <NavSection label={strings.settingsSectionLegal} rows={smileIDSampleLegalRows} onPress={onNavRowPress} />
 
       <UseSmileIDSampleDestructiveRow
-        text="Sign out"
+        text={strings.settingsSignOut}
         onPress={() =>
           smileIDSampleConfirm({
-            title: 'Sign out?',
-            message: 'This ends the token session and deletes every profile on this device.',
-            confirmLabel: 'Sign out',
+            cancelLabel: strings.commonCancel,
+            title: strings.settingsSignOutTitle,
+            message: strings.settingsSignOutBody,
+            confirmLabel: strings.settingsSignOut,
             onConfirm: onSignOut,
           })
         }

@@ -7,6 +7,7 @@ import {
   smileIDSampleUtf8Text,
 } from './use-smile-id-sample-token-bytes';
 import type { UseSmileIDSampleTokenSession } from './use-smile-id-sample-token-session';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// The consent bound into the token; `granted` is true or absent.
 export type UseSmileIDSampleTokenConsent = {
@@ -32,10 +33,43 @@ export type UseSmileIDSampleTokenBindings = {
 };
 
 /// Either the session a token describes, or why it is not one.
+/// Why a token was refused, worded where it is shown.
+export type UseSmileIDSampleTokenRejection =
+  | { readonly kind: 'segments' | 'payloadEncoding' | 'payloadJson' | 'iat' | 'exp' | 'expOrder' }
+  | { readonly kind: 'apiUrlMissing' | 'apiUrlInvalid' }
+  | { readonly kind: 'apiUrlUnknown'; readonly host: string };
+
+/// The rejection in the app's language.
+export const smileIDSampleTokenRejectionText = (
+  rejection: UseSmileIDSampleTokenRejection,
+  strings: UseSmileIDSampleStrings,
+): string => {
+  switch (rejection.kind) {
+    case 'segments':
+      return strings.tokenErrorSegments;
+    case 'payloadEncoding':
+      return strings.tokenErrorPayloadEncoding;
+    case 'payloadJson':
+      return strings.tokenErrorPayloadJson;
+    case 'iat':
+      return strings.tokenErrorIat;
+    case 'exp':
+      return strings.tokenErrorExp;
+    case 'expOrder':
+      return strings.tokenErrorExpOrder;
+    case 'apiUrlMissing':
+      return strings.tokenErrorApiUrlMissing;
+    case 'apiUrlInvalid':
+      return strings.tokenErrorApiUrlInvalid;
+    case 'apiUrlUnknown':
+      return strings.tokenErrorApiUrlUnknown({ host: rejection.host });
+  }
+};
+
 export type UseSmileIDSampleTokenDecode =
   | { readonly kind: 'decoded'; readonly session: UseSmileIDSampleTokenSession }
   /// Names what failed; never a value, bar the public `api_url` host.
-  | { readonly kind: 'rejected'; readonly reason: string };
+  | { readonly kind: 'rejected'; readonly reason: UseSmileIDSampleTokenRejection };
 
 /// True when the token alone satisfies consent.
 export const smileIDSampleConsentIsComplete = (consent: UseSmileIDSampleTokenConsent | null | undefined): boolean =>
@@ -74,30 +108,26 @@ export const smileIDSampleDecodeToken = (token: string): UseSmileIDSampleTokenDe
   const trimmed = token.trim();
   const segments = trimmed.split('.');
   if (segments.length !== SEGMENTS || segments.some((segment) => !BASE64_URL.test(segment))) {
-    return reject('A token is three dot-separated base64url segments; this is not.');
+    return reject({ kind: 'segments' });
   }
   const bytes = smileIDSampleBase64UrlBytes(segments[1]!);
-  if (bytes === null) return reject("The token's payload segment is not base64url.");
+  if (bytes === null) return reject({ kind: 'payloadEncoding' });
   const claims = parseObject(smileIDSampleUtf8Text(bytes));
-  if (claims === null) return reject("The token's payload segment is not a JSON object.");
+  if (claims === null) return reject({ kind: 'payloadJson' });
   const issuedAt = seconds(claims.iat);
-  if (issuedAt === null) return reject('The token carries no numeric iat claim.');
+  if (issuedAt === null) return reject({ kind: 'iat' });
   const expires = seconds(claims.exp);
-  if (expires === null) return reject('The token carries no numeric exp claim.');
-  if (expires <= issuedAt) return reject("The token's exp claim is not after its iat claim.");
+  if (expires === null) return reject({ kind: 'exp' });
+  if (expires <= issuedAt) return reject({ kind: 'expOrder' });
   // Refused, not defaulted: a sandbox fallback sends a production token to the wrong host.
   const apiUrl = valueOf(claims.api_url);
   if (apiUrl === null) {
-    return reject('The token carries no api_url claim, so nothing says which environment it was minted for.');
+    return reject({ kind: 'apiUrlMissing' });
   }
   const environment = smileIDSampleEnvironmentFor(apiUrl);
   if (environment === null) {
     const host = smileIDSampleApiUrlHost(apiUrl);
-    return reject(
-      host === null
-        ? "The token's api_url is not a URL, so it names no environment."
-        : `The token's api_url names ${host}, which is not a Smile ID environment.`,
-    );
+    return reject(host === null ? { kind: 'apiUrlInvalid' } : { kind: 'apiUrlUnknown', host });
   }
   const session: UseSmileIDSampleTokenSession = {
     id: valueOf(claims.jti) ?? digest(trimmed),
@@ -136,7 +166,7 @@ const HANDLE_BYTES = 4;
 const MAX_DEPTH = 32;
 const BASE64_URL = /^[A-Za-z0-9_-]+$/;
 
-const reject = (reason: string): UseSmileIDSampleTokenDecode => ({ kind: 'rejected', reason });
+const reject = (reason: UseSmileIDSampleTokenRejection): UseSmileIDSampleTokenDecode => ({ kind: 'rejected', reason });
 
 const nonBlank = (value: string | null | undefined): boolean => value != null && value.trim().length > 0;
 

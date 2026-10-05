@@ -2,6 +2,7 @@ import { smileIDSampleDetailsContactProblem } from './use-smile-id-sample-contac
 import type { UseSmileIDSampleTokenBindings } from './use-smile-id-sample-token-decoder';
 import type { UseSmileIDSampleUserDetails } from './use-smile-id-sample-profiles';
 import { UseSmileIDSampleUserField, type UseSmileIDSampleUserFieldSpec } from '../model/use-smile-id-sample-user-fields';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 export type { UseSmileIDSampleTokenBindings };
 
@@ -64,21 +65,21 @@ export const smileIDSampleRequirementSupplies = (
 export const smileIDSampleRequirementLabel = (
   requirement: UseSmileIDSampleUserDetailsRequirement,
   field: UseSmileIDSampleUserFieldSpec,
-): string => {
-  return requirement.contact && !field.required ? field.title : field.label;
-};
+  strings: UseSmileIDSampleStrings,
+): string => (requirement.contact && !field.required ? field.title(strings) : field.label(strings));
 
 const titlecase = (text: string): string => text.charAt(0).toUpperCase() + text.slice(1);
 
 /// The sentence under the form, which has to name what is actually outstanding.
 export const smileIDSampleRequirementPrompt = (
   requirement: UseSmileIDSampleUserDetailsRequirement,
+  strings: UseSmileIDSampleStrings,
 ): string => {
   const outstanding: string[] = [];
-  if (requirement.firstName) outstanding.push('first name');
-  if (requirement.lastName) outstanding.push('last name');
-  if (requirement.contact) outstanding.push('an email or phone number');
-  if (outstanding.length === 0) return 'Tap any field to edit.';
-  if (outstanding.length === 1) return `${titlecase(outstanding[0]!)} is required.`;
-  return `Required: ${outstanding.join(', ')}.`;
+  if (requirement.firstName) outstanding.push(strings.userRequirementFirstName);
+  if (requirement.lastName) outstanding.push(strings.userRequirementLastName);
+  if (requirement.contact) outstanding.push(strings.userRequirementContact);
+  if (outstanding.length === 0) return strings.userDetailsEditHint;
+  if (outstanding.length === 1) return strings.userRequirementOne({ field: titlecase(outstanding[0]!) });
+  return strings.userRequirementMany({ fields: outstanding.join(strings.userRequirementSeparator) });
 };

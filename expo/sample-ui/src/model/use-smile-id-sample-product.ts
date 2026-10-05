@@ -1,6 +1,7 @@
 import { smileProductHues, type SmileProductHue } from '../smile-product-hues';
 import type { SmileIconName } from '../smile-icons';
 import { UseSmileIDSampleMarks } from '../use-smile-id-sample-marks';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// Constant keys outlive their labels: the second section is the Onboarding heading, not the Verifications tab.
 export const UseSmileIDSampleProductSection = {
@@ -124,3 +125,59 @@ export const smileIDSampleProductHue = (product: UseSmileIDSampleProduct): Smile
 /// Resolves a product id from a launch argument or a route, returning null rather than throwing.
 export const smileIDSampleProductFrom = (id: string | null | undefined) =>
   smileIDSampleProducts.find((product) => product.id === id) ?? null;
+
+/// A section's heading in the app's language.
+export const smileIDSampleProductSectionLabel = (
+  section: UseSmileIDSampleProductSectionKey,
+  strings: UseSmileIDSampleStrings,
+): string => (section === 'Authentication' ? strings.productsSectionAuthentication : strings.productsSectionOnboarding);
+
+/// The product's name in the app's language.
+export const smileIDSampleProductTitle = (product: UseSmileIDSampleProduct, strings: UseSmileIDSampleStrings): string => {
+  switch (product.id) {
+    case 'smartSelfieEnrollment':
+      return strings.productSmartSelfieEnrollment;
+    case 'smartSelfieAuth':
+      return strings.productSmartSelfieAuthentication;
+    case 'documentVerification':
+      return strings.productDocumentVerification;
+    case 'enhancedDocumentVerification':
+      return strings.productEnhancedDocumentVerification;
+    case 'residencyDocumentVerification':
+      return strings.productResidencyDocumentVerification;
+    case 'biometricKyc':
+      return strings.productBiometricKyc;
+    case 'enhancedKyc':
+      return strings.productEnhancedKyc;
+    default:
+      return product.label;
+  }
+};
+
+/// The card's first line in the app's language.
+export const smileIDSampleProductCardTitle = (product: UseSmileIDSampleProduct, strings: UseSmileIDSampleStrings): string => {
+  switch (product.id) {
+    case 'smartSelfieEnrollment':
+      return strings.productCardRegistration;
+    case 'smartSelfieAuth':
+      return strings.productCardAuth;
+    case 'documentVerification':
+      return strings.productCardDocument;
+    case 'enhancedDocumentVerification':
+      return strings.productCardEnhancedDoc;
+    case 'residencyDocumentVerification':
+      return strings.productCardResidencyDoc;
+    case 'biometricKyc':
+      return strings.productCardBiometric;
+    case 'enhancedKyc':
+      return strings.productCardEnhanced;
+    default:
+      return product.cardTitle;
+  }
+};
+
+/// The card's second line; the SmartSelfie mark is never translated.
+export const smileIDSampleProductCardFamily = (product: UseSmileIDSampleProduct, strings: UseSmileIDSampleStrings): string => {
+  if (product.cardFamily === UseSmileIDSampleMarks.SMART_SELFIE) return product.cardFamily;
+  return product.cardFamily === 'KYC' ? strings.productFamilyKyc : strings.productFamilyVerification;
+};

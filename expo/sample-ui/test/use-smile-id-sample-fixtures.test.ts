@@ -14,6 +14,9 @@ import {
   smileIDSampleProfilesRecord,
   type UseSmileIDSampleProfile,
 } from '../src/state/use-smile-id-sample-profiles';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 const store = () => useSmileIDSampleProfileStore.getState();
 const ada = { firstName: 'Ada', lastName: 'Okafor', email: 'ada@kobo.example', phone: '' };
@@ -259,7 +262,7 @@ describe('the stored record', () => {
 describe('a profile', () => {
   it('names the app on consent when its organisation is blank, never the person', () => {
     const person = profile('', 'Ada', 'Okafor');
-    expect(smileIDSampleProfileTitle(person)).toBe('Ada Okafor');
+    expect(smileIDSampleProfileTitle(person, strings)).toBe('Ada Okafor');
     expect(smileIDSamplePartnerName(person)).toBe('Smile ID');
   });
 
@@ -270,6 +273,6 @@ describe('a profile', () => {
   });
 
   it('says so under the organisation until details are saved', () => {
-    expect(smileIDSampleProfileCaption(profile('Kobo Bank'))).toBe('No user details yet');
+    expect(smileIDSampleProfileCaption(profile('Kobo Bank'), strings)).toBe('No user details yet');
   });
 });

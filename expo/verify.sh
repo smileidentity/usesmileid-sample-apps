@@ -64,6 +64,8 @@ if runs checks; then
     python3 "$REPO_ROOT/scripts/sync_design_tokens.py" "${TOKEN_ARGS[@]}"
   fi
   python3 "$REPO_ROOT/scripts/test_sync_design_tokens.py" >/dev/null
+  python3 "$REPO_ROOT/scripts/sync_l10n.py" --check --platform expo
+  python3 "$REPO_ROOT/scripts/test_sync_l10n.py" >/dev/null
   # The notices generator's own rules, which no export is needed to check and which a wrong shipping
   # set would pass silently: a graph-walked set shipped 542 components and drifted 48 of them.
   python3 "$REPO_ROOT/scripts/test_generate_expo_licenses.py" >/dev/null 2>&1

@@ -1,6 +1,7 @@
 import { UseSmileIDSampleUserField } from '../src/model/use-smile-id-sample-user-fields';
 import {
   smileIDSampleContactProblem,
+  smileIDSampleContactProblemText,
   smileIDSampleContactSubmitted,
 } from '../src/state/use-smile-id-sample-contact-rules';
 import {
@@ -8,6 +9,9 @@ import {
   smileIDSampleRequirementDefaults,
 } from '../src/state/use-smile-id-sample-user-details-requirement';
 import { spec } from './spec-file';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 type Case = { field: 'email' | 'phone'; value: string; valid: boolean; submits?: string };
 const file = spec<{ email: { error: string }; phone: { error: string }; cases: Case[] }>('contact-rules.json');
@@ -20,8 +24,12 @@ describe('the contact rules', () => {
   });
 
   it('shows the spec sentences', () => {
-    expect(smileIDSampleContactProblem(UseSmileIDSampleUserField.Email, 'ada')).toBe(file.email.error);
-    expect(smileIDSampleContactProblem(UseSmileIDSampleUserField.Phone, '0700')).toBe(file.phone.error);
+    expect(smileIDSampleContactProblemText(smileIDSampleContactProblem(UseSmileIDSampleUserField.Email, 'ada')!, strings)).toBe(
+      file.email.error,
+    );
+    expect(smileIDSampleContactProblemText(smileIDSampleContactProblem(UseSmileIDSampleUserField.Phone, '0700')!, strings)).toBe(
+      file.phone.error,
+    );
   });
 
   it('keeps the form from continuing on a bad contact but not on a blank one', () => {

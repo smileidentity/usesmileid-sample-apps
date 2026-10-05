@@ -1,4 +1,5 @@
 import { smileIDSampleEnvironments, type UseSmileIDSampleEnvironment } from './use-smile-id-sample-result';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// The host each environment names.
 export const smileIDSampleEnvironmentHosts: Readonly<Record<UseSmileIDSampleEnvironment, string>> = {
@@ -7,10 +8,10 @@ export const smileIDSampleEnvironmentHosts: Readonly<Record<UseSmileIDSampleEnvi
 };
 
 /// What the simulated-scan chips read.
-export const smileIDSampleEnvironmentLabels: Readonly<Record<UseSmileIDSampleEnvironment, string>> = {
-  sandbox: 'Sandbox',
-  production: 'Production',
-};
+export const smileIDSampleEnvironmentLabel = (
+  environment: UseSmileIDSampleEnvironment,
+  strings: UseSmileIDSampleStrings,
+): string => (environment === 'sandbox' ? strings.scanEnvironmentSandbox : strings.scanEnvironmentProduction);
 
 /// Trailing slash, the form the SDK's own constants take.
 export const smileIDSampleEnvironmentBaseUrl = (environment: UseSmileIDSampleEnvironment): string =>

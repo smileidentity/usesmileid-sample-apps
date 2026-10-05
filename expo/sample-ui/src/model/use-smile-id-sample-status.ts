@@ -1,3 +1,5 @@
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+
 /// The four job statuses, Title case as the design sets them.
 export const UseSmileIDSampleStatus = {
   Clear: 'Clear',
@@ -7,6 +9,20 @@ export const UseSmileIDSampleStatus = {
 } as const;
 
 export type UseSmileIDSampleStatus = (typeof UseSmileIDSampleStatus)[keyof typeof UseSmileIDSampleStatus];
+
+/// The pill's text in the app's language.
+export const smileIDSampleStatusLabel = (status: UseSmileIDSampleStatus, strings: UseSmileIDSampleStrings): string => {
+  switch (status) {
+    case UseSmileIDSampleStatus.Clear:
+      return strings.statusClear;
+    case UseSmileIDSampleStatus.Attention:
+      return strings.statusAttention;
+    case UseSmileIDSampleStatus.Blocked:
+      return strings.statusBlocked;
+    case UseSmileIDSampleStatus.Processing:
+      return strings.statusProcessing;
+  }
+};
 
 /// The feedback role each status draws its soft pill from.
 export const smileIDSampleStatusRole = (status: UseSmileIDSampleStatus): string => {

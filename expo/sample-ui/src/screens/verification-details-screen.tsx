@@ -24,6 +24,8 @@ import {
 } from '../use-smile-id-sample-test-ids';
 import type { BadgeTokens } from '../theme/smile-colors';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
+import { smileIDSampleProductTitle } from '../model/use-smile-id-sample-product';
 
 /// Everything the details screen renders. `job` is null for a deep link naming a row this build has no copy of.
 export type UseSmileIDSampleVerificationDetailsState = {
@@ -55,18 +57,19 @@ export const VerificationDetailsScreen = ({
   onCopy,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const { job } = state;
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }, style]}>
       <UseSmileIDSampleTopAppBar
-        title="Verification details"
+        title={strings.detailsTitle}
         onBack={onBack}
         action={
           job === null ? undefined : (
             <UseSmileIDSampleTopAppBarButton
-              accessibilityLabel="Delete"
+              accessibilityLabel={strings.commonDelete}
               onPress={onDelete}
               emphasis="Destructive"
               testID={UseSmileIDSampleTestIds.DETAILS_DELETE}
@@ -93,9 +96,9 @@ export const VerificationDetailsScreen = ({
       >
         {state.pending === true ? null : job === null ? (
           <UseSmileIDSampleEmptyState
-            text="No verification here"
+            text={strings.detailsMissingTitle}
             // The id asked for is the whole diagnostic, which a deep link is how you reach.
-            supportingText={`Nothing stored for jobId = ${state.jobId}`}
+            supportingText={strings.detailsMissingBody({ jobId: state.jobId })}
             testID={UseSmileIDSampleTestIds.DETAILS_EMPTY}
           />
         ) : (
@@ -107,7 +110,7 @@ export const VerificationDetailsScreen = ({
               ]}
             >
               <Text style={[theme.type.textStyleTitle, styles.titleText, { color: theme.colors.textTitle }]}>
-                {job.product.label}
+                {smileIDSampleProductTitle(job.product, strings)}
               </Text>
               <UseSmileIDSampleStatusBadge
                 status={job.status}
@@ -115,7 +118,7 @@ export const VerificationDetailsScreen = ({
               />
             </View>
 
-            <UseSmileIDSampleSectionSurface label="DETAILS">
+            <UseSmileIDSampleSectionSurface label={strings.detailsSection}>
               <UseSmileIDSampleDataFieldRow
                 label="Created_at"
                 value={smileIDSampleCreatedAtLabel(job)}
@@ -124,17 +127,17 @@ export const VerificationDetailsScreen = ({
               <UseSmileIDSampleDataFieldRow
                 label="Job_id"
                 value={smileIDSampleJobShortId(job)}
-                onCopy={() => onCopy('Job ID', job.id)}
+                onCopy={() => onCopy(strings.detailsJobId, job.id)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('jobId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('jobId')}
               />
               <UseSmileIDSampleDataFieldRow
-                label="Message"
+                label={strings.detailsMessage}
                 value={job.message}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('message')}
               />
               <UseSmileIDSampleDataFieldRow
-                label="Status"
+                label={strings.detailsStatus}
                 value={smileIDSampleHttpLabel(job.httpStatus) ?? ''}
                 // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
                 valueColor={httpStatusColour(job.httpStatus, theme.colors.badge)}
@@ -143,7 +146,7 @@ export const VerificationDetailsScreen = ({
               <UseSmileIDSampleDataFieldRow
                 label="User_id"
                 value={smileIDSampleJobShortUserId(job)}
-                onCopy={() => onCopy('User ID', job.userId)}
+                onCopy={() => onCopy(strings.detailsUserId, job.userId)}
                 testID={UseSmileIDSampleSuffixedTestIds.detailField('userId')}
                 copyTestID={UseSmileIDSampleSuffixedTestIds.detailCopy('userId')}
               />

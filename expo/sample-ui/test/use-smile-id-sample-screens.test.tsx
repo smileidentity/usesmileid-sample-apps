@@ -9,7 +9,7 @@ import { smileIDSampleSettingsDefaults } from '../src/state/use-smile-id-sample-
 import { useSmileIDSampleTheme } from '../src/theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { UseSmileIDSampleAppearance } from '../src/model/use-smile-id-sample-appearance';
-import { renderInTheme, schemes } from './render-in-theme';
+import { renderInTheme, rightToLeft, schemes } from './render-in-theme';
 import { expectGoldens } from './paint/pixel-golden';
 
 const noop = () => {};
@@ -43,6 +43,7 @@ const settings = (
     onNavRowPress={noop}
     onCaptureModePress={noop}
     onAppearancePress={noop}
+    onLanguagePress={noop}
     onSignOut={noop}
     {...overrides}
   />
@@ -147,6 +148,12 @@ describe.each(cases)('$screen', ({ states }) => {
     it.each(Object.keys(states))('%s', async (state) => {
       await expectGoldens(states[state]!.element(), dark);
     });
+  });
+});
+
+describe('settings in Arabic', () => {
+  it('mirrors the rows and translates every line but the instrumentation', async () => {
+    await expectGoldens(rightToLeft(settings()), false, { name: 'settings.light.ar' });
   });
 });
 

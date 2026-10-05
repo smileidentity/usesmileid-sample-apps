@@ -8,6 +8,7 @@ import {
   useSmileIDSampleProfileStore,
   useSmileIDSampleSessionStore,
   type UseSmileIDSampleProfileEdit,
+  useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
@@ -15,6 +16,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
 
 export default function ProfileConfig() {
+  const strings = useSmileIDSampleStrings();
   const back = useSmileIDSampleBack('/profiles');
   const { profileId } = useLocalSearchParams<{ profileId: string }>();
   const profile = useSmileIDSampleProfileStore((state) =>
@@ -52,13 +54,13 @@ export default function ProfileConfig() {
   return (
     <ProfileConfigScreen
       state={{
-        title: smileIDSampleProfileTitle(profile),
+        title: smileIDSampleProfileTitle(profile, strings),
         organisation,
         defaults,
         isActive: profileId === activeId,
         changed,
         callbackUrl,
-        callbackOverride: live === null ? null : smileIDSampleCallbackOverrideCaption(live),
+        callbackOverride: live === null ? null : smileIDSampleCallbackOverrideCaption(live, strings),
       }}
       onFieldChange={(field, value) => setEdit({ profileId, details: smileIDSampleUserFieldWrite(field, defaults, value) })}
       onCallbackUrlChange={(value) => setCallbackEdit({ profileId, value })}

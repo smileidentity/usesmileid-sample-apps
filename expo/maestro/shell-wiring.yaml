@@ -96,3 +96,25 @@ appId: ${APP_ID}
     selected: true
 - tapOn:
     id: "sample_appearance_option_system"
+
+# The language sheet by its link: a pick applies at once, and System restores the device's.
+- openLink: "usesmileid-sample-expo:///settings/language"
+- extendedWaitUntil:
+    visible:
+      id: "sample_language_sheet"
+    timeout: 60000
+- assertVisible:
+    id: "sample_language_option_system"
+    selected: true
+- tapOn:
+    id: "sample_language_option_fr"
+- assertNotVisible:
+    id: "sample_language_sheet"
+- assertVisible: "Réglages"
+- openLink: "usesmileid-sample-expo:///settings/language"
+- assertVisible:
+    id: "sample_language_option_fr"
+    selected: true
+- tapOn:
+    id: "sample_language_option_system"
+- assertVisible: "Settings"

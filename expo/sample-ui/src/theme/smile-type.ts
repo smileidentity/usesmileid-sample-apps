@@ -9,6 +9,8 @@ export type SmileTextStyle = {
   readonly letterSpacing: number;
   readonly marginTop: number;
   readonly marginBottom: number;
+  /// Set only in a right-to-left language; see the theme provider.
+  readonly writingDirection?: 'rtl';
 };
 
 type TokenTextStyle = {

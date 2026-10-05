@@ -1,3 +1,5 @@
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+
 /// How long a simulated scan's token lasts; Ended reaches the expiry gate without waiting.
 export type UseSmileIDSampleSimulatedSpan = {
   readonly id: 'fifteenMinutes' | 'oneHour' | 'eightHours' | 'ended';
@@ -7,6 +9,10 @@ export type UseSmileIDSampleSimulatedSpan = {
 };
 
 const MINUTE = 60_000;
+
+/// The span's chip label; only the ended span is translated.
+export const smileIDSampleSimulatedSpanLabel = (span: UseSmileIDSampleSimulatedSpan, strings: UseSmileIDSampleStrings): string =>
+  span.ended ? strings.scanSpanExpired : span.label;
 
 export const smileIDSampleSimulatedSpans: readonly UseSmileIDSampleSimulatedSpan[] = [
   { id: 'fifteenMinutes', label: '15m', spanMillis: 15 * MINUTE, ended: false },

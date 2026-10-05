@@ -18,9 +18,7 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
-
-/// Appended to the active profile's supporting line.
-const ACTIVE_SUFFIX = ' · active';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The create row's own metrics, which land between the scale steps — spec/screens.json → profiles.
 const CREATE_PADDING_X = 14;
@@ -29,6 +27,7 @@ const CREATE_TITLE_SIZE = 14.5;
 
 /// The last row: no card and no border, a pale primary tile with a plus.
 const CreateProfileRow = ({ onPress }: { onPress: () => void }) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
 
   return (
@@ -66,10 +65,10 @@ const CreateProfileRow = ({ onPress }: { onPress: () => void }) => {
             { color: theme.colors.textTitle },
           ]}
         >
-          Create new profile
+          {strings.profilesCreate}
         </Text>
         <Text style={[theme.type.textStyleCaption, { color: theme.colors.textMuted }]}>
-          Its user details will live under it
+          {strings.profilesCreateHint}
         </Text>
       </View>
     </Pressable>
@@ -91,6 +90,7 @@ type Props = {
 
 /// Every profile the app can act as. Tapping one configures it; switching happens on the sheet.
 export const ProfilesScreen = ({ state, onProfilePress, onCreate, onBack }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
 
@@ -99,7 +99,7 @@ export const ProfilesScreen = ({ state, onProfilePress, onCreate, onBack }: Prop
       testID={UseSmileIDSampleTestIds.PROFILES_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
-      <UseSmileIDSampleTopAppBar title="Profiles" onBack={onBack} />
+      <UseSmileIDSampleTopAppBar title={strings.profilesTitle} onBack={onBack} />
       <ScrollView
         contentContainerStyle={{
           paddingBottom: insets.bottom + theme.dimens.spacing.md,
@@ -111,11 +111,11 @@ export const ProfilesScreen = ({ state, onProfilePress, onCreate, onBack }: Prop
             key={profile.id}
             // Position in the list, cycled, which is what picks a profile's avatar hue.
             avatarColor={smileProfileHues[index % smileProfileHues.length]}
-            organisation={smileIDSampleProfileTitle(profile)}
+            organisation={smileIDSampleProfileTitle(profile, strings)}
             supportingText={
               profile.id === state.activeId
-                ? smileIDSampleProfileCaption(profile) + ACTIVE_SUFFIX
-                : smileIDSampleProfileCaption(profile)
+                ? smileIDSampleProfileCaption(profile, strings) + strings.profilesActiveSuffix
+                : smileIDSampleProfileCaption(profile, strings)
             }
             initials={smileIDSampleProfileInitials(profile)}
             selected={false}

@@ -4,6 +4,7 @@ import { smileCardStrokeWidth } from '../smile-product-hues';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   onScan: () => void;
@@ -12,6 +13,7 @@ type Props = {
 
 /// A neutral grey card that replaces the session card once the session expires — not a warning-accented banner.
 export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
 
   return (
@@ -35,10 +37,10 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
     >
       <View style={[styles.text, { rowGap: theme.dimens.spacing.xxs }]}>
         <Text style={[theme.type.textStyleOverline, { color: theme.colors.textTitle }]}>
-          TOKEN SESSION ENDED
+          {strings.sessionEnded}
         </Text>
         <Text style={[theme.type.textStyleCaption, { color: theme.colors.textMuted }]}>
-          Scan a token to relink
+          {strings.sessionRelink}
         </Text>
       </View>
       <Pressable
@@ -46,7 +48,7 @@ export const UseSmileIDSampleSessionEndedBanner = ({ onScan, style }: Props) => 
         onPress={onScan}
         style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
       >
-        <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>Scan</Text>
+        <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>{strings.sessionScan}</Text>
       </Pressable>
     </View>
   );

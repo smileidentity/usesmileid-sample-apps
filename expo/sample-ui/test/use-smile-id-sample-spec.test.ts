@@ -9,6 +9,9 @@ import {
   smileIDSampleThemeScenarios,
 } from '../src/model/use-smile-id-sample-scenario';
 import { spec } from './spec-file';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 type Scenarios = {
   scenarios: { id: string; kind: string; label: string }[];
@@ -100,8 +103,8 @@ describe('the removal notice copy', () => {
   // Pinned to the wording Android, iOS and Flutter ship, not to this port's own: it read
   // "N verifications removed" here alone, and only a sibling comparison could see that.
   it('is singular for one and plural for more, worded as the other three shells word it', () => {
-    expect(smileIDSampleRemovalNotice(1).message).toBe('1 verification hidden from App list');
-    expect(smileIDSampleRemovalNotice(3).message).toBe('3 verifications hidden from App list');
-    expect(smileIDSampleRemovalNotice(2).actionLabel).toBe('Undo');
+    expect(smileIDSampleRemovalNotice(1, strings).message).toBe('1 verification hidden from App list');
+    expect(smileIDSampleRemovalNotice(3, strings).message).toBe('3 verifications hidden from App list');
+    expect(smileIDSampleRemovalNotice(2, strings).actionLabel).toBe('Undo');
   });
 });

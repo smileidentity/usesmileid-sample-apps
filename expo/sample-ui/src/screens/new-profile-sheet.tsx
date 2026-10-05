@@ -14,6 +14,8 @@ import {
   smileIDSampleContactProblem,
   smileIDSampleDetailsContactProblem,
 } from '../state/use-smile-id-sample-contact-rules';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// What the sheet has collected. Its own state, because a dismissed sheet must start empty next time.
 export type UseSmileIDSampleNewProfileDraft = {
@@ -41,7 +43,7 @@ export const smileIDSampleNewProfileComplete = (draft: UseSmileIDSampleNewProfil
 
 type Field = {
   readonly key: keyof UseSmileIDSampleNewProfileDraft;
-  readonly placeholder: string;
+  readonly placeholder: (strings: UseSmileIDSampleStrings) => string;
   readonly icon: SmileIconName;
   readonly testID: string;
 };
@@ -49,7 +51,7 @@ type Field = {
 /// The name, then the four user details that will live under it, each carrying its leading glyph.
 const NAME_FIELD: Field = {
   key: 'name',
-  placeholder: 'Profile name',
+  placeholder: (strings) => strings.profileConfigName,
   icon: 'fieldPerson',
   testID: UseSmileIDSampleTestIds.NEW_PROFILE_NAME,
 };
@@ -90,6 +92,7 @@ type Props = {
 
 /// A profile name, then the four user details that will live under it.
 export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const problemOf = (spec: Field): string | null =>
     spec.key === 'email' || spec.key === 'phone' ? smileIDSampleContactProblem(spec.key, draft[spec.key]) : null;
   const field = (spec: Field) => (
@@ -97,7 +100,7 @@ export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Pro
       key={spec.key}
       value={draft[spec.key]}
       onValueChange={(value) => onDraftChange({ ...draft, [spec.key]: value })}
-      placeholder={spec.placeholder}
+      placeholder={spec.placeholder(strings)}
       {...(spec.key === 'name' ? {} : smileIDSampleUserFieldKeyboard(spec.key))}
       isError={problemOf(spec) !== null}
       errorMessage={problemOf(spec)}
@@ -109,15 +112,15 @@ export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Pro
   return (
     <UseSmileIDSampleBottomSheet
       visible
-      title="New profile"
+      title={strings.profileSwitchNew}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.NEW_PROFILE_SHEET}
     >
       {field(NAME_FIELD)}
-      <UseSmileIDSampleSectionLabel text="USER DETAILS" />
+      <UseSmileIDSampleSectionLabel text={strings.newProfileSectionDetails} />
       {DETAIL_FIELDS.map(field)}
       <UseSmileIDSampleButton
-        text="Create profile"
+        text={strings.newProfileCreate}
         onPress={onSave}
         enabled={smileIDSampleNewProfileComplete(draft)}
         testID={UseSmileIDSampleTestIds.NEW_PROFILE_SAVE}

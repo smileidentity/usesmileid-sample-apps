@@ -1,7 +1,12 @@
+import { View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
 
 import { smileIcons, type SmileIcon, type SmileIconName } from '../smile-icons';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleRightToLeft } from '../use-smile-id-sample-strings-context';
+
+/// Marks that point along the reading direction, flipped in right-to-left languages.
+const DIRECTIONAL: ReadonlySet<SmileIconName> = new Set(['arrowBack', 'arrowForward', 'chevron']);
 
 type Props = {
   name: SmileIconName;
@@ -15,8 +20,9 @@ export const UseSmileIDSampleIcon = ({ name, tint, size }: Props) => {
   const theme = useSmileIDSampleTheme();
   const icon: SmileIcon = smileIcons[name];
   const box = size ?? theme.dimens.size['icon-md'];
+  const mirrored = useSmileIDSampleRightToLeft() && DIRECTIONAL.has(name);
 
-  return (
+  const mark = (
     <Svg
       width={box}
       height={box}
@@ -44,6 +50,7 @@ export const UseSmileIDSampleIcon = ({ name, tint, size }: Props) => {
       })}
     </Svg>
   );
+  return mirrored ? <View style={{ transform: [{ scaleX: -1 }] }}>{mark}</View> : mark;
 };
 
 /// The marks a composite reaches for by role rather than by file name, so a rename lands in one place.

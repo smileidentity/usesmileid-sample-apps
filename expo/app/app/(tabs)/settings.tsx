@@ -9,9 +9,9 @@ import {
   useSmileIDSampleTheme,
   avatarColorForProfile,
   type UseSmileIDSampleNavRow,
-  USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL,
   smileIDSampleProfileTitle,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
 import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
@@ -27,6 +27,7 @@ import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-in
 const versionLabel = () => `Smile ID · ${Constants.expoConfig?.version ?? '0.0.0'}`;
 
 export default function Settings() {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const router = useRouter();
   const profile = useSmileIDSampleActiveProfile();
@@ -60,7 +61,7 @@ export default function Settings() {
     <SettingsScreen
       state={{
         settings,
-        organisation: profile === null ? USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL : smileIDSampleProfileTitle(profile),
+        organisation: profile === null ? strings.profilesNoProfile : smileIDSampleProfileTitle(profile, strings),
         initials: profile === null ? '' : smileIDSampleProfileInitials(profile),
         hasProfile: profile !== null,
         versionLabel: versionLabel(),
@@ -73,6 +74,7 @@ export default function Settings() {
       onNavRowPress={onNavRowPress}
       onCaptureModePress={() => router.push('/settings/capture-mode')}
       onAppearancePress={() => router.push('/settings/appearance')}
+      onLanguagePress={() => router.push('/settings/language')}
       onSignOut={() => {
         clearSession().catch(() => undefined);
         clearForms();
