@@ -29,6 +29,8 @@ The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
   `GET /v3/status`.
 - **Profiles** for different partners or test users, and an **appearance** (System, Light or Dark)
   carried through to the SDK's screens.
+- **Languages**: English, French, Arabic and Hebrew, for the app and the SDK's screens. The app follows
+  the device's language, or one picked in Settings.
 - **Probes** for automation and debugging: a scenario drawer, an on-screen result card and callback
   counters.
 
@@ -123,6 +125,7 @@ expo/verify.sh
 | [Architecture](docs/architecture.md) | How the four apps are built and kept identical, and where the SDK is called |
 | [Token sessions](docs/token-session.md) | How to run verifications from a v3 token instead of an API key |
 | [Theming](docs/theming.md) | How the apps theme themselves and the SDK |
+| [Localisation](docs/localisation.md) | How the apps are translated, and how to add a language |
 | [Testing](docs/testing.md) | How to test an integration like this one |
 | [App size](docs/app-size.md) | What Smile ID adds to an app's size, on each platform |
 | [Submitting to the stores](docs/store-submission.md) | What the SDK means for your App Store and Google Play submission |

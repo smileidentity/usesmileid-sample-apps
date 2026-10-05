@@ -14,6 +14,18 @@ Expo's Settings screen shows the scenario-drawer button only when a shell passes
 the Expo shell as the other three apps do, then drop the three excused ids from
 `use-smile-id-sample-test-id-usage.test.ts`.
 
+### Translations: a native speaker's review
+
+The French, Arabic and Hebrew strings in `spec/l10n/app/` were written without a native speaker's
+review. Have each language reviewed, and fix the strings in `spec/l10n/` so every platform picks them up.
+Done when each language has been read in the running app by a native speaker.
+
+### iOS: a language pick that applies at once
+
+On iOS a pick in the Language sheet applies on the next launch, because the SDK reads its strings in the
+language the process started with. Once the SDK takes a language override, apply the pick at once as the
+other three apps do, and drop the next-launch note from the sheet.
+
 ## Tests and structural checks
 
 ### Words that cannot fit the narrowest phone at the largest type
