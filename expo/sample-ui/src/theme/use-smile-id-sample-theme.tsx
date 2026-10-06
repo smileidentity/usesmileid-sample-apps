@@ -3,7 +3,8 @@ import { useColorScheme } from 'react-native';
 
 import { smileDarkColors, smileLightColors, type SmileColors } from './smile-colors';
 import { smileDimens, type SmileDimens } from './smile-dimens';
-import { smileType, type SmileType } from './smile-type';
+import { smileType, type SmileTextStyle, type SmileType } from './smile-type';
+import { useSmileIDSampleRightToLeft } from '../use-smile-id-sample-strings-context';
 
 /// One radius per named surface, fixing where the scale is applied rather than which value it is.
 export const smileShapes = {
@@ -37,6 +38,13 @@ const darkTheme: UseSmileIDSampleTheme = { ...lightTheme, colors: smileDarkColor
 const ThemeContext = createContext<UseSmileIDSampleTheme>(lightTheme);
 
 /// Provides the theme, following the system scheme unless the host pins one.
+/// iOS aligns natural text by the launch language, not React Native's forced direction, so every style says it.
+const rightToLeftType = (type: SmileType): SmileType => {
+  const styles: Record<string, SmileTextStyle> = {};
+  for (const [name, style] of Object.entries(type)) styles[name] = { ...style, writingDirection: 'rtl' };
+  return styles as SmileType;
+};
+
 export const UseSmileIDSampleThemeProvider = ({
   dark,
   children,
@@ -46,7 +54,11 @@ export const UseSmileIDSampleThemeProvider = ({
 }) => {
   const scheme = useColorScheme();
   const isDark = dark ?? scheme === 'dark';
-  const value = useMemo(() => (isDark ? darkTheme : lightTheme), [isDark]);
+  const rightToLeft = useSmileIDSampleRightToLeft();
+  const value = useMemo(() => {
+    const base = isDark ? darkTheme : lightTheme;
+    return rightToLeft ? { ...base, type: rightToLeftType(base.type) } : base;
+  }, [isDark, rightToLeft]);
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 

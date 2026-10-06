@@ -65,7 +65,7 @@ class _UseSmileIDSampleProfileConfigTabState
     return UseSmileIDSampleAboveShellPage(
       onBack: widget.onBack,
       child: UseSmileIDSampleProfileConfigScreen(
-        title: profile.title,
+        title: profile.title(context.strings),
         organisation: organisation,
         onOrganisationChanged: (String value) =>
             setState(() => _editedOrganisation = value),
@@ -81,7 +81,7 @@ class _UseSmileIDSampleProfileConfigTabState
         callbackUrl: callbackUrl,
         onCallbackUrlChanged: (String value) =>
             setState(() => _editedCallbackUrl = value),
-        callbackOverride: live?.callbackOverrideCaption,
+        callbackOverride: live?.callbackOverrideCaption(context.strings),
         onSave: () {
           edits
             ..update(

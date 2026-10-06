@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
   name: "SampleUI",
+  defaultLocalization: "en",
   // Above the SDK's own floor of 15 so the store can be SwiftData; see docs/architecture.md §5.
   platforms: [.iOS(.v17)],
   products: [

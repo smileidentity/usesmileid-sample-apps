@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// Which of the three treatments an app-bar control takes.
@@ -24,7 +25,7 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
   const UseSmileIDSampleTopAppBar({
     required this.title,
     required this.onBack,
-    this.backSemanticLabel = 'Back',
+    this.backSemanticLabel,
     this.action,
     this.testId,
     super.key,
@@ -37,7 +38,7 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
   final VoidCallback onBack;
 
   /// The back control's accessibility label.
-  final String backSemanticLabel;
+  final String? backSemanticLabel;
 
   /// The trailing control, where the screen has one.
   final Widget? action;
@@ -68,7 +69,7 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
           child: Row(
             children: <Widget>[
               UseSmileIDSampleTopAppBarButton(
-                semanticLabel: backSemanticLabel,
+                semanticLabel: backSemanticLabel ?? context.strings.commonBack,
                 onTap: onBack,
                 emphasis: UseSmileIDSampleTopAppBarEmphasis.filled,
                 glyph: UseSmileIDSampleGlyphs.arrowBack,

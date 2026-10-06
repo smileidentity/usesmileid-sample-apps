@@ -66,7 +66,7 @@ public struct UseSmileIDSampleTopAppBar<Action: View>: View {
 
   public init(
     title: String,
-    backLabel: String = "Back",
+    backLabel: String = UseSmileIDSampleStrings.commonBack,
     testId: String? = nil,
     onBack: @escaping () -> Void,
     @ViewBuilder action: () -> Action = { EmptyView() }

@@ -1,21 +1,28 @@
+import '../use_smileid_sample_strings.dart';
+
 /// The four job statuses, Title case as the design sets them — never upper-cased.
 enum UseSmileIDSampleStatus {
   /// Cleared.
-  clear('Clear', 'success'),
+  clear('success'),
 
   /// Needs attention.
-  attention('Attention', 'warning'),
+  attention('warning'),
 
   /// Blocked.
-  blocked('Blocked', 'error'),
+  blocked('error'),
 
   /// Still processing.
-  processing('Processing', 'info');
+  processing('info');
 
-  const UseSmileIDSampleStatus(this.label, this.role);
+  const UseSmileIDSampleStatus(this.role);
 
   /// The pill's text, already cased.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleStatus.clear => strings.statusClear,
+    UseSmileIDSampleStatus.attention => strings.statusAttention,
+    UseSmileIDSampleStatus.blocked => strings.statusBlocked,
+    UseSmileIDSampleStatus.processing => strings.statusProcessing,
+  };
 
   /// The feedback role whose soft fill the pill draws.
   final String role;

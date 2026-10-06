@@ -14,14 +14,14 @@ public struct NewProfileSheet: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "New profile", testId: UseSmileIDSampleTestIds.newProfileSheet) {
-      field($draft.name, placeholder: "Profile name", icon: SmileIcons.fieldPerson, testId: UseSmileIDSampleTestIds.newProfileName)
-      UseSmileIDSampleSectionLabel("USER DETAILS")
-      field($draft.firstName, placeholder: "First name", icon: SmileIcons.fieldPerson, testId: UseSmileIDSampleTestIds.newProfileFirstName)
-      field($draft.lastName, placeholder: "Last name", icon: SmileIcons.fieldPerson, testId: UseSmileIDSampleTestIds.newProfileLastName)
+    UseSmileIDSampleBottomSheet(title: UseSmileIDSampleStrings.profileSwitchNew, testId: UseSmileIDSampleTestIds.newProfileSheet) {
+      field($draft.name, placeholder: UseSmileIDSampleStrings.profileConfigName, icon: SmileIcons.fieldPerson, testId: UseSmileIDSampleTestIds.newProfileName)
+      UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.newProfileSectionDetails)
+      field($draft.firstName, placeholder: UseSmileIDSampleStrings.userFieldFirstName, icon: SmileIcons.fieldPerson, testId: UseSmileIDSampleTestIds.newProfileFirstName)
+      field($draft.lastName, placeholder: UseSmileIDSampleStrings.userFieldLastName, icon: SmileIcons.fieldPerson, testId: UseSmileIDSampleTestIds.newProfileLastName)
       field(
         $draft.email,
-        placeholder: "Email (optional)",
+        placeholder: UseSmileIDSampleStrings.userFieldEmailOptional,
         icon: SmileIcons.fieldEmail,
         keyboardType: .emailAddress,
         problem: UseSmileIDSampleContactRules.problem(.email, draft.email),
@@ -29,14 +29,14 @@ public struct NewProfileSheet: View {
       )
       field(
         $draft.phone,
-        placeholder: "Phone (optional)",
+        placeholder: UseSmileIDSampleStrings.userFieldPhoneOptional,
         icon: SmileIcons.fieldPhone,
         keyboardType: .phonePad,
         problem: UseSmileIDSampleContactRules.problem(.phone, draft.phone),
         testId: UseSmileIDSampleTestIds.newProfilePhone
       )
       UseSmileIDSampleButton(
-        text: "Create profile",
+        text: UseSmileIDSampleStrings.newProfileCreate,
         enabled: draft.canCreate,
         testId: UseSmileIDSampleTestIds.newProfileSave,
         action: onSave

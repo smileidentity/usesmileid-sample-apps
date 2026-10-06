@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.R
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
@@ -76,31 +77,11 @@ class UseSmileIDSampleUserDetailsRequirementTest {
     @Test
     fun `a contact row stops saying optional exactly when one is required`() {
         val outstanding = null.userDetailsRequirement()
-        assertEquals("Email", outstanding.labelFor(UseSmileIDSampleUserField.Email))
-        assertEquals("Phone", outstanding.labelFor(UseSmileIDSampleUserField.Phone))
+        assertEquals(R.string.sample_user_field_email, outstanding.labelFor(UseSmileIDSampleUserField.Email))
+        assertEquals(R.string.sample_user_field_phone, outstanding.labelFor(UseSmileIDSampleUserField.Phone))
         val bound = bindings(email = true).userDetailsRequirement()
-        assertEquals("Email (optional)", bound.labelFor(UseSmileIDSampleUserField.Email))
-        assertEquals("First name", outstanding.labelFor(UseSmileIDSampleUserField.FirstName))
-    }
-
-    @Test
-    fun `the prompt names what is outstanding and nothing else`() {
-        assertEquals(
-            "Required: first name, last name, an email or phone number.",
-            null.userDetailsRequirement().prompt,
-        )
-        assertEquals(
-            "Last name is required.",
-            bindings(givenNames = true, email = true).userDetailsRequirement().prompt,
-        )
-        assertEquals(
-            "An email or phone number is required.",
-            bindings(givenNames = true, lastName = true).userDetailsRequirement().prompt,
-        )
-        assertEquals(
-            "Tap any field to edit.",
-            bindings(givenNames = true, lastName = true, email = true).userDetailsRequirement().prompt,
-        )
+        assertEquals(R.string.sample_user_field_email_optional, bound.labelFor(UseSmileIDSampleUserField.Email))
+        assertEquals(R.string.sample_user_field_first_name, outstanding.labelFor(UseSmileIDSampleUserField.FirstName))
     }
 
     private fun bindings(

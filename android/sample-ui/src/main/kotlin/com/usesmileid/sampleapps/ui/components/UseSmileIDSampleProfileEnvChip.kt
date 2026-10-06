@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.label
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -41,7 +42,7 @@ fun UseSmileIDSampleProfileEnvChip(
     ) {
         Box(modifier = Modifier.size(SmileDimens.spacingXs).background(color = dot, shape = CircleShape))
         Text(
-            text = environment.label,
+            text = environment.label(),
             style = UseSmileIDSampleTheme.type.textStyleCaption,
             color = colors.textBody,
         )

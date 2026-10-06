@@ -270,7 +270,7 @@ describe('the day grouping', () => {
       NOW,
       'en-GB',
     );
-    expect(days.map((day) => day.relative)).toEqual(['TODAY', 'YESTERDAY', '']);
+    expect(days.map((day) => day.relative)).toEqual(['today', 'yesterday', null]);
   });
 
   it('formats the absolute date rather than hardcoding one', () => {
@@ -294,6 +294,11 @@ describe('the day grouping', () => {
       'en-GB',
     );
     expect(days).toHaveLength(1);
+  });
+
+  it('writes the date in the language the app shows', () => {
+    const [day] = smileIDSampleGroupByDay([{ ...fixtures[0]!, createdAtMillis: Date.UTC(2026, 9, 5, 12) }], NOW, 'fr');
+    expect(day?.absolute).toBe('LUN., 05 OCT. 2026');
   });
 
   it('labels each row with a wall-clock time from one formatter', () => {

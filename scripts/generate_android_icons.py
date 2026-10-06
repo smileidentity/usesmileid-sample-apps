@@ -24,6 +24,9 @@ ICON_DIR = "design/icons"
 OUT_DIR = "android/sample-ui/src/main/res/drawable"
 PREFIX = "sample_ic_"
 
+# Glyphs that point along the reading direction, so a right-to-left layout flips them.
+DIRECTIONAL = {"arrow_back", "arrow_forward", "chevron"}
+
 # Android's resource names as they stand; everything else is `sample_ic_<file name>`.
 RENAMED = {
     "agent": "setting_agent",
@@ -160,7 +163,9 @@ def parse(text: str, name: str) -> str:
         f'    android:width="{fmt(width)}dp"\n'
         f'    android:height="{fmt(height)}dp"\n'
         f'    android:viewportWidth="{fmt(width)}"\n'
-        f'    android:viewportHeight="{fmt(height)}">\n'
+        f'    android:viewportHeight="{fmt(height)}"'
+        + ('\n    android:autoMirrored="true"' if name in DIRECTIONAL else "")
+        + ">\n"
         f"{body}\n"
         "</vector>\n"
     )

@@ -2,8 +2,8 @@ import { smileIDSampleIdNumberAccepts } from './use-smile-id-sample-id-number-hi
 import {
   UseSmileIDSampleCaptureAs,
   smileIDSampleCaptureAsLabel,
-  smileIDSampleMatchDocumentLabel,
 } from '../model/use-smile-id-sample-capture-as';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// A country from the Smile ID API, named in the locale the request asked for.
 export type UseSmileIDSampleCountry = {
@@ -48,10 +48,10 @@ export type UseSmileIDSampleDocumentOrientation = 'landscape' | 'portrait';
 
 export const smileIDSampleOrientations: readonly {
   readonly id: UseSmileIDSampleDocumentOrientation;
-  readonly label: string;
+  readonly label: (strings: UseSmileIDSampleStrings) => string;
 }[] = [
-  { id: 'landscape', label: 'Landscape' },
-  { id: 'portrait', label: 'Portrait' },
+  { id: 'landscape', label: (strings) => strings.genericDocumentLandscape },
+  { id: 'portrait', label: (strings) => strings.genericDocumentPortrait },
 ];
 
 /// The frame ratios the sheet offers, as width over height; `off` is the SDK's own frame.
@@ -59,13 +59,13 @@ export type UseSmileIDSampleAspectRatio = 'off' | 'card' | 'passport' | 'booklet
 
 export const smileIDSampleAspectRatios: readonly {
   readonly id: UseSmileIDSampleAspectRatio;
-  readonly label: string;
+  readonly label: (strings: UseSmileIDSampleStrings) => string;
   readonly ratio: number | null;
 }[] = [
-  { id: 'off', label: 'Off', ratio: null },
-  { id: 'card', label: 'Card 1.586', ratio: 1.586 },
-  { id: 'passport', label: 'Passport 1.309', ratio: 1.309 },
-  { id: 'booklet', label: 'Booklet 0.748', ratio: 0.748 },
+  { id: 'off', label: (strings) => strings.genericDocumentRatioOff, ratio: null },
+  { id: 'card', label: (strings) => strings.genericDocumentRatioCard, ratio: 1.586 },
+  { id: 'passport', label: (strings) => strings.genericDocumentRatioPassport, ratio: 1.309 },
+  { id: 'booklet', label: (strings) => strings.genericDocumentRatioBooklet, ratio: 0.748 },
 ];
 
 /// What the generic-document sheet builds, as the SDK's GenericDocument takes it.
@@ -187,20 +187,32 @@ export const smileIDSampleCaptureBothSides = (resolved: UseSmileIDSampleResolved
   resolved.captureAs !== UseSmileIDSampleCaptureAs.Passport;
 
 /// The trigger text from `spec/catalogue-rules.json` captureAs.
-export const smileIDSampleCaptureAsTriggerText = (resolved: UseSmileIDSampleResolvedCaptureAs): string => {
-  const sides = smileIDSampleCaptureBothSides(resolved) && smileIDSampleResolvedHasBackSide(resolved) ? 'front and back' : 'front only';
-  const orientation = resolved.genericDocument.orientation;
+export const smileIDSampleCaptureAsTriggerText = (
+  resolved: UseSmileIDSampleResolvedCaptureAs,
+  strings: UseSmileIDSampleStrings,
+): string => {
+  const sides =
+    smileIDSampleCaptureBothSides(resolved) && smileIDSampleResolvedHasBackSide(resolved)
+      ? strings.captureAsFrontAndBack
+      : strings.captureAsFrontOnly;
+  const orientation = (
+    smileIDSampleOrientations.find((option) => option.id === resolved.genericDocument.orientation)?.label(strings) ??
+    resolved.genericDocument.orientation
+  ).toLowerCase();
+  const name = smileIDSampleCaptureAsLabel(resolved.captureAs, strings);
   if (resolved.captureAs !== UseSmileIDSampleCaptureAs.GenericDocument) {
-    return `${smileIDSampleCaptureAsLabel(resolved.captureAs)} · ${resolved.matched ? 'matches document' : 'chosen'}`;
+    return resolved.matched ? strings.captureAsMatches({ captureAs: name }) : strings.captureAsChosen({ captureAs: name });
   }
   return resolved.matched
-    ? `${smileIDSampleCaptureAsLabel(UseSmileIDSampleCaptureAs.GenericDocument)} · ${orientation} · ${sides}`
-    : `${resolved.genericDocument.displayName} · ${orientation} · ${sides} · chosen`;
+    ? strings.captureAsGenericSummary({ captureAs: name, orientation, sides })
+    : strings.captureAsGenericNamedSummary({ name: resolved.genericDocument.displayName, orientation, sides });
 };
 
 /// The sheet's Match row, naming what the document resolves to.
-export const smileIDSampleMatchRowLabel = (resolved: UseSmileIDSampleResolvedCaptureAs): string =>
-  `${smileIDSampleMatchDocumentLabel} (${smileIDSampleCaptureAsLabel(resolved.captureAs)})`;
+export const smileIDSampleMatchRowLabel = (
+  resolved: UseSmileIDSampleResolvedCaptureAs,
+  strings: UseSmileIDSampleStrings,
+): string => strings.captureAsMatchNamed({ captureAs: smileIDSampleCaptureAsLabel(resolved.captureAs, strings) });
 
 /// Drops picks a relinked partner's lists lack; a list still loading (null) keeps them, and an unchanged pick returns `details` itself.
 export const smileIDSampleIdDetailsWithEnabledOnly = (

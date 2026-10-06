@@ -2,52 +2,54 @@ package com.usesmileid.sampleapps.android.launch
 
 import android.content.res.Configuration
 import android.os.LocaleList
+import android.text.TextUtils
 import android.util.Log
+import android.view.View
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.unit.LayoutDirection
 
-/**
- * Honours `appLocale`: every string the app renders, the SDK's own localized text included, resolves
- * in the requested BCP 47 tag without touching device settings that some OEMs will not script.
- */
+/** Renders everything below, the SDK's screens included, in [tag]; null keeps the device's. */
 @Composable
 fun UseSmileIDSampleAppLocale(tag: String?, content: @Composable () -> Unit) {
     val requested = remember(tag) { tag?.let(::useSmileIDSampleLocales) }
-    if (requested == null) {
-        LaunchedEffect(tag) {
-            if (tag != null) Log.w(TAG, "appLocale=$tag did nothing: not a usable BCP 47 tag")
-        }
-        content()
-        return
-    }
-
     val configuration = LocalConfiguration.current
-    val localized = remember(configuration, requested) {
-        Configuration(configuration).apply { setLocales(requested) }
-    }
     val context = LocalContext.current
+    val deviceResources = LocalResources.current
+    val deviceDirection = LocalLayoutDirection.current
+    val localized = remember(configuration, requested) {
+        requested?.let { Configuration(configuration).apply { setLocales(it) } } ?: configuration
+    }
     // Resources rather than the context: the SDK reads every string through `stringResource`, and
     // substituting LocalContext would take the Activity its screens unwrap to out of the chain.
-    val localizedResources = remember(context, localized) {
-        context.createConfigurationContext(localized).resources
+    val localizedResources = remember(context, localized, deviceResources) {
+        if (requested == null) deviceResources else context.createConfigurationContext(localized).resources
     }
 
-    LaunchedEffect(requested, configuration.locales) {
-        if (configuration.locales.toLanguageTags() == requested.toLanguageTags()) {
-            Log.w(TAG, "appLocale=$tag is already the device locale — the run proves nothing about localization")
-        } else {
-            Log.i(TAG, "appLocale=$tag applied over ${configuration.locales.toLanguageTags()}")
+    LaunchedEffect(tag, configuration.locales) {
+        when {
+            requested != null -> Log.i(TAG, "locale $tag applied over ${configuration.locales.toLanguageTags()}")
+            tag != null -> Log.w(TAG, "locale $tag did nothing: not a usable BCP 47 tag")
         }
     }
 
+    // Compose reads direction from the view, not LocalConfiguration.
+    val direction = when {
+        requested == null -> deviceDirection
+        TextUtils.getLayoutDirectionFromLocale(requested[0]) == View.LAYOUT_DIRECTION_RTL -> LayoutDirection.Rtl
+        else -> LayoutDirection.Ltr
+    }
+    // Always this provider: a bare `content()` changes the composition's shape and drops remembered state.
     CompositionLocalProvider(
         LocalConfiguration provides localized,
         LocalResources provides localizedResources,
+        LocalLayoutDirection provides direction,
         content = content,
     )
 }

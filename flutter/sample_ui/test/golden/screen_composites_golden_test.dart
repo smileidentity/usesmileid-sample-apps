@@ -167,7 +167,7 @@ Widget _productGrid() => UseSmileIDSampleProductGrid(
 Widget _sectionHeaders() => _stack(<Widget>[
   for (final UseSmileIDSampleProductSection section
       in UseSmileIDSampleProductSection.values)
-    UseSmileIDSampleSectionHeader(text: section.label),
+    UseSmileIDSampleSectionHeader(text: section.label(_en)),
 ], gap: SmileDimens.spacingXs);
 
 /// With and without a session, so the ring's presence is a visible difference.
@@ -288,3 +288,5 @@ const Set<String> _gridOpenWords = <String>{
   'Verification',
   'SmartSelfie\u2122',
 };
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

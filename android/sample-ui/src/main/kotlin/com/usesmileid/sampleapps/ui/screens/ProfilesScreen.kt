@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -50,7 +51,7 @@ fun ProfilesScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.PROFILES_SCREEN),
     ) {
-        UseSmileIDSampleTopAppBar(title = "Profiles", onBack = onBack)
+        UseSmileIDSampleTopAppBar(title = UseSmileIDSampleStrings.profilesTitle, onBack = onBack)
         LazyColumn(
             contentPadding = contentPadding,
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
@@ -59,7 +60,7 @@ fun ProfilesScreen(
                 UseSmileIDSampleProfileRow(
                     avatarColor = avatarColorForProfile(index),
                     organisation = profile.title,
-                    supportingText = if (profile.id == activeId) profile.caption + ACTIVE_SUFFIX else profile.caption,
+                    supportingText = if (profile.id == activeId) profile.caption + UseSmileIDSampleStrings.profilesActiveSuffix else profile.caption,
                     initials = profile.initials,
                     selected = false,
                     onClick = { onProfileClick(profile) },
@@ -102,21 +103,18 @@ private fun CreateProfileRow(onClick: () -> Unit, modifier: Modifier = Modifier)
         }
         Column(verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs)) {
             Text(
-                text = "Create new profile",
+                text = UseSmileIDSampleStrings.profilesCreate,
                 style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(fontSize = CREATE_TITLE_SIZE),
                 color = colors.textTitle,
             )
             Text(
-                text = "Its user details will live under it",
+                text = UseSmileIDSampleStrings.profilesCreateHint,
                 style = UseSmileIDSampleTheme.type.textStyleCaption,
                 color = colors.textMuted,
             )
         }
     }
 }
-
-/** Appended to the active profile's supporting line. */
-private const val ACTIVE_SUFFIX = " \u00b7 active"
 
 private val CREATE_PADDING_X = 14.dp
 private val CREATE_TILE_RADIUS = 12.dp

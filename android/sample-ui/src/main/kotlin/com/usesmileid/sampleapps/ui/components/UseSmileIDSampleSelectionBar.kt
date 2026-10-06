@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,7 +68,7 @@ fun UseSmileIDSampleSelectionBar(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs),
             ) {
                 Text(
-                        text = "$selectedCount selected",
+                        text = UseSmileIDSampleStrings.verificationsSelected(selectedCount),
                     style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(
                         fontSize = COUNT_SIZE,
                         fontWeight = FontWeight.Bold,
@@ -76,7 +77,7 @@ fun UseSmileIDSampleSelectionBar(
                     modifier = Modifier.testTag(UseSmileIDSampleTestIds.SELECTION_COUNT),
                 )
                 Text(
-                    text = if (selectedCount == 0) "Tap rows to select" else "Tap \"Hide from List\" to confirm",
+                    text = if (selectedCount == 0) UseSmileIDSampleStrings.verificationsTapRows else UseSmileIDSampleStrings.verificationsTapHide,
                     style = UseSmileIDSampleTheme.type.textStyleBodySm.copy(fontSize = HINT_SIZE),
                     color = colors.textMuted,
                 )
@@ -111,7 +112,7 @@ private fun RemoveAction(enabled: Boolean, onRemove: () -> Unit) {
                 TrashGlyph(tint = colors.badge.errorText)
             }
             Text(
-                text = "Hide from List",
+                text = UseSmileIDSampleStrings.verificationsHideFromList,
                 style = UseSmileIDSampleTheme.type.textStyleBodyStrong.copy(
                     fontSize = REMOVE_SIZE,
                     fontWeight = FontWeight.Bold,

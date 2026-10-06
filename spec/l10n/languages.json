@@ -1,0 +1,11 @@
+{
+  "description": "The languages the sample apps ship. `id` is the BCP 47 tag used everywhere except Android's resource folder, which predates the `he` tag.",
+  "base": "en",
+  "languages": [
+    { "id": "en", "endonym": "English", "direction": "ltr", "androidFolder": "values" },
+    { "id": "fr", "endonym": "Français", "direction": "ltr", "androidFolder": "values-fr" },
+    { "id": "ar", "endonym": "العربية", "direction": "rtl", "androidFolder": "values-ar" },
+    { "id": "he", "endonym": "עברית", "direction": "rtl", "androidFolder": "values-iw" }
+  ],
+  "integerArguments": ["count"]
+}

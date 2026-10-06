@@ -7,8 +7,8 @@ public enum UseSmileIDSampleScanReason: Equatable, Sendable {
 
   public var caption: String {
     switch self {
-    case .sessionEnded: "Token session ended. Scan to continue where you left off."
-    case .sessionNeeded: "Scan a token to start this verification."
+    case .sessionEnded: UseSmileIDSampleStrings.scanReasonSessionEnded
+    case .sessionNeeded: UseSmileIDSampleStrings.scanReasonNeeded
     }
   }
 }
@@ -60,9 +60,9 @@ public struct ScanTokenScreen: View {
 
   public var body: some View {
     VStack(spacing: 0) {
-      UseSmileIDSampleTopAppBar(title: "Scan token", onBack: onBack) {
+      UseSmileIDSampleTopAppBar(title: UseSmileIDSampleStrings.scanTitle, onBack: onBack) {
         UseSmileIDSampleTopAppBarButton(
-          label: torchOn ? "Turn flash off" : "Turn flash on",
+          label: torchOn ? UseSmileIDSampleStrings.scanFlashOff : UseSmileIDSampleStrings.scanFlashOn,
           emphasis: .filled,
           action: onTorchToggle
         ) { tint in
@@ -162,10 +162,10 @@ public struct ScanTokenScreen: View {
 
   /// Where a real token comes from, as a phrase: a raw URL breaks mid-word on the narrowest phone at the largest type.
   private static var portalLine: AttributedString {
-    var link = AttributedString("Smile ID Portal")
+    var link = AttributedString(UseSmileIDSampleStrings.scanPortalLink)
     link.link = URL(string: "https://portal.usesmileid.com/security-settings")
     link.underlineStyle = .single
-    return AttributedString("Get a v3 token from the ") + link + AttributedString(", under Security settings.")
+    return AttributedString(UseSmileIDSampleStrings.scanPortalPrefix) + link + AttributedString(UseSmileIDSampleStrings.scanPortalSuffix)
   }
 
   /// The reticle answers with colour before anyone reads the words.
@@ -200,7 +200,7 @@ public struct ScanTokenScreen: View {
 
   private func paste() {
     guard let pasted = onPaste(), !pasted.isBlank else {
-      entry.rejection = "The clipboard holds no text to paste."
+      entry.rejection = UseSmileIDSampleStrings.scanClipboardEmpty
       return
     }
     entry.token = pasted
@@ -224,8 +224,14 @@ public struct ScanTokenScreen: View {
     }
   }
 
-  private static let title = "Point at a Smile token QR"
-  private static let caption = "Line up the code inside the frame to link this device to a verification session."
+  private static var title: String {
+    UseSmileIDSampleStrings.scanPoint
+  }
+
+  private static var caption: String {
+    UseSmileIDSampleStrings.scanLineUp
+  }
+
   /// Long enough to read "Session linked" and its handle, short enough not to feel like a wait.
   private static let linkedDwellNanoseconds: UInt64 = 900000000
   private static let reticleWidthFraction: CGFloat = 0.72

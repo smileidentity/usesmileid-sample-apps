@@ -1,18 +1,23 @@
+import '../use_smileid_sample_strings.dart';
+
 /// Sandbox or production; there is no third case, and the SDK resolves to the same two hosts.
 enum UseSmileIDSampleEnvironment {
   /// The sandbox, which every automated run reads.
-  sandbox('sandbox', 'Sandbox', 'testapi.smileidentity.com'),
+  sandbox('sandbox', 'testapi.smileidentity.com'),
 
   /// Production.
-  production('production', 'Production', 'api.smileidentity.com');
+  production('production', 'api.smileidentity.com');
 
-  const UseSmileIDSampleEnvironment(this.id, this.label, this.host);
+  const UseSmileIDSampleEnvironment(this.id, this.host);
 
   /// The id the result card publishes.
   final String id;
 
   /// The human-readable name.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleEnvironment.sandbox => strings.scanEnvironmentSandbox,
+    UseSmileIDSampleEnvironment.production => strings.scanEnvironmentProduction,
+  };
 
   /// The API host the token's `api_url` claim names.
   final String host;

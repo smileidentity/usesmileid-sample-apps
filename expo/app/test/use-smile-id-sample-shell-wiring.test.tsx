@@ -71,7 +71,8 @@ jest.mock('expo-router', () => {
   // Runs the effect and its cleanup as the real one does, so the focus teardown is not stubbed inert.
   const useFocusEffect = (effect: () => void | (() => void)) =>
     mockReact.useEffect(effect, [effect]);
-  return { Stack, useRouter, useFocusEffect };
+  const usePathname = () => '/';
+  return { Stack, useRouter, usePathname, useFocusEffect };
 });
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;

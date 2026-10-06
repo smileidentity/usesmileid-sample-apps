@@ -27,6 +27,6 @@ const job = (createdAtMillis: number): UseSmileIDSampleJob => ({
   it('names the day before a 23-hour day as yesterday', () => {
     const now = new Date(2026, 2, 30, 12).getTime();
     const [day] = smileIDSampleGroupByDay([job(new Date(2026, 2, 29, 12).getTime())], now);
-    expect(day?.relative).toBe('YESTERDAY');
+    expect(day?.relative).toBe('yesterday');
   });
 });

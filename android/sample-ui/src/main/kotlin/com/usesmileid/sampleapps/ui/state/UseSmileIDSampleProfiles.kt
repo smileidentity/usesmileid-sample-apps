@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,8 +21,11 @@ data class UseSmileIDSampleProfile(
     /** The person the details name, so it can never disagree with them. */
     val person: String get() = "${defaults.firstName} ${defaults.lastName}".trim()
 
-    /** What a row calls it: the organisation, or the person when it names none. */
-    val title: String get() = organisation.ifBlank { person }.ifBlank { UNNAMED_PROFILE }
+    /** The organisation, else the person, else [unnamed]. */
+    fun title(unnamed: String): String = organisation.ifBlank { person }.ifBlank { unnamed }
+
+    /** [title] with the app's own word for a profile that names nobody. */
+    val title: String @Composable get() = title(UseSmileIDSampleStrings.profilesUnnamed)
 
     /** The person's initials, as the design has them, falling back to the organisation. */
     val initials: String
@@ -31,7 +36,7 @@ data class UseSmileIDSampleProfile(
 
     /** What a row says under the organisation: the person, or a placeholder until details are saved. */
     val caption: String
-        get() = person.ifBlank { NO_USER_DETAILS_CAPTION }
+        @Composable get() = person.ifBlank { UseSmileIDSampleStrings.profilesNoDetails }
 }
 
 /** What is stored: the profiles and which is active. Null [activeId] exactly when there are none. */
@@ -199,16 +204,9 @@ class UseSmileIDSampleProfiles(
 
         /** What a plain launch has always sent as the partner id, so no profile changes nothing on the wire. */
         const val FIRST_PROFILE_ID = "p-1"
-
-        /** What the header, settings card and form say while there is no profile. */
-        const val NO_PROFILE_LABEL = "No profile yet"
     }
 }
 
 private fun UseSmileIDSampleProfilesRecord.validActiveId(): String? =
     activeId?.takeIf { id -> profiles.any { it.id == id } } ?: profiles.firstOrNull()?.id
 
-private const val NO_USER_DETAILS_CAPTION = "No user details yet"
-
-/** A profile naming neither an organisation nor a person, which only a token binding both names allows. */
-private const val UNNAMED_PROFILE = "Unnamed profile"

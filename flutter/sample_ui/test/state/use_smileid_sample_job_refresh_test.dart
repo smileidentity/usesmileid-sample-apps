@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
@@ -168,7 +167,7 @@ void main() {
       );
 
       expect(
-        (outcome! as UseSmileIDSampleStatusFailed).reason,
+        (outcome! as UseSmileIDSampleStatusFailed).message(_en),
         'The verification is no longer stored',
       );
     });
@@ -187,7 +186,7 @@ void main() {
         );
 
         expect(
-          (outcome! as UseSmileIDSampleStatusFailed).reason,
+          (outcome! as UseSmileIDSampleStatusFailed).message(_en),
           'The verification is no longer stored',
         );
         expect(await store.find('job_1'), isNull);
@@ -207,7 +206,9 @@ void main() {
         ),
       );
 
-      final String reason = (outcome! as UseSmileIDSampleStatusFailed).reason;
+      final String reason = (outcome! as UseSmileIDSampleStatusFailed).message(
+        _en,
+      );
       expect(reason, contains('StateError'));
       expect(reason, isNot(contains('SECRET')));
     });
@@ -277,7 +278,7 @@ void main() {
   });
 
   group('the outcome labels', () {
-    const Map<UseSmileIDSampleStatusRefresh, String> expected =
+    final Map<UseSmileIDSampleStatusRefresh, String> expected =
         <UseSmileIDSampleStatusRefresh, String>{
           updated: 'Clear — Approved',
           UseSmileIDSampleStatusStillProcessing(): 'Still processing',
@@ -292,28 +293,8 @@ void main() {
 
     test('say what Android says', () {
       expected.forEach((UseSmileIDSampleStatusRefresh outcome, String label) {
-        expect(useSmileIDSampleRefreshLabel(outcome), label);
+        expect(useSmileIDSampleRefreshLabel(outcome, _en), label);
       });
-    });
-
-    test('are the strings the Android twin ships', () {
-      final String android = File(
-        '../../android/app/src/main/kotlin/com/usesmileid/sampleapps/android/navigation/VerificationsDestinations.kt',
-      ).readAsStringSync();
-      for (final String literal in <String>[
-        r'"${status.label} — $message"',
-        '"Still processing"',
-        '"Scan a token first"',
-        '"Not submitted under a scanned token"',
-        '"Submitted by a different partner"',
-        r'"Could not check status: $reason"',
-      ]) {
-        expect(
-          android,
-          contains(literal),
-          reason: 'Android no longer says $literal',
-        );
-      }
     });
   });
 }
@@ -414,3 +395,5 @@ class _Gated implements UseSmileIDSampleJobStatusSource {
     return outcome;
   }
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

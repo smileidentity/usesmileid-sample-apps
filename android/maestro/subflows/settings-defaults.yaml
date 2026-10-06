@@ -7,6 +7,26 @@ appId: ${APP_ID}
     id: "sample_nav_settings"
 - assertVisible:
     id: "sample_settings_screen"
+# The tab keeps its scroll position, so scroll the sheet rows into view.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_appearance"
+    direction: UP
+    centerElement: true
+# Language first, so later text assertions read English.
+- tapOn:
+    id: "sample_setting_language"
+- tapOn:
+    id: "sample_language_option_system"
+- assertNotVisible:
+    id: "sample_language_sheet"
+# Appearance back to System, checked on the sheet: the row's label names the device's theme.
+- tapOn:
+    id: "sample_setting_appearance"
+- tapOn:
+    id: "sample_appearance_option_system"
+- assertNotVisible:
+    id: "sample_appearance_sheet"
 # Enhanced first: the mutex turns Agent mode off on its way, so the pair needs one tap, not two.
 - runFlow:
     when:
@@ -40,6 +60,11 @@ appId: ${APP_ID}
     commands:
       - tapOn:
           id: "sample_setting_instructions_step"
+# Below the fold since the Language section.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_preview_step"
+    centerElement: true
 - runFlow:
     when:
       visible:
@@ -48,13 +73,11 @@ appId: ${APP_ID}
     commands:
       - tapOn:
           id: "sample_setting_preview_step"
-# Appearance back to System; its label names the device's theme, so the sheet is the only check that holds.
-- tapOn:
-    id: "sample_setting_appearance"
-- tapOn:
-    id: "sample_appearance_option_system"
-- assertNotVisible:
-    id: "sample_appearance_sheet"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_enhanced_smart_selfie"
+    direction: UP
+    centerElement: true
 - assertVisible:
     id: "sample_setting_enhanced_smart_selfie"
     checked: true
@@ -67,6 +90,10 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_setting_instructions_step"
     checked: true
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_preview_step"
+    centerElement: true
 - assertVisible:
     id: "sample_setting_preview_step"
     checked: true

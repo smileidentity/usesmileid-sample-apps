@@ -12,7 +12,7 @@ public enum UseSmileIDSampleSimulatedSpan: String, CaseIterable, Sendable {
     case .fifteenMinutes: "15m"
     case .oneHour: "1h"
     case .eightHours: "8h"
-    case .ended: "Expired"
+    case .ended: UseSmileIDSampleStrings.scanSpanExpired
     }
   }
 

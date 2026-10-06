@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import org.robolectric.annotation.Config
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 
@@ -78,6 +79,10 @@ class FormGoldenTest : GoldenTest() {
 
     @Test
     fun kyc_form_selected() = goldens("screen_kyc_form_selected") { KycForm(SELECTED) }
+
+    @Test
+    @Config(qualifiers = "+ar")
+    fun kyc_form_selected_arabic() = goldens("screen_kyc_form_selected_ar") { RightToLeft { KycForm(SELECTED) } }
 
     @Test
     fun kyc_form_max_font_scale() = assertSurvivesMaxFontScale { KycForm(SELECTED) }

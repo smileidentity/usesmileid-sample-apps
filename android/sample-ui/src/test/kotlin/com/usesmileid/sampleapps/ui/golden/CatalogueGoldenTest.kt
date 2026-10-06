@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLanguage
+import com.usesmileid.sampleapps.ui.screens.LanguageSheet
 import android.provider.Settings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -141,6 +143,16 @@ class CatalogueGoldenTest : GoldenTest() {
     @Test
     fun appearance_sheet_max_font_scale() = assertSurvivesMaxFontScale {
         AppearanceSheet(selected = UseSmileIDSampleAppearance.System, deviceDark = true, onSelect = {}, onDismissRequest = {})
+    }
+
+    @Test
+    fun language_sheet() = goldens("sheet_language", fullWindow = true) {
+        LanguageSheet(selected = UseSmileIDSampleLanguage.System, deviceLanguages = listOf("en-US"), onSelect = {}, onDismissRequest = {})
+    }
+
+    @Test
+    fun language_sheet_max_font_scale() = assertSurvivesMaxFontScale {
+        LanguageSheet(selected = UseSmileIDSampleLanguage.System, deviceLanguages = listOf("en-US"), onSelect = {}, onDismissRequest = {})
     }
 
     @Composable

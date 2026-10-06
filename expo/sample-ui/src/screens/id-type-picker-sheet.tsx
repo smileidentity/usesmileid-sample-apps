@@ -4,6 +4,7 @@ import { UseSmileIDSampleOptionRow } from '../components/use-smile-id-sample-opt
 import type { UseSmileIDSampleCatalogue } from '../state/use-smile-id-sample-catalogue';
 import type { UseSmileIDSampleCountry, UseSmileIDSampleKycIdType } from '../state/use-smile-id-sample-id-details';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   country: UseSmileIDSampleCountry | null;
@@ -26,35 +27,39 @@ export const IdTypePickerSheet = ({
   onSelect,
   onRetry,
   onDismiss,
-}: Props) => (
-  <UseSmileIDSampleBottomSheet
-    visible
-    fullHeight
-    title="ID type"
-    onDismiss={onDismiss}
-    testID={UseSmileIDSampleTestIds.ID_TYPE_SHEET}
-  >
-    <UseSmileIDSampleCataloguePicker
-      catalogue={catalogue}
-      what="ID types"
-      query={query}
-      onQueryChange={onQueryChange}
-      searchPlaceholder="Search ID type"
-      searchTestID={UseSmileIDSampleTestIds.ID_TYPE_SEARCH}
-      label={(idType) => idType.label}
-      emptyTestID={UseSmileIDSampleTestIds.ID_TYPE_EMPTY}
-      emptyLabel={(text) => `No ID type matches “${text}”`}
-      nothingToList={[`No ID types for ${country?.name ?? 'this country'}`, 'Choose another country']}
-      onRetry={onRetry}
-      row={(idType) => (
-        <UseSmileIDSampleOptionRow
-          key={idType.id}
-          label={idType.label}
-          selected={idType.id === selected?.id}
-          onPress={() => onSelect(idType)}
-          testID={UseSmileIDSampleSuffixedTestIds.idTypeOption(idType.id)}
-        />
-      )}
-    />
-  </UseSmileIDSampleBottomSheet>
-);
+}: Props) => {
+  const strings = useSmileIDSampleStrings();
+  return (
+    <UseSmileIDSampleBottomSheet
+      visible
+      fullHeight
+      title={strings.pickerIdTypeTitle}
+      onDismiss={onDismiss}
+      testID={UseSmileIDSampleTestIds.ID_TYPE_SHEET}
+    >
+      <UseSmileIDSampleCataloguePicker
+        catalogue={catalogue}
+        loadingLabel={strings.pickerIdTypeLoading}
+        failedLabel={strings.pickerIdTypeLoadFailed}
+        query={query}
+        onQueryChange={onQueryChange}
+        searchPlaceholder={strings.pickerIdTypeSearch}
+        searchTestID={UseSmileIDSampleTestIds.ID_TYPE_SEARCH}
+        label={(idType) => idType.label}
+        emptyTestID={UseSmileIDSampleTestIds.ID_TYPE_EMPTY}
+        emptyLabel={(text) => strings.pickerIdTypeNoMatch({ query: text })}
+        nothingToList={[strings.pickerIdTypeEmpty({ country: country?.name ?? strings.pickerThisCountry }), strings.pickerChooseAnotherCountry]}
+        onRetry={onRetry}
+        row={(idType) => (
+          <UseSmileIDSampleOptionRow
+            key={idType.id}
+            label={idType.label}
+            selected={idType.id === selected?.id}
+            onPress={() => onSelect(idType)}
+            testID={UseSmileIDSampleSuffixedTestIds.idTypeOption(idType.id)}
+          />
+        )}
+      />
+    </UseSmileIDSampleBottomSheet>
+  );
+};

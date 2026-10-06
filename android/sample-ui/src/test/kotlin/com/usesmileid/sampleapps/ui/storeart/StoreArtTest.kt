@@ -103,6 +103,7 @@ class StoreArtTest {
             onNavRowClick = {},
             onCaptureModeClick = {},
             onAppearanceClick = {},
+            onLanguageClick = {},
             onOpenScenarioDrawer = null,
             onSignOut = {},
         )

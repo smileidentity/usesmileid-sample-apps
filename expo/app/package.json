@@ -34,6 +34,7 @@
     "expo-image-picker": "~57.0.18",
     "expo-keep-awake": "~57.0.2",
     "expo-linking": "~57.0.10",
+    "expo-localization": "~57.0.2",
     "expo-navigation-bar": "~57.0.2",
     "expo-router": "~57.0.21",
     "expo-screen-orientation": "~57.0.2",
@@ -69,7 +70,7 @@
   "pinRationale": {
     "@react-native/jest-preset": "Required by peer from both react-native and jest-expo, and matched to the react-native version.",
     "@react-native/metro-config": "Exactly 0.86.3: react-native-worklets requires it at the react-native version, and Expo's map offers 0.87 which fails that peer.",
-    "@smileid/sample-ui": "The shared UI, by workspace link. Never published, and this is the only workspace: range in the app \u2014 the SDK below is always a registry version.",
+    "@smileid/sample-ui": "The shared UI, by workspace link. Never published, and this is the only workspace: range in the app — the SDK below is always a registry version.",
     "@smileid/usesmileid": "The SDK, pinned exactly from the npm registry so every bump arrives as a PR and is therefore a free consumption test.",
     "@smileid/usesmileid_mlkit_document": "Document analyzer for Android targets with Google services; ships the config plugin that sets the Kotlin and KSP versions its AAR needs.",
     "@smileid/usesmileid_mlkit_face": "Face analyzer for Android targets with Google services; same config-plugin requirement.",
@@ -90,6 +91,7 @@
     "expo-image-picker": "Required SDK peer: the document gallery-upload path.",
     "expo-keep-awake": "Required SDK peer: the device must not sleep mid-capture.",
     "expo-linking": "Parses the cold-start URL that carries the launch arguments, which is this platform's mechanism per spec/launch-args.json.",
+    "expo-localization": "The device's language list, updated while the app runs, which System follows; Hermes Intl keeps the launch locale.",
     "expo-navigation-bar": "Restyles the Android navigation bar when the appearance changes; edge to edge keeps the style it launched with.",
     "expo-router": "The navigation host; its file routes are what the expo column of spec/routes.json names.",
     "expo-screen-orientation": "Required SDK peer: document capture locks orientation.",
@@ -112,7 +114,7 @@
     "react-native-svg": "Required SDK peer, and what the design's own marks are drawn as.",
     "react-native-worklets": "Reanimated 4's worklets runtime, and the reason babel.config.js carries its plugin last.",
     "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer.",
-    "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on \u2014 7.x would not.",
+    "typescript": "6.0.3, the version Expo SDK 57 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
     "zustand": "The app-lifetime stores, per the navigation plan's per-platform choice; screen state stays in hooks."
   }
 }

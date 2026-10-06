@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 
 /// What a list says when it has nothing to show. Not in the design — the app's own convention,
 /// muted and centred, because an empty list is a normal state rather than a failure.
@@ -73,7 +74,7 @@ class UseSmileIDSampleEmptyState extends StatelessWidget {
                 child: TextButton(
                   onPressed: onRetry,
                   child: Text(
-                    'Retry',
+                    context.strings.commonRetry,
                     style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
                       color: colors.textLink,
                     ),

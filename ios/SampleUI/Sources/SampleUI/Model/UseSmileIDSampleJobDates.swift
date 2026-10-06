@@ -57,7 +57,7 @@ public extension [UseSmileIDSampleJob] {
     return order.map { day in
       let absolute = format.string(from: day).uppercased(with: calendar.locale)
       return UseSmileIDSampleJobDay(
-        relative: day == today ? "TODAY" : day == yesterday ? "YESTERDAY" : "",
+        relative: day == today ? UseSmileIDSampleStrings.verificationsToday : day == yesterday ? UseSmileIDSampleStrings.verificationsYesterday : "",
         absolute: absolute,
         jobs: byDay[day] ?? []
       )

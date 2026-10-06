@@ -209,7 +209,7 @@ class _UseSmileIDSampleSdkFlowTabState
         _result.block(
           _snapshot!,
           issues.isEmpty
-              ? 'The flow did not validate'
+              ? context.strings.flowInvalid
               : issues
                     .map((UseSmileIDValidationException it) => it.message)
                     .join('; '),

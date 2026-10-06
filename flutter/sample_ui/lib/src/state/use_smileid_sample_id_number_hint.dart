@@ -1,3 +1,4 @@
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_id_details.dart';
 
 /// The ID-number hint and format check from `spec/id-number-hints.json`: the API gives a regex, never an example.
@@ -12,15 +13,20 @@ abstract final class UseSmileIDSampleIdNumberHint {
   }
 
   /// What the empty field shows for the chosen type.
-  static String placeholder(UseSmileIDSampleKycIdType? type) {
+  static String placeholder(
+    UseSmileIDSampleKycIdType? type,
+    UseSmileIDSampleStrings strings,
+  ) {
     if (type == null) {
-      return 'Choose an ID type first';
+      return strings.kycChooseIdTypeFirst;
     }
     final String? hint =
         type.regex.trim().isEmpty || compiled(type.regex) == null
         ? null
         : example(type.regex);
-    return hint == null ? 'Enter your ${type.label}' : 'e.g. $hint';
+    return hint == null
+        ? strings.kycIdNumberPlaceholder(idType: type.label)
+        : strings.kycIdNumberExample(example: hint);
   }
 
   /// The trimmed number against the whole regex; a blank regex, or one this engine cannot compile, checks nothing.
@@ -39,14 +45,18 @@ abstract final class UseSmileIDSampleIdNumberHint {
   }
 
   /// The line under a non-empty number that does not fit, which repeats the example; null when it fits.
-  static String? error(UseSmileIDSampleKycIdType? type, String number) {
+  static String? error(
+    UseSmileIDSampleKycIdType? type,
+    String number,
+    UseSmileIDSampleStrings strings,
+  ) {
     if (type == null || number.trim().isEmpty || accepts(type.regex, number)) {
       return null;
     }
     final String? hint = example(type.regex);
     return hint == null
-        ? "Doesn't match the ${type.label} format"
-        : "Doesn't match the ${type.label} format, e.g. $hint";
+        ? strings.kycIdNumberInvalid(idType: type.label)
+        : strings.kycIdNumberInvalidExample(idType: type.label, example: hint);
   }
 
   /// The regex as Dart compiles it, or null when it will not.

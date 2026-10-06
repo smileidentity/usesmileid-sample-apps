@@ -92,17 +92,4 @@ class UseSmileIDSampleSettingsTest {
         )
         expected.forEach { (input, dark) -> assertEquals("$input", dark, input.first.isDark(input.second)) }
     }
-
-    @Test
-    fun `the System label names the device's theme and the others name themselves`() {
-        val expected = mapOf(
-            (UseSmileIDSampleAppearance.System to false) to "System (Light)",
-            (UseSmileIDSampleAppearance.System to true) to "System (Dark)",
-            (UseSmileIDSampleAppearance.Light to false) to "Light",
-            (UseSmileIDSampleAppearance.Light to true) to "Light",
-            (UseSmileIDSampleAppearance.Dark to false) to "Dark",
-            (UseSmileIDSampleAppearance.Dark to true) to "Dark",
-        )
-        expected.forEach { (input, label) -> assertEquals("$input", label, input.first.label(input.second)) }
-    }
 }

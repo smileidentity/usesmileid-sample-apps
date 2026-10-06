@@ -7,6 +7,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_button.dart';
 import 'use_smileid_sample_glyphs.dart';
@@ -125,7 +126,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
             UseSmileIDSampleTextInput(
               value: state.token,
               onChanged: onTokenChanged,
-              placeholder: 'Or enter token manually',
+              placeholder: context.strings.scanManualEntry,
               isError: state.rejection != null,
               errorMessage: state.rejection,
               // A bearer credential 900 characters long: nobody proofreads it, and masked it stays
@@ -134,7 +135,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
               testId: UseSmileIDSampleTestIds.tokenManualEntry,
               leading: UseSmileIDSampleGlyphs.scanMark,
               trailing: (Color tint) => _SheetAction(
-                label: 'Paste',
+                label: context.strings.scanPaste,
                 onTap: onPaste,
                 testId: UseSmileIDSampleTestIds.tokenPaste,
                 colors: colors,
@@ -142,7 +143,10 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
             ),
             if (state.token.trim().isNotEmpty) ...<Widget>[
               const SizedBox(height: SmileDimens.spacingSm),
-              UseSmileIDSampleButton(text: 'Link token', onPressed: onLink),
+              UseSmileIDSampleButton(
+                text: context.strings.scanLinkToken,
+                onPressed: onLink,
+              ),
             ],
             const SizedBox(height: SmileDimens.spacingSm),
             Semantics(
@@ -157,9 +161,9 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
                   ),
                   child: Row(
                     children: <Widget>[
-                      const Expanded(
+                      Expanded(
                         child: UseSmileIDSampleSectionLabel(
-                          text: 'SIMULATED SCAN',
+                          text: context.strings.scanSimulated,
                         ),
                       ),
                       const SizedBox(width: SmileDimens.spacingXs),
@@ -179,7 +183,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
                   for (final UseSmileIDSampleSimulatedSpan span
                       in UseSmileIDSampleSimulatedSpan.values)
                     _SheetChip(
-                      label: span.label,
+                      label: span.label(context.strings),
                       selected: state.span == span,
                       onTap: () => onSpanSelect(span),
                     ),
@@ -191,7 +195,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
                   for (final UseSmileIDSampleEnvironment environment
                       in UseSmileIDSampleEnvironment.values)
                     _SheetChip(
-                      label: environment.label,
+                      label: environment.label(context.strings),
                       selected: state.environment == environment,
                       onTap: () => onEnvironmentSelect(environment),
                       testId: UseSmileIDSampleTestIds.tokenEnvironment(
@@ -204,7 +208,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
               _ChipRow(
                 children: <Widget>[
                   _SheetChip(
-                    label: 'Binds consent',
+                    label: context.strings.scanBindsConsent,
                     selected: state.bindings.consent,
                     checkbox: true,
                     onTap: () => onBindingsChanged(
@@ -212,7 +216,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
                     ),
                   ),
                   _SheetChip(
-                    label: 'Binds details',
+                    label: context.strings.scanBindsDetails,
                     selected: state.bindings.userDetails,
                     checkbox: true,
                     onTap: () => onBindingsChanged(
@@ -226,7 +230,7 @@ class UseSmileIDSampleScanSheet extends StatelessWidget {
             ],
             const SizedBox(height: SmileDimens.spacingSm),
             UseSmileIDSampleButton(
-              text: 'Simulate a successful scan',
+              text: context.strings.scanSimulate,
               onPressed: onSimulate,
               testId: UseSmileIDSampleTestIds.tokenSimulate,
             ),

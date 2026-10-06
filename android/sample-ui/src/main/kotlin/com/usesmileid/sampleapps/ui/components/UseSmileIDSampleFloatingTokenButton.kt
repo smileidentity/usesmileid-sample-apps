@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,11 +22,12 @@ fun UseSmileIDSampleFloatingTokenButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val description = UseSmileIDSampleStrings.navTokenSession
     Surface(
         onClick = onClick,
         modifier = modifier
             .size(SmileDimens.space48)
-            .semantics { contentDescription = "Token session" }
+            .semantics { contentDescription = description }
             .testTag(UseSmileIDSampleTestIds.TOKEN_FLOAT),
         shape = CircleShape,
         // White with a border, like the nav bar's token control — not a primary-filled FAB.

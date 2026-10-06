@@ -61,7 +61,8 @@ public final class UseSmileIDSampleStore {
       captureMode: settingsStorage.data(Self.captureModeKey)
         .flatMap { String(data: $0, encoding: .utf8) }
         .flatMap(UseSmileIDSampleCaptureMode.init(rawValue:)) ?? defaults.captureMode,
-      appearance: Self.appearance(in: settingsStorage)
+      appearance: Self.appearance(in: settingsStorage),
+      language: settingsStorage.string(Self.languageKey).flatMap(UseSmileIDSampleLanguage.init(rawValue:)) ?? defaults.language
     ).normalised()
   }
 
@@ -102,6 +103,14 @@ public final class UseSmileIDSampleStore {
   }
 
   static let appearanceKey = "appearance"
+
+  /// Stored by its id, like the capture mode.
+  public func setLanguage(_ language: UseSmileIDSampleLanguage) {
+    settingsStorage.setString(Self.languageKey, language.rawValue)
+    settings.language = language
+  }
+
+  static let languageKey = "language"
   /// The Dark mode switch that `appearance` replaced, read only to carry an installed choice over.
   static let legacyDarkModeKey = "dark_mode"
 

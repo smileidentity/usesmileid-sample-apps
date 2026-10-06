@@ -58,7 +58,7 @@ public struct UseSmileIDSampleSheetHeader: View {
 
   public var body: some View {
     HStack(spacing: Self.gap) {
-      UseSmileIDSampleTopAppBarButton(label: "Close \(title)", emphasis: .filled, action: onClose) { tint in
+      UseSmileIDSampleTopAppBarButton(label: UseSmileIDSampleStrings.commonCloseNamed(title: title), emphasis: .filled, action: onClose) { tint in
         UseSmileIDSampleIcon(SmileIcons.arrowBack, tint: tint, size: SmileSpacing.sizeIconMd)
       }
       UseSmileIDSampleText(title, style: UseSmileIDSampleTheme.type.textStyleTitle)

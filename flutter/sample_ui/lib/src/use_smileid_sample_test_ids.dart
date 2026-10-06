@@ -85,6 +85,16 @@ abstract final class UseSmileIDSampleTestIds {
   static String appearanceOption(String appearanceId) =>
       'sample_appearance_option_$appearanceId';
 
+  /// The Language row that opens the language sheet.
+  static const String settingLanguage = 'sample_setting_language';
+
+  /// The language sheet.
+  static const String languageSheet = 'sample_language_sheet';
+
+  /// One language row, suffixed with its id.
+  static String languageOption(String languageId) =>
+      'sample_language_option_$languageId';
+
   /// The Consent screen switch, which includes or omits consent().
   static const String settingConsentStep = 'sample_setting_consent_step';
 
@@ -448,6 +458,8 @@ abstract final class UseSmileIDSampleTestIds {
     settingAgentMode,
     settingAppearance,
     appearanceSheet,
+    settingLanguage,
+    languageSheet,
     settingConsentStep,
     settingInstructionsStep,
     settingPreviewStep,

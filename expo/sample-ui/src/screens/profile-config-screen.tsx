@@ -27,6 +27,7 @@ import {
   smileIDSampleContactProblem,
   smileIDSampleDetailsContactProblem,
 } from '../state/use-smile-id-sample-contact-rules';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The design's gap between the header, the label, the card and the CTA — not the 8 used inside a card.
 const SECTION_GAP = 14;
@@ -68,6 +69,7 @@ export const ProfileConfigScreen = ({
   onSave,
   onDelete,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const contactProblem = smileIDSampleDetailsContactProblem(state.defaults);
   const insets = useSafeAreaInsets();
@@ -85,27 +87,27 @@ export const ProfileConfigScreen = ({
           rowGap: SECTION_GAP,
         }}
       >
-        <UseSmileIDSampleSectionLabel text="PROFILE" />
+        <UseSmileIDSampleSectionLabel text={strings.profileConfigSectionProfile} />
         <UseSmileIDSampleSectionSurface>
           <UseSmileIDSampleKeyValueEditRow
-            label="Profile name"
+            label={strings.profileConfigName}
             value={state.organisation}
             onValueChange={(value) => onOrganisationChange?.(value)}
-            placeholder="Shown on the consent screen"
+            placeholder={strings.profileConfigNameHint}
             testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_NAME}
           />
         </UseSmileIDSampleSectionSurface>
         {/* The label stays here: SECTION_GAP, not the surface's own spacing, separates it from the card. */}
-        <UseSmileIDSampleSectionLabel text="USER DETAILS — ATTACHED TO EVERY JOB" />
+        <UseSmileIDSampleSectionLabel text={strings.profileConfigSectionDetails} />
         <UseSmileIDSampleSectionSurface>
           {smileIDSampleUserFields.map((field, index) => (
             <View key={field.id}>
               {index > 0 ? <UseSmileIDSampleRowDivider /> : null}
               <UseSmileIDSampleKeyValueEditRow
-                label={field.label}
+                label={field.label(strings)}
                 value={smileIDSampleUserFieldRead(field.id, state.defaults)}
                 onValueChange={(value) => onFieldChange(field.id, value)}
-                placeholder={field.placeholder}
+                placeholder={field.placeholder(strings)}
                 required={field.required}
                 {...smileIDSampleUserFieldKeyboard(field.id)}
                 isError={smileIDSampleContactProblem(field.id, smileIDSampleUserFieldRead(field.id, state.defaults)) !== null}
@@ -123,13 +125,13 @@ export const ProfileConfigScreen = ({
           </Text>
         )}
         {/* Its own section, not a row in the card above: a webhook URL is not a user detail. */}
-        <UseSmileIDSampleSectionLabel text="CALLBACK URL" />
+        <UseSmileIDSampleSectionLabel text={strings.profileConfigSectionCallback} />
         <UseSmileIDSampleSectionSurface>
           <UseSmileIDSampleKeyValueEditRow
-            label="Webhook URL"
+            label={strings.profileConfigCallbackLabel}
             value={state.callbackOverride === null ? state.callbackUrl : ''}
             onValueChange={onCallbackUrlChange}
-            placeholder={state.callbackOverride ?? 'Uses your portal default'}
+            placeholder={state.callbackOverride ?? strings.profileConfigCallbackHint}
             enabled={state.callbackOverride === null}
             keyboardType="url"
             testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_CALLBACK_URL}
@@ -137,12 +139,13 @@ export const ProfileConfigScreen = ({
         </UseSmileIDSampleSectionSurface>
         {onDelete === undefined ? null : (
           <UseSmileIDSampleDestructiveRow
-            text="Delete profile"
+            text={strings.profileConfigDelete}
             onPress={() =>
               smileIDSampleConfirm({
-                title: `Delete ${state.title ?? state.organisation}?`,
-                message: 'Its details and callback URL are removed from this device.',
-                confirmLabel: 'Delete',
+                cancelLabel: strings.commonCancel,
+                title: strings.profileConfigDeleteTitle({ profile: state.title ?? state.organisation }),
+                message: strings.profileConfigDeleteBody,
+                confirmLabel: strings.commonDelete,
                 onConfirm: onDelete,
               })
             }
@@ -151,7 +154,7 @@ export const ProfileConfigScreen = ({
         )}
       </ScrollView>
       <UseSmileIDSampleButton
-        text={state.isActive ? 'Save changes' : 'Use this profile'}
+        text={state.isActive ? strings.profileConfigSave : strings.profileConfigUse}
         onPress={onSave}
         enabled={((state.changed ?? false) || !state.isActive) && contactProblem === null}
         testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_SAVE}

@@ -33,7 +33,9 @@ enum UseSmileIDSampleSheetLinks {
     UseSmileIDSampleDeepLinks.captureMode:
       UseSmileIDSampleSheetLink(sheet: .captureMode, ownerUri: UseSmileIDSampleDeepLinks.settings),
     UseSmileIDSampleDeepLinks.appearance:
-      UseSmileIDSampleSheetLink(sheet: .appearance, ownerUri: UseSmileIDSampleDeepLinks.settings)
+      UseSmileIDSampleSheetLink(sheet: .appearance, ownerUri: UseSmileIDSampleDeepLinks.settings),
+    UseSmileIDSampleDeepLinks.language:
+      UseSmileIDSampleSheetLink(sheet: .language, ownerUri: UseSmileIDSampleDeepLinks.settings)
   ]
 
   /// The pickers hang off the form's own path, so their owner is the link minus its last segment.

@@ -2,6 +2,7 @@ import {
   smileIDSampleAllowedRequiredFields,
   smileIDSampleCatalogueAdvice,
   smileIDSampleCatalogueCountries,
+  smileIDSampleCatalogueAdviceText,
   smileIDSampleCatalogueDefaultAdvice,
   smileIDSampleCatalogueDocuments,
   smileIDSampleCatalogueEnabledCountries,
@@ -24,12 +25,14 @@ import {
 } from '../src/state/use-smile-id-sample-id-details';
 import {
   smileIDSampleMatchDocumentId,
-  smileIDSampleMatchDocumentLabel,
   type UseSmileIDSampleCaptureAs,
 } from '../src/model/use-smile-id-sample-capture-as';
 import { useSmileIDSampleFormsStore } from '../src/state/use-smile-id-sample-forms-store';
 import { catalogueData, catalogueFixture } from './catalogue-fixtures';
 import { spec } from './spec-file';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 type Section = {
   cases: {
@@ -156,9 +159,9 @@ describe('catalogue rules', () => {
   });
 
   it('names the failures the spec names', () => {
-    expect(smileIDSampleCatalogueDefaultAdvice).toBe(rules.failures.default);
+    expect(smileIDSampleCatalogueAdviceText(smileIDSampleCatalogueDefaultAdvice, strings)).toBe(rules.failures.default);
     for (const c of rules.failures.cases) {
-      expect(smileIDSampleCatalogueAdvice(c.status)).toBe(c.supportingText);
+      expect(smileIDSampleCatalogueAdviceText(smileIDSampleCatalogueAdvice(c.status), strings)).toBe(c.supportingText);
     }
   });
 
@@ -176,9 +179,9 @@ describe('catalogue rules', () => {
     }
     expect(resolved.matched).toBe(c.expected.matched);
     expect(smileIDSampleCaptureBothSides(resolved)).toBe(c.expected.captureBothSides);
-    expect(smileIDSampleCaptureAsTriggerText(resolved)).toBe(c.expected.triggerText);
+    expect(smileIDSampleCaptureAsTriggerText(resolved, strings)).toBe(c.expected.triggerText);
     expect(
-      smileIDSampleMatchRowLabel(smileIDSampleResolvedCaptureAs(row(c.document), null, smileIDSampleGenericDocumentDefaults)),
+      smileIDSampleMatchRowLabel(smileIDSampleResolvedCaptureAs(row(c.document), null, smileIDSampleGenericDocumentDefaults), strings),
     ).toBe(c.expected.matchRowLabel);
   });
 
@@ -205,6 +208,6 @@ describe('catalogue rules', () => {
   });
 
   it("uses the spec's trigger placeholder", () => {
-    expect(smileIDSampleMatchDocumentLabel).toBe(rules.captureAs.triggerPlaceholder);
+    expect(strings.captureAsMatchDocument).toBe(rules.captureAs.triggerPlaceholder);
   });
 });

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -26,6 +27,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
+import com.usesmileid.sampleapps.ui.R
+import com.usesmileid.sampleapps.ui.message
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -96,6 +102,8 @@ fun ScanTokenScreen(
     // Held apart from the display state: the credential has no business in something a pill renders.
     var linked by remember { mutableStateOf<UseSmileIDSampleTokenSession?>(null) }
     val haptics = LocalHapticFeedback.current
+    // Read here: a token is judged in a callback, outside composition.
+    val resources = LocalResources.current
 
     // Scanned, pasted or typed, a candidate is judged here and nowhere else. Decoding is not
     // verification, so this proves the token parses — never that it is valid.
@@ -113,9 +121,9 @@ fun ScanTokenScreen(
             // The field's own error sits under the field, where the person is looking; a scanned code
             // has no field to annotate, so it answers in the status pill instead. Never both.
             is UseSmileIDSampleTokenDecode.Rejected -> if (fromField) {
-                rejection = decoded.reason
+                rejection = decoded.reason.message(resources)
             } else {
-                scan = UseSmileIDSampleScanState.Rejected(decoded.reason)
+                scan = UseSmileIDSampleScanState.Rejected(decoded.reason.message(resources))
             }
         }
     }
@@ -137,7 +145,8 @@ fun ScanTokenScreen(
         }
     }
 
-    val caption = reason?.caption ?: SCAN_CAPTION
+    val caption = reason?.let { stringResource(it.caption) } ?: UseSmileIDSampleStrings.scanLineUp
+    val title = UseSmileIDSampleStrings.scanPoint
     val titleStyle = UseSmileIDSampleTheme.type.textStyleTitle
     val titleColor = UseSmileIDSampleTheme.colors.textTitle
     val captionStyle = UseSmileIDSampleTheme.type.textStyleCaption.copy(fontSize = SCAN_BODY_SIZE)
@@ -148,9 +157,9 @@ fun ScanTokenScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.SCAN_TOKEN_SCREEN),
     ) {
-        UseSmileIDSampleTopAppBar(title = "Scan token", onBack = onBack) {
+        UseSmileIDSampleTopAppBar(title = UseSmileIDSampleStrings.scanTitle, onBack = onBack) {
             UseSmileIDSampleTopAppBarButton(
-                contentDescription = if (torchOn) "Turn flash off" else "Turn flash on",
+                contentDescription = if (torchOn) UseSmileIDSampleStrings.scanFlashOff else UseSmileIDSampleStrings.scanFlashOn,
                 onClick = onTorchToggle,
                 emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
             ) { tint -> FlashGlyph(tint = tint) }
@@ -167,7 +176,7 @@ fun ScanTokenScreen(
                     verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm, Alignment.CenterVertically),
                 ) {
                     Box(contentAlignment = Alignment.Center) { UseSmileIDSampleScanGlyph() }
-                    ScanCopy(text = SCAN_TITLE, style = titleStyle, color = titleColor)
+                    ScanCopy(text = title, style = titleStyle, color = titleColor)
                     ScanCopy(text = caption, style = captionStyle, color = captionColor)
                     PortalLine(style = captionStyle, color = captionColor)
                 }
@@ -192,7 +201,7 @@ fun ScanTokenScreen(
                     )
                     // Straight on the camera: a container here was a white slab over the preview.
                     if (searching) {
-                        ScanCopy(text = SCAN_TITLE, style = titleStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
+                        ScanCopy(text = title, style = titleStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
                         ScanCopy(text = caption, style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
                         PortalLine(style = captionStyle.overCamera(), color = UseSmileIDSampleTheme.colors.textInverse)
                     } else {
@@ -224,7 +233,7 @@ fun ScanTokenScreen(
             onPaste = {
                 val pasted = onPaste()
                 if (pasted.isNullOrBlank()) {
-                    rejection = "The clipboard holds no text to paste."
+                    rejection = resources.getString(R.string.sample_scan_clipboard_empty)
                 } else {
                     token = pasted
                     rejection = null
@@ -255,10 +264,13 @@ private fun PortalLine(style: TextStyle, color: Color) {
     val linkStyle = TextLinkStyles(
         SpanStyle(color = UseSmileIDSampleTheme.colors.textLink, textDecoration = TextDecoration.Underline),
     )
+    val prefix = UseSmileIDSampleStrings.scanPortalPrefix
+    val link = UseSmileIDSampleStrings.scanPortalLink
+    val suffix = UseSmileIDSampleStrings.scanPortalSuffix
     val text = buildAnnotatedString {
-        append("Get a v3 token from the ")
-        withLink(LinkAnnotation.Url(PORTAL_URL, linkStyle)) { append("Smile ID Portal") }
-        append(", under Security settings.")
+        append(prefix)
+        withLink(LinkAnnotation.Url(PORTAL_URL, linkStyle)) { append(link) }
+        append(suffix)
     }
     Text(
         text = text,
@@ -300,14 +312,10 @@ private fun UseSmileIDSampleScanState.reticleTint(): Color = when (this) {
 }
 
 /** Why the scanner opened. The copy lives here so the golden pins the sentence the app ships. */
-enum class UseSmileIDSampleScanReason(val caption: String) {
-    SessionEnded("Token session ended. Scan to continue where you left off."),
-    SessionNeeded("Scan a token to start this verification."),
+enum class UseSmileIDSampleScanReason(@StringRes val caption: Int) {
+    SessionEnded(R.string.sample_scan_reason_session_ended),
+    SessionNeeded(R.string.sample_scan_reason_needed),
 }
-
-private const val SCAN_TITLE = "Point at a Smile token QR"
-private const val SCAN_CAPTION =
-    "Line up the code inside the frame to link this device to a verification session."
 private const val PORTAL_URL = "https://portal.usesmileid.com/security-settings"
 private val SCAN_BODY_SIZE = 12.5.sp
 

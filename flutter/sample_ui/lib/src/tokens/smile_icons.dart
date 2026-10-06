@@ -49,6 +49,8 @@ abstract final class SmileIcons {
   static const String materialPlus = '$_base/material-symbols/plus.svg';
   static const String materialProductMark =
       '$_base/material-symbols/product_mark.svg';
+  static const String materialSettingLanguage =
+      '$_base/material-symbols/setting_language.svg';
   static const String materialSettingScenarios =
       '$_base/material-symbols/setting_scenarios.svg';
 
@@ -89,6 +91,7 @@ abstract final class SmileIcons {
     materialCopy,
     materialPlus,
     materialProductMark,
+    materialSettingLanguage,
     materialSettingScenarios,
   ];
 }

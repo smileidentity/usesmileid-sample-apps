@@ -4,14 +4,20 @@ import { UseSmileIDSampleEmptyState } from './use-smile-id-sample-empty-state';
 import { UseSmileIDSamplePickerList } from './use-smile-id-sample-picker-list';
 import { UseSmileIDSampleSearchField } from './use-smile-id-sample-search-field';
 import { useSmileIDSampleSkeletonGate, UseSmileIDSampleSkeletonRows } from './use-smile-id-sample-skeleton';
-import { smileIDSampleCatalogueDefaultAdvice, type UseSmileIDSampleCatalogue } from '../state/use-smile-id-sample-catalogue';
+import {
+  smileIDSampleCatalogueAdviceText,
+  smileIDSampleCatalogueDefaultAdvice,
+  type UseSmileIDSampleCatalogue } from '../state/use-smile-id-sample-catalogue';
 import { smileIDSampleOptionMatches } from '../state/use-smile-id-sample-id-details';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 
 type Props<T> = {
   catalogue: UseSmileIDSampleCatalogue<T>;
-  /// What is listed, in "Loading countries" and "Couldn't load countries".
-  what: string;
+  /// What a screen reader hears while the list loads, e.g. "Loading countries".
+  loadingLabel: string;
+  /// The error state's title, e.g. "Couldn't load countries".
+  failedLabel: string;
   query: string;
   onQueryChange: (query: string) => void;
   searchPlaceholder: string;
@@ -31,7 +37,8 @@ type Props<T> = {
 /// One picker's body: skeleton rows while loading, an error with Retry, an empty state without one, and a search.
 export const UseSmileIDSampleCataloguePicker = <T,>({
   catalogue,
-  what,
+  loadingLabel,
+  failedLabel,
   query,
   onQueryChange,
   searchPlaceholder,
@@ -44,6 +51,7 @@ export const UseSmileIDSampleCataloguePicker = <T,>({
   row,
   leadingCircle = false,
 }: Props<T>) => {
+  const strings = useSmileIDSampleStrings();
   const skeleton = useSmileIDSampleSkeletonGate(catalogue.kind === 'loading');
   const search = (
     <UseSmileIDSampleSearchField
@@ -59,7 +67,7 @@ export const UseSmileIDSampleCataloguePicker = <T,>({
       <>
         {search}
         <UseSmileIDSampleSkeletonRows
-          announcement={`Loading ${what}`}
+          announcement={loadingLabel}
           leadingCircle={leadingCircle}
           testID={UseSmileIDSampleTestIds.CATALOGUE_LOADING}
         />
@@ -75,8 +83,8 @@ export const UseSmileIDSampleCataloguePicker = <T,>({
         <>
           {search}
           <UseSmileIDSampleEmptyState
-            text={`Couldn't load ${what}`}
-            supportingText={catalogue.advice ?? smileIDSampleCatalogueDefaultAdvice}
+            text={failedLabel}
+            supportingText={smileIDSampleCatalogueAdviceText(catalogue.advice ?? smileIDSampleCatalogueDefaultAdvice, strings)}
             testID={UseSmileIDSampleTestIds.CATALOGUE_ERROR}
             onRetry={onRetry}
             retryTestID={UseSmileIDSampleTestIds.CATALOGUE_RETRY}

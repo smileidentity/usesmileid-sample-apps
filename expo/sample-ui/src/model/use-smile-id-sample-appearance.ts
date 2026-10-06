@@ -1,3 +1,5 @@
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+
 /// The app's theme choice; System follows the device's own theme.
 export const UseSmileIDSampleAppearance = {
   System: 'system',
@@ -25,13 +27,14 @@ export const smileIDSampleAppearanceIsDark = (
 export const smileIDSampleAppearanceLabel = (
   appearance: UseSmileIDSampleAppearance,
   deviceDark: boolean,
+  strings: UseSmileIDSampleStrings,
 ): string => {
   switch (appearance) {
     case UseSmileIDSampleAppearance.System:
-      return deviceDark ? 'System (Dark)' : 'System (Light)';
+      return deviceDark ? strings.appearanceSystemDark : strings.appearanceSystemLight;
     case UseSmileIDSampleAppearance.Light:
-      return 'Light';
+      return strings.appearanceLight;
     case UseSmileIDSampleAppearance.Dark:
-      return 'Dark';
+      return strings.appearanceDark;
   }
 };

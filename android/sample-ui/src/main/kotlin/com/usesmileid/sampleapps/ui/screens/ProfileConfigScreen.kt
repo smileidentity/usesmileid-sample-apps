@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import androidx.compose.ui.res.stringResource
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -73,27 +75,27 @@ fun ProfileConfigScreen(
                 .padding(horizontal = SmileDimens.spacingMd),
             verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
         ) {
-            UseSmileIDSampleSectionLabel(text = "PROFILE")
+            UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.profileConfigSectionProfile)
             UseSmileIDSampleSectionSurface {
                 UseSmileIDSampleKeyValueEditRow(
-                    label = "Profile name",
+                    label = UseSmileIDSampleStrings.profileConfigName,
                     value = organisation,
                     onValueChange = onOrganisationChange,
-                    placeholder = "Shown on the consent screen",
+                    placeholder = UseSmileIDSampleStrings.profileConfigNameHint,
                     required = false,
                     testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_NAME,
                 )
             }
             // The label stays here: SECTION_GAP, not the component's own spacing, separates it from the card.
-            UseSmileIDSampleSectionLabel(text = "USER DETAILS — ATTACHED TO EVERY JOB")
+            UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.profileConfigSectionDetails)
             UseSmileIDSampleSectionSurface {
                 UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
                     if (index > 0) UseSmileIDSampleSettingRowDivider()
                     UseSmileIDSampleKeyValueEditRow(
-                        label = field.label,
+                        label = stringResource(field.label),
                         value = field.read(defaults),
                         onValueChange = { onFieldChange(field, it) },
-                        placeholder = field.placeholder,
+                        placeholder = stringResource(field.placeholder),
                         required = field.required,
                         keyboardOptions = field.keyboardOptions,
                         isError = UseSmileIDSampleContactRules.problem(field, field.read(defaults)) != null,
@@ -103,20 +105,20 @@ fun ProfileConfigScreen(
             }
             defaults.contactProblem?.let { problem ->
                 Text(
-                    text = problem,
+                    text = stringResource(problem),
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = UseSmileIDSampleTheme.colors.input.borderError,
                     modifier = Modifier.testTag(UseSmileIDSampleTestIds.PROFILE_CONFIG_CONTACT_ERROR),
                 )
             }
             // Its own section, not a row in the card above: a webhook URL is not a user detail.
-            UseSmileIDSampleSectionLabel(text = "CALLBACK URL")
+            UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.profileConfigSectionCallback)
             UseSmileIDSampleSectionSurface {
                 UseSmileIDSampleKeyValueEditRow(
-                    label = "Webhook URL",
+                    label = UseSmileIDSampleStrings.profileConfigCallbackLabel,
                     value = if (callbackOverride == null) callbackUrl else "",
                     onValueChange = onCallbackUrlChange,
-                    placeholder = callbackOverride ?: "Uses your portal default",
+                    placeholder = callbackOverride ?: UseSmileIDSampleStrings.profileConfigCallbackHint,
                     enabled = callbackOverride == null,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Uri),
                     testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_CALLBACK_URL,
@@ -124,14 +126,14 @@ fun ProfileConfigScreen(
             }
             if (onDelete != null) {
                 UseSmileIDSampleDestructiveRow(
-                    text = "Delete profile",
+                    text = UseSmileIDSampleStrings.profileConfigDelete,
                     onClick = { confirmingDelete = true },
                     testId = UseSmileIDSampleTestIds.PROFILE_CONFIG_DELETE,
                 )
             }
         }
         UseSmileIDSampleButton(
-            text = if (isActive) "Save changes" else "Use this profile",
+            text = if (isActive) UseSmileIDSampleStrings.profileConfigSave else UseSmileIDSampleStrings.profileConfigUse,
             onClick = {
                 autofill?.cancel()
                 onSave()
@@ -143,9 +145,9 @@ fun ProfileConfigScreen(
     }
     if (confirmingDelete && onDelete != null) {
         UseSmileIDSampleConfirmDialog(
-            title = "Delete $title?",
-            text = "Its details and callback URL are removed from this device.",
-            confirmLabel = "Delete",
+            title = UseSmileIDSampleStrings.profileConfigDeleteTitle(title),
+            text = UseSmileIDSampleStrings.profileConfigDeleteBody,
+            confirmLabel = UseSmileIDSampleStrings.commonDelete,
             confirmTestId = UseSmileIDSampleTestIds.PROFILE_DELETE_CONFIRM,
             onConfirm = {
                 confirmingDelete = false

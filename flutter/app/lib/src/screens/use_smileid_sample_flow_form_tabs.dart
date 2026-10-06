@@ -400,7 +400,7 @@ class _UseSmileIDSampleKycFormTabState
         .idDetails;
     await showUseSmileIDSampleSheet<void>(
       context: context,
-      title: 'Capture as',
+      title: context.strings.captureAsTitle,
       testId: UseSmileIDSampleTestIds.captureAsSheet,
       builder: (BuildContext sheetContext) => UseSmileIDSampleCaptureAsSheet(
         selected: details.captureAsOverride,
@@ -429,7 +429,7 @@ class _UseSmileIDSampleKycFormTabState
 
   Future<void> _buildGenericDocument() => showUseSmileIDSampleSheet<void>(
     context: context,
-    title: 'Generic document',
+    title: context.strings.captureAsGenericDocument,
     testId: UseSmileIDSampleTestIds.genericDocumentSheet,
     builder: (BuildContext sheetContext) =>
         UseSmileIDSampleGenericDocumentSheet(

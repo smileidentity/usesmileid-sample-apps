@@ -107,6 +107,18 @@ class UseSmileIDSampleSettingsNotifier
       state = previous;
     }
   }
+
+  /// Chooses the app's language; it applies at once.
+  Future<void> setLanguage(UseSmileIDSampleLanguage language) async {
+    final UseSmileIDSampleSettings previous = state;
+    try {
+      state = await ref
+          .read(useSmileIDSampleSettingsRepositoryProvider)
+          .setLanguage(language);
+    } on Object {
+      state = previous;
+    }
+  }
 }
 
 /// Where the profiles are kept; the shell overrides this with the store that survives a restart.

@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android
 
+import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
 import com.usesmileid.sampleapps.android.flow.resolveCallbackUrl
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
@@ -30,8 +31,8 @@ class FlowCallbackUrlRuleTest {
 
     @Test
     fun `the row says which of the two applies`() {
-        assertEquals("The scanned token's partner default applies", session().callbackOverrideCaption())
-        assertEquals("Set by the scanned token", session(callbackUrl = "https://token.example/hook").callbackOverrideCaption())
+        assertEquals(R.string.sample_token_callback_default, session().callbackOverrideCaption())
+        assertEquals(R.string.sample_token_callback_set, session(callbackUrl = "https://token.example/hook").callbackOverrideCaption())
     }
 
     private fun session(callbackUrl: String? = null) = UseSmileIDSampleTokenSession(

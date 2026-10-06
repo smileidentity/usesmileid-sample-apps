@@ -47,6 +47,21 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     app.buttons["sample_appearance_option_light"].tap()
   }
 
+  func testALanguagePickWaitsForTheNextLaunchAndSaysSo() {
+    launch()
+    XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
+    open("settings/language")
+    XCTAssertTrue(element(Self.languageSheet).waitForExistence(timeout: 10))
+    XCTAssertTrue(app.buttons["sample_language_option_system"].isSelected, "the seeded language is not checked")
+
+    app.buttons["sample_language_option_fr"].tap()
+
+    XCTAssertTrue(app.buttons["sample_language_option_fr"].isSelected, "the pick did not hold")
+    XCTAssertTrue(app.staticTexts["Applies the next time the app opens."].waitForExistence(timeout: 5))
+    app.buttons["sample_language_option_system"].tap()
+    XCTAssertFalse(app.staticTexts["Applies the next time the app opens."].exists)
+  }
+
   func testOneTapOnAgentModeMovesBothCaptureRowsAndTheirSupportingLines() {
     launch()
     openSettings()
@@ -224,6 +239,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
   private static let agentMode = "sample_setting_agent_mode"
   private static let appearance = "sample_setting_appearance"
   private static let appearanceSheet = "sample_appearance_sheet"
+  private static let languageSheet = "sample_language_sheet"
   private static let consentStep = "sample_setting_consent_step"
   private static let instructionsStep = "sample_setting_instructions_step"
   private static let previewStep = "sample_setting_preview_step"

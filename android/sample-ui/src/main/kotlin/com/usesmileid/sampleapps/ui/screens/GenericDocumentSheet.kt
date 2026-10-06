@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.label
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -36,19 +38,19 @@ fun GenericDocumentSheet(
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
-        title = "Generic document",
+        title = UseSmileIDSampleStrings.genericDocumentTitle,
         testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_SHEET,
     ) {
-        UseSmileIDSampleSectionLabel(text = "DISPLAY NAME")
+        UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.genericDocumentDisplayName)
         UseSmileIDSampleTextInput(
             value = draft.displayName,
             onValueChange = { draft = draft.copy(displayName = it) },
-            placeholder = "Document",
+            placeholder = UseSmileIDSampleStrings.genericDocumentDefaultName,
             testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_NAME,
         )
         UseSmileIDSampleSettingRow(
-            title = "Back side",
-            supportingText = "Capture the back after the front",
+            title = UseSmileIDSampleStrings.genericDocumentBackSide,
+            supportingText = UseSmileIDSampleStrings.genericDocumentBackSideHint,
             trailing = {
                 UseSmileIDSampleSwitch(
                     checked = draft.hasBackSide,
@@ -57,11 +59,11 @@ fun GenericDocumentSheet(
                 )
             },
         )
-        UseSmileIDSampleSectionLabel(text = "ORIENTATION")
+        UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.genericDocumentOrientation)
         FlowRow(horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs)) {
             UseSmileIDSampleDocumentOrientation.entries.forEach { orientation ->
                 UseSmileIDSampleFilterChip(
-                    label = orientation.label,
+                    label = orientation.label(),
                     count = null,
                     selected = orientation == draft.orientation,
                     onClick = { draft = draft.copy(orientation = orientation) },
@@ -69,14 +71,14 @@ fun GenericDocumentSheet(
                 )
             }
         }
-        UseSmileIDSampleSectionLabel(text = "ASPECT RATIO")
+        UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.genericDocumentAspectRatio)
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
         ) {
             UseSmileIDSampleAspectRatio.entries.forEach { ratio ->
                 UseSmileIDSampleFilterChip(
-                    label = ratio.label,
+                    label = ratio.label(),
                     count = null,
                     selected = ratio == draft.aspectRatio,
                     onClick = { draft = draft.copy(aspectRatio = ratio) },
@@ -84,9 +86,10 @@ fun GenericDocumentSheet(
                 )
             }
         }
+        val defaultName = UseSmileIDSampleStrings.genericDocumentDefaultName
         UseSmileIDSampleButton(
-            text = "Done",
-            onClick = { onDone(draft.copy(displayName = draft.displayName.trim().ifEmpty { "Document" })) },
+            text = UseSmileIDSampleStrings.commonDone,
+            onClick = { onDone(draft.copy(displayName = draft.displayName.trim().ifEmpty { defaultName })) },
             modifier = Modifier.fillMaxWidth(),
             testId = UseSmileIDSampleTestIds.GENERIC_DOCUMENT_DONE,
         )

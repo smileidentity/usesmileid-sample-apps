@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 
 import '../model/use_smileid_sample_environment.dart';
 import '../model/use_smileid_sample_product.dart';
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_digest.dart';
 import 'use_smileid_sample_token_session.dart';
 
@@ -160,10 +161,60 @@ class UseSmileIDSampleTokenDecoded extends UseSmileIDSampleTokenDecode {
 /// Why a token was refused, naming a claim, never a value.
 class UseSmileIDSampleTokenRejected extends UseSmileIDSampleTokenDecode {
   /// [reason] is shown to the person who entered the token.
-  const UseSmileIDSampleTokenRejected(this.reason);
+  const UseSmileIDSampleTokenRejected(this.reason, {this.host});
 
   /// Why the token is not a session.
-  final String reason;
+  final UseSmileIDSampleTokenRejection reason;
+
+  /// The `api_url` host for [UseSmileIDSampleTokenRejection.apiUrlUnknown], a public API host.
+  final String? host;
+
+  /// The reason in the app's language.
+  String message(UseSmileIDSampleStrings strings) => switch (reason) {
+    UseSmileIDSampleTokenRejection.segments => strings.tokenErrorSegments,
+    UseSmileIDSampleTokenRejection.payloadEncoding =>
+      strings.tokenErrorPayloadEncoding,
+    UseSmileIDSampleTokenRejection.payloadJson => strings.tokenErrorPayloadJson,
+    UseSmileIDSampleTokenRejection.issuedAt => strings.tokenErrorIat,
+    UseSmileIDSampleTokenRejection.expiry => strings.tokenErrorExp,
+    UseSmileIDSampleTokenRejection.expiryOrder => strings.tokenErrorExpOrder,
+    UseSmileIDSampleTokenRejection.apiUrlMissing =>
+      strings.tokenErrorApiUrlMissing,
+    UseSmileIDSampleTokenRejection.apiUrlUnknown =>
+      strings.tokenErrorApiUrlUnknown(host: host ?? ''),
+    UseSmileIDSampleTokenRejection.apiUrlInvalid =>
+      strings.tokenErrorApiUrlInvalid,
+  };
+}
+
+/// The claim or structure a refused token failed on.
+enum UseSmileIDSampleTokenRejection {
+  /// Not three base64url segments.
+  segments,
+
+  /// The payload is not base64url.
+  payloadEncoding,
+
+  /// The payload is not a JSON object.
+  payloadJson,
+
+  /// No numeric `iat`.
+  issuedAt,
+
+  /// No numeric `exp`.
+  expiry,
+
+  /// `exp` is not after `iat`.
+  expiryOrder,
+
+  /// No `api_url`.
+  apiUrlMissing,
+
+  /// An `api_url` host that is not a Smile ID environment.
+  apiUrlUnknown,
+
+  /// An `api_url` that is not a URL.
+  apiUrlInvalid,
 }
 
 /// Reads the claims a session is made of.
@@ -174,44 +225,41 @@ abstract final class UseSmileIDSampleTokenDecoder {
     final List<String> segments = trimmed.split('.');
     if (segments.length != _segments ||
         segments.any((String it) => !_base64Url.hasMatch(it))) {
-      return _reject(
-        'A token is three dot-separated base64url segments; this is not.',
-      );
+      return _reject(UseSmileIDSampleTokenRejection.segments);
     }
     final String? claims = _decodeSegment(segments[1]);
     if (claims == null) {
-      return _reject("The token's payload segment is not base64url.");
+      return _reject(UseSmileIDSampleTokenRejection.payloadEncoding);
     }
     final Object? parsed = _parse(claims);
     if (parsed is! Map<String, Object?>) {
-      return _reject("The token's payload segment is not a JSON object.");
+      return _reject(UseSmileIDSampleTokenRejection.payloadJson);
     }
     final int? issuedAt = _seconds(parsed['iat']);
     if (issuedAt == null) {
-      return _reject('The token carries no numeric iat claim.');
+      return _reject(UseSmileIDSampleTokenRejection.issuedAt);
     }
     final int? expires = _seconds(parsed['exp']);
     if (expires == null) {
-      return _reject('The token carries no numeric exp claim.');
+      return _reject(UseSmileIDSampleTokenRejection.expiry);
     }
     if (expires <= issuedAt) {
-      return _reject("The token's exp claim is not after its iat claim.");
+      return _reject(UseSmileIDSampleTokenRejection.expiryOrder);
     }
     // Refused, not defaulted: a sandbox fallback misroutes a production token.
     final String? apiUrl = _string(parsed['api_url']);
     if (apiUrl == null || apiUrl.trim().isEmpty) {
-      return _reject(
-        'The token carries no api_url claim, so nothing says which environment it was minted for.',
-      );
+      return _reject(UseSmileIDSampleTokenRejection.apiUrlMissing);
     }
     final UseSmileIDSampleEnvironment? environment = environmentFor(apiUrl);
     if (environment == null) {
       final String? host = apiUrlHost(apiUrl);
-      return _reject(
-        host == null
-            ? "The token's api_url is not a URL, so it names no environment."
-            : "The token's api_url names $host, which is not a Smile ID environment.",
-      );
+      return host == null
+          ? _reject(UseSmileIDSampleTokenRejection.apiUrlInvalid)
+          : UseSmileIDSampleTokenRejected(
+              UseSmileIDSampleTokenRejection.apiUrlUnknown,
+              host: host,
+            );
     }
     final String? partnerId = _string(parsed['partner_id']);
     final Object? payload = parsed['payload'];
@@ -329,8 +377,9 @@ abstract final class UseSmileIDSampleTokenDecoder {
     };
   }
 
-  static UseSmileIDSampleTokenRejected _reject(String reason) =>
-      UseSmileIDSampleTokenRejected(reason);
+  static UseSmileIDSampleTokenRejected _reject(
+    UseSmileIDSampleTokenRejection reason,
+  ) => UseSmileIDSampleTokenRejected(reason);
 
   static const int _segments = 3;
   static const int _millisPerSecond = 1000;

@@ -56,6 +56,7 @@ const screens = {
       onNavRowPress={noop}
       onCaptureModePress={noop}
       onAppearancePress={noop}
+      onLanguagePress={noop}
       onSignOut={noop}
       bottomInset={bottomInset}
     />

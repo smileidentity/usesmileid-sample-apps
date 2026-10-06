@@ -55,6 +55,8 @@ object UseSmileIDSampleTestIds {
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
     const val SETTING_APPEARANCE = "sample_setting_appearance"
     const val APPEARANCE_SHEET = "sample_appearance_sheet"
+    const val SETTING_LANGUAGE = "sample_setting_language"
+    const val LANGUAGE_SHEET = "sample_language_sheet"
     const val SETTING_CONSENT_STEP = "sample_setting_consent_step"
     const val SETTING_INSTRUCTIONS_STEP = "sample_setting_instructions_step"
     const val SETTING_PREVIEW_STEP = "sample_setting_preview_step"
@@ -187,6 +189,8 @@ object UseSmileIDSampleTestIds {
         SETTING_AGENT_MODE,
         SETTING_APPEARANCE,
         APPEARANCE_SHEET,
+        SETTING_LANGUAGE,
+        LANGUAGE_SHEET,
         SETTING_CONSENT_STEP,
         SETTING_INSTRUCTIONS_STEP,
         SETTING_PREVIEW_STEP,
@@ -279,6 +283,7 @@ object UseSmileIDSampleTestIds {
     fun captureModeOption(modeId: String) = "sample_capture_mode_option_$modeId"
 
     fun appearanceOption(appearanceId: String) = "sample_appearance_option_$appearanceId"
+    fun languageOption(languageId: String) = "sample_language_option_$languageId"
 
     fun genericDocumentOrientation(orientationId: String) = "sample_generic_document_orientation_$orientationId"
 

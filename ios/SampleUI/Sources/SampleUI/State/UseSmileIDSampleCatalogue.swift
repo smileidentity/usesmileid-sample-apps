@@ -189,13 +189,15 @@ public enum UseSmileIDSampleCatalogueRules {
   /// The error state's supporting line for an HTTP `status`, or nil when there was no answer.
   public static func advice(status: Int?) -> String {
     switch status {
-    case 401: "The server refused this session's token. Link a new session, then try again"
-    case 403: "Access denied: production may not be enabled for this partner, or this network is not allowed"
+    case 401: UseSmileIDSampleStrings.catalogueAdviceUnauthorised
+    case 403: UseSmileIDSampleStrings.catalogueAdviceForbidden
     default: defaultAdvice
     }
   }
 
-  public static let defaultAdvice = "Check your connection, then try again"
+  public static var defaultAdvice: String {
+    UseSmileIDSampleStrings.catalogueAdviceOffline
+  }
 
   public static func countries(
     _ data: UseSmileIDSampleCatalogueData,

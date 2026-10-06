@@ -69,17 +69,17 @@ public struct ProfileConfigScreen: View {
       UseSmileIDSampleTopAppBar(title: state.title, onBack: onBack)
       ScrollView {
         VStack(alignment: .leading, spacing: Self.sectionGap) {
-          UseSmileIDSampleSectionLabel("PROFILE")
+          UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.profileConfigSectionProfile)
           UseSmileIDSampleSectionSurface {
             UseSmileIDSampleKeyValueEditRow(
-              label: "Profile name",
+              label: UseSmileIDSampleStrings.profileConfigName,
               value: Binding(get: { state.organisation }, set: onOrganisationChange),
-              placeholder: "Shown on the consent screen",
+              placeholder: UseSmileIDSampleStrings.profileConfigNameHint,
               testId: UseSmileIDSampleTestIds.profileConfigName
             )
           }
           // The label stays here: the section gap, not the surface's own spacing, separates it from the card.
-          UseSmileIDSampleSectionLabel("USER DETAILS \u{2014} ATTACHED TO EVERY JOB")
+          UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.profileConfigSectionDetails)
           UseSmileIDSampleSectionSurface {
             ForEach(Array(UseSmileIDSampleUserField.allCases.enumerated()), id: \.element) { index, field in
               if index > 0 {
@@ -94,13 +94,13 @@ public struct ProfileConfigScreen: View {
               .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileConfigContactError)
           }
           // Its own section, not a row in the card above: a webhook URL is not a user detail.
-          UseSmileIDSampleSectionLabel("CALLBACK URL")
+          UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.profileConfigSectionCallback)
           UseSmileIDSampleSectionSurface {
             callbackRow
           }
           if onDelete != nil {
             UseSmileIDSampleDestructiveRow(
-              text: "Delete profile",
+              text: UseSmileIDSampleStrings.profileConfigDelete,
               testId: UseSmileIDSampleTestIds.profileConfigDelete,
               action: { confirmingDelete = true }
             )
@@ -111,7 +111,7 @@ public struct ProfileConfigScreen: View {
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileConfigScreen)
       UseSmileIDSampleButton(
-        text: state.isActive ? "Save changes" : "Use this profile",
+        text: state.isActive ? UseSmileIDSampleStrings.profileConfigSave : UseSmileIDSampleStrings.profileConfigUse,
         enabled: (state.changed || !state.isActive) && state.defaults.contactProblem == nil,
         testId: UseSmileIDSampleTestIds.profileConfigSave,
         action: onSave
@@ -121,9 +121,9 @@ public struct ProfileConfigScreen: View {
     .background(colors.background)
     .useSmileIDSampleConfirmation(
       isPresented: $confirmingDelete,
-      title: "Delete \(state.title)?",
-      message: "Its details and callback URL are removed from this device.",
-      confirmLabel: "Delete",
+      title: UseSmileIDSampleStrings.profileConfigDeleteTitle(profile: state.title),
+      message: UseSmileIDSampleStrings.profileConfigDeleteBody,
+      confirmLabel: UseSmileIDSampleStrings.commonDelete,
       confirmTestId: UseSmileIDSampleTestIds.profileDeleteConfirm,
       onConfirm: { onDelete?() }
     )
@@ -131,12 +131,12 @@ public struct ProfileConfigScreen: View {
 
   private var callbackRow: some View {
     UseSmileIDSampleKeyValueEditRow(
-      label: "Webhook URL",
+      label: UseSmileIDSampleStrings.profileConfigCallbackLabel,
       value: Binding(
         get: { state.callbackOverride == nil ? state.callbackUrl : "" },
         set: onCallbackUrlChange
       ),
-      placeholder: state.callbackOverride ?? "Uses your portal default",
+      placeholder: state.callbackOverride ?? UseSmileIDSampleStrings.profileConfigCallbackHint,
       required: false,
       enabled: state.callbackOverride == nil,
       keyboardType: .URL,

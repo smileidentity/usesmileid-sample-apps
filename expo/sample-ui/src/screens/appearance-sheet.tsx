@@ -6,6 +6,7 @@ import {
   type UseSmileIDSampleAppearance,
 } from '../model/use-smile-id-sample-appearance';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   selected: UseSmileIDSampleAppearance;
@@ -16,21 +17,24 @@ type Props = {
 };
 
 /// The three appearances; System's label names `deviceDark`, the device's own theme.
-export const AppearanceSheet = ({ selected, deviceDark, onSelect, onDismiss }: Props) => (
-  <UseSmileIDSampleBottomSheet
-    visible
-    title="Theme"
-    onDismiss={onDismiss}
-    testID={UseSmileIDSampleTestIds.APPEARANCE_SHEET}
-  >
-    {smileIDSampleAppearances.map((appearance) => (
-      <UseSmileIDSampleOptionRow
-        key={appearance}
-        label={smileIDSampleAppearanceLabel(appearance, deviceDark)}
-        selected={appearance === selected}
-        onPress={() => onSelect(appearance)}
-        testID={UseSmileIDSampleSuffixedTestIds.appearanceOption(appearance)}
-      />
-    ))}
-  </UseSmileIDSampleBottomSheet>
-);
+export const AppearanceSheet = ({ selected, deviceDark, onSelect, onDismiss }: Props) => {
+  const strings = useSmileIDSampleStrings();
+  return (
+    <UseSmileIDSampleBottomSheet
+      visible
+      title={strings.appearanceTitle}
+      onDismiss={onDismiss}
+      testID={UseSmileIDSampleTestIds.APPEARANCE_SHEET}
+    >
+      {smileIDSampleAppearances.map((appearance) => (
+        <UseSmileIDSampleOptionRow
+          key={appearance}
+          label={smileIDSampleAppearanceLabel(appearance, deviceDark, strings)}
+          selected={appearance === selected}
+          onPress={() => onSelect(appearance)}
+          testID={UseSmileIDSampleSuffixedTestIds.appearanceOption(appearance)}
+        />
+      ))}
+    </UseSmileIDSampleBottomSheet>
+  );
+};

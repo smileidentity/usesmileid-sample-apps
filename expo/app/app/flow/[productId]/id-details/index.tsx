@@ -10,6 +10,8 @@ import {
   useSmileIDSampleFormsStore,
   useSmileIDSampleSessionStore,
   type UseSmileIDSampleCatalogueFamily,
+  smileIDSampleProductTitle,
+  useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useMemo } from 'react';
@@ -36,11 +38,13 @@ const enabledListsOf = (
 });
 
 export default function IdDetailsForm() {
+  const strings = useSmileIDSampleStrings();
   const router = useRouter();
   const { productId } = useLocalSearchParams<{ productId: string }>();
   const back = useSmileIDSampleBack(`/flow/${productId}/details`);
   const product = smileIDSampleProductFrom(productId);
   const family = (product === null ? null : smileIDSampleCatalogueFamily(product)) ?? 'kyc';
+  const productLabel = product === null ? (productId ?? '') : smileIDSampleProductTitle(product, strings);
   const details = useSmileIDSampleFormsStore((state) => state.idDetails);
   const setIdNumber = useSmileIDSampleFormsStore((state) => state.setIdNumber);
   const keepDocumentListedOn = useSmileIDSampleFormsStore((state) => state.keepDocumentListedOn);
@@ -96,7 +100,7 @@ export default function IdDetailsForm() {
   return (
     <KycIdFormScreen
       state={{
-        productLabel: product?.label ?? productId ?? '',
+        productLabel,
         family,
         details,
         countryListLoading: countryList?.kind === 'loading',

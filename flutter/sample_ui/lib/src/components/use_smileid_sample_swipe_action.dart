@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
 
 /// Wraps a row in the platform swipe gesture; the design fixes only the revealed treatment.
@@ -61,7 +62,7 @@ class _RemoveBackdrop extends StatelessWidget {
               UseSmileIDSampleGlyphs.trash(colors.errorFill),
               const SizedBox(height: SmileDimens.spacingXxs),
               Text(
-                'Hide',
+                context.strings.commonHide,
                 style: UseSmileIDSampleType.textStyleCaption.copyWith(
                   color: colors.errorFill,
                 ),

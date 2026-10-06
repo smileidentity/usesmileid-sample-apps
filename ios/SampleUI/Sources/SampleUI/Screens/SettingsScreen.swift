@@ -17,47 +17,53 @@ public struct UseSmileIDSampleNavRow: Identifiable, Equatable, Sendable {
 }
 
 /// The rows in the order the design draws them, so a caller can assert the set rather than the screen.
-public let useSmileIDSampleNavRows: [UseSmileIDSampleNavRow] = aboutRows + legalRows
+public var useSmileIDSampleNavRows: [UseSmileIDSampleNavRow] {
+  aboutRows + legalRows
+}
 
-private let aboutRows: [UseSmileIDSampleNavRow] = [
-  .init(
-    id: "documentation",
-    title: "Documentation",
-    supportingText: "docs.usesmileid.com",
-    icon: SmileIcons.docs,
-    url: URL(string: "https://docs.usesmileid.com/"),
-    opensInApp: true
-  ),
-  .init(
-    id: "support",
-    title: "Support",
-    supportingText: "Contact the Smile team",
-    icon: SmileIcons.support,
-    url: URL(string: "https://smile.id/contact-us"),
-    opensInApp: true
-  )
-]
+private var aboutRows: [UseSmileIDSampleNavRow] {
+  [
+    .init(
+      id: "documentation",
+      title: UseSmileIDSampleStrings.settingsDocumentation,
+      supportingText: "docs.usesmileid.com",
+      icon: SmileIcons.docs,
+      url: URL(string: "https://docs.usesmileid.com/"),
+      opensInApp: true
+    ),
+    .init(
+      id: "support",
+      title: UseSmileIDSampleStrings.settingsSupport,
+      supportingText: UseSmileIDSampleStrings.settingsSupportBody,
+      icon: SmileIcons.support,
+      url: URL(string: "https://smile.id/contact-us"),
+      opensInApp: true
+    )
+  ]
+}
 
-private let legalRows: [UseSmileIDSampleNavRow] = [
-  .init(
-    id: "terms",
-    title: "Terms of Service",
-    supportingText: nil,
-    icon: SmileIcons.terms,
-    url: URL(string: "https://smile.id/terms-and-conditions"),
-    opensInApp: false
-  ),
-  .init(
-    id: "privacy",
-    title: "Privacy Policy",
-    supportingText: nil,
-    icon: SmileIcons.privacy,
-    url: URL(string: "https://smile.id/privacy-policy"),
-    opensInApp: false
-  ),
-  // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
-  .init(id: "licenses", title: "Open-source licenses", supportingText: nil, icon: SmileIcons.licenses, url: nil, opensInApp: true)
-]
+private var legalRows: [UseSmileIDSampleNavRow] {
+  [
+    .init(
+      id: "terms",
+      title: UseSmileIDSampleStrings.settingsTerms,
+      supportingText: nil,
+      icon: SmileIcons.terms,
+      url: URL(string: "https://smile.id/terms-and-conditions"),
+      opensInApp: false
+    ),
+    .init(
+      id: "privacy",
+      title: UseSmileIDSampleStrings.settingsPrivacy,
+      supportingText: nil,
+      icon: SmileIcons.privacy,
+      url: URL(string: "https://smile.id/privacy-policy"),
+      opensInApp: false
+    ),
+    // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
+    .init(id: "licenses", title: UseSmileIDSampleStrings.settingsLicenses, supportingText: nil, icon: SmileIcons.licenses, url: nil, opensInApp: true)
+  ]
+}
 
 /// Everything the settings list renders; callbacks stay parameters, like every screen.
 public struct UseSmileIDSampleSettingsState: Equatable {
@@ -73,6 +79,10 @@ public struct UseSmileIDSampleSettingsState: Equatable {
   public var hasProfile: Bool
   /// The device's own theme, which the System label names; the shell reads it where the app's choice cannot mask it.
   public var deviceDark: Bool
+  /// The device's languages, which the System label resolves.
+  public var deviceLanguages: [String]
+  /// The language the process started with, which the row names until the next launch.
+  public var runningLanguage: UseSmileIDSampleLanguage?
 
   public init(
     settings: UseSmileIDSampleSettings,
@@ -82,7 +92,9 @@ public struct UseSmileIDSampleSettingsState: Equatable {
     consentBoundByToken: Bool = false,
     avatarColor: Color = smileProfileHues[0],
     hasProfile: Bool = true,
-    deviceDark: Bool
+    deviceDark: Bool,
+    deviceLanguages: [String] = [],
+    runningLanguage: UseSmileIDSampleLanguage? = nil
   ) {
     self.settings = settings
     self.organisation = organisation
@@ -92,6 +104,8 @@ public struct UseSmileIDSampleSettingsState: Equatable {
     self.avatarColor = avatarColor
     self.hasProfile = hasProfile
     self.deviceDark = deviceDark
+    self.deviceLanguages = deviceLanguages
+    self.runningLanguage = runningLanguage
   }
 }
 
@@ -103,6 +117,7 @@ public struct SettingsScreen: View {
   private let onNavRow: (UseSmileIDSampleNavRow) -> Void
   private let onCaptureMode: () -> Void
   private let onAppearance: () -> Void
+  private let onLanguage: () -> Void
   /// `nil` hides the DEBUG section: `sample-ui` may not read a host's build configuration.
   private let onOpenScenarioDrawer: (() -> Void)?
   private let onSignOut: () -> Void
@@ -117,6 +132,7 @@ public struct SettingsScreen: View {
     onNavRow: @escaping (UseSmileIDSampleNavRow) -> Void,
     onCaptureMode: @escaping () -> Void = {},
     onAppearance: @escaping () -> Void = {},
+    onLanguage: @escaping () -> Void = {},
     onOpenScenarioDrawer: (() -> Void)? = nil,
     onSignOut: @escaping () -> Void
   ) {
@@ -126,6 +142,7 @@ public struct SettingsScreen: View {
     self.onNavRow = onNavRow
     self.onCaptureMode = onCaptureMode
     self.onAppearance = onAppearance
+    self.onLanguage = onLanguage
     self.onOpenScenarioDrawer = onOpenScenarioDrawer
     self.onSignOut = onSignOut
   }
@@ -133,20 +150,21 @@ public struct SettingsScreen: View {
   public var body: some View {
     ScrollView {
       VStack(alignment: .leading, spacing: SmileSpacing.spacingXs) {
-        UseSmileIDSampleText("Settings", style: UseSmileIDSampleTheme.type.textStyleHeadingPage)
+        UseSmileIDSampleText(UseSmileIDSampleStrings.settingsTitle, style: UseSmileIDSampleTheme.type.textStyleHeadingPage)
           .foregroundColor(colors.textTitle)
           .padding(.vertical, SmileSpacing.spacingXs)
 
         profileSection
         captureSection
         appearanceSection
+        languageSection
         sdkScreensSection
         documentCaptureSection
         debugSection
-        navSection("ABOUT", rows: aboutRows)
-        navSection("LEGAL", rows: legalRows)
+        navSection(UseSmileIDSampleStrings.settingsSectionAbout, rows: aboutRows)
+        navSection(UseSmileIDSampleStrings.settingsSectionLegal, rows: legalRows)
 
-        UseSmileIDSampleDestructiveRow(text: "Sign out", testId: UseSmileIDSampleTestIds.signOut) {
+        UseSmileIDSampleDestructiveRow(text: UseSmileIDSampleStrings.settingsSignOut, testId: UseSmileIDSampleTestIds.signOut) {
           confirmingSignOut = true
         }
 
@@ -162,19 +180,19 @@ public struct SettingsScreen: View {
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.settingsScreen)
     .useSmileIDSampleConfirmation(
       isPresented: $confirmingSignOut,
-      title: "Sign out?",
-      message: "This ends the token session and deletes every profile on this device.",
-      confirmLabel: "Sign out",
+      title: UseSmileIDSampleStrings.settingsSignOutTitle,
+      message: UseSmileIDSampleStrings.settingsSignOutBody,
+      confirmLabel: UseSmileIDSampleStrings.settingsSignOut,
       confirmTestId: UseSmileIDSampleTestIds.signOutConfirm,
       onConfirm: onSignOut
     )
   }
 
   private var profileSection: some View {
-    UseSmileIDSampleSectionSurface(label: "PROFILE") {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionProfile) {
       UseSmileIDSampleProfileRow(
         organisation: state.organisation,
-        supportingText: state.hasProfile ? "Tap to configure" : "Tap to create one",
+        supportingText: state.hasProfile ? UseSmileIDSampleStrings.settingsProfileConfigure : UseSmileIDSampleStrings.settingsProfileCreate,
         initials: state.initials,
         selected: false,
         avatarColor: state.avatarColor,
@@ -188,31 +206,46 @@ public struct SettingsScreen: View {
 
   /// Mutually exclusive, so each row says what turning it on does to the other.
   private var captureSection: some View {
-    UseSmileIDSampleSectionSurface(label: "CAPTURE") {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionCapture) {
       switchRow(
         title: Self.enhancedSmartSelfieTitle,
         icon: SmileIcons.smile,
-        supporting: state.settings.agentMode ? "Turns Agent mode off" : "Face capture uses head-turns",
+        supporting: state.settings.agentMode ? UseSmileIDSampleStrings.settingsEnhancedSmartSelfieMutex : UseSmileIDSampleStrings.settingsEnhancedSmartSelfieBody,
         setting: .enhancedSmartSelfie,
         testId: UseSmileIDSampleTestIds.settingEnhancedSmartSelfie
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Agent mode",
+        title: UseSmileIDSampleStrings.settingsAgentMode,
         icon: SmileIcons.agent,
         supporting: state.settings.enhancedSmartSelfie
-          ? "Turns \(Self.enhancedSmartSelfieTitle) off"
-          : "Operator captures for the applicant",
+          ? UseSmileIDSampleStrings.settingsAgentModeMutex(setting: UseSmileIDSampleStrings.settingsEnhancedSmartSelfie)
+          : UseSmileIDSampleStrings.settingsAgentModeBody,
         setting: .agentMode,
         testId: UseSmileIDSampleTestIds.settingAgentMode
       )
     }
   }
 
-  private var appearanceSection: some View {
-    UseSmileIDSampleSectionSurface(label: "APPEARANCE") {
+  private var languageSection: some View {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionLanguage) {
       UseSmileIDSampleSettingRow(
-        title: "Theme",
+        title: UseSmileIDSampleStrings.settingsLanguage,
+        supportingText: (state.runningLanguage ?? state.settings.language).label(deviceLanguages: state.deviceLanguages),
+        testId: UseSmileIDSampleTestIds.settingLanguage,
+        onTap: onLanguage
+      ) {
+        UseSmileIDSampleIcon(SmileIcons.settingLanguage, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
+      } trailing: {
+        UseSmileIDSampleSettingRowChevron()
+      }
+    }
+  }
+
+  private var appearanceSection: some View {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionAppearance) {
+      UseSmileIDSampleSettingRow(
+        title: UseSmileIDSampleStrings.settingsTheme,
         supportingText: state.settings.appearance.label(deviceDark: state.deviceDark),
         testId: UseSmileIDSampleTestIds.settingAppearance,
         onTap: onAppearance
@@ -225,30 +258,30 @@ public struct SettingsScreen: View {
   }
 
   private var sdkScreensSection: some View {
-    UseSmileIDSampleSectionSurface(label: "SDK SCREENS — SHOW OR SKIP FLOW STEPS") {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionSdkScreens) {
       switchRow(
-        title: "Consent screen",
+        title: UseSmileIDSampleStrings.settingsConsent,
         icon: SmileIcons.consent,
         supporting: state.consentBoundByToken
-          ? "The token grants consent, so the screen is skipped"
-          : "Ask permission before KYC checks",
+          ? UseSmileIDSampleStrings.settingsConsentBound
+          : UseSmileIDSampleStrings.settingsConsentBody,
         setting: .consentStep,
         testId: UseSmileIDSampleTestIds.settingConsentStep,
         enabled: !state.consentBoundByToken
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Instruction screen",
+        title: UseSmileIDSampleStrings.settingsInstructions,
         icon: SmileIcons.instructions,
-        supporting: "Prep tips before capture",
+        supporting: UseSmileIDSampleStrings.settingsInstructionsBody,
         setting: .instructionsStep,
         testId: UseSmileIDSampleTestIds.settingInstructionsStep
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Preview screen",
+        title: UseSmileIDSampleStrings.settingsPreview,
         icon: SmileIcons.preview,
-        supporting: "Confirm or retake after capture",
+        supporting: UseSmileIDSampleStrings.settingsPreviewBody,
         setting: .previewStep,
         testId: UseSmileIDSampleTestIds.settingPreviewStep
       )
@@ -257,9 +290,9 @@ public struct SettingsScreen: View {
 
   /// The design draws no such section either; it sits with the other capture choices.
   private var documentCaptureSection: some View {
-    UseSmileIDSampleSectionSurface(label: "DOCUMENT CAPTURE") {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionDocumentCapture) {
       UseSmileIDSampleSettingRow(
-        title: "Capture mode",
+        title: UseSmileIDSampleStrings.settingsCaptureMode,
         supportingText: state.settings.captureMode.label,
         testId: UseSmileIDSampleTestIds.settingCaptureMode,
         onTap: onCaptureMode
@@ -270,25 +303,25 @@ public struct SettingsScreen: View {
       }
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Gallery upload",
+        title: UseSmileIDSampleStrings.settingsGalleryUpload,
         icon: SmileIcons.preview,
-        supporting: "The system picker needs no permission",
+        supporting: UseSmileIDSampleStrings.settingsGalleryUploadBody,
         setting: .galleryUpload,
         testId: UseSmileIDSampleTestIds.settingGalleryUpload
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Skip the back",
+        title: UseSmileIDSampleStrings.settingsSkipBack,
         icon: SmileIcons.instructions,
-        supporting: "A Skip button on the back-side capture",
+        supporting: UseSmileIDSampleStrings.settingsSkipBackBody,
         setting: .allowSkipBack,
         testId: UseSmileIDSampleTestIds.settingAllowSkipBack
       )
       UseSmileIDSampleRowDivider()
       switchRow(
-        title: "Selfie first",
+        title: UseSmileIDSampleStrings.settingsSelfieFirst,
         icon: SmileIcons.smile,
-        supporting: "The selfie before the document",
+        supporting: UseSmileIDSampleStrings.settingsSelfieFirstBody,
         setting: .selfieFirst,
         testId: UseSmileIDSampleTestIds.settingSelfieFirst
       )
@@ -360,5 +393,7 @@ public struct SettingsScreen: View {
     )
   }
 
-  private static let enhancedSmartSelfieTitle = "Enhanced SmartSelfie\u{2122}"
+  private static var enhancedSmartSelfieTitle: String {
+    UseSmileIDSampleStrings.settingsEnhancedSmartSelfie
+  }
 }

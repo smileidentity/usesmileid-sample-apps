@@ -5,7 +5,11 @@ public enum UseSmileIDSampleNavItem: String, CaseIterable, Sendable {
   case products, verifications, settings
 
   public var label: String {
-    rawValue.prefix(1).uppercased() + rawValue.dropFirst()
+    switch self {
+    case .products: UseSmileIDSampleStrings.navProducts
+    case .verifications: UseSmileIDSampleStrings.navVerifications
+    case .settings: UseSmileIDSampleStrings.navSettings
+    }
   }
 
   public var testId: String {
@@ -113,7 +117,7 @@ public struct UseSmileIDSampleNavBar: View {
     Button(action: onToken) {
       VStack(spacing: 0) {
         UseSmileIDSampleIcon(SmileIcons.tokenScan, tint: colors.foreground, size: SmileSpacing.sizeIconSm)
-        UseSmileIDSampleText("Token", style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: 8.5))
+        UseSmileIDSampleText(UseSmileIDSampleStrings.navToken, style: UseSmileIDSampleTheme.type.textStyleOverline.with(size: 8.5))
           .foregroundColor(colors.foreground)
       }
       .frame(minWidth: tokenSize, minHeight: tokenSize)

@@ -85,7 +85,7 @@ public struct UseSmileIDSampleDataFieldRow: View {
           .padding(-(Self.target - SmileSpacing.sizeIconLg) / 2)
       }
       .buttonStyle(.plain)
-      .accessibilityLabel("Copy \(label)")
+      .accessibilityLabel(UseSmileIDSampleStrings.commonCopyNamed(label: label))
       .useSmileIDSampleTestId(copyTestId)
     }
   }

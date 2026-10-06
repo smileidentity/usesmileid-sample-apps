@@ -1,6 +1,7 @@
 import {
   SMILE_ID_SAMPLE_NOTICE_WINDOW_MS,
   UseSmileIDSampleNoticeWindowProvider,
+  UseSmileIDSampleStringsProvider,
   UseSmileIDSampleThemeProvider,
   smileDarkColors,
   smileFontAssets,
@@ -20,6 +21,7 @@ import { useEffect } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useSmileIDSampleAppLanguage } from '../src/use-smile-id-sample-app-language';
 import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
@@ -105,51 +107,64 @@ export default function RootLayout() {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, argsLoaded, loadProfiles, seedFixtures]);
 
-  if (!fontsLoaded || !sessionLoaded || !argsLoaded || !profilesLoaded) {
+  const ready = fontsLoaded && sessionLoaded && argsLoaded && profilesLoaded;
+  const { language, deviceLanguages } = useSmileIDSampleAppLanguage(args.appLocale, ready);
+
+  if (!ready) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }
 
   return (
     <SafeAreaProvider>
-      <UseSmileIDSampleThemeProvider dark={dark}>
-        <UseSmileIDSampleNoticeWindowProvider value={noticeWindowMs}>
-          <StatusBar style={dark ? 'light' : 'dark'} />
-          {/* Names the button colour, as StatusBar does, despite the type's doc saying the bar's. */}
-          <NavigationBar style={dark ? 'light' : 'dark'} />
-          <Stack
-            screenOptions={{
-              headerShown: false,
-              contentStyle: { backgroundColor: colors.background },
-            }}
-          >
-            {/* Transparent, so the owner stays visible behind the sheet rather than being replaced. */}
-            <Stack.Screen
-              name="(products)/profiles/switch"
-              options={{
-                presentation: 'transparentModal',
-                animation: 'none',
-                contentStyle: { backgroundColor: 'transparent' },
+      <UseSmileIDSampleStringsProvider language={language} deviceLanguages={deviceLanguages}>
+        <UseSmileIDSampleThemeProvider dark={dark}>
+          <UseSmileIDSampleNoticeWindowProvider value={noticeWindowMs}>
+            <StatusBar style={dark ? 'light' : 'dark'} />
+            {/* Names the button colour, as StatusBar does, despite the type's doc saying the bar's. */}
+            <NavigationBar style={dark ? 'light' : 'dark'} />
+            <Stack
+              screenOptions={{
+                headerShown: false,
+                contentStyle: { backgroundColor: colors.background },
               }}
-            />
-            <Stack.Screen
-              name="(settings)/settings/capture-mode"
-              options={{
-                presentation: 'transparentModal',
-                animation: 'none',
-                contentStyle: { backgroundColor: 'transparent' },
-              }}
-            />
-            <Stack.Screen
-              name="(settings)/settings/appearance"
-              options={{
-                presentation: 'transparentModal',
-                animation: 'none',
-                contentStyle: { backgroundColor: 'transparent' },
-              }}
-            />
-          </Stack>
-        </UseSmileIDSampleNoticeWindowProvider>
-      </UseSmileIDSampleThemeProvider>
+            >
+              {/* Transparent, so the owner stays visible behind the sheet rather than being replaced. */}
+              <Stack.Screen
+                name="(products)/profiles/switch"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'none',
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              />
+              <Stack.Screen
+                name="(settings)/settings/capture-mode"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'none',
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              />
+              <Stack.Screen
+                name="(settings)/settings/appearance"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'none',
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              />
+              <Stack.Screen
+                name="(settings)/settings/language"
+                options={{
+                  presentation: 'transparentModal',
+                  animation: 'none',
+                  contentStyle: { backgroundColor: 'transparent' },
+                }}
+              />
+            </Stack>
+          </UseSmileIDSampleNoticeWindowProvider>
+        </UseSmileIDSampleThemeProvider>
+      </UseSmileIDSampleStringsProvider>
     </SafeAreaProvider>
   );
 }

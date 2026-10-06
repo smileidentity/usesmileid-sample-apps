@@ -111,6 +111,15 @@ jobs:
           DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=26.5
         run: ios/verify.sh ${{ matrix.phase }} ${{ matrix.class }}
 
+      - name: Upload the runner's rendering of failed goldens
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ios-goldens-recorded-${{ matrix.class || 'checks' }}
+          path: ios/build/snapshot-artifacts/**
+          if-no-files-found: ignore
+          retention-days: 7
+
       - name: Keep the UI test result bundle when the lane reds
         if: failure()
         uses: actions/upload-artifact@v7

@@ -43,7 +43,7 @@ class UseSmileIDSampleJobDatesTest {
             job("older", createdAtMillis = today - 2 * MILLIS_PER_DAY),
         )
         assertEquals(
-            listOf("TODAY", "YESTERDAY", ""),
+            listOf(UseSmileIDSampleRelativeDay.Today, UseSmileIDSampleRelativeDay.Yesterday, null),
             jobs.groupByDay(today, Locale.US).map { it.relative },
         )
     }
@@ -70,7 +70,7 @@ class UseSmileIDSampleJobDatesTest {
             }.timeInMillis
             assertEquals(23L * 3_600_000L, at(30, 0) - at(29, 0))
             val days = listOf(job("dst", createdAtMillis = at(29, 12))).groupByDay(nowMillis = at(30, 12), locale = Locale.US)
-            assertEquals("YESTERDAY", days.single().relative)
+            assertEquals(UseSmileIDSampleRelativeDay.Yesterday, days.single().relative)
         } finally {
             TimeZone.setDefault(saved)
         }

@@ -170,7 +170,7 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
     inFlight.add(jobId);
     try {
       const row = get().find(jobId);
-      if (row === null) return { kind: 'failed', reason: 'The verification is no longer stored' };
+      if (row === null) return { kind: 'failed', reason: '', failure: 'notStored' };
       if (row.sessionId === null) return { kind: 'noServerJob' };
       if (session === null || session.expiresAtMillis <= nowMillis) return { kind: 'noSession' };
       // The partner, not the session: tokens expire and the same partner holds a newer one.
@@ -183,7 +183,7 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
       } catch (error) {
         // The type, never the message: this text goes on screen and a client error carries the URL.
         const name = error instanceof Error ? error.name : 'Error';
-        return { kind: 'failed', reason: `Unexpected error: ${name}` };
+        return { kind: 'failed', reason: name, failure: 'unexpected' };
       }
       if (outcome.kind !== 'updated') return outcome;
 
@@ -193,7 +193,7 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
         outcome.message,
         outcome.httpCode,
       );
-      return written ? outcome : { kind: 'failed', reason: 'The verification is no longer stored' };
+      return written ? outcome : { kind: 'failed', reason: '', failure: 'notStored' };
     } finally {
       // Released even when the caller was cancelled, or the row is silently unrefreshable for the
       // rest of the process — which is what a `finally` buys that an early return does not.

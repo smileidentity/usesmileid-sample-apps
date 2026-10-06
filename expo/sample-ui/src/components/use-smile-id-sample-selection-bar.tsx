@@ -5,6 +5,7 @@ import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { atSize, atWeight } from '../theme/smile-type';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 const COUNT_SIZE = 14;
 const HINT_SIZE = 11.5;
@@ -20,6 +21,7 @@ type Props = {
 
 /// Replaces the nav bar in select mode. The count is its own node, so a flow asserts equality rather than parsing prose.
 export const UseSmileIDSampleSelectionBar = ({ selectedCount, onRemove, style }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
 
@@ -60,7 +62,7 @@ export const UseSmileIDSampleSelectionBar = ({ selectedCount, onRemove, style }:
             {`${selectedCount} selected`}
           </Text>
           <Text style={[atSize(theme.type.textStyleBodySm, HINT_SIZE), { color: theme.colors.textMuted }]}>
-            {selectedCount === 0 ? 'Tap rows to select' : 'Tap "Hide from List" to confirm'}
+            {selectedCount === 0 ? strings.verificationsTapRows : strings.verificationsTapHide}
           </Text>
         </View>
         <RemoveAction enabled={selectedCount > 0} onRemove={onRemove} />
@@ -71,6 +73,7 @@ export const UseSmileIDSampleSelectionBar = ({ selectedCount, onRemove, style }:
 
 /// The action reads Hide from List, never Remove or Delete: nothing is deleted at the API.
 const RemoveAction = ({ enabled, onRemove }: { enabled: boolean; onRemove: () => void }) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   return (
     <Pressable
@@ -103,7 +106,7 @@ const RemoveAction = ({ enabled, onRemove }: { enabled: boolean; onRemove: () =>
           { color: theme.colors.badge.errorText },
         ]}
       >
-        Hide from List
+        {strings.verificationsHideFromList}
       </Text>
     </Pressable>
   );

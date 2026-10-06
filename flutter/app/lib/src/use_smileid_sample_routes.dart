@@ -45,6 +45,9 @@ abstract final class UseSmileIDSampleRoutes {
   /// The appearance sheet, a LAYER over settings.
   static const String appearance = '/settings/appearance';
 
+  /// The language sheet, a LAYER over settings.
+  static const String language = '/settings/language';
+
   /// The token scanner, pushed above the shell.
   static const String scanToken = '/token/scan';
 
@@ -115,6 +118,7 @@ String useSmileIDSamplePageBehind(String location) => switch (location) {
   UseSmileIDSampleRoutes.scenarioDrawer => UseSmileIDSampleRoutes.settings,
   UseSmileIDSampleRoutes.captureMode => UseSmileIDSampleRoutes.settings,
   UseSmileIDSampleRoutes.appearance => UseSmileIDSampleRoutes.settings,
+  UseSmileIDSampleRoutes.language => UseSmileIDSampleRoutes.settings,
   UseSmileIDSampleRoutes.profileSwitch => UseSmileIDSampleRoutes.products,
   _ => location,
 };
@@ -228,6 +232,13 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
               pageBuilder: (_, _) => _ownerPage(
                 UseSmileIDSampleRoutes.settings,
                 const UseSmileIDSampleSettingsTab(openAppearance: true),
+              ),
+            ),
+            GoRoute(
+              path: UseSmileIDSampleRoutes.language,
+              pageBuilder: (_, _) => _ownerPage(
+                UseSmileIDSampleRoutes.settings,
+                const UseSmileIDSampleSettingsTab(openLanguage: true),
               ),
             ),
           ],

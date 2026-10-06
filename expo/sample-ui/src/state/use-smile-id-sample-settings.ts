@@ -1,5 +1,6 @@
 import { UseSmileIDSampleAppearance } from '../model/use-smile-id-sample-appearance';
 import { UseSmileIDSampleCaptureMode } from '../model/use-smile-id-sample-capture-mode';
+import { UseSmileIDSampleLanguage } from '../model/use-smile-id-sample-language';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 
 /// The Settings state. Three of these decide whether a step is composed into the flow at all.
@@ -20,6 +21,8 @@ export type UseSmileIDSampleSettings = {
   readonly captureMode: UseSmileIDSampleCaptureMode;
   /// Typed like `captureMode`; System follows the device.
   readonly appearance: UseSmileIDSampleAppearance;
+  /// Typed like `appearance`; System follows the device's own language.
+  readonly language: UseSmileIDSampleLanguage;
 };
 
 export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
@@ -33,6 +36,7 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   selfieFirst: false,
   captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
   appearance: UseSmileIDSampleAppearance.System,
+  language: UseSmileIDSampleLanguage.System,
 };
 
 /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses.

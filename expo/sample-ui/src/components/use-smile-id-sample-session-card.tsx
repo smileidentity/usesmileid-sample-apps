@@ -12,6 +12,7 @@ import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 const LABEL_TRACKING = 1;
 const COUNTDOWN_SIZE = 24;
@@ -25,6 +26,7 @@ type Props = {
 
 /// The active token session and its m:ss countdown, on a gradient that composites against the page.
 export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   // The gradient is scheme-independent, so its ink is too: colors.surface is #272a35 in dark.
   const ink = lightColors.color.text.inverse;
@@ -73,7 +75,7 @@ export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Pro
       >
         <View style={[styles.text, { rowGap: theme.dimens.spacing.xxs }]}>
           <Text style={[theme.type.textStyleOverline, { letterSpacing: LABEL_TRACKING, color: ink }]}>
-            ACTIVE TOKEN SESSION
+            {strings.sessionActive}
           </Text>
           <Text
             style={[
@@ -81,7 +83,7 @@ export const UseSmileIDSampleSessionCard = ({ sessionId, remaining, style }: Pro
               { color: ink },
             ]}
           >
-            {`Linked to session ${sessionId}`}
+            {strings.sessionLinkedTo({ sessionId })}
           </Text>
         </View>
         <Text

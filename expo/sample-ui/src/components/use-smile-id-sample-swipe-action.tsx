@@ -5,6 +5,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { lightColors } from '../tokens';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   onAction: () => void;
@@ -14,6 +15,7 @@ type Props = {
 
 /// The platform swipe gesture; the design only fixes the revealed action's treatment.
 export const UseSmileIDSampleSwipeAction = ({ onAction, testID, children }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const revealWidth = theme.dimens.space[64] + theme.dimens.spacing.md;
 
@@ -43,7 +45,7 @@ export const UseSmileIDSampleSwipeAction = ({ onAction, testID, children }: Prop
           />
           {/* Labelled Hide, matching the selection bar: nothing is deleted at the API. */}
           <Text style={[theme.type.textStyleOverline, { color: lightColors.color.text.inverse }]}>
-            Hide
+            {strings.commonHide}
           </Text>
         </View>
       )}

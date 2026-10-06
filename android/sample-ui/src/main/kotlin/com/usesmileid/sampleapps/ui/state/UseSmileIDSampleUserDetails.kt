@@ -1,6 +1,10 @@
 package com.usesmileid.sampleapps.ui.state
 
+import androidx.annotation.StringRes
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import com.usesmileid.sampleapps.ui.R
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -25,7 +29,8 @@ data class UseSmileIDSampleUserDetails(
             contactProblem == null
 
     /** Why the email or phone would fail the job, email first; null when both would pass. */
-    val contactProblem: String?
+    @get:StringRes
+    val contactProblem: Int?
         get() = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
             ?: UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
 
@@ -71,26 +76,28 @@ data class UseSmileIDSampleUserDetailsRequirement(
     }
 
     /** A contact row stops saying "optional" the moment one of the two is actually required. */
-    fun labelFor(field: UseSmileIDSampleUserField): String = when {
+    @StringRes
+    fun labelFor(field: UseSmileIDSampleUserField): Int = when {
         !contact -> field.label
-        field == UseSmileIDSampleUserField.Email -> "Email"
-        field == UseSmileIDSampleUserField.Phone -> "Phone"
+        field == UseSmileIDSampleUserField.Email -> R.string.sample_user_field_email
+        field == UseSmileIDSampleUserField.Phone -> R.string.sample_user_field_phone
         else -> field.label
     }
 
     /** The sentence under the form, which has to name what is actually outstanding. */
-    val prompt: String
-        get() = buildList {
-            if (firstName) add("first name")
-            if (lastName) add("last name")
-            if (contact) add("an email or phone number")
-        }.let { outstanding ->
-            when {
-                outstanding.isEmpty() -> "Tap any field to edit."
-                outstanding.size == 1 -> "${outstanding.single().replaceFirstChar(Char::titlecase)} is required."
-                else -> "Required: ${outstanding.joinToString(", ")}."
-            }
+    @Composable
+    fun prompt(): String {
+        val outstanding = buildList {
+            if (firstName) add(UseSmileIDSampleStrings.userRequirementFirstName)
+            if (lastName) add(UseSmileIDSampleStrings.userRequirementLastName)
+            if (contact) add(UseSmileIDSampleStrings.userRequirementContact)
         }
+        return when {
+            outstanding.isEmpty() -> UseSmileIDSampleStrings.userDetailsEditHint
+            outstanding.size == 1 -> UseSmileIDSampleStrings.userRequirementOne(outstanding.single())
+            else -> UseSmileIDSampleStrings.userRequirementMany(outstanding.joinToString(UseSmileIDSampleStrings.userRequirementSeparator))
+        }.replaceFirstChar(Char::titlecase)
+    }
 }
 
 /**
@@ -104,11 +111,16 @@ fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUs
 )
 
 /** Which user-details row changed, so the form reports one callback rather than four. */
-enum class UseSmileIDSampleUserField(val id: String, val label: String, val placeholder: String, val required: Boolean) {
-    FirstName("firstName", "First name", "Add first name", required = true),
-    LastName("lastName", "Last name", "Add last name", required = true),
-    Email("email", "Email (optional)", "name@company.com", required = false),
-    Phone("phone", "Phone (optional)", "+254 700 000 000", required = false),
+enum class UseSmileIDSampleUserField(
+    val id: String,
+    @StringRes val label: Int,
+    @StringRes val placeholder: Int,
+    val required: Boolean,
+) {
+    FirstName("firstName", R.string.sample_user_field_first_name, R.string.sample_user_field_first_name_placeholder, required = true),
+    LastName("lastName", R.string.sample_user_field_last_name, R.string.sample_user_field_last_name_placeholder, required = true),
+    Email("email", R.string.sample_user_field_email_optional, R.string.sample_user_field_email_placeholder, required = false),
+    Phone("phone", R.string.sample_user_field_phone_optional, R.string.sample_user_field_phone_placeholder, required = false),
     ;
 
     fun read(details: UseSmileIDSampleUserDetails) = when (this) {
@@ -128,8 +140,9 @@ enum class UseSmileIDSampleUserField(val id: String, val label: String, val plac
 
 /** The email and phone checks from `spec/contact-rules.json`, which mirror the v3 API's own request schema. */
 object UseSmileIDSampleContactRules {
-    const val EMAIL_ERROR = "Enter an email like name@company.com."
-    const val PHONE_ERROR = "Enter the number with its country code, like +254 700 000 000."
+    @StringRes val EMAIL_ERROR = R.string.sample_user_field_email_error
+
+    @StringRes val PHONE_ERROR = R.string.sample_user_field_phone_error
 
     private val email = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$")
     private val phoneSeparators = Regex("[\\s().-]")
@@ -142,7 +155,8 @@ object UseSmileIDSampleContactRules {
     }
 
     /** Why [value] would fail the job as [field], or null when it would pass; blank always passes. */
-    fun problem(field: UseSmileIDSampleUserField, value: String): String? {
+    @StringRes
+    fun problem(field: UseSmileIDSampleUserField, value: String): Int? {
         val submitted = submitted(field, value)
         if (submitted.isEmpty()) return null
         return when (field) {

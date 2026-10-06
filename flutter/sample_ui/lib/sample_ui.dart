@@ -88,4 +88,6 @@ export 'src/tokens/smile_icons.dart';
 export 'src/tokens/smile_product_hues.dart';
 export 'src/tokens/smile_tokens.dart';
 export 'src/use_smileid_sample_marks.dart';
+export 'src/use_smileid_sample_strings.dart';
+export 'src/use_smileid_sample_strings_scope.dart';
 export 'src/use_smileid_sample_test_ids.dart';

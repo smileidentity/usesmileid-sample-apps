@@ -30,20 +30,21 @@ public struct DocumentPickerSheet: View {
 
   public var body: some View {
     UseSmileIDSampleFullHeightBottomSheet(
-      title: "Document",
+      title: UseSmileIDSampleStrings.pickerDocumentTitle,
       testId: UseSmileIDSampleTestIds.documentSheet,
       onClose: onClose
     ) {
       UseSmileIDSampleCataloguePicker(
         catalogue: catalogue,
-        what: "documents",
+        loadingLabel: UseSmileIDSampleStrings.pickerDocumentLoading,
+        failedLabel: UseSmileIDSampleStrings.pickerDocumentLoadFailed,
         query: $query,
-        searchPlaceholder: "Search document",
+        searchPlaceholder: UseSmileIDSampleStrings.pickerDocumentSearch,
         searchTestId: UseSmileIDSampleTestIds.documentSearch,
         label: \.name,
         emptyTestId: UseSmileIDSampleTestIds.documentEmpty,
-        emptyLabel: "No document matches \u{201C}\(query)\u{201D}",
-        nothingToList: ("No documents for \(country?.name ?? "this country")", "Choose another country"),
+        emptyLabel: UseSmileIDSampleStrings.pickerDocumentNoMatch(query: query),
+        nothingToList: (UseSmileIDSampleStrings.pickerDocumentEmpty(country: country?.name ?? UseSmileIDSampleStrings.pickerThisCountry), UseSmileIDSampleStrings.pickerChooseAnotherCountry),
         onRetry: onRetry
       ) { document in
         UseSmileIDSampleOptionRow(

@@ -1,3 +1,5 @@
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+
 /// Where the scanner is.
 export type UseSmileIDSampleScanState =
   | { readonly kind: 'searching' }
@@ -8,8 +10,12 @@ export type UseSmileIDSampleScanState =
 
 /// Why the scanner opened, worded once for every host.
 export const UseSmileIDSampleScanReason = {
-  sessionEnded: 'Token session ended. Scan to continue where you left off.',
-  sessionNeeded: 'Scan a token to start this verification.',
+  sessionEnded: 'sessionEnded',
+  sessionNeeded: 'sessionNeeded',
 } as const;
 
 export type UseSmileIDSampleScanReason = keyof typeof UseSmileIDSampleScanReason;
+
+/// The sentence shown in place of the generic caption.
+export const smileIDSampleScanReasonCaption = (reason: UseSmileIDSampleScanReason, strings: UseSmileIDSampleStrings): string =>
+  reason === 'sessionEnded' ? strings.scanReasonSessionEnded : strings.scanReasonNeeded;

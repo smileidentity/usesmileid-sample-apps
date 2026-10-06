@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import '../model/use_smileid_sample_environment.dart';
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_token_decoder.dart';
 
 /// A linked session, held as an absolute deadline.
@@ -66,7 +67,7 @@ class UseSmileIDSampleTokenSession {
   /// Redacted, so the credential never reaches a log.
   @override
   String toString() =>
-      'UseSmileIDSampleTokenSession(id: $id, environment: ${environment.label}, '
+      'UseSmileIDSampleTokenSession(id: $id, environment: ${environment.id}, '
       'expiresAtMillis: $expiresAtMillis)';
 }
 
@@ -88,7 +89,8 @@ String useSmileIDSampleCountdown(Duration remaining) {
 /// What the profile's callback URL row reads instead of its value while this session runs.
 extension UseSmileIDSampleCallbackOverride on UseSmileIDSampleTokenSession {
   /// The token's own URL wins when it binds one; otherwise the token's partner default applies.
-  String get callbackOverrideCaption => bindings.callbackUrl != null
-      ? 'Set by the scanned token'
-      : "The scanned token's partner default applies";
+  String callbackOverrideCaption(UseSmileIDSampleStrings strings) =>
+      bindings.callbackUrl != null
+      ? strings.tokenCallbackSet
+      : strings.tokenCallbackDefault;
 }

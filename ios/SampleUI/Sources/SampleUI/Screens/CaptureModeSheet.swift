@@ -11,7 +11,7 @@ public struct CaptureModeSheet: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Capture mode", testId: UseSmileIDSampleTestIds.captureModeSheet) {
+    UseSmileIDSampleBottomSheet(title: UseSmileIDSampleStrings.captureModeTitle, testId: UseSmileIDSampleTestIds.captureModeSheet) {
       ForEach(UseSmileIDSampleCaptureMode.allCases, id: \.self) { mode in
         UseSmileIDSampleOptionRow(
           label: mode.label,

@@ -72,6 +72,11 @@ if runs checks; then
 fi
 
 if runs checks; then
+  echo "==> strings are current"
+  # Generated from spec/l10n/; a hand edit fails here.
+  python3 "$REPO_ROOT/scripts/sync_l10n.py" --check --platform ios
+  python3 "$REPO_ROOT/scripts/test_sync_l10n.py" >/dev/null
+
   echo "==> icons are current"
   # Generated from design/icons/, which lives in this repo rather than the design system, so this
   # needs no secret and always runs.
@@ -117,7 +122,9 @@ if runs checks; then
   # on — DESTINATION is pinned to the same iPhone 17 Pro the SDK repo's snapshot gate uses.
   # Re-record an intentional change with TEST_RUNNER_SNAPSHOT_TESTING_RECORD=all (xcodebuild forwards only
   # TEST_RUNNER_ variables; the bare name records nothing) and commit what it writes.
-  (cd SampleUI && xcodebuild test -scheme SampleUI -destination "$DESTINATION" -only-testing:SampleUIGoldenTests -quiet)
+  # A failed snapshot is written here, so CI can publish the runner's rendering as the new baseline.
+  (cd SampleUI && TEST_RUNNER_SNAPSHOT_ARTIFACTS="$PWD/../build/snapshot-artifacts" \
+    xcodebuild test -scheme SampleUI -destination "$DESTINATION" -only-testing:SampleUIGoldenTests -quiet)
 fi
 
 if runs checks; then

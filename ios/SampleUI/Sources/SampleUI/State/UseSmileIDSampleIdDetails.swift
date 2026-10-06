@@ -151,13 +151,15 @@ public enum UseSmileIDSampleCaptureAs: String, CaseIterable, Sendable {
 
   /// The sheet's first row, which clears the override so the document decides.
   public static let matchDocumentId = "matchDocument"
-  public static let matchDocumentLabel = "Match document"
+  public static var matchDocumentLabel: String {
+    UseSmileIDSampleStrings.captureAsMatchDocument
+  }
 
   public var label: String {
     switch self {
-    case .greenBook: "Green Book preset"
-    case .passport: "Passport preset"
-    case .genericDocument: "Generic document"
+    case .greenBook: UseSmileIDSampleStrings.captureAsGreenBook
+    case .passport: UseSmileIDSampleStrings.captureAsPassport
+    case .genericDocument: UseSmileIDSampleStrings.captureAsGenericDocument
     }
   }
 }
@@ -166,7 +168,7 @@ public enum UseSmileIDSampleDocumentOrientation: String, CaseIterable, Sendable 
   case landscape, portrait
 
   public var label: String {
-    self == .landscape ? "Landscape" : "Portrait"
+    self == .landscape ? UseSmileIDSampleStrings.genericDocumentLandscape : UseSmileIDSampleStrings.genericDocumentPortrait
   }
 }
 
@@ -185,10 +187,10 @@ public enum UseSmileIDSampleAspectRatio: String, CaseIterable, Sendable {
 
   public var label: String {
     switch self {
-    case .off: "Off"
-    case .card: "Card 1.586"
-    case .passport: "Passport 1.309"
-    case .booklet: "Booklet 0.748"
+    case .off: UseSmileIDSampleStrings.genericDocumentRatioOff
+    case .card: UseSmileIDSampleStrings.genericDocumentRatioCard
+    case .passport: UseSmileIDSampleStrings.genericDocumentRatioPassport
+    case .booklet: UseSmileIDSampleStrings.genericDocumentRatioBooklet
     }
   }
 }
@@ -235,19 +237,19 @@ public struct UseSmileIDSampleResolvedCaptureAs: Equatable, Sendable {
 
   /// The trigger text from `spec/catalogue-rules.json` captureAs.
   public func triggerText() -> String {
-    let sides = captureBothSides && hasBackSide ? "front and back" : "front only"
+    let sides = captureBothSides && hasBackSide ? UseSmileIDSampleStrings.captureAsFrontAndBack : UseSmileIDSampleStrings.captureAsFrontOnly
     let orientation = genericDocument.orientation.label.lowercased()
     if captureAs != .genericDocument {
-      return "\(captureAs.label) · \(matched ? "matches document" : "chosen")"
+      return matched ? UseSmileIDSampleStrings.captureAsMatches(captureAs: captureAs.label) : UseSmileIDSampleStrings.captureAsChosen(captureAs: captureAs.label)
     }
     return matched
-      ? "\(UseSmileIDSampleCaptureAs.genericDocument.label) · \(orientation) · \(sides)"
-      : "\(genericDocument.displayName) · \(orientation) · \(sides) · chosen"
+      ? UseSmileIDSampleStrings.captureAsGenericSummary(captureAs: UseSmileIDSampleCaptureAs.genericDocument.label, orientation: orientation, sides: sides)
+      : UseSmileIDSampleStrings.captureAsGenericNamedSummary(name: genericDocument.displayName, orientation: orientation, sides: sides)
   }
 
   /// The sheet's Match row, naming what the document resolves to.
   public var matchRowLabel: String {
-    "\(UseSmileIDSampleCaptureAs.matchDocumentLabel) (\(captureAs.label))"
+    UseSmileIDSampleStrings.captureAsMatchNamed(captureAs: captureAs.label)
   }
 }
 

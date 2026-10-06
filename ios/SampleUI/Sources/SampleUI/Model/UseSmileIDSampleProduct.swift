@@ -8,8 +8,12 @@ public enum UseSmileIDSampleProductSection: String, CaseIterable, Sendable {
   case authentication = "Authentication"
   case verifications = "Onboarding"
 
+  /// The heading in the app's language; the raw value stays the English the spec records.
   public var label: String {
-    rawValue
+    switch self {
+    case .authentication: UseSmileIDSampleStrings.productsSectionAuthentication
+    case .verifications: UseSmileIDSampleStrings.productsSectionOnboarding
+    }
   }
 }
 
@@ -30,34 +34,34 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
   /// The SDK's job-type name in full, which the verifications row and the result card read.
   public var label: String {
     switch self {
-    case .smartSelfieEnrollment: "SmartSelfie Enrollment"
-    case .smartSelfieAuth: "SmartSelfie Authentication"
-    case .documentVerification: "Document Verification"
-    case .enhancedDocumentVerification: "Enhanced Document Verification"
-    case .residencyDocumentVerification: "Residency Document Verification"
-    case .biometricKyc: "Biometric KYC"
-    case .enhancedKyc: "Enhanced KYC"
+    case .smartSelfieEnrollment: UseSmileIDSampleStrings.productSmartSelfieEnrollment
+    case .smartSelfieAuth: UseSmileIDSampleStrings.productSmartSelfieAuthentication
+    case .documentVerification: UseSmileIDSampleStrings.productDocumentVerification
+    case .enhancedDocumentVerification: UseSmileIDSampleStrings.productEnhancedDocumentVerification
+    case .residencyDocumentVerification: UseSmileIDSampleStrings.productResidencyDocumentVerification
+    case .biometricKyc: UseSmileIDSampleStrings.productBiometricKyc
+    case .enhancedKyc: UseSmileIDSampleStrings.productEnhancedKyc
     }
   }
 
   /// The card's two runs, shortened to fit its text column.
   public var cardTitle: String {
     switch self {
-    case .smartSelfieEnrollment: "Registration"
-    case .smartSelfieAuth: "Auth"
-    case .documentVerification: "Document"
-    case .enhancedDocumentVerification: "Enhanced Doc."
-    case .residencyDocumentVerification: "Residency Doc."
-    case .biometricKyc: "Biometric"
-    case .enhancedKyc: "Enhanced"
+    case .smartSelfieEnrollment: UseSmileIDSampleStrings.productCardRegistration
+    case .smartSelfieAuth: UseSmileIDSampleStrings.productCardAuth
+    case .documentVerification: UseSmileIDSampleStrings.productCardDocument
+    case .enhancedDocumentVerification: UseSmileIDSampleStrings.productCardEnhancedDoc
+    case .residencyDocumentVerification: UseSmileIDSampleStrings.productCardResidencyDoc
+    case .biometricKyc: UseSmileIDSampleStrings.productCardBiometric
+    case .enhancedKyc: UseSmileIDSampleStrings.productCardEnhanced
     }
   }
 
   public var cardFamily: String {
     switch self {
     case .smartSelfieEnrollment, .smartSelfieAuth: UseSmileIDSampleMarks.smartSelfie
-    case .documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification: "Verification"
-    case .biometricKyc, .enhancedKyc: "KYC"
+    case .documentVerification, .enhancedDocumentVerification, .residencyDocumentVerification: UseSmileIDSampleStrings.productFamilyVerification
+    case .biometricKyc, .enhancedKyc: UseSmileIDSampleStrings.productFamilyKyc
     }
   }
 

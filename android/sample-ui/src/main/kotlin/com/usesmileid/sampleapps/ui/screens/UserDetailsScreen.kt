@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import androidx.compose.ui.res.stringResource
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,7 +34,6 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import androidx.compose.ui.graphics.Color
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
@@ -78,8 +79,8 @@ fun UserDetailsScreen(
         ) {
             item {
                 UseSmileIDSampleProfileRow(
-                    organisation = profile?.title ?: UseSmileIDSampleProfiles.NO_PROFILE_LABEL,
-                    supportingText = if (profile == null) "Your details below will create one" else "Tap to switch profile",
+                    organisation = profile?.title ?: UseSmileIDSampleStrings.profilesNoProfile,
+                    supportingText = if (profile == null) UseSmileIDSampleStrings.userDetailsNoProfile else UseSmileIDSampleStrings.userDetailsSwitchProfile,
                     initials = profile?.initials.orEmpty(),
                     avatarColor = profileColor,
                     selected = false,
@@ -92,14 +93,14 @@ fun UserDetailsScreen(
             item {
                 UseSmileIDSampleSectionSurface(
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                    label = "YOUR DETAILS",
+                    label = UseSmileIDSampleStrings.userDetailsSection,
                 ) {
                     if (profile == null) {
                         UseSmileIDSampleKeyValueEditRow(
-                            label = "Profile name (optional)",
+                            label = UseSmileIDSampleStrings.userDetailsProfileName,
                             value = organisation,
                             onValueChange = onOrganisationChange,
-                            placeholder = "Shown on the consent screen",
+                            placeholder = UseSmileIDSampleStrings.userDetailsProfileNameHint,
                             required = false,
                             testId = UseSmileIDSampleTestIds.userDetailsField(ORGANISATION_FIELD_ID),
                         )
@@ -111,10 +112,10 @@ fun UserDetailsScreen(
                         // cannot be prefilled either.
                         val supplied = requirement.supplies(field)
                         UseSmileIDSampleKeyValueEditRow(
-                            label = requirement.labelFor(field),
+                            label = stringResource(requirement.labelFor(field)),
                             value = if (supplied) "" else field.read(details),
                             onValueChange = { onFieldChange(field, it) },
-                            placeholder = if (supplied) "Provided by token" else field.placeholder,
+                            placeholder = if (supplied) UseSmileIDSampleStrings.userDetailsFromToken else stringResource(field.placeholder),
                             required = false,
                             enabled = !supplied,
                             keyboardOptions = field.keyboardOptions,
@@ -128,9 +129,9 @@ fun UserDetailsScreen(
                 val problem = details.contactProblem
                 Text(
                     text = when {
-                        problem != null -> problem
-                        details.satisfies(requirement) -> "Tap any field to edit."
-                        else -> requirement.prompt
+                        problem != null -> stringResource(problem)
+                        details.satisfies(requirement) -> UseSmileIDSampleStrings.userDetailsEditHint
+                        else -> requirement.prompt()
                     },
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
                     color = if (problem != null) UseSmileIDSampleTheme.colors.input.borderError else UseSmileIDSampleTheme.colors.textMuted,
@@ -161,7 +162,7 @@ fun UserDetailsScreen(
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
-                                text = profile?.let { "Save to ${it.title}" } ?: "Save as a new profile",
+                                text = profile?.let { UseSmileIDSampleStrings.userDetailsSaveTo(it.title) } ?: UseSmileIDSampleStrings.userDetailsSaveNew,
                                 style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = REMEMBER_TEXT_SIZE),
                                 color = UseSmileIDSampleTheme.colors.textBody,
                                 modifier = Modifier.weight(1f),
@@ -178,7 +179,7 @@ fun UserDetailsScreen(
             item { Spacer(modifier = Modifier.height(SmileDimens.spacingLg)) }
         }
         UseSmileIDSampleButton(
-            text = "Continue",
+            text = UseSmileIDSampleStrings.commonContinue,
             onClick = {
                 autofill?.cancel()
                 onContinue()

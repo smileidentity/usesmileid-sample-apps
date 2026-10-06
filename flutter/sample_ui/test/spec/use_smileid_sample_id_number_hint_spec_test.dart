@@ -73,10 +73,10 @@ void main() {
       regex: '^[0-9',
     );
     expect(
-      UseSmileIDSampleIdNumberHint.placeholder(type),
+      UseSmileIDSampleIdNumberHint.placeholder(type, _en),
       'Enter your Tax number',
     );
-    expect(UseSmileIDSampleIdNumberHint.error(type, 'anything'), isNull);
+    expect(UseSmileIDSampleIdNumberHint.error(type, 'anything', _en), isNull);
   });
 
   test('a type with no regex checks nothing rather than locking Continue', () {
@@ -88,15 +88,15 @@ void main() {
       regex: '',
     );
     expect(
-      UseSmileIDSampleIdNumberHint.placeholder(type),
+      UseSmileIDSampleIdNumberHint.placeholder(type, _en),
       'Enter your Tax number',
     );
-    expect(UseSmileIDSampleIdNumberHint.error(type, '12345'), isNull);
+    expect(UseSmileIDSampleIdNumberHint.error(type, '12345', _en), isNull);
   });
 
   test('the field waits for a type, then shows the example', () {
     expect(
-      UseSmileIDSampleIdNumberHint.placeholder(null),
+      UseSmileIDSampleIdNumberHint.placeholder(null, _en),
       'Choose an ID type first',
     );
     const UseSmileIDSampleKycIdType type = UseSmileIDSampleKycIdType(
@@ -105,10 +105,15 @@ void main() {
       label: 'National ID',
       regex: r'^[0-9]{11}$',
     );
-    expect(UseSmileIDSampleIdNumberHint.placeholder(type), 'e.g. 00000000000');
     expect(
-      UseSmileIDSampleIdNumberHint.error(type, '123'),
+      UseSmileIDSampleIdNumberHint.placeholder(type, _en),
+      'e.g. 00000000000',
+    );
+    expect(
+      UseSmileIDSampleIdNumberHint.error(type, '123', _en),
       "Doesn't match the National ID format, e.g. 00000000000",
     );
   });
 }
+
+final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

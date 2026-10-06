@@ -11,6 +11,7 @@ import {
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// One third-party component's notice, as the generator emits it.
 export type UseSmileIDSampleLicence = {
@@ -31,11 +32,12 @@ type Props = {
 /// Every notice the bundle ships. A flat list rather than section cards: five hundred rows inside one card mount all of them at once.
 export const LicensesScreen = ({ licences, onBack, style }: Props) => {
   const theme = useSmileIDSampleTheme();
+  const strings = useSmileIDSampleStrings();
   const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }, style]}>
-      <UseSmileIDSampleTopAppBar title="Open-source licenses" onBack={onBack} />
+      <UseSmileIDSampleTopAppBar title={strings.licensesTitle} onBack={onBack} />
       <ScrollView
         testID={UseSmileIDSampleTestIds.LICENSES_SCREEN}
         contentContainerStyle={{ paddingBottom: theme.dimens.spacing.lg }}
@@ -43,14 +45,14 @@ export const LicensesScreen = ({ licences, onBack, style }: Props) => {
         {licences.length === 0 ? (
           // Generated into the bundle at build time, so an empty list means the asset did not ship.
           <UseSmileIDSampleEmptyState
-            text="No notices bundled"
-            supportingText="The generated licenses.json is missing from this build"
+            text={strings.licensesEmptyTitle}
+            supportingText={strings.licensesEmptyBody}
             testID={UseSmileIDSampleTestIds.LICENSES_EMPTY}
           />
         ) : (
           <View>
             <UseSmileIDSampleSectionLabel
-              text={`OPEN-SOURCE COMPONENTS — ${licences.length}`}
+              text={strings.licensesSection({ count: licences.length })}
               style={{ paddingHorizontal: theme.dimens.spacing.md, paddingVertical: theme.dimens.spacing.xs }}
             />
             {licences.map((licence) => (

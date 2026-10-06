@@ -24,6 +24,7 @@ import {
 } from '../use-smile-id-sample-test-ids';
 import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleLanguageShown, useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// What the list renders. `jobs` is null until the store's first read: not loaded is not empty.
 export type UseSmileIDSampleVerificationsState = {
@@ -51,6 +52,8 @@ export const VerificationsScreen = ({
   bottomInset = 0,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
+  const language = useSmileIDSampleLanguageShown();
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const [filterId, setFilterId] = useState(smileIDSampleJobFilters[0]!.id);
@@ -82,10 +85,10 @@ export const VerificationsScreen = ({
     [jobs, filter],
   );
   const days = useMemo(
-    () => smileIDSampleGroupByDay(visible, state.nowMillis),
-    [visible, state.nowMillis],
+    () => smileIDSampleGroupByDay(visible, state.nowMillis, language),
+    [visible, state.nowMillis, language],
   );
-  const times = useMemo(() => smileIDSampleTimeLabels(visible), [visible]);
+  const times = useMemo(() => smileIDSampleTimeLabels(visible, language), [visible, language]);
   // A row's id is its position in the list as drawn, filter and day order applied, as on the other three.
   const positions = useMemo(
     () => new Map(days.flatMap((day) => day.jobs).map((job, position) => [job.id, position])),
@@ -130,7 +133,7 @@ export const VerificationsScreen = ({
           ]}
         >
           <Text style={[theme.type.textStyleHeadingPage, styles.title, { color: theme.colors.textTitle }]}>
-            Verifications
+            {strings.verificationsTitle}
           </Text>
           {(jobs ?? []).length > 0 ? (
             <Pressable
@@ -143,7 +146,7 @@ export const VerificationsScreen = ({
               style={[styles.selectToggle, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
             >
               <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
-                {selecting ? 'Cancel' : 'Select'}
+                {selecting ? strings.commonCancel : strings.verificationsSelect}
               </Text>
             </Pressable>
           ) : null}
@@ -160,7 +163,7 @@ export const VerificationsScreen = ({
           {smileIDSampleJobFilters.map((entry) => (
             <UseSmileIDSampleFilterChip
               key={entry.id}
-              label={entry.label}
+              label={entry.label(strings)}
               count={counts[entry.id] ?? 0}
               selected={entry.id === filter.id}
               onPress={() => setFilterId(entry.id)}
@@ -173,11 +176,11 @@ export const VerificationsScreen = ({
         {jobs !== null && visible.length === 0 ? (
           <UseSmileIDSampleEmptyState
             // Two texts behind one id: nothing submitted yet, versus nothing matching this filter.
-            text={jobs.length === 0 ? 'No verifications yet' : `Nothing ${filter.label.toLowerCase()}`}
+            text={jobs.length === 0 ? strings.verificationsEmptyTitle : strings.verificationsFilteredEmptyTitle({ filter: filter.label(strings).toLowerCase() })}
             supportingText={
               jobs.length === 0
-                ? 'Start a product above and the job lands here.'
-                : 'Other filters still have verifications.'
+                ? strings.verificationsEmptyBody
+                : strings.verificationsFilteredEmptyBody
             }
             testID={UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY}
           />
@@ -188,7 +191,16 @@ export const VerificationsScreen = ({
             key={`${day.relative}-${day.absolute}`}
             style={{ paddingHorizontal: theme.dimens.spacing.md, rowGap: theme.dimens.spacing.xs }}
           >
-            <UseSmileIDSampleDateGroupHeader relative={day.relative} absolute={day.absolute} />
+            <UseSmileIDSampleDateGroupHeader
+              relative={
+                day.relative === 'today'
+                  ? strings.verificationsToday
+                  : day.relative === 'yesterday'
+                    ? strings.verificationsYesterday
+                    : ''
+              }
+              absolute={day.absolute}
+            />
             {day.jobs.map((job) => (
               <JobEntry
                 key={job.id}

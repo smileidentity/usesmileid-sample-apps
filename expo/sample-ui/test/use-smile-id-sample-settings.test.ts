@@ -12,6 +12,9 @@ import {
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { smileIDSampleNavRows } from '../src/model/use-smile-id-sample-nav-row';
 import { spec } from './spec-file';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 describe('the appearance', () => {
   it('follows the device on a fresh install', () => {
@@ -27,7 +30,7 @@ describe('the appearance', () => {
     [UseSmileIDSampleAppearance.Dark, true, true, 'Dark'],
   ])('%s on deviceDark %s renders dark %s and reads %s', (appearance, deviceDark, dark, label) => {
     expect(smileIDSampleAppearanceIsDark(appearance, deviceDark)).toBe(dark);
-    expect(smileIDSampleAppearanceLabel(appearance, deviceDark)).toBe(label);
+    expect(smileIDSampleAppearanceLabel(appearance, deviceDark, strings)).toBe(label);
   });
 });
 

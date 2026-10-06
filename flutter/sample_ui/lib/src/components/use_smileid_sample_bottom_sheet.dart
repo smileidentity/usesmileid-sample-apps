@@ -4,6 +4,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
 import 'use_smileid_sample_top_app_bar.dart';
 
@@ -138,7 +139,7 @@ class UseSmileIDSampleSheetHeader extends StatelessWidget {
     child: Row(
       children: <Widget>[
         UseSmileIDSampleTopAppBarButton(
-          semanticLabel: 'Close $title',
+          semanticLabel: context.strings.commonCloseNamed(title: title),
           onTap: onClose,
           emphasis: UseSmileIDSampleTopAppBarEmphasis.filled,
           glyph: UseSmileIDSampleGlyphs.arrowBack,

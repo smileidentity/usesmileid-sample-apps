@@ -26,6 +26,8 @@ data class UseSmileIDSampleSettings(
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
     /** Typed like [captureMode]; System follows the device. */
     val appearance: UseSmileIDSampleAppearance = UseSmileIDSampleAppearance.System,
+    /** Typed like [appearance]; System follows the device's own language. */
+    val language: UseSmileIDSampleLanguage = UseSmileIDSampleLanguage.System,
 ) {
     /** Reads one row, so a caller can diff two states without naming every field. */
     operator fun get(setting: UseSmileIDSampleSetting): Boolean = when (setting) {
@@ -72,10 +74,10 @@ enum class UseSmileIDSampleSetting {
 }
 
 /** DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary. */
-enum class UseSmileIDSampleCaptureMode(val id: String, val label: String, val supportingText: String) {
-    Auto("auto", "Automatic", "Captures when the document is held steady"),
-    Manual("manual", "Manual", "The shutter shows at once"),
-    AutoWithFallback("autoWithFallback", "Automatic with manual fallback", "The shutter shows after 10 seconds"),
+enum class UseSmileIDSampleCaptureMode(val id: String) {
+    Auto("auto"),
+    Manual("manual"),
+    AutoWithFallback("autoWithFallback"),
 }
 
 /** The app's theme choice; System follows the device's own theme. */
@@ -91,11 +93,26 @@ enum class UseSmileIDSampleAppearance(val id: String) {
         Light -> false
         Dark -> true
     }
+}
 
-    /** System names the device's theme, never the one the app renders, so the row says why it looks the way it does. */
-    fun label(deviceDark: Boolean): String = when (this) {
-        System -> if (deviceDark) "System (Dark)" else "System (Light)"
-        Light -> "Light"
-        Dark -> "Dark"
+/** The app's language: System follows the device; the rest are in `spec/l10n/languages.json`. */
+enum class UseSmileIDSampleLanguage(val id: String, val endonym: String) {
+    System("system", ""),
+    English("en", "English"),
+    French("fr", "Français"),
+    Arabic("ar", "العربية"),
+    Hebrew("he", "עברית"),
+    ;
+
+    /** System resolves to the first device language the app ships, else English. */
+    fun resolved(deviceLanguages: List<String>): UseSmileIDSampleLanguage =
+        if (this != System) this else deviceLanguages.firstNotNullOfOrNull(::shipped) ?: English
+
+    companion object {
+        /** The shipped language a BCP 47 tag names, by its language subtag; Android still reports Hebrew as `iw`. */
+        fun shipped(tag: String): UseSmileIDSampleLanguage? {
+            val language = tag.substringBefore('-').substringBefore('_').lowercase().let { if (it == "iw") "he" else it }
+            return entries.firstOrNull { it != System && it.id == language }
+        }
     }
 }

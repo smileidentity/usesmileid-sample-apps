@@ -5,14 +5,16 @@ export const smileIDSampleConfirm = ({
   title,
   message,
   confirmLabel,
+  cancelLabel,
   onConfirm,
 }: {
   readonly title: string;
   readonly message: string;
   readonly confirmLabel: string;
+  readonly cancelLabel: string;
   readonly onConfirm: () => void;
 }): void =>
   Alert.alert(title, message, [
-    { text: 'Cancel', style: 'cancel' },
+    { text: cancelLabel, style: 'cancel' },
     { text: confirmLabel, style: 'destructive', onPress: onConfirm },
   ]);

@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.R
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 
@@ -36,8 +38,15 @@ sealed interface UseSmileIDSampleCatalogue<out T> {
     /** [advice] is the error state's supporting line, per `spec/catalogue-rules.json` failures. */
     data class Failed(
         val reason: String,
-        val advice: String = UseSmileIDSampleCatalogueRules.DEFAULT_ADVICE,
+        val advice: UseSmileIDSampleCatalogueAdvice = UseSmileIDSampleCatalogueRules.DEFAULT_ADVICE,
     ) : UseSmileIDSampleCatalogue<Nothing>
+}
+
+/** What a failed list tells the reader to do; [key] names its string in `spec/l10n`. */
+enum class UseSmileIDSampleCatalogueAdvice(val key: String, @StringRes val text: Int) {
+    Unauthorised("catalogue_advice_unauthorised", R.string.sample_catalogue_advice_unauthorised),
+    Forbidden("catalogue_advice_forbidden", R.string.sample_catalogue_advice_forbidden),
+    Offline("catalogue_advice_offline", R.string.sample_catalogue_advice_offline),
 }
 
 /** An ID type as `supported_id_types` returns it. */
@@ -159,13 +168,13 @@ object UseSmileIDSampleCatalogueRules {
     }
 
     /** The error state's supporting line for an HTTP [status], or null when there was no answer. */
-    fun advice(status: Int?): String = when (status) {
-        HTTP_UNAUTHORIZED -> "The server refused this session's token. Link a new session, then try again"
-        HTTP_FORBIDDEN -> "Access denied: production may not be enabled for this partner, or this network is not allowed"
+    fun advice(status: Int?): UseSmileIDSampleCatalogueAdvice = when (status) {
+        HTTP_UNAUTHORIZED -> UseSmileIDSampleCatalogueAdvice.Unauthorised
+        HTTP_FORBIDDEN -> UseSmileIDSampleCatalogueAdvice.Forbidden
         else -> DEFAULT_ADVICE
     }
 
-    const val DEFAULT_ADVICE = "Check your connection, then try again"
+    val DEFAULT_ADVICE = UseSmileIDSampleCatalogueAdvice.Offline
     private const val HTTP_UNAUTHORIZED = 401
     private const val HTTP_FORBIDDEN = 403
 

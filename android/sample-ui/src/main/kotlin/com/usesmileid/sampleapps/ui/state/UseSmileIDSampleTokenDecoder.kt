@@ -78,8 +78,21 @@ sealed interface UseSmileIDSampleTokenDecode {
     /** The session the claims describe — decoded only, never verified: the sample holds no signing key. */
     data class Decoded(val session: UseSmileIDSampleTokenSession) : UseSmileIDSampleTokenDecode
 
-    /** Names the claim or the structure that failed. Never a value, bar the `api_url` host, which is a public API host. */
-    data class Rejected(val reason: String) : UseSmileIDSampleTokenDecode
+    /** Names the claim or the structure that failed. */
+    data class Rejected(val reason: UseSmileIDSampleTokenRejection) : UseSmileIDSampleTokenDecode
+}
+
+/** Why a token was refused; it never carries a value bar the public `api_url` host. */
+sealed interface UseSmileIDSampleTokenRejection {
+    data object Segments : UseSmileIDSampleTokenRejection
+    data object PayloadEncoding : UseSmileIDSampleTokenRejection
+    data object PayloadJson : UseSmileIDSampleTokenRejection
+    data object IssuedAt : UseSmileIDSampleTokenRejection
+    data object Expiry : UseSmileIDSampleTokenRejection
+    data object ExpiryOrder : UseSmileIDSampleTokenRejection
+    data object ApiUrlMissing : UseSmileIDSampleTokenRejection
+    data class ApiUrlUnknown(val host: String) : UseSmileIDSampleTokenRejection
+    data object ApiUrlInvalid : UseSmileIDSampleTokenRejection
 }
 
 /**
@@ -98,23 +111,23 @@ object UseSmileIDSampleTokenDecoder {
     fun decode(token: String): UseSmileIDSampleTokenDecode {
         val segments = token.trim().split(".")
         if (segments.size != SEGMENTS || segments.any { !it.matches(BASE64_URL) }) {
-            return reject("A token is three dot-separated base64url segments; this is not.")
+            return reject(UseSmileIDSampleTokenRejection.Segments)
         }
         val claims = base64Url(segments[1])
-            ?: return reject("The token's payload segment is not base64url.")
+            ?: return reject(UseSmileIDSampleTokenRejection.PayloadEncoding)
         val json = parseTokenJson(claims) as? TokenJson.Obj
-            ?: return reject("The token's payload segment is not a JSON object.")
-        val issuedAt = json.seconds("iat") ?: return reject("The token carries no numeric iat claim.")
-        val expires = json.seconds("exp") ?: return reject("The token carries no numeric exp claim.")
-        if (expires <= issuedAt) return reject("The token's exp claim is not after its iat claim.")
+            ?: return reject(UseSmileIDSampleTokenRejection.PayloadJson)
+        val issuedAt = json.seconds("iat") ?: return reject(UseSmileIDSampleTokenRejection.IssuedAt)
+        val expires = json.seconds("exp") ?: return reject(UseSmileIDSampleTokenRejection.Expiry)
+        if (expires <= issuedAt) return reject(UseSmileIDSampleTokenRejection.ExpiryOrder)
         // Refused rather than defaulted: a silent sandbox fallback sends a production token to the
         // wrong host and comes back as a 401 that reads like a bad token.
         val apiUrl = json.string("api_url")?.takeIf { it.isNotBlank() }
-            ?: return reject("The token carries no api_url claim, so nothing says which environment it was minted for.")
+            ?: return reject(UseSmileIDSampleTokenRejection.ApiUrlMissing)
         val environment = environmentFor(apiUrl) ?: return reject(
             apiUrlHost(apiUrl)
-                ?.let { "The token's api_url names $it, which is not a Smile ID environment." }
-                ?: "The token's api_url is not a URL, so it names no environment.",
+                ?.let { UseSmileIDSampleTokenRejection.ApiUrlUnknown(it) }
+                ?: UseSmileIDSampleTokenRejection.ApiUrlInvalid,
         )
         return UseSmileIDSampleTokenDecode.Decoded(
             UseSmileIDSampleTokenSession(
@@ -179,7 +192,7 @@ object UseSmileIDSampleTokenDecoder {
         String(PAYLOAD_BASE64.decode(segment), Charsets.UTF_8)
     }.getOrNull()
 
-    private fun reject(reason: String) = UseSmileIDSampleTokenDecode.Rejected(reason)
+    private fun reject(reason: UseSmileIDSampleTokenRejection) = UseSmileIDSampleTokenDecode.Rejected(reason)
 
     private const val SEGMENTS = 3
     private const val MILLIS_PER_SECOND = 1000L

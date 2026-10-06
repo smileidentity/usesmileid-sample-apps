@@ -14,12 +14,16 @@ import {
   UseSmileIDSampleTopAppBarButton,
 } from '../components/use-smile-id-sample-top-app-bar';
 import type { UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
-import { UseSmileIDSampleScanReason, type UseSmileIDSampleScanState } from '../model/use-smile-id-sample-scan-state';
+import {
+  smileIDSampleScanReasonCaption,
+  type UseSmileIDSampleScanReason,
+  type UseSmileIDSampleScanState,
+} from '../model/use-smile-id-sample-scan-state';
 import type {
   UseSmileIDSampleSimulatedBindings,
   UseSmileIDSampleSimulatedSpan,
 } from '../model/use-smile-id-sample-simulated-scan';
-import { smileIDSampleDecodeToken } from '../state/use-smile-id-sample-token-decoder';
+import { smileIDSampleDecodeToken, smileIDSampleTokenRejectionText } from '../state/use-smile-id-sample-token-decoder';
 import {
   smileIDSampleCountdown,
   smileIDSampleSessionRemaining,
@@ -28,9 +32,8 @@ import {
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
-const SCAN_TITLE = 'Point at a Smile token QR';
-const SCAN_CAPTION = 'Line up the code inside the frame to link this device to a verification session.';
 const SCAN_BODY_SIZE = 12.5;
 /// Where a real token comes from.
 export const SMILE_ID_PORTAL_URL = 'https://portal.usesmileid.com/security-settings';
@@ -90,6 +93,7 @@ export const ScanTokenScreen = ({
   acceptsTaps = true,
   style,
 }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const [sheet, setSheet] = useState<UseSmileIDSampleScanSheetState>(smileIDSampleScanSheetDefaults);
   const [scan, setScan] = useState<UseSmileIDSampleScanState>({ kind: 'searching' });
@@ -114,8 +118,8 @@ export const ScanTokenScreen = ({
       return;
     }
     // A scanned code has no field, so its rejection goes in the pill.
-    if (fromField) setSheet((current) => ({ ...current, rejection: decoded.reason }));
-    else setScan({ kind: 'rejected', reason: decoded.reason });
+    if (fromField) setSheet((current) => ({ ...current, rejection: smileIDSampleTokenRejectionText(decoded.reason, strings) }));
+    else setScan({ kind: 'rejected', reason: smileIDSampleTokenRejectionText(decoded.reason, strings) });
   };
 
   useEffect(() => {
@@ -127,7 +131,7 @@ export const ScanTokenScreen = ({
     return () => clearTimeout(timer);
   }, [scan]);
 
-  const caption = reason == null ? SCAN_CAPTION : UseSmileIDSampleScanReason[reason];
+  const caption = reason == null ? strings.scanLineUp : smileIDSampleScanReasonCaption(reason, strings);
   const titleStyle = theme.type.textStyleTitle;
   const captionStyle = atSize(theme.type.textStyleCaption, SCAN_BODY_SIZE);
   const searching = scan.kind === 'searching';
@@ -150,11 +154,11 @@ export const ScanTokenScreen = ({
       style={[styles.screen, { backgroundColor: theme.colors.background }, style]}
     >
       <UseSmileIDSampleTopAppBar
-        title="Scan token"
+        title={strings.scanTitle}
         onBack={onBack}
         action={
           <UseSmileIDSampleTopAppBarButton
-            accessibilityLabel={torchOn ? 'Turn flash off' : 'Turn flash on'}
+            accessibilityLabel={torchOn ? strings.scanFlashOff : strings.scanFlashOn}
             onPress={() => onTorchToggle?.()}
             emphasis="Filled"
             glyph={(tint) => <UseSmileIDSampleIcon name="flash" tint={tint} />}
@@ -174,7 +178,7 @@ export const ScanTokenScreen = ({
             ]}
           >
             <UseSmileIDSampleScanGlyph />
-            <Text style={[titleStyle, styles.copy, { color: theme.colors.textTitle }]}>{SCAN_TITLE}</Text>
+            <Text style={[titleStyle, styles.copy, { color: theme.colors.textTitle }]}>{strings.scanPoint}</Text>
             <Text style={[captionStyle, styles.copy, { color: theme.colors.textMuted }]}>{caption}</Text>
             <PortalLine style={[captionStyle, styles.copy, { color: theme.colors.textMuted }]} onPress={onOpenPortal} />
           </ScrollView>
@@ -197,7 +201,7 @@ export const ScanTokenScreen = ({
               {/* Straight on the camera: a container was a white slab over the preview. */}
               {searching ? (
                 <>
-                  <Text style={[titleStyle, styles.copy, overCamera]}>{SCAN_TITLE}</Text>
+                  <Text style={[titleStyle, styles.copy, overCamera]}>{strings.scanPoint}</Text>
                   <Text style={[captionStyle, styles.copy, overCamera]}>{caption}</Text>
                   <PortalLine style={[captionStyle, styles.copy, overCamera]} onPress={onOpenPortal} />
                 </>
@@ -226,7 +230,7 @@ export const ScanTokenScreen = ({
                   .then((pasted) =>
                     setSheet((current) =>
                       pasted == null || pasted.trim().length === 0
-                        ? { ...current, rejection: 'The clipboard holds no text to paste.' }
+                        ? { ...current, rejection: strings.scanClipboardEmpty }
                         : { ...current, token: pasted, rejection: null },
                     ),
                   );
@@ -249,6 +253,7 @@ export const ScanTokenScreen = ({
 
 /// A phrase rather than a URL, which breaks mid-word on the narrowest phone at the largest type.
 const PortalLine = ({ style, onPress }: { style: StyleProp<TextStyle>; onPress?: () => void }) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   return (
     <Pressable
@@ -258,9 +263,9 @@ const PortalLine = ({ style, onPress }: { style: StyleProp<TextStyle>; onPress?:
       style={styles.portal}
     >
       <Text style={style}>
-        Get a v3 token from the{' '}
-        <Text style={{ color: theme.colors.textLink, textDecorationLine: 'underline' }}>Smile ID Portal</Text>, under
-        Security settings.
+        {strings.scanPortalPrefix}
+        <Text style={{ color: theme.colors.textLink, textDecorationLine: 'underline' }}>{strings.scanPortalLink}</Text>
+        {strings.scanPortalSuffix}
       </Text>
     </Pressable>
   );

@@ -10,6 +10,7 @@ import '../components/use_smileid_sample_text_input.dart';
 import '../state/use_smileid_sample_id_details.dart';
 import '../state/use_smileid_sample_settings.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// How the SDK photographs the document: Match document first, then the overrides; Generic document hands over to its sheet.
@@ -37,7 +38,7 @@ class UseSmileIDSampleCaptureAsSheet extends StatelessWidget {
     mainAxisSize: MainAxisSize.min,
     children: <Widget>[
       UseSmileIDSampleOptionRow(
-        label: matched.matchRowLabel,
+        label: matched.matchRowLabel(context.strings),
         selected: selected == null,
         onTap: () => onSelect(null),
         testId: UseSmileIDSampleTestIds.captureAsOption(
@@ -47,7 +48,7 @@ class UseSmileIDSampleCaptureAsSheet extends StatelessWidget {
       for (final UseSmileIDSampleCaptureAs option
           in UseSmileIDSampleCaptureAs.values)
         UseSmileIDSampleOptionRow(
-          label: option.label,
+          label: option.label(context.strings),
           selected: option == selected,
           onTap: () => onSelect(option),
           testId: UseSmileIDSampleTestIds.captureAsOption(option.id),
@@ -79,7 +80,7 @@ class UseSmileIDSampleCaptureModeSheet extends StatelessWidget {
       for (final UseSmileIDSampleCaptureMode mode
           in UseSmileIDSampleCaptureMode.values)
         UseSmileIDSampleOptionRow(
-          label: mode.label,
+          label: mode.label(context.strings),
           selected: mode == selected,
           onTap: () => onSelect(mode),
           testId: UseSmileIDSampleTestIds.captureModeOption(mode.id),
@@ -115,7 +116,7 @@ class UseSmileIDSampleAppearanceSheet extends StatelessWidget {
       for (final UseSmileIDSampleAppearance appearance
           in UseSmileIDSampleAppearance.values)
         UseSmileIDSampleOptionRow(
-          label: appearance.label(deviceDark: deviceDark),
+          label: appearance.label(context.strings, deviceDark: deviceDark),
           selected: appearance == selected,
           onTap: () => onSelect(appearance),
           testId: UseSmileIDSampleTestIds.appearanceOption(appearance.id),
@@ -154,19 +155,21 @@ class _UseSmileIDSampleGenericDocumentSheetState
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        const UseSmileIDSampleSectionLabel(text: 'DISPLAY NAME'),
+        UseSmileIDSampleSectionLabel(
+          text: context.strings.genericDocumentDisplayName,
+        ),
         const SizedBox(height: SmileDimens.spacingSm),
         UseSmileIDSampleTextInput(
           value: _draft.displayName,
           onChanged: (String value) =>
               setState(() => _draft = _draft.copyWith(displayName: value)),
-          placeholder: 'Document',
+          placeholder: context.strings.productCardDocument,
           testId: UseSmileIDSampleTestIds.genericDocumentName,
         ),
         const SizedBox(height: SmileDimens.spacingSm),
         UseSmileIDSampleSettingRow(
-          title: 'Back side',
-          supportingText: 'Capture the back after the front',
+          title: context.strings.genericDocumentBackSide,
+          supportingText: context.strings.genericDocumentBackSideHint,
           trailing: UseSmileIDSampleSwitch(
             value: _draft.hasBackSide,
             onChanged: (bool value) =>
@@ -175,7 +178,9 @@ class _UseSmileIDSampleGenericDocumentSheetState
           ),
         ),
         const SizedBox(height: SmileDimens.spacingSm),
-        const UseSmileIDSampleSectionLabel(text: 'ORIENTATION'),
+        UseSmileIDSampleSectionLabel(
+          text: context.strings.genericDocumentOrientation,
+        ),
         const SizedBox(height: SmileDimens.spacingSm),
         Wrap(
           spacing: SmileDimens.spacingXs,
@@ -184,7 +189,7 @@ class _UseSmileIDSampleGenericDocumentSheetState
             for (final UseSmileIDSampleDocumentOrientation orientation
                 in UseSmileIDSampleDocumentOrientation.values)
               UseSmileIDSampleFilterChip(
-                label: orientation.label,
+                label: orientation.label(context.strings),
                 count: null,
                 selected: orientation == _draft.orientation,
                 onTap: () => setState(
@@ -197,7 +202,9 @@ class _UseSmileIDSampleGenericDocumentSheetState
           ],
         ),
         const SizedBox(height: SmileDimens.spacingSm),
-        const UseSmileIDSampleSectionLabel(text: 'ASPECT RATIO'),
+        UseSmileIDSampleSectionLabel(
+          text: context.strings.genericDocumentAspectRatio,
+        ),
         const SizedBox(height: SmileDimens.spacingSm),
         Wrap(
           spacing: SmileDimens.spacingXs,
@@ -206,7 +213,7 @@ class _UseSmileIDSampleGenericDocumentSheetState
             for (final UseSmileIDSampleAspectRatio ratio
                 in UseSmileIDSampleAspectRatio.values)
               UseSmileIDSampleFilterChip(
-                label: ratio.label,
+                label: ratio.label(context.strings),
                 count: null,
                 selected: ratio == _draft.aspectRatio,
                 onTap: () => setState(
@@ -220,11 +227,15 @@ class _UseSmileIDSampleGenericDocumentSheetState
         ),
         const SizedBox(height: SmileDimens.spacingMd),
         UseSmileIDSampleButton(
-          text: 'Done',
+          text: context.strings.commonDone,
           onPressed: () {
             final String name = _draft.displayName.trim();
             widget.onDone(
-              _draft.copyWith(displayName: name.isEmpty ? 'Document' : name),
+              _draft.copyWith(
+                displayName: name.isEmpty
+                    ? context.strings.productCardDocument
+                    : name,
+              ),
             );
           },
           testId: UseSmileIDSampleTestIds.genericDocumentDone,
@@ -232,4 +243,39 @@ class _UseSmileIDSampleGenericDocumentSheetState
       ],
     );
   }
+}
+
+/// System, then each shipped language under its own name.
+class UseSmileIDSampleLanguageSheet extends StatelessWidget {
+  /// [onSelect] receives the language tapped.
+  const UseSmileIDSampleLanguageSheet({
+    required this.selected,
+    required this.deviceLanguages,
+    required this.onSelect,
+    super.key,
+  });
+
+  /// The language already chosen.
+  final UseSmileIDSampleLanguage selected;
+
+  /// The device's languages, which the System row resolves.
+  final List<String> deviceLanguages;
+
+  /// Called with the language tapped.
+  final ValueChanged<UseSmileIDSampleLanguage> onSelect;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      for (final UseSmileIDSampleLanguage language
+          in UseSmileIDSampleLanguage.values)
+        UseSmileIDSampleOptionRow(
+          label: language.label(context.strings, deviceLanguages),
+          selected: language == selected,
+          onTap: () => onSelect(language),
+          testId: UseSmileIDSampleTestIds.languageOption(language.id),
+        ),
+    ],
+  );
 }

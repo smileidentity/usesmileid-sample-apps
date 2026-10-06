@@ -54,7 +54,7 @@ public struct VerificationDetailsScreen: View {
 
   public var body: some View {
     VStack(spacing: 0) {
-      UseSmileIDSampleTopAppBar(title: "Verification details", onBack: onBack) {
+      UseSmileIDSampleTopAppBar(title: UseSmileIDSampleStrings.detailsTitle, onBack: onBack) {
         deleteAction
       }
       ScrollView {
@@ -64,8 +64,8 @@ public struct VerificationDetailsScreen: View {
             details(job)
           } else {
             UseSmileIDSampleEmptyState(
-              text: "No verification here",
-              supportingText: "Nothing stored for jobId = \(state.jobId)",
+              text: UseSmileIDSampleStrings.detailsMissingTitle,
+              supportingText: UseSmileIDSampleStrings.detailsMissingBody(jobId: state.jobId),
               testId: UseSmileIDSampleTestIds.detailsEmpty
             )
           }
@@ -91,7 +91,7 @@ public struct VerificationDetailsScreen: View {
   private var deleteAction: some View {
     if state.job != nil {
       UseSmileIDSampleTopAppBarButton(
-        label: "Hide verification from the app list",
+        label: UseSmileIDSampleStrings.detailsHide,
         emphasis: .destructive,
         testId: UseSmileIDSampleTestIds.detailsDelete,
         action: onDelete
@@ -125,13 +125,13 @@ public struct VerificationDetailsScreen: View {
   }
 
   private func details(_ job: UseSmileIDSampleJob) -> some View {
-    UseSmileIDSampleSectionSurface(label: "DETAILS") {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.detailsSection) {
       row("createdAt", "Created_at", job.createdAtLabel)
-      row("jobId", "Job_id", job.shortId) { onCopy("Job ID", job.id) }
-      row("message", "Message", job.message)
+      row("jobId", "Job_id", job.shortId) { onCopy(UseSmileIDSampleStrings.detailsJobId, job.id) }
+      row("message", UseSmileIDSampleStrings.detailsMessage, job.message)
       // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
-      row("status", "Status", httpStatusLabel(job), valueColor: httpStatusColor(job))
-      row("userId", "User_id", job.shortUserId) { onCopy("User ID", job.userId) }
+      row("status", UseSmileIDSampleStrings.detailsStatus, httpStatusLabel(job), valueColor: httpStatusColor(job))
+      row("userId", "User_id", job.shortUserId) { onCopy(UseSmileIDSampleStrings.detailsUserId, job.userId) }
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
   }

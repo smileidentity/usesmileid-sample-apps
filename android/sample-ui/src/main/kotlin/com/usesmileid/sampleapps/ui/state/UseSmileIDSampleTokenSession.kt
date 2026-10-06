@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.state
 
+import com.usesmileid.sampleapps.ui.R
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Immutable
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import kotlin.time.Duration
@@ -50,11 +52,9 @@ data class UseSmileIDSampleTokenSession(
 }
 
 /** What the row reads instead of the profile's URL while this session runs. */
-fun UseSmileIDSampleTokenSession.callbackOverrideCaption(): String =
-    if (bindings.callbackUrl != null) SESSION_BINDS_CALLBACK else SESSION_PARTNER_DEFAULT
-
-private const val SESSION_BINDS_CALLBACK = "Set by the scanned token"
-private const val SESSION_PARTNER_DEFAULT = "The scanned token's partner default applies"
+@StringRes
+fun UseSmileIDSampleTokenSession.callbackOverrideCaption(): Int =
+    if (bindings.callbackUrl != null) R.string.sample_token_callback_set else R.string.sample_token_callback_default
 
 /** `m:ss`, growing an hours part when the span needs one — an 8h token reads 7:59:12, not 479:12. */
 fun Duration.toCountdown(): String {

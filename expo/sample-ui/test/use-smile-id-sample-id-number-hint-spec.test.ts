@@ -6,6 +6,9 @@ import {
   smileIDSampleIdNumberPlaceholder,
 } from '../src/state/use-smile-id-sample-id-number-hint';
 import { spec } from './spec-file';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 const { cases } = spec<{ cases: { regex: string; hint: string | null }[] }>('id-number-hints.json');
 
@@ -31,26 +34,26 @@ describe('ID number hints', () => {
   it('checks nothing against a regex this engine cannot compile', () => {
     const type = { id: 'X', type: 'X', label: 'Tax number', regex: '^[0-9' };
     expect(smileIDSampleIdNumberAccepts('^[0-9', 'anything')).toBe(true);
-    expect(smileIDSampleIdNumberPlaceholder(type)).toBe('Enter your Tax number');
-    expect(smileIDSampleIdNumberError(type, 'anything')).toBeNull();
+    expect(smileIDSampleIdNumberPlaceholder(type, strings)).toBe('Enter your Tax number');
+    expect(smileIDSampleIdNumberError(type, 'anything', strings)).toBeNull();
   });
 
   it('checks nothing for a type with no regex, rather than locking Continue', () => {
     const type = { id: 'X', type: 'X', label: 'Tax number', regex: '' };
     expect(smileIDSampleIdNumberAccepts('', '12345')).toBe(true);
-    expect(smileIDSampleIdNumberPlaceholder(type)).toBe('Enter your Tax number');
-    expect(smileIDSampleIdNumberError(type, '12345')).toBeNull();
+    expect(smileIDSampleIdNumberPlaceholder(type, strings)).toBe('Enter your Tax number');
+    expect(smileIDSampleIdNumberError(type, '12345', strings)).toBeNull();
   });
 
   it('waits for a type, then shows the example', () => {
-    expect(smileIDSampleIdNumberPlaceholder(null)).toBe('Choose an ID type first');
+    expect(smileIDSampleIdNumberPlaceholder(null, strings)).toBe('Choose an ID type first');
     const type = {
       id: 'NIN',
       type: 'NIN',
       label: 'National ID',
       regex: '^[0-9]{11}$',
     };
-    expect(smileIDSampleIdNumberPlaceholder(type)).toBe('e.g. 00000000000');
-    expect(smileIDSampleIdNumberError(type, '123')).toBe("Doesn't match the National ID format, e.g. 00000000000");
+    expect(smileIDSampleIdNumberPlaceholder(type, strings)).toBe('e.g. 00000000000');
+    expect(smileIDSampleIdNumberError(type, '123', strings)).toBe("Doesn't match the National ID format, e.g. 00000000000");
   });
 });

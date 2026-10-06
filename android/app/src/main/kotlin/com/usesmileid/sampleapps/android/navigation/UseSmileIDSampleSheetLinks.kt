@@ -29,6 +29,7 @@ internal enum class UseSmileIDSampleSheet {
     GenericDocument,
     CaptureMode,
     Appearance,
+    Language,
 }
 
 internal data class UseSmileIDSampleSheetLink(val sheet: UseSmileIDSampleSheet, val ownerUri: String)
@@ -58,6 +59,8 @@ internal object UseSmileIDSampleSheetLinks {
             UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.CaptureMode, UseSmileIDSampleDeepLinks.SETTINGS),
         UseSmileIDSampleDeepLinks.APPEARANCE to
             UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.Appearance, UseSmileIDSampleDeepLinks.SETTINGS),
+        UseSmileIDSampleDeepLinks.LANGUAGE to
+            UseSmileIDSampleSheetLink(UseSmileIDSampleSheet.Language, UseSmileIDSampleDeepLinks.SETTINGS),
     )
 
     /** The pickers hang off the form's own path, so their owner is the link minus its last segment. */

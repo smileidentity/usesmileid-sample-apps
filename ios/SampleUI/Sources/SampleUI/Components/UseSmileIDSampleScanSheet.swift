@@ -62,7 +62,7 @@ public struct UseSmileIDSampleScanSheet: View {
             state.rejection = nil
           }
         ),
-        placeholder: "Or enter token manually",
+        placeholder: UseSmileIDSampleStrings.scanManualEntry,
         isError: state.rejection != nil,
         errorMessage: state.rejection,
         // A 900-character bearer credential: masked, it stays out of screenshots and hierarchy dumps.
@@ -81,14 +81,14 @@ public struct UseSmileIDSampleScanSheet: View {
       }
       // Only once there is something to link, so the default sheet keeps the design's two rows.
       if !state.token.isBlank {
-        UseSmileIDSampleButton(text: "Link token", action: onLink)
+        UseSmileIDSampleButton(text: UseSmileIDSampleStrings.scanLinkToken, action: onLink)
       }
       // Collapsed by default: expanded, the mint controls left the viewfinder a letterbox.
       Button {
         state.expanded.toggle()
       } label: {
         HStack(spacing: SmileSpacing.spacingXs) {
-          UseSmileIDSampleSectionLabel("SIMULATED SCAN")
+          UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.scanSimulated)
             .frame(maxWidth: .infinity, alignment: .leading)
           UseSmileIDSampleIcon(
             state.expanded ? SmileIcons.chevronDown : SmileIcons.chevron,
@@ -104,7 +104,7 @@ public struct UseSmileIDSampleScanSheet: View {
         mintControls
       }
       UseSmileIDSampleButton(
-        text: "Simulate a successful scan",
+        text: UseSmileIDSampleStrings.scanSimulate,
         testId: UseSmileIDSampleTestIds.tokenSimulate,
         action: onSimulate
       )
@@ -122,7 +122,7 @@ public struct UseSmileIDSampleScanSheet: View {
 
   private var pasteAction: some View {
     Button(action: onPaste) {
-      UseSmileIDSampleText("Paste", style: UseSmileIDSampleTheme.type.linkFont.with(size: 13, weight: 700))
+      UseSmileIDSampleText(UseSmileIDSampleStrings.scanPaste, style: UseSmileIDSampleTheme.type.linkFont.with(size: 13, weight: 700))
         .foregroundColor(colors.primary)
         .lineLimit(1)
         .padding(.horizontal, SmileSpacing.spacingXs)
@@ -151,8 +151,8 @@ public struct UseSmileIDSampleScanSheet: View {
       }
     }
     chipRow {
-      ScanSheetChip(label: "Binds consent", selected: state.bindings.consent) { state.bindings.consent.toggle() }
-      ScanSheetChip(label: "Binds details", selected: state.bindings.userDetails) { state.bindings.userDetails.toggle() }
+      ScanSheetChip(label: UseSmileIDSampleStrings.scanBindsConsent, selected: state.bindings.consent) { state.bindings.consent.toggle() }
+      ScanSheetChip(label: UseSmileIDSampleStrings.scanBindsDetails, selected: state.bindings.userDetails) { state.bindings.userDetails.toggle() }
     }
   }
 

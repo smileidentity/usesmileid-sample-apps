@@ -31,9 +31,11 @@ import {
 } from '../../../src/flow/use-smile-id-sample-flow-launch-snapshot';
 import { smileIDSamplePreflight } from '../../../src/flow/use-smile-id-sample-flow-preflight';
 import { useLaunchArgs } from '../../../src/use-smile-id-sample-launch';
+import { useSmileIDSampleStrings } from '@smileid/sample-ui';
 
 /// The single route hosting the SDK flow. The SDK owns everything inside it: no host chrome, no host back.
 export default function SdkFlowRun() {
+  const strings = useSmileIDSampleStrings();
   const router = useRouter();
   const { productId } = useLocalSearchParams<{ productId: string }>();
   const args = useLaunchArgs();
@@ -122,7 +124,7 @@ export default function SdkFlowRun() {
   }
   // No form fixes a misconfigured builder, and it must still never reach the SDK.
   if (preflight?.kind === 'misconfigured') {
-    const reason = preflight.issues.map((issue) => issue.message).join('; ') || 'The flow did not validate';
+    const reason = preflight.issues.map((issue) => issue.message).join('; ') || strings.flowInvalid;
     return <RecordBlocked reason={reason} run={runOf(snapshot)} />;
   }
   if (preflight?.kind !== 'ready') return <Redirect href="/products" />;

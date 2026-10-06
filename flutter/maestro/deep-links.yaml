@@ -80,3 +80,25 @@ appId: ${APP_ID}
     selected: true
 - tapOn:
     id: "sample_appearance_option_system"
+
+# The language sheet by its link: a pick applies at once, and System restores the device's.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://settings/language?catalogue=fixture"
+      LANDS_ON: "sample_language_sheet"
+- assertVisible:
+    id: "sample_language_option_system"
+    selected: true
+- tapOn:
+    id: "sample_language_option_fr"
+- assertNotVisible:
+    id: "sample_language_sheet"
+- assertVisible: "Réglages"
+- openLink: "usesmileid-sample-flutter://settings/language"
+- assertVisible:
+    id: "sample_language_option_fr"
+    selected: true
+- tapOn:
+    id: "sample_language_option_system"
+- assertVisible: "Settings"

@@ -23,19 +23,19 @@ public struct LicensesScreen: View {
 
   public var body: some View {
     VStack(spacing: 0) {
-      UseSmileIDSampleTopAppBar(title: "Open-source licenses", onBack: onBack)
+      UseSmileIDSampleTopAppBar(title: UseSmileIDSampleStrings.licensesTitle, onBack: onBack)
       ScrollView {
         if licenses.isEmpty {
           // Generated at build time, so an empty list means the asset did not ship.
           UseSmileIDSampleEmptyState(
-            text: "No notices bundled",
-            supportingText: "The generated licenses.json is missing from this build",
+            text: UseSmileIDSampleStrings.licensesEmptyTitle,
+            supportingText: UseSmileIDSampleStrings.licensesEmptyBody,
             testId: UseSmileIDSampleTestIds.licensesEmpty
           )
           .padding(.top, SmileSpacing.spacingXl)
         } else {
           LazyVStack(alignment: .leading, spacing: 0) {
-            UseSmileIDSampleSectionLabel("OPEN-SOURCE COMPONENTS — \(licenses.components.count)")
+            UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.licensesSection(count: licenses.components.count))
               .padding(.horizontal, SmileSpacing.spacingMd)
               .padding(.vertical, SmileSpacing.spacingXs)
             ForEach(licenses.components, id: \.component) { notice in
@@ -69,7 +69,7 @@ public struct LicensesScreen: View {
   @ViewBuilder
   private func expandedLicence(_ notice: UseSmileIDSampleNotice) -> some View {
     UseSmileIDSampleText(
-      notice.text ?? "The text ships with the component itself.",
+      notice.text ?? UseSmileIDSampleStrings.licensesTextShipsWithComponent,
       style: UseSmileIDSampleTheme.type.textStyleCaption
     )
     .foregroundColor(colors.textMuted)
@@ -79,7 +79,7 @@ public struct LicensesScreen: View {
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.licenseText(notice.component))
     if let url = notice.url, notice.text == nil {
       UseSmileIDSampleSettingRow(
-        title: "Open \(notice.licenseName)",
+        title: UseSmileIDSampleStrings.licensesOpen(license: notice.licenseName),
         testId: UseSmileIDSampleTestIds.licenseLink(notice.component),
         onTap: { onOpenUrl(url) }
       )

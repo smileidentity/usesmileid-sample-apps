@@ -45,8 +45,13 @@ public struct UseSmileIDSampleUserDetails: Equatable, Sendable {
 
 /// The email and phone checks from `spec/contact-rules.json`, which mirror the v3 API's own request schema.
 public enum UseSmileIDSampleContactRules {
-  public static let emailError = "Enter an email like name@company.com."
-  public static let phoneError = "Enter the number with its country code, like +254 700 000 000."
+  public static var emailError: String {
+    UseSmileIDSampleStrings.userFieldEmailError
+  }
+
+  public static var phoneError: String {
+    UseSmileIDSampleStrings.userFieldPhoneError
+  }
 
   /// `value` as it is submitted: trimmed, and a phone number without its separators.
   public static func submitted(_ field: UseSmileIDSampleUserField, _ value: String) -> String {
@@ -113,8 +118,8 @@ public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
   public func label(for field: UseSmileIDSampleUserField) -> String {
     guard contact else { return field.label }
     switch field {
-    case .email: return "Email"
-    case .phone: return "Phone"
+    case .email: return UseSmileIDSampleStrings.userFieldEmail
+    case .phone: return UseSmileIDSampleStrings.userFieldPhone
     default: return field.label
     }
   }
@@ -123,19 +128,24 @@ public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
   public var prompt: String {
     var outstanding: [String] = []
     if firstName {
-      outstanding.append("first name")
+      outstanding.append(UseSmileIDSampleStrings.userRequirementFirstName)
     }
     if lastName {
-      outstanding.append("last name")
+      outstanding.append(UseSmileIDSampleStrings.userRequirementLastName)
     }
     if contact {
-      outstanding.append("an email or phone number")
+      outstanding.append(UseSmileIDSampleStrings.userRequirementContact)
     }
     switch outstanding.count {
-    case 0: return "Tap any field to edit."
-    case 1: return outstanding[0].prefix(1).uppercased() + outstanding[0].dropFirst() + " is required."
-    default: return "Required: " + outstanding.joined(separator: ", ") + "."
+    case 0: return UseSmileIDSampleStrings.userDetailsEditHint
+    case 1: return Self.sentence(UseSmileIDSampleStrings.userRequirementOne(field: outstanding[0]))
+    default: return Self.sentence(UseSmileIDSampleStrings.userRequirementMany(fields: outstanding.joined(separator: UseSmileIDSampleStrings.userRequirementSeparator)))
     }
+  }
+
+  /// The prompt opens a sentence, so its first letter is capitalised.
+  private static func sentence(_ text: String) -> String {
+    text.prefix(1).uppercased() + text.dropFirst()
   }
 }
 
@@ -163,19 +173,19 @@ public enum UseSmileIDSampleUserField: String, CaseIterable, Sendable {
 
   public var label: String {
     switch self {
-    case .firstName: "First name"
-    case .lastName: "Last name"
-    case .email: "Email (optional)"
-    case .phone: "Phone (optional)"
+    case .firstName: UseSmileIDSampleStrings.userFieldFirstName
+    case .lastName: UseSmileIDSampleStrings.userFieldLastName
+    case .email: UseSmileIDSampleStrings.userFieldEmailOptional
+    case .phone: UseSmileIDSampleStrings.userFieldPhoneOptional
     }
   }
 
   public var placeholder: String {
     switch self {
-    case .firstName: "Add first name"
-    case .lastName: "Add last name"
-    case .email: "name@company.com"
-    case .phone: "+254 700 000 000"
+    case .firstName: UseSmileIDSampleStrings.userFieldFirstNamePlaceholder
+    case .lastName: UseSmileIDSampleStrings.userFieldLastNamePlaceholder
+    case .email: UseSmileIDSampleStrings.userFieldEmailPlaceholder
+    case .phone: UseSmileIDSampleStrings.userFieldPhonePlaceholder
     }
   }
 

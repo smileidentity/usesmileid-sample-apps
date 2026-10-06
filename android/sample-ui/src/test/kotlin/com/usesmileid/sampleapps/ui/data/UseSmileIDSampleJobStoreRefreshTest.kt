@@ -94,7 +94,7 @@ class UseSmileIDSampleJobStoreRefreshTest {
         store.add(job("job-1", sessionId = "s-1"))
 
         assertEquals(
-            UseSmileIDSampleStatusRefresh.Failed("Could not reach the server"),
+            UseSmileIDSampleStatusRefresh.Failed(UseSmileIDSampleStatusRefresh.Reason.Unreachable),
             store.refresh("job-1", session(id = "s-1"), NOW),
         )
     }
@@ -127,7 +127,7 @@ class UseSmileIDSampleJobStoreRefreshTest {
         store.add(job("job-1", sessionId = "s-1"))
 
         assertEquals(
-            UseSmileIDSampleStatusRefresh.Failed("The verification is no longer stored"),
+            UseSmileIDSampleStatusRefresh.Failed(UseSmileIDSampleStatusRefresh.Reason.NotStored),
             store.refresh("job-1", session(id = "s-1"), NOW),
         )
         assertNull(store.find("job-1"))

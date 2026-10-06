@@ -10,6 +10,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLanguage
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesCodec
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
@@ -77,6 +78,11 @@ class UseSmileIDSampleStore(
         }
     }
 
+    /** Stored by id, like [setCaptureMode]. */
+    suspend fun setLanguage(language: UseSmileIDSampleLanguage) {
+        store.edit { prefs -> prefs[LANGUAGE] = language.id }
+    }
+
     /** Re-seals a token an earlier build stored in plain text, so an upgrade leaves no credential readable on disk. */
     suspend fun sealLegacyToken() {
         val stored = store.data.first()[SESSION_TOKEN] ?: return
@@ -130,6 +136,7 @@ class UseSmileIDSampleStore(
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
                 ?: defaults.captureMode,
             appearance = appearanceIn(prefs),
+            language = UseSmileIDSampleLanguage.entries.firstOrNull { it.id == prefs[LANGUAGE] } ?: defaults.language,
         ).normalised()
     }
 
@@ -154,6 +161,7 @@ class UseSmileIDSampleStore(
         val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val APPEARANCE = stringPreferencesKey("appearance")
+        val LANGUAGE = stringPreferencesKey("language")
         // The switch that APPEARANCE replaced, read only to carry an installed choice over.
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val CONSENT_STEP = booleanPreferencesKey("consent_step")

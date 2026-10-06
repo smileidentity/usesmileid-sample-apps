@@ -11,34 +11,34 @@ public struct GenericDocumentSheet: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleBottomSheet(title: "Generic document", testId: UseSmileIDSampleTestIds.genericDocumentSheet) {
-      UseSmileIDSampleSectionLabel("DISPLAY NAME")
+    UseSmileIDSampleBottomSheet(title: UseSmileIDSampleStrings.genericDocumentTitle, testId: UseSmileIDSampleTestIds.genericDocumentSheet) {
+      UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.genericDocumentDisplayName)
       UseSmileIDSampleTextInput(
         value: $draft.displayName,
-        placeholder: "Document",
+        placeholder: UseSmileIDSampleStrings.genericDocumentDefaultName,
         testId: UseSmileIDSampleTestIds.genericDocumentName
       )
-      UseSmileIDSampleSettingRow(title: "Back side", supportingText: "Capture the back after the front") {
+      UseSmileIDSampleSettingRow(title: UseSmileIDSampleStrings.genericDocumentBackSide, supportingText: UseSmileIDSampleStrings.genericDocumentBackSideHint) {
         EmptyView()
       } trailing: {
         UseSmileIDSampleSwitch(isOn: $draft.hasBackSide, testId: UseSmileIDSampleTestIds.genericDocumentBackSide)
       }
-      UseSmileIDSampleSectionLabel("ORIENTATION")
+      UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.genericDocumentOrientation)
       chips(UseSmileIDSampleDocumentOrientation.allCases, selected: draft.orientation, label: \.label) {
         draft.orientation = $0
       } testId: {
         UseSmileIDSampleTestIds.genericDocumentOrientation($0.rawValue)
       }
-      UseSmileIDSampleSectionLabel("ASPECT RATIO")
+      UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.genericDocumentAspectRatio)
       chips(UseSmileIDSampleAspectRatio.allCases, selected: draft.aspectRatio, label: \.label) {
         draft.aspectRatio = $0
       } testId: {
         UseSmileIDSampleTestIds.genericDocumentAspectRatio($0.rawValue)
       }
-      UseSmileIDSampleButton(text: "Done", testId: UseSmileIDSampleTestIds.genericDocumentDone) {
+      UseSmileIDSampleButton(text: UseSmileIDSampleStrings.commonDone, testId: UseSmileIDSampleTestIds.genericDocumentDone) {
         var done = draft
         let trimmed = done.displayName.trimmingCharacters(in: .whitespaces)
-        done.displayName = trimmed.isEmpty ? "Document" : trimmed
+        done.displayName = trimmed.isEmpty ? UseSmileIDSampleStrings.genericDocumentDefaultName : trimmed
         onDone(done)
       }
     }

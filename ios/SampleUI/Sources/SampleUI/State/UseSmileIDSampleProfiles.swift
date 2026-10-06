@@ -48,10 +48,14 @@ public struct UseSmileIDSampleProfile: Equatable, Identifiable, Sendable, Codabl
     person.isBlank ? Self.noUserDetailsCaption : person
   }
 
-  static let noUserDetailsCaption = "No user details yet"
+  static var noUserDetailsCaption: String {
+    UseSmileIDSampleStrings.profilesNoDetails
+  }
 
   /// A profile naming neither an organisation nor a person, which only a token binding both names allows.
-  static let unnamed = "Unnamed profile"
+  static var unnamed: String {
+    UseSmileIDSampleStrings.profilesUnnamed
+  }
 
   enum CodingKeys: String, CodingKey {
     case id, organisation, firstName, lastName, email, phone, callbackUrl
@@ -205,7 +209,9 @@ public struct UseSmileIDSampleProfiles: Equatable, Sendable {
   public static let firstProfileId = "p-1"
 
   /// What the header, settings card and form say while there is no profile.
-  public static let noProfileLabel = "No profile yet"
+  public static var noProfileLabel: String {
+    UseSmileIDSampleStrings.profilesNoProfile
+  }
 
   /// The three the design's sheet shows. Reached only by the `seedProfiles` launch argument.
   public static func fixtures() -> [UseSmileIDSampleProfile] {

@@ -12,10 +12,14 @@ import {
   smileIDSampleBindsIdDetails,
   smileIDSampleBindsRequiredUserDetails,
   smileIDSampleConsentIsComplete,
+  smileIDSampleTokenRejectionText,
   smileIDSampleDecodeToken,
   smileIDSampleTokenSession,
   type UseSmileIDSampleTokenBindings,
 } from '../src/state/use-smile-id-sample-token-decoder';
+import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 /// The same cases as Android's and iOS's decoder tests.
 const IAT = 1_755_500_000;
@@ -33,7 +37,7 @@ const session = (candidate: string) => smileIDSampleTokenSession(candidate);
 const rejection = (candidate: string) => {
   const decoded = decode(candidate);
   if (decoded.kind !== 'rejected') throw new Error('expected a rejection');
-  return decoded.reason;
+  return smileIDSampleTokenRejectionText(decoded.reason, strings);
 };
 const bindings = (payloadFields: string): UseSmileIDSampleTokenBindings =>
   session(jwt(`{"iat":${IAT},"exp":${EXP},${SANDBOX_URL},"payload":{${payloadFields}}}`))!.bindings;

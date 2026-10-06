@@ -70,10 +70,10 @@ public enum UseSmileIDSampleJobFilter: String, CaseIterable, Sendable {
 
   public var label: String {
     switch self {
-    case .all: "All"
-    case .clear: "Clear"
-    case .attention: "Attention"
-    case .blocked: "Blocked"
+    case .all: UseSmileIDSampleStrings.verificationsFilterAll
+    case .clear: UseSmileIDSampleStrings.statusClear
+    case .attention: UseSmileIDSampleStrings.statusAttention
+    case .blocked: UseSmileIDSampleStrings.statusBlocked
     }
   }
 

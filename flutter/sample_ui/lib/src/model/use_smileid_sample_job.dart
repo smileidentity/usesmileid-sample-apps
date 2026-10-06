@@ -1,3 +1,6 @@
+import 'package:intl/intl.dart';
+
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_product.dart';
 import 'use_smileid_sample_status.dart';
 
@@ -162,24 +165,25 @@ UseSmileIDSampleStatus _statusNamed(Object? name) {
 /// a fourth chip would be a filter the design does not have.
 enum UseSmileIDSampleJobFilter {
   /// Everything.
-  all('all', 'All', null),
+  all('all', null),
 
   /// Cleared only.
-  clear('clear', 'Clear', UseSmileIDSampleStatus.clear),
+  clear('clear', UseSmileIDSampleStatus.clear),
 
   /// Needs attention only.
-  attention('attention', 'Attention', UseSmileIDSampleStatus.attention),
+  attention('attention', UseSmileIDSampleStatus.attention),
 
   /// Blocked only.
-  blocked('blocked', 'Blocked', UseSmileIDSampleStatus.blocked);
+  blocked('blocked', UseSmileIDSampleStatus.blocked);
 
-  const UseSmileIDSampleJobFilter(this.id, this.label, this.status);
+  const UseSmileIDSampleJobFilter(this.id, this.status);
 
   /// The id that suffixes this chip's test ids.
   final String id;
 
   /// The chip's text.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) =>
+      status?.label(strings) ?? strings.verificationsFilterAll;
 
   /// The status this chip keeps, null for All.
   final UseSmileIDSampleStatus? status;
@@ -236,11 +240,15 @@ int useSmileIDSampleStartOfDayMillis(int millis) {
   return DateTime(at.year, at.month, at.day).millisecondsSinceEpoch;
 }
 
-/// TODAY, YESTERDAY, or empty for a day older than that, against [nowMillis].
-String useSmileIDSampleRelativeDay(int dayStartMillis, int nowMillis) {
+/// Today, yesterday, or empty for a day older than that, against [nowMillis].
+String useSmileIDSampleRelativeDay(
+  int dayStartMillis,
+  int nowMillis,
+  UseSmileIDSampleStrings strings,
+) {
   final int today = useSmileIDSampleStartOfDayMillis(nowMillis);
   if (dayStartMillis == today) {
-    return 'TODAY';
+    return strings.verificationsToday;
   }
   // Calendar arithmetic, not a fixed 86_400_000: a daylight-saving day is 23 or 25 hours long, and
   // subtracting a day of milliseconds lands inside the wrong day on both of those.
@@ -251,14 +259,25 @@ String useSmileIDSampleRelativeDay(int dayStartMillis, int nowMillis) {
     at.month,
     at.day - 1,
   ).millisecondsSinceEpoch;
-  return dayStartMillis == start ? 'YESTERDAY' : '';
+  return dayStartMillis == start ? strings.verificationsYesterday : '';
 }
 
-/// A day header's absolute half, as the design cases it.
-String useSmileIDSampleAbsoluteDay(int dayStartMillis) {
+/// A day header's absolute half, as the design cases it, with names in [language].
+String useSmileIDSampleAbsoluteDay(int dayStartMillis, String language) {
   final DateTime at = DateTime.fromMillisecondsSinceEpoch(dayStartMillis);
   final String day = at.day.toString().padLeft(2, '0');
-  return '${_weekdays[at.weekday - 1]}, $day ${_months[at.month - 1]} ${at.year}';
+  String weekday = _weekdays[at.weekday - 1];
+  String month = _months[at.month - 1];
+  // A host that never loaded date symbols, where `intl` throws even for English, keeps the English names.
+  try {
+    if (DateFormat.localeExists(language)) {
+      weekday = DateFormat.E(language).format(at).toUpperCase();
+      month = DateFormat.MMM(language).format(at).toUpperCase();
+    }
+  } on Exception {
+    // The English names above stand.
+  }
+  return '$weekday, $day $month ${at.year}';
 }
 
 /// A job's time, as a row shows it.
@@ -272,7 +291,7 @@ String useSmileIDSampleTimeLabel(int millis) {
 String _elide(String value) =>
     value.length > 8 ? '${value.substring(0, 8)}…' : value;
 
-/// Upper-cased because the header is, and written out because `intl` is not in this app's graph.
+/// The English names, for a host that has not loaded the language's date symbols.
 const List<String> _weekdays = <String>[
   'MON',
   'TUE',

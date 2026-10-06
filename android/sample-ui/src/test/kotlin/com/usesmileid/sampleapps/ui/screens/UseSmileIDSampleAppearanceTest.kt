@@ -48,6 +48,7 @@ class UseSmileIDSampleAppearanceTest {
                     onNavRowClick = {},
                     onCaptureModeClick = {},
                     onAppearanceClick = { opened = true },
+                    onLanguageClick = {},
                     onOpenScenarioDrawer = null,
                     onSignOut = {},
                 )

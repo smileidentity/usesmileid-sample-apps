@@ -1,11 +1,17 @@
-/// The four job statuses, Title case as the design sets them.
+/// The four job statuses; the raw value is stored, so it never changes with the language.
 public enum UseSmileIDSampleStatus: String, CaseIterable, Sendable {
   case clear = "Clear"
   case attention = "Attention"
   case blocked = "Blocked"
   case processing = "Processing"
 
+  /// The status in the app's language.
   public var label: String {
-    rawValue
+    switch self {
+    case .clear: UseSmileIDSampleStrings.statusClear
+    case .attention: UseSmileIDSampleStrings.statusAttention
+    case .blocked: UseSmileIDSampleStrings.statusBlocked
+    case .processing: UseSmileIDSampleStrings.statusProcessing
+    }
   }
 }

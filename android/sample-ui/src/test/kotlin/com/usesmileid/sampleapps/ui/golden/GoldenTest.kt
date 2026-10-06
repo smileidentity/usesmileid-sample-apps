@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -210,3 +212,8 @@ private fun TextLayoutResult.midWordBreaks(text: String): List<String> =
 
 private fun SemanticsNode.textOrEmpty(): String =
     config.getOrNull(SemanticsProperties.Text)?.joinToString(" ") { it.text } ?: "<no text>"
+
+/** Robolectric's locale qualifier does not reach Compose's direction, so set it here. */
+@Composable
+internal fun RightToLeft(content: @Composable () -> Unit) =
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl, content = content)

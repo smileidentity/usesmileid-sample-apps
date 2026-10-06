@@ -32,6 +32,7 @@ import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLaunchArgs
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLanguage
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStore
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleEndedSession
@@ -74,11 +75,18 @@ class UseSmileIDSampleAppState(
     private val now: State<Long>,
     /** The device's own theme, read at the Activity, which never forces night mode. */
     val deviceDark: Boolean,
+    /** The device's languages in preference order. */
+    val deviceLanguages: List<String>,
 ) {
     val settings: UseSmileIDSampleSettings get() = settingsState.value
 
     /** What the app renders: the theme, the bars and the SDK all read this one value. */
     val resolvedDark: Boolean get() = settings.appearance.isDark(deviceDark)
+
+    /** `appLocale` when it names a shipped language, else the setting; null follows the device. */
+    val localeTag: String?
+        get() = launchArgs.appLocale?.takeIf { UseSmileIDSampleLanguage.shipped(it) != null }
+            ?: settings.language.takeUnless { it == UseSmileIDSampleLanguage.System }?.id
     val session: UseSmileIDSampleTokenSession? get() = sessionState.value?.live
 
     /** Whether the stored session has been read; nothing may decide the run needs a token before it has. */
@@ -104,7 +112,7 @@ class UseSmileIDSampleAppState(
         get() = if (useSandbox) UseSmileIDSampleEnvironment.Sandbox else UseSmileIDSampleEnvironment.Production
 
     /** The API translates document and country names; an unsupported locale comes back in en-GB. */
-    val catalogueLocale: String get() = Locale.getDefault().toLanguageTag()
+    val catalogueLocale: String get() = localeTag ?: Locale.getDefault().toLanguageTag()
 
     /** Starts [product]'s lists if nothing has; Enhanced Document Verification's also needs the session's own list. */
     fun ensureCatalogue(product: UseSmileIDSampleProduct?) {
@@ -121,15 +129,18 @@ class UseSmileIDSampleAppState(
 fun rememberUseSmileIDSampleAppState(
     launchArgs: UseSmileIDSampleLaunchArgs,
     deviceDark: Boolean,
+    deviceLanguages: List<String>,
 ): UseSmileIDSampleAppState {
     val context = LocalContext.current
     val store = remember(context) { UseSmileIDSampleStore(context) }
-    // Saved across recreation: a sheet restored on the first frame fixes its bar icons then, before the store has answered.
+    // Saved across recreation, so the first frame keeps the theme and language.
     var savedAppearance by rememberSaveable { mutableStateOf(UseSmileIDSampleAppearance.System) }
+    var savedLanguage by rememberSaveable { mutableStateOf(UseSmileIDSampleLanguage.System) }
     val settingsState = store.settings.collectAsStateWithLifecycle(
-        initialValue = UseSmileIDSampleSettings(appearance = savedAppearance),
+        initialValue = UseSmileIDSampleSettings(appearance = savedAppearance, language = savedLanguage),
     )
     LaunchedEffect(settingsState.value.appearance) { savedAppearance = settingsState.value.appearance }
+    LaunchedEffect(settingsState.value.language) { savedLanguage = settingsState.value.language }
     val sessionState = store.session.collectAsStateWithLifecycle<UseSmileIDSampleSessionRecord?>(initialValue = null)
     val now = remember { mutableLongStateOf(System.currentTimeMillis()) }
     val jobStore = remember(context) { UseSmileIDSampleJobStore.of(context, RetrofitJobStatusSource()) }
@@ -183,6 +194,7 @@ fun rememberUseSmileIDSampleAppState(
         catalogue = catalogue,
         now = now,
         deviceDark = deviceDark,
+        deviceLanguages = deviceLanguages,
     )
 }
 

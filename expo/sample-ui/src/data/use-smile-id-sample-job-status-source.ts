@@ -1,4 +1,5 @@
-import type { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
+import { smileIDSampleStatusLabel, type UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// What a refresh did, so the screen can say so. The labels are product strings, identical across the four apps.
 export type UseSmileIDSampleStatusRefresh =
@@ -11,7 +12,8 @@ export type UseSmileIDSampleStatusRefresh =
   | { readonly kind: 'noServerJob' }
   /// Submitted by a different partner, so this session's credential is for another account.
   | { readonly kind: 'partnerMismatch' }
-  | { readonly kind: 'failed'; readonly reason: string };
+  /// The server's wording, or the error's type when `failure` is `unexpected`.
+  | { readonly kind: 'failed'; readonly reason: string; readonly failure?: 'notStored' | 'unexpected' };
 
 /// The one network call the app owns, behind a seam so the refresh orchestration tests off-device.
 export type UseSmileIDSampleJobStatusSource = {
@@ -20,19 +22,37 @@ export type UseSmileIDSampleJobStatusSource = {
 };
 
 /// What each outcome says on screen. Kept beside the type so four apps cannot word them differently.
-export const smileIDSampleRefreshLabel = (outcome: UseSmileIDSampleStatusRefresh): string => {
+export const smileIDSampleRefreshLabel = (
+  outcome: UseSmileIDSampleStatusRefresh,
+  strings: UseSmileIDSampleStrings,
+): string => {
   switch (outcome.kind) {
     case 'updated':
-      return `${outcome.status} — ${outcome.message}`;
+      return strings.statusRefreshResult({ status: smileIDSampleStatusLabel(outcome.status, strings), message: outcome.message });
     case 'stillProcessing':
-      return 'Still processing';
+      return strings.statusRefreshProcessing;
     case 'noSession':
-      return 'Scan a token first';
+      return strings.statusRefreshNoSession;
     case 'noServerJob':
-      return 'Not submitted under a scanned token';
+      return strings.statusRefreshNotTokenJob;
     case 'partnerMismatch':
-      return 'Submitted by a different partner';
+      return strings.statusRefreshOtherPartner;
     case 'failed':
-      return `Could not check status: ${outcome.reason}`;
+      return strings.statusRefreshFailed({ reason: smileIDSampleFailureText(outcome, strings) });
+  }
+};
+
+/// A failure's own line, in the app's language where the app worded it.
+const smileIDSampleFailureText = (
+  failed: Extract<UseSmileIDSampleStatusRefresh, { kind: 'failed' }>,
+  strings: UseSmileIDSampleStrings,
+): string => {
+  switch (failed.failure) {
+    case 'notStored':
+      return strings.jobErrorNotStored;
+    case 'unexpected':
+      return strings.jobErrorUnexpected({ type: failed.reason });
+    default:
+      return failed.reason;
   }
 };

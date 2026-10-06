@@ -40,7 +40,7 @@ public struct UseSmileIDSampleUserDetailsState: Equatable {
   }
 
   var saveLabel: String {
-    profile.map { "Save to \($0.title)" } ?? "Save as a new profile"
+    profile.map { UseSmileIDSampleStrings.userDetailsSaveTo(profile: $0.title) } ?? UseSmileIDSampleStrings.userDetailsSaveNew
   }
 }
 
@@ -90,7 +90,7 @@ public struct UserDetailsScreen: View {
       }
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.userDetailsScreen)
       UseSmileIDSampleButton(
-        text: "Continue",
+        text: UseSmileIDSampleStrings.commonContinue,
         enabled: state.isSatisfied,
         testId: UseSmileIDSampleTestIds.userDetailsContinue,
         action: onContinue
@@ -104,7 +104,7 @@ public struct UserDetailsScreen: View {
   private var profileRow: some View {
     UseSmileIDSampleProfileRow(
       organisation: state.profile?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
-      supportingText: state.profile == nil ? "Your details below will create one" : "Tap to switch profile",
+      supportingText: state.profile == nil ? UseSmileIDSampleStrings.userDetailsNoProfile : UseSmileIDSampleStrings.userDetailsSwitchProfile,
       initials: state.profile?.initials ?? "",
       selected: false,
       avatarColor: useSmileIDSampleAvatarColor(profileIndex: state.profileIndex),
@@ -116,12 +116,12 @@ public struct UserDetailsScreen: View {
   }
 
   private var fields: some View {
-    UseSmileIDSampleSectionSurface(label: "YOUR DETAILS") {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.userDetailsSection) {
       if state.profile == nil {
         UseSmileIDSampleKeyValueEditRow(
-          label: "Profile name (optional)",
+          label: UseSmileIDSampleStrings.userDetailsProfileName,
           value: Binding(get: { state.organisation }, set: onOrganisationChange),
-          placeholder: "Shown on the consent screen",
+          placeholder: UseSmileIDSampleStrings.userDetailsProfileNameHint,
           testId: UseSmileIDSampleTestIds.userDetailsField(Self.organisationFieldId)
         )
         UseSmileIDSampleRowDivider()
@@ -144,7 +144,7 @@ public struct UserDetailsScreen: View {
         get: { supplied ? "" : field.read(state.details) },
         set: { onFieldChange(field, $0) }
       ),
-      placeholder: supplied ? "Provided by token" : field.placeholder,
+      placeholder: supplied ? UseSmileIDSampleStrings.userDetailsFromToken : field.placeholder,
       enabled: !supplied,
       keyboardType: field.keyboardType,
       isError: UseSmileIDSampleContactRules.problem(field, field.read(state.details)) != nil,
@@ -154,7 +154,7 @@ public struct UserDetailsScreen: View {
 
   private var hint: some View {
     UseSmileIDSampleText(
-      state.details.contactProblem ?? (state.isSatisfied ? "Tap any field to edit." : state.requirement.prompt),
+      state.details.contactProblem ?? (state.isSatisfied ? UseSmileIDSampleStrings.userDetailsEditHint : state.requirement.prompt),
       style: UseSmileIDSampleTheme.type.textStyleCaption
     )
     .foregroundColor(state.details.contactProblem == nil ? colors.textMuted : colors.input.borderError)

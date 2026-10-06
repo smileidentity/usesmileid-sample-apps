@@ -26,7 +26,7 @@ Rules:
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
 | `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
 | `routes.json` | The shared route table — ids, deep-link paths, typed arguments and the per-platform binding | **added 2026-08-13** |
-| `screens.json` | 20 screens, 57 states, each linked to its design node or marked `"design": "in-repo"` where the design has no frame; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12**; document features added 2026-09-28 |
+| `screens.json` | 22 screens, 59 states, each linked to its design node or marked `"design": "in-repo"` where the design has no frame; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12**; document features added 2026-09-28 |
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
 | `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |
@@ -35,6 +35,7 @@ Rules:
 | `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, the partner's enabled documents, the error line, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |
 | `id-number-hints.json` | Test cases for the ID-number hint computed from a type's regex, and the regexes every platform's engine must compile | added 2026-09-28 |
 | `contact-rules.json` | The email and phone checks the forms run before Continue, mirroring the v3 API's schema, and the value each submits | added 2026-09-30 |
+| `l10n/` | Every string the apps show and the SDK overrides they ship, in each language `languages.json` lists. `scripts/sync_l10n.py` generates each platform's files from it; never edit those by hand | added 2026-10-05 |
 
 ## `screens.json` entry shape
 

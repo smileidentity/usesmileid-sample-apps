@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
 
+import '../use_smileid_sample_strings.dart';
+
 /// How long a simulated scan's token lasts.
 enum UseSmileIDSampleSimulatedSpan {
   /// Fifteen minutes.
@@ -12,16 +14,20 @@ enum UseSmileIDSampleSimulatedSpan {
   eightHours('8h', Duration(hours: 8)),
 
   /// Minted wholly in the past.
-  ended('Expired', Duration(minutes: 15), inPast: true);
+  ended('', Duration(minutes: 15), inPast: true);
 
   const UseSmileIDSampleSimulatedSpan(
-    this.label,
+    this.shortLabel,
     this.span, {
     this.inPast = false,
   });
 
+  /// The duration; empty for the ended span, which is translated.
+  final String shortLabel;
+
   /// The chip's label.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) =>
+      inPast ? strings.scanSpanExpired : shortLabel;
 
   /// `exp - iat`.
   final Duration span;

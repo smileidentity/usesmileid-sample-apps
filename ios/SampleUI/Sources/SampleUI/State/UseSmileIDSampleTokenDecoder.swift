@@ -117,32 +117,32 @@ public enum UseSmileIDSampleTokenDecoder {
     let trimmed = token.trimmingCharacters(in: .whitespacesAndNewlines)
     let segments = trimmed.split(separator: ".", omittingEmptySubsequences: false).map(String.init)
     guard segments.count == Self.segments, segments.allSatisfy(isBase64Url) else {
-      return .rejected("A token is three dot-separated base64url segments; this is not.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorSegments)
     }
     guard let claims = base64Url(segments[1]) else {
-      return .rejected("The token's payload segment is not base64url.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorPayloadEncoding)
     }
     guard case .obj(let json)? = parseTokenJson(claims) else {
-      return .rejected("The token's payload segment is not a JSON object.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorPayloadJson)
     }
     guard let issuedAt = json.seconds("iat") else {
-      return .rejected("The token carries no numeric iat claim.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorIat)
     }
     guard let expires = json.seconds("exp") else {
-      return .rejected("The token carries no numeric exp claim.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorExp)
     }
     guard expires > issuedAt else {
-      return .rejected("The token's exp claim is not after its iat claim.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorExpOrder)
     }
     // Refused rather than defaulted: a sandbox fallback sends a production token to the wrong host as a 401.
     guard let apiUrl = json.string("api_url"), !apiUrl.isBlank else {
-      return .rejected("The token carries no api_url claim, so nothing says which environment it was minted for.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorApiUrlMissing)
     }
     guard let environment = UseSmileIDSampleEnvironment.of(apiUrl: apiUrl) else {
       if let host = UseSmileIDSampleEnvironment.apiUrlHost(apiUrl) {
-        return .rejected("The token's api_url names \(host), which is not a Smile ID environment.")
+        return .rejected(UseSmileIDSampleStrings.tokenErrorApiUrlUnknown(host: host))
       }
-      return .rejected("The token's api_url is not a URL, so it names no environment.")
+      return .rejected(UseSmileIDSampleStrings.tokenErrorApiUrlInvalid)
     }
     return .decoded(
       UseSmileIDSampleTokenSession(

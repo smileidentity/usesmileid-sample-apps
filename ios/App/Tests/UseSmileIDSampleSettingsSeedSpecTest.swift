@@ -8,6 +8,7 @@ final class UseSmileIDSampleSettingsSeedSpecTest: XCTestCase {
     var seeded = try Self.seed()
     // Pinned rather than the shipped System, so a run does not depend on the simulator's theme.
     XCTAssertEqual(seeded.removeValue(forKey: "appearance"), "light")
+    XCTAssertEqual(seeded.removeValue(forKey: "language"), UseSmileIDSampleSettings().language.rawValue)
     let shipped = UseSmileIDSampleSettings()
     XCTAssertEqual(
       seeded,

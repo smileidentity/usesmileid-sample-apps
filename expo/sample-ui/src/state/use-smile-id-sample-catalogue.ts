@@ -6,6 +6,7 @@ import type {
 } from './use-smile-id-sample-id-details';
 import { smileIDSampleDocumentListedOn } from './use-smile-id-sample-id-details';
 import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
 /// The one document code Residency Document Verification accepts, which the SDK enforces too.
 export const smileIDSamplePassport = 'PASSPORT';
@@ -34,7 +35,7 @@ export type UseSmileIDSampleCatalogue<T> =
   | { readonly kind: 'ready'; readonly items: readonly T[] }
   | { readonly kind: 'empty' }
   /// `advice` is the error state's supporting line when the failure names one, per `spec/catalogue-rules.json` failures.
-  | { readonly kind: 'failed'; readonly reason: string; readonly advice?: string };
+  | { readonly kind: 'failed'; readonly reason: string; readonly advice?: UseSmileIDSampleCatalogueAdvice };
 
 /// The rows once the list has settled, an empty list for `empty`; null while it loads or after it fails.
 export const smileIDSampleSettledItems = <T>(catalogue: UseSmileIDSampleCatalogue<T>): readonly T[] | null =>
@@ -54,18 +55,36 @@ type UseSmileIDSampleApiEnabledDocument = {
 /// The product key the configuration call asks for and reads back.
 export const smileIDSampleEnhancedDocumentVerificationKey = 'enhanced_document_verification';
 
-/// The line for every failure the status does not name.
-export const smileIDSampleCatalogueDefaultAdvice = 'Check your connection, then try again';
+/// What a failed list tells the reader to do, worded where it is shown.
+export type UseSmileIDSampleCatalogueAdvice = 'unauthorised' | 'forbidden' | 'offline';
 
-/// The error state's supporting line for an HTTP `status`, or null when there was no answer.
-export const smileIDSampleCatalogueAdvice = (status: number | null): string => {
+/// The line for every failure the status does not name.
+export const smileIDSampleCatalogueDefaultAdvice: UseSmileIDSampleCatalogueAdvice = 'offline';
+
+/// The error state's supporting line for an HTTP `status`, or the default when there was no answer.
+export const smileIDSampleCatalogueAdvice = (status: number | null): UseSmileIDSampleCatalogueAdvice => {
   switch (status) {
     case 401:
-      return "The server refused this session's token. Link a new session, then try again";
+      return 'unauthorised';
     case 403:
-      return 'Access denied: production may not be enabled for this partner, or this network is not allowed';
+      return 'forbidden';
     default:
       return smileIDSampleCatalogueDefaultAdvice;
+  }
+};
+
+/// The advice in the app's language.
+export const smileIDSampleCatalogueAdviceText = (
+  advice: UseSmileIDSampleCatalogueAdvice,
+  strings: UseSmileIDSampleStrings,
+): string => {
+  switch (advice) {
+    case 'unauthorised':
+      return strings.catalogueAdviceUnauthorised;
+    case 'forbidden':
+      return strings.catalogueAdviceForbidden;
+    case 'offline':
+      return strings.catalogueAdviceOffline;
   }
 };
 

@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   text: string;
@@ -14,6 +15,7 @@ type Props = {
 
 /// What a list says when it has nothing to show. Not in the design; the supporting line is only where the reader can act.
 export const UseSmileIDSampleEmptyState = ({ text, supportingText, testID, onRetry, retryTestID, style }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
 
   return (
@@ -44,7 +46,7 @@ export const UseSmileIDSampleEmptyState = ({ text, supportingText, testID, onRet
           onPress={onRetry}
           style={{ minHeight: theme.dimens.size['control-md'], justifyContent: 'center' }}
         >
-          <Text style={[theme.type.textStyleBodyStrong, { color: theme.colors.textLink }]}>Retry</Text>
+          <Text style={[theme.type.textStyleBodyStrong, { color: theme.colors.textLink }]}>{strings.commonRetry}</Text>
         </Pressable>
       ) : null}
     </View>

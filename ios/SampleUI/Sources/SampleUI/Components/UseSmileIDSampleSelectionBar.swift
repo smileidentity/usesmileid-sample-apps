@@ -79,13 +79,13 @@ public struct UseSmileIDSampleSelectionBar: View {
   private var counts: some View {
     VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
       UseSmileIDSampleText(
-        "\(selectedCount) selected",
+        UseSmileIDSampleStrings.verificationsSelected(count: selectedCount),
         style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 14)
       )
       .foregroundColor(colors.textTitle)
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectionCount)
       UseSmileIDSampleText(
-        selectedCount == 0 ? "Tap rows to select" : "Tap \"Hide from List\" to confirm",
+        selectedCount == 0 ? UseSmileIDSampleStrings.verificationsTapRows : UseSmileIDSampleStrings.verificationsTapHide,
         style: UseSmileIDSampleTheme.type.textStyleBodySm.with(size: 11.5)
       )
       .foregroundColor(colors.textMuted)
@@ -97,7 +97,7 @@ public struct UseSmileIDSampleSelectionBar: View {
     Button(action: onRemove) {
       HStack(spacing: SmileSpacing.spacingXs) {
         UseSmileIDSampleIcon(SmileIcons.trash, tint: colors.badge.errorText, size: SmileSpacing.sizeIconSm)
-        UseSmileIDSampleText("Hide from List", style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 13.5))
+        UseSmileIDSampleText(UseSmileIDSampleStrings.verificationsHideFromList, style: UseSmileIDSampleTheme.type.textStyleBodyStrong.with(size: 13.5))
           .foregroundColor(colors.badge.errorText)
       }
       .padding(.horizontal, SmileSpacing.spacingMd)

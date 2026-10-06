@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } fro
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 const FIELD_TEXT_SIZE = 13;
 
@@ -76,11 +77,12 @@ const CopyButton = ({
   testID?: string;
 }) => {
   const theme = useSmileIDSampleTheme();
+  const strings = useSmileIDSampleStrings();
   return (
     <Pressable
       testID={testID}
       accessibilityRole="button"
-      accessibilityLabel={`Copy ${label}`}
+      accessibilityLabel={strings.commonCopyNamed({ label })}
       onPress={onCopy}
       // The glyph is 24; the platform minimum is reached with slop rather than by growing the row.
       hitSlop={12}

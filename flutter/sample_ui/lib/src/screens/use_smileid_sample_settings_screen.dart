@@ -15,6 +15,8 @@ import '../tokens/smile_icons.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_marks.dart';
+import '../use_smileid_sample_strings.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// One ABOUT or LEGAL row: an id, a title, the line beneath it, and where it goes.
@@ -50,37 +52,39 @@ class UseSmileIDSampleNavRow {
 }
 
 /// The ABOUT rows, in the order the design draws them.
-const List<UseSmileIDSampleNavRow> useSmileIDSampleAboutRows =
-    <UseSmileIDSampleNavRow>[
-      UseSmileIDSampleNavRow(
-        id: 'documentation',
-        title: 'Documentation',
-        supportingText: 'docs.usesmileid.com',
-        icon: SmileIcons.docs,
-        url: 'https://docs.usesmileid.com/',
-      ),
-      UseSmileIDSampleNavRow(
-        id: 'support',
-        title: 'Support',
-        supportingText: 'Contact the Smile team',
-        icon: SmileIcons.support,
-        url: 'https://smile.id/contact-us',
-      ),
-    ];
+List<UseSmileIDSampleNavRow> useSmileIDSampleAboutRows(
+  UseSmileIDSampleStrings strings,
+) => <UseSmileIDSampleNavRow>[
+  UseSmileIDSampleNavRow(
+    id: 'documentation',
+    title: strings.settingsDocumentation,
+    supportingText: 'docs.usesmileid.com',
+    icon: SmileIcons.docs,
+    url: 'https://docs.usesmileid.com/',
+  ),
+  UseSmileIDSampleNavRow(
+    id: 'support',
+    title: strings.settingsSupport,
+    supportingText: strings.settingsSupportBody,
+    icon: SmileIcons.support,
+    url: 'https://smile.id/contact-us',
+  ),
+];
 
 /// The LEGAL rows, in the order the design draws them.
-const List<UseSmileIDSampleNavRow>
-useSmileIDSampleLegalRows = <UseSmileIDSampleNavRow>[
+List<UseSmileIDSampleNavRow> useSmileIDSampleLegalRows(
+  UseSmileIDSampleStrings strings,
+) => <UseSmileIDSampleNavRow>[
   UseSmileIDSampleNavRow(
     id: 'terms',
-    title: 'Terms of Service',
+    title: strings.settingsTerms,
     icon: SmileIcons.terms,
     url: 'https://smile.id/terms-and-conditions',
     opensInApp: false,
   ),
   UseSmileIDSampleNavRow(
     id: 'privacy',
-    title: 'Privacy Policy',
+    title: strings.settingsPrivacy,
     icon: SmileIcons.privacy,
     url: 'https://smile.id/privacy-policy',
     opensInApp: false,
@@ -88,17 +92,18 @@ useSmileIDSampleLegalRows = <UseSmileIDSampleNavRow>[
   // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
   UseSmileIDSampleNavRow(
     id: 'licenses',
-    title: 'Open-source licenses',
+    title: strings.settingsLicenses,
     icon: SmileIcons.licenses,
   ),
 ];
 
 /// Every navigation row, so a caller can assert the set rather than the screen.
-List<UseSmileIDSampleNavRow> get useSmileIDSampleNavRows =>
-    <UseSmileIDSampleNavRow>[
-      ...useSmileIDSampleAboutRows,
-      ...useSmileIDSampleLegalRows,
-    ];
+List<UseSmileIDSampleNavRow> useSmileIDSampleNavRows(
+  UseSmileIDSampleStrings strings,
+) => <UseSmileIDSampleNavRow>[
+  ...useSmileIDSampleAboutRows(strings),
+  ...useSmileIDSampleLegalRows(strings),
+];
 
 /// Everything the settings list renders; callbacks stay parameters, like every screen.
 @immutable
@@ -152,6 +157,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onSignOut,
     required this.onCaptureModeTap,
     required this.onAppearanceTap,
+    required this.onLanguageTap,
     this.onOpenScenarioDrawer,
     this.bottomInset = 0,
     super.key,
@@ -179,6 +185,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
   /// Opens the appearance sheet.
   final VoidCallback onAppearanceTap;
 
+  /// Opens the language sheet.
+  final VoidCallback onLanguageTap;
+
   /// Opens the scenario drawer; null hides the DEBUG section entirely.
   final VoidCallback? onOpenScenarioDrawer;
 
@@ -203,7 +212,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
             child: Semantics(
               header: true,
               child: Text(
-                'Settings',
+                context.strings.settingsTitle,
                 style: UseSmileIDSampleType.textStyleHeadingPage.copyWith(
                   color: colors.textTitle,
                 ),
@@ -211,13 +220,13 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
             ),
           ),
           _Section(
-            label: 'PROFILE',
+            label: context.strings.settingsSectionProfile,
             children: <Widget>[
               UseSmileIDSampleProfileRow(
                 organisation: state.organisation,
                 supportingText: state.hasProfile
-                    ? 'Tap to configure'
-                    : 'Tap to create one',
+                    ? context.strings.settingsProfileConfigure
+                    : context.strings.settingsProfileCreate,
                 initials: state.initials,
                 selected: false,
                 onTap: onProfileTap,
@@ -229,33 +238,36 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
           ),
           // Mutually exclusive, so each row says what turning it on does to the other.
           _Section(
-            label: 'CAPTURE',
+            label: context.strings.settingsSectionCapture,
             children: <Widget>[
               _switchRow(
                 title: _enhancedSmartSelfieTitle,
                 icon: SmileIcons.smile,
                 supportingText: state.settings.agentMode
-                    ? 'Turns Agent mode off'
-                    : 'Face capture uses head-turns',
+                    ? context.strings.settingsEnhancedSmartSelfieMutex
+                    : context.strings.settingsEnhancedSmartSelfieBody,
                 setting: UseSmileIDSampleSetting.enhancedSmartSelfie,
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Agent mode',
+                title: context.strings.settingsAgentMode,
                 icon: SmileIcons.agent,
                 supportingText: state.settings.enhancedSmartSelfie
-                    ? 'Turns $_enhancedSmartSelfieTitle off'
-                    : 'Operator captures for the applicant',
+                    ? context.strings.settingsAgentModeMutex(
+                        setting: _enhancedSmartSelfieTitle,
+                      )
+                    : context.strings.settingsAgentModeBody,
                 setting: UseSmileIDSampleSetting.agentMode,
               ),
             ],
           ),
           _Section(
-            label: 'APPEARANCE',
+            label: context.strings.settingsSectionAppearance,
             children: <Widget>[
               UseSmileIDSampleSettingRow(
-                title: 'Theme',
+                title: context.strings.settingsTheme,
                 supportingText: state.settings.appearance.label(
+                  context.strings,
                   deviceDark: state.deviceDark,
                 ),
                 onTap: onAppearanceTap,
@@ -269,39 +281,60 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
             ],
           ),
           _Section(
-            label: 'SDK SCREENS — SHOW OR SKIP FLOW STEPS',
+            label: context.strings.settingsSectionLanguage,
+            children: <Widget>[
+              UseSmileIDSampleSettingRow(
+                title: context.strings.settingsLanguage,
+                supportingText: state.settings.language.label(
+                  context.strings,
+                  UseSmileIDSampleStringsScope.deviceLanguagesOf(context),
+                ),
+                onTap: onLanguageTap,
+                leading: (Color tint) => UseSmileIDSampleIcon(
+                  asset: SmileIcons.materialSettingLanguage,
+                  tint: tint,
+                ),
+                trailing: const UseSmileIDSampleSettingRowChevron(),
+                testId: UseSmileIDSampleTestIds.settingLanguage,
+              ),
+            ],
+          ),
+          _Section(
+            label: context.strings.settingsSectionSdkScreens,
             children: <Widget>[
               _switchRow(
-                title: 'Consent screen',
+                title: context.strings.settingsConsent,
                 icon: SmileIcons.consent,
                 supportingText: state.consentBoundByToken
-                    ? 'The token grants consent, so the screen is skipped'
-                    : 'Ask permission before KYC checks',
+                    ? context.strings.settingsConsentBound
+                    : context.strings.settingsConsentBody,
                 setting: UseSmileIDSampleSetting.consentStep,
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Instruction screen',
+                title: context.strings.settingsInstructions,
                 icon: SmileIcons.instructions,
-                supportingText: 'Prep tips before capture',
+                supportingText: context.strings.settingsInstructionsBody,
                 setting: UseSmileIDSampleSetting.instructionsStep,
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Preview screen',
+                title: context.strings.settingsPreview,
                 icon: SmileIcons.preview,
-                supportingText: 'Confirm or retake after capture',
+                supportingText: context.strings.settingsPreviewBody,
                 setting: UseSmileIDSampleSetting.previewStep,
               ),
             ],
           ),
           // The design draws no such section either; it sits with the other capture choices.
           _Section(
-            label: 'DOCUMENT CAPTURE',
+            label: context.strings.settingsSectionDocumentCapture,
             children: <Widget>[
               UseSmileIDSampleSettingRow(
-                title: 'Capture mode',
-                supportingText: state.settings.captureMode.label,
+                title: context.strings.settingsCaptureMode,
+                supportingText: state.settings.captureMode.label(
+                  context.strings,
+                ),
                 onTap: onCaptureModeTap,
                 leading: (Color tint) => UseSmileIDSampleIcon(
                   asset: SmileIcons.documentVerification,
@@ -312,23 +345,23 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Gallery upload',
+                title: context.strings.settingsGalleryUpload,
                 icon: SmileIcons.preview,
-                supportingText: 'The system picker needs no permission',
+                supportingText: context.strings.settingsGalleryUploadBody,
                 setting: UseSmileIDSampleSetting.galleryUpload,
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Skip the back',
+                title: context.strings.settingsSkipBack,
                 icon: SmileIcons.instructions,
-                supportingText: 'A Skip button on the back-side capture',
+                supportingText: context.strings.settingsSkipBackBody,
                 setting: UseSmileIDSampleSetting.allowSkipBack,
               ),
               const UseSmileIDSampleSettingRowDivider(),
               _switchRow(
-                title: 'Selfie first',
+                title: context.strings.settingsSelfieFirst,
                 icon: SmileIcons.smile,
-                supportingText: 'The selfie before the document',
+                supportingText: context.strings.settingsSelfieFirstBody,
                 setting: UseSmileIDSampleSetting.selfieFirst,
               ),
             ],
@@ -351,26 +384,25 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ],
             ),
           _Section(
-            label: 'ABOUT',
-            children: _navRows(useSmileIDSampleAboutRows),
+            label: context.strings.settingsSectionAbout,
+            children: _navRows(useSmileIDSampleAboutRows(context.strings)),
           ),
           _Section(
-            label: 'LEGAL',
-            children: _navRows(useSmileIDSampleLegalRows),
+            label: context.strings.settingsSectionLegal,
+            children: _navRows(useSmileIDSampleLegalRows(context.strings)),
           ),
           Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,
             ),
             child: UseSmileIDSampleDestructiveRow(
-              text: 'Sign out',
+              text: context.strings.settingsSignOut,
               onTap: () async {
                 if (await showUseSmileIDSampleConfirmation(
                   context,
-                  title: 'Sign out?',
-                  message:
-                      'This ends the token session and deletes every profile on this device.',
-                  confirmLabel: 'Sign out',
+                  title: context.strings.settingsSignOutTitle,
+                  message: context.strings.settingsSignOutBody,
+                  confirmLabel: context.strings.settingsSignOut,
                   confirmTestId: UseSmileIDSampleTestIds.signOutConfirm,
                 )) {
                   onSignOut();

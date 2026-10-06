@@ -149,6 +149,13 @@ struct UseSmileIDSampleShell: View {
         app.setAppearance(appearance)
         router.sheet = nil
       }
+    case .language:
+      // Stays open after a pick, to say it applies at the next launch.
+      LanguageSheet(
+        selected: app.settings.language,
+        deviceLanguages: app.deviceLanguages,
+        pending: app.settings.language != app.runningLanguage
+      ) { app.setLanguage($0) }
     case .profileSwitch:
       ProfileSwitchSheet(
         profiles: app.profiles.all,
@@ -203,9 +210,9 @@ struct UseSmileIDSampleShell: View {
     app.clearLastJobRemoval()
     removalNotice = UseSmileIDSampleTransientNotice(
       message: count == 1
-        ? "1 verification hidden from App list"
-        : "\(count) verifications hidden from App list",
-      actionLabel: "Undo"
+        ? UseSmileIDSampleStrings.verificationsHiddenOne
+        : UseSmileIDSampleStrings.verificationsHiddenMany(count: count),
+      actionLabel: UseSmileIDSampleStrings.commonUndo
     )
   }
 

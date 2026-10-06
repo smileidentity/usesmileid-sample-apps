@@ -9,7 +9,7 @@ import kotlin.time.Duration.Companion.minutes
  * How long a simulated scan's token lasts. The three live spans are the Portal's own expiry
  * allow-list; [Ended] is the only way a device flow can reach the expiry gate without waiting.
  */
-enum class UseSmileIDSampleSimulatedSpan(val label: String, val span: Duration, val ended: Boolean = false) {
+enum class UseSmileIDSampleSimulatedSpan(val shortLabel: String, val span: Duration, val ended: Boolean = false) {
     FifteenMinutes("15m", 15.minutes),
     OneHour("1h", 1.hours),
     EightHours("8h", 8.hours),

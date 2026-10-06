@@ -8,39 +8,36 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_icons.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_icon.dart';
 
 /// The three destinations the nav bar switches between. The token affordance is not one of them.
 enum UseSmileIDSampleNavItem {
   /// The products grid.
-  products(
-    UseSmileIDSampleTestIds.navProducts,
-    'Products',
-    SmileIcons.products,
-  ),
+  products(UseSmileIDSampleTestIds.navProducts, SmileIcons.products),
 
   /// The verifications list.
   verifications(
     UseSmileIDSampleTestIds.navVerifications,
-    'Verifications',
     SmileIcons.verifications,
   ),
 
   /// Settings.
-  settings(
-    UseSmileIDSampleTestIds.navSettings,
-    'Settings',
-    SmileIcons.settings,
-  );
+  settings(UseSmileIDSampleTestIds.navSettings, SmileIcons.settings);
 
-  const UseSmileIDSampleNavItem(this.testId, this.label, this.icon);
+  const UseSmileIDSampleNavItem(this.testId, this.icon);
 
   /// The `sample_*` id a flow taps.
   final String testId;
 
   /// The tab's label, beneath its icon.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleNavItem.products => strings.navProducts,
+    UseSmileIDSampleNavItem.verifications => strings.navVerifications,
+    UseSmileIDSampleNavItem.settings => strings.navSettings,
+  };
 
   /// The tab's mark, which the design supplies.
   final String icon;
@@ -180,7 +177,7 @@ class _TokenAffordance extends StatelessWidget {
               ),
               const SizedBox(height: SmileDimens.spacingXxs),
               Text(
-                'Token',
+                context.strings.navToken,
                 style: UseSmileIDSampleType.textStyleOverline.copyWith(
                   fontSize: _tokenLabelSize,
                   color: colors.foreground,
@@ -282,7 +279,7 @@ class _NavBarTab extends StatelessWidget {
               ),
               const SizedBox(height: SmileDimens.spacingXxs),
               Text(
-                item.label,
+                item.label(context.strings),
                 textAlign: TextAlign.center,
                 style: UseSmileIDSampleType.textStyleOverline.copyWith(
                   color: tint,

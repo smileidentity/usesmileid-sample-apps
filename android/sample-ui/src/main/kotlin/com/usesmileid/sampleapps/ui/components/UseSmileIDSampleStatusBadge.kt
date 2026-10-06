@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.label
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,7 +29,7 @@ fun UseSmileIDSampleStatusBadge(
         UseSmileIDSampleStatus.Blocked -> badge.errorBackground to badge.errorText
         UseSmileIDSampleStatus.Processing -> badge.infoBackground to badge.infoText
     }
-    StatusPill(label = status.label, background = background, foreground = foreground, modifier = modifier, testId = testId)
+    StatusPill(label = status.label(), background = background, foreground = foreground, modifier = modifier, testId = testId)
 }
 
 @Composable

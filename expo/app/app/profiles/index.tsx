@@ -3,7 +3,7 @@ import {
   UseSmileIDSampleTransientNoticeHost,
   useSmileIDSampleProfileStore,
   useSmileIDSampleTransientNotice,
-} from '@smileid/sample-ui';
+ useSmileIDSampleStrings } from '@smileid/sample-ui';
 import { useRouter } from 'expo-router';
 
 import { useSmileIDSampleBack } from '../../src/use-smile-id-sample-back';
@@ -12,6 +12,7 @@ import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 export default function Profiles() {
+  const strings = useSmileIDSampleStrings();
   const router = useRouter();
   const back = useSmileIDSampleBack('/settings');
   const notice = useSmileIDSampleTransientNotice();
@@ -31,11 +32,11 @@ export default function Profiles() {
     if (created === undefined) return;
     // Creating a profile does not make it active, so the confirmation carries the offer.
     show({
-      message: `${created.organisation} created`,
-      actionLabel: 'Make active',
+      message: strings.profilesCreated({ profile: created.organisation }),
+      actionLabel: strings.profilesMakeActive,
       onAction: () => setActive(created.id),
     });
-  }, [lastCreatedId, profiles, clearLastCreated, setActive, show]);
+  }, [lastCreatedId, profiles, clearLastCreated, setActive, show, strings]);
 
   return (
     <View style={styles.host}>

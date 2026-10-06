@@ -2,6 +2,7 @@ import type { ExpoConfig } from 'expo/config';
 import { withAppDelegate, withInfoPlist, type ConfigPlugin } from 'expo/config-plugins';
 
 import identity from '../../spec/app-identity.json';
+import l10n from '../../spec/l10n/languages.json';
 
 /// The expo entry of spec/app-identity.json, which owns every id and scheme this shell may claim.
 const expoIdentity = identity.apps.find((app) => app.platform === 'expo');
@@ -82,6 +83,14 @@ const config: ExpoConfig = {
     'expo-status-bar',
     'expo-font',
     'react-native-quick-crypto',
+    // No supportsRTL: with it the module resets forceRTL from the device's locale on every launch.
+    [
+      'expo-localization',
+      {
+        supportedLocales: l10n.languages.map((language) => language.id),
+        allowDynamicLocaleChangesAndroid: true,
+      },
+    ],
     // QR only, so neither platform asks for the microphone.
     ['expo-camera', { cameraPermission: cameraUsage, microphonePermission: false, recordAudioAndroid: false }],
     // kspVersion is deliberately not passed: the plugin rejects it without kotlinVersion, and its

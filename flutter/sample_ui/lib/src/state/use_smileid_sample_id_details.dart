@@ -1,4 +1,5 @@
 import '../model/use_smileid_sample_product.dart';
+import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_catalogue.dart';
 import 'use_smileid_sample_id_number_hint.dart';
 
@@ -113,67 +114,80 @@ class UseSmileIDSampleDocument {
 /// How the SDK photographs the chosen document, each the SDK's own type; never what the server receives.
 enum UseSmileIDSampleCaptureAs {
   /// A GenericDocument shaped in its own sheet, the SDK's defaults until then.
-  genericDocument('genericDocument', 'Generic document'),
+  genericDocument('genericDocument'),
 
   /// The SDK's Green Book preset.
-  greenBook('greenBook', 'Green Book preset'),
+  greenBook('greenBook'),
 
   /// The SDK's Passport preset.
-  passport('passport', 'Passport preset');
+  passport('passport');
 
-  const UseSmileIDSampleCaptureAs(this.id, this.label);
+  const UseSmileIDSampleCaptureAs(this.id);
 
   /// The id that suffixes this row's test id.
   final String id;
 
   /// What the row and the trigger say.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleCaptureAs.genericDocument =>
+      strings.captureAsGenericDocument,
+    UseSmileIDSampleCaptureAs.greenBook => strings.captureAsGreenBook,
+    UseSmileIDSampleCaptureAs.passport => strings.captureAsPassport,
+  };
 
   /// The sheet's first row, which clears the override so the document decides.
   static const String matchDocumentId = 'matchDocument';
-
-  /// The Match row's name and the trigger's placeholder.
-  static const String matchDocumentLabel = 'Match document';
 }
 
 /// A generic document's capture orientation.
 enum UseSmileIDSampleDocumentOrientation {
   /// Wider than tall.
-  landscape('landscape', 'Landscape'),
+  landscape('landscape'),
 
   /// Taller than wide.
-  portrait('portrait', 'Portrait');
+  portrait('portrait');
 
-  const UseSmileIDSampleDocumentOrientation(this.id, this.label);
+  const UseSmileIDSampleDocumentOrientation(this.id);
 
   /// The id that suffixes this chip's test id.
   final String id;
 
   /// What the chip says.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleDocumentOrientation.landscape =>
+      strings.genericDocumentLandscape,
+    UseSmileIDSampleDocumentOrientation.portrait =>
+      strings.genericDocumentPortrait,
+  };
 }
 
 /// The frame ratios the sheet offers, as width over height.
 enum UseSmileIDSampleAspectRatio {
   /// The SDK's own frame.
-  off('off', 'Off', null),
+  off('off', null),
 
   /// An ID-1 card.
-  card('card', 'Card 1.586', 1.586),
+  card('card', 1.586),
 
   /// A passport data page.
-  passport('passport', 'Passport 1.309', 1.309),
+  passport('passport', 1.309),
 
   /// A tall booklet.
-  booklet('booklet', 'Booklet 0.748', 0.748);
+  booklet('booklet', 0.748);
 
-  const UseSmileIDSampleAspectRatio(this.id, this.label, this.ratio);
+  const UseSmileIDSampleAspectRatio(this.id, this.ratio);
 
   /// The id that suffixes this chip's test id.
   final String id;
 
-  /// What the chip says.
-  final String label;
+  /// What the chip says; the number is written the same in every language.
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleAspectRatio.off => strings.genericDocumentRatioOff,
+    UseSmileIDSampleAspectRatio.card => strings.genericDocumentRatioCard,
+    UseSmileIDSampleAspectRatio.passport =>
+      strings.genericDocumentRatioPassport,
+    UseSmileIDSampleAspectRatio.booklet => strings.genericDocumentRatioBooklet,
+  };
 
   /// The ratio handed to the SDK, null for its own.
   final double? ratio;
@@ -413,22 +427,35 @@ class UseSmileIDSampleResolvedCaptureAs {
   bool get captureBothSides => captureAs != UseSmileIDSampleCaptureAs.passport;
 
   /// The trigger text from `spec/catalogue-rules.json` captureAs.
-  String triggerText() {
+  String triggerText(UseSmileIDSampleStrings strings) {
     final String sides = captureBothSides && hasBackSide
-        ? 'front and back'
-        : 'front only';
-    final String orientation = genericDocument.orientation.label.toLowerCase();
+        ? strings.captureAsFrontAndBack
+        : strings.captureAsFrontOnly;
+    final String orientation = genericDocument.orientation
+        .label(strings)
+        .toLowerCase();
+    final String name = captureAs.label(strings);
     if (captureAs != UseSmileIDSampleCaptureAs.genericDocument) {
-      return '${captureAs.label} · ${matched ? 'matches document' : 'chosen'}';
+      return matched
+          ? strings.captureAsMatches(captureAs: name)
+          : strings.captureAsChosen(captureAs: name);
     }
     return matched
-        ? '${UseSmileIDSampleCaptureAs.genericDocument.label} · $orientation · $sides'
-        : '${genericDocument.displayName} · $orientation · $sides · chosen';
+        ? strings.captureAsGenericSummary(
+            captureAs: name,
+            orientation: orientation,
+            sides: sides,
+          )
+        : strings.captureAsGenericNamedSummary(
+            name: genericDocument.displayName,
+            orientation: orientation,
+            sides: sides,
+          );
   }
 
   /// The sheet's Match row, naming what the document resolves to.
-  String get matchRowLabel =>
-      '${UseSmileIDSampleCaptureAs.matchDocumentLabel} (${captureAs.label})';
+  String matchRowLabel(UseSmileIDSampleStrings strings) =>
+      strings.captureAsMatchNamed(captureAs: captureAs.label(strings));
 
   @override
   bool operator ==(Object other) =>

@@ -20,6 +20,11 @@ abstract interface class UseSmileIDSampleSettingsRepository {
   Future<UseSmileIDSampleSettings> setAppearance(
     UseSmileIDSampleAppearance appearance,
   );
+
+  /// Stores the language and returns what was stored.
+  Future<UseSmileIDSampleSettings> setLanguage(
+    UseSmileIDSampleLanguage language,
+  );
 }
 
 /// The keys the store writes, shared across all four apps so a device carries one set, not four.
@@ -57,6 +62,9 @@ abstract final class UseSmileIDSampleSettingsKeys {
 
   /// The appearance, stored by its id.
   static const String appearance = 'appearance';
+
+  /// The language, stored by its id.
+  static const String language = 'language';
 
   /// The key one switch is stored under.
   static String of(UseSmileIDSampleSetting setting) => switch (setting) {
@@ -99,4 +107,9 @@ class UseSmileIDSampleMemorySettingsRepository
   Future<UseSmileIDSampleSettings> setAppearance(
     UseSmileIDSampleAppearance appearance,
   ) async => _settings = _settings.withAppearance(appearance);
+
+  @override
+  Future<UseSmileIDSampleSettings> setLanguage(
+    UseSmileIDSampleLanguage language,
+  ) async => _settings = _settings.withLanguage(language);
 }

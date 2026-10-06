@@ -1,5 +1,9 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleRelativeDay
+import androidx.compose.ui.platform.LocalConfiguration
+import com.usesmileid.sampleapps.ui.label
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -128,10 +132,12 @@ fun VerificationsScreen(
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     val visible = remember(state.jobs, state.filter) { state.jobs.orEmpty().filter(state.filter::matches) }
-    val days = remember(visible, state.todayStartMillis) { visible.groupByDay(state.todayStartMillis) }
+    // The app's locale: the JVM default does not follow the override.
+    val locale = LocalConfiguration.current.locales[0]
+    val days = remember(visible, state.todayStartMillis, locale) { visible.groupByDay(state.todayStartMillis, locale) }
     // Row ids carry the index in the whole visible list, not the one within the day group.
     val rowIndex = remember(visible) { visible.withIndex().associate { it.value.id to it.index } }
-    val timeLabels = remember(visible) { visible.timeLabels() }
+    val timeLabels = remember(visible, locale) { visible.timeLabels(locale) }
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -148,13 +154,13 @@ fun VerificationsScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "Verifications",
+                    text = UseSmileIDSampleStrings.verificationsTitle,
                     style = UseSmileIDSampleTheme.type.textStyleHeadingPage,
                     color = UseSmileIDSampleTheme.colors.textTitle,
                     modifier = Modifier.weight(1f),
                 )
                 Text(
-                    text = if (state.selectMode) "Cancel" else "Select",
+                    text = if (state.selectMode) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,
@@ -175,7 +181,7 @@ fun VerificationsScreen(
             ) {
                 UseSmileIDSampleJobFilter.entries.forEach { filter ->
                     UseSmileIDSampleFilterChip(
-                        label = filter.label,
+                        label = filter.label(),
                         count = state.counts[filter] ?: 0,
                         selected = filter == state.filter,
                         onClick = { onFilterChange(filter) },
@@ -191,14 +197,14 @@ fun VerificationsScreen(
             item {
                 if (state.jobs.isEmpty()) {
                     UseSmileIDSampleEmptyState(
-                        text = "No verifications yet",
-                        supportingText = "Start a product above and the job lands here.",
+                        text = UseSmileIDSampleStrings.verificationsEmptyTitle,
+                        supportingText = UseSmileIDSampleStrings.verificationsEmptyBody,
                         testId = UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY,
                     )
                 } else {
                     UseSmileIDSampleEmptyState(
-                        text = "Nothing ${state.filter.label.lowercase()}",
-                        supportingText = "Other filters still have verifications.",
+                        text = UseSmileIDSampleStrings.verificationsFilteredEmptyTitle(state.filter.label().lowercase()),
+                        supportingText = UseSmileIDSampleStrings.verificationsFilteredEmptyBody,
                         testId = UseSmileIDSampleTestIds.VERIFICATIONS_EMPTY,
                     )
                 }
@@ -208,7 +214,11 @@ fun VerificationsScreen(
         days.forEach { day ->
             item {
                 UseSmileIDSampleDateGroupHeader(
-                    relative = day.relative,
+                    relative = when (day.relative) {
+                        UseSmileIDSampleRelativeDay.Today -> UseSmileIDSampleStrings.verificationsToday
+                        UseSmileIDSampleRelativeDay.Yesterday -> UseSmileIDSampleStrings.verificationsYesterday
+                        null -> ""
+                    },
                     absolute = day.absolute,
                     modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 )

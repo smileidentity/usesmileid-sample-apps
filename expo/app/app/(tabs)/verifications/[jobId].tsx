@@ -7,6 +7,8 @@ import {
   useSmileIDSampleResultStore,
   useSmileIDSampleSessionStore,
   useSmileIDSampleTransientNotice,
+  useSmileIDSampleStrings,
+  UseSmileIDSampleStatus,
 } from '@smileid/sample-ui';
 import * as Clipboard from 'expo-clipboard';
 import { useLocalSearchParams } from 'expo-router';
@@ -19,6 +21,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 export default function VerificationDetails() {
+  const strings = useSmileIDSampleStrings();
   const back = useSmileIDSampleBack('/verifications');
   const { jobId } = useLocalSearchParams<{ jobId: string }>();
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
@@ -52,10 +55,10 @@ export default function VerificationDetails() {
       if (!silent) setRefreshing(false);
       // Silent on entry only about "still processing", which every visit would repeat.
       if (outcome !== null && (!silent || outcome.kind !== 'stillProcessing')) {
-        show({ message: smileIDSampleRefreshLabel(outcome) });
+        show({ message: smileIDSampleRefreshLabel(outcome, strings) });
       }
     },
-    [jobId, refresh, show],
+    [jobId, refresh, show, strings],
   );
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export default function VerificationDetails() {
 
   useEffect(() => {
     // Only a processing row can change, so only that one is refreshed on entry.
-    if (job === null || job.status !== 'Processing') return;
+    if (job === null || job.status !== UseSmileIDSampleStatus.Processing) return;
     if (refreshedOnEntry.current === job.id) return;
     refreshedOnEntry.current = job.id;
     void run(true);

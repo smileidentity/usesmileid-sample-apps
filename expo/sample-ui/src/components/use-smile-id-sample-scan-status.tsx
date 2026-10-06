@@ -5,6 +5,8 @@ import type { UseSmileIDSampleScanState } from '../model/use-smile-id-sample-sca
 import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 const DETAIL_SIZE = 12.5;
 
@@ -14,25 +16,25 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-const headline = (state: UseSmileIDSampleScanState): string => {
+const headline = (state: UseSmileIDSampleScanState, strings: UseSmileIDSampleStrings): string => {
   switch (state.kind) {
     case 'searching':
-      return 'Point at a Smile token QR';
+      return strings.scanPoint;
     case 'found':
-      return 'Token found';
+      return strings.scanFound;
     case 'linked':
-      return 'Session linked';
+      return strings.scanLinked;
     case 'rejected':
-      return 'That is not a token';
+      return strings.scanNotAToken;
   }
 };
 
-const detail = (state: UseSmileIDSampleScanState): string | null => {
+const detail = (state: UseSmileIDSampleScanState, strings: UseSmileIDSampleStrings): string | null => {
   switch (state.kind) {
     case 'searching':
       return null;
     case 'found':
-      return 'Reading it now';
+      return strings.scanReading;
     case 'linked':
       return `${state.handle} · ${state.remaining} left`;
     case 'rejected':
@@ -42,6 +44,7 @@ const detail = (state: UseSmileIDSampleScanState): string | null => {
 
 /// The scanner's state over the viewfinder, in the feedback fills; only a rejection offers an action.
 export const UseSmileIDSampleScanStatus = ({ state, onRetry, style }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const { background, foreground } = {
     searching: { background: theme.colors.surface, foreground: theme.colors.textTitle },
@@ -49,7 +52,7 @@ export const UseSmileIDSampleScanStatus = ({ state, onRetry, style }: Props) => 
     linked: { background: theme.colors.successFill, foreground: theme.colors.onSuccess },
     rejected: { background: theme.colors.errorFill, foreground: theme.colors.onError },
   }[state.kind];
-  const text = detail(state);
+  const text = detail(state, strings);
 
   return (
     <View
@@ -70,7 +73,7 @@ export const UseSmileIDSampleScanStatus = ({ state, onRetry, style }: Props) => 
           <UseSmileIDSampleIcon name="check" size={theme.dimens.size['icon-md']} tint={foreground} />
         ) : null}
         <Text style={[theme.type.textStyleBodyStrong, styles.centred, { color: foreground }]}>
-          {headline(state)}
+          {headline(state, strings)}
         </Text>
       </View>
       {text === null ? null : (
@@ -84,7 +87,7 @@ export const UseSmileIDSampleScanStatus = ({ state, onRetry, style }: Props) => 
           onPress={onRetry}
           style={[styles.action, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
         >
-          <Text style={[atWeight(theme.type.linkFont, 700), { color: foreground }]}>Try again</Text>
+          <Text style={[atWeight(theme.type.linkFont, 700), { color: foreground }]}>{strings.commonTryAgain}</Text>
         </Pressable>
       ) : null}
     </View>

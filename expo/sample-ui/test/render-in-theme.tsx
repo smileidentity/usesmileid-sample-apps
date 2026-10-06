@@ -1,9 +1,16 @@
 import { fireEvent, render } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
-import { PixelRatio } from 'react-native';
+import { PixelRatio, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleThemeProvider } from '../src/theme/use-smile-id-sample-theme';
+import { UseSmileIDSampleStringsProvider } from '../src/use-smile-id-sample-strings-context';
+
+export const rightToLeft = (element: ReactElement): ReactElement => (
+  <UseSmileIDSampleStringsProvider language="ar" deviceLanguages={[]}>
+    <View style={{ direction: 'rtl', flex: 1 }}>{element}</View>
+  </UseSmileIDSampleStringsProvider>
+);
 
 /// The two schemes every golden is recorded in, named so a suite reads as light-then-dark.
 export const schemes = [

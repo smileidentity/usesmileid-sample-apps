@@ -11,8 +11,8 @@ public enum UseSmileIDSampleEnvironment: String, CaseIterable, Sendable {
 
   public var label: String {
     switch self {
-    case .sandbox: "Sandbox"
-    case .production: "Production"
+    case .sandbox: UseSmileIDSampleStrings.scanEnvironmentSandbox
+    case .production: UseSmileIDSampleStrings.scanEnvironmentProduction
     }
   }
 

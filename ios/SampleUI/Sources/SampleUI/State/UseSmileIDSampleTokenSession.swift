@@ -55,8 +55,8 @@ public extension UseSmileIDSampleTokenSession {
   /// What the row reads instead of the profile's URL while this session runs.
   var callbackOverrideCaption: String {
     bindings.callbackUrl != nil
-      ? "Set by the scanned token"
-      : "The scanned token's partner default applies"
+      ? UseSmileIDSampleStrings.tokenCallbackSet
+      : UseSmileIDSampleStrings.tokenCallbackDefault
   }
 }
 

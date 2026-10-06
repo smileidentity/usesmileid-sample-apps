@@ -14,7 +14,10 @@ import {
 } from '@smileid/sample-ui';
 
 // A copy of spec/catalogue-fixture.json: Metro cannot reach spec/, and verify.sh fails if the copy drifts.
+import { getLocales } from 'expo-localization';
+
 import fixture from '../../assets/catalogue-fixture.json';
+import { smileIDSamplePinnedLanguage } from '../use-smile-id-sample-pinned-language';
 
 // The store's own timeout, so a request it gives up on is torn down rather than left open.
 const REQUEST_TIMEOUT_MS = 10_000;
@@ -81,7 +84,8 @@ export const smileIDSampleCatalogueEnvironment = (
 ): UseSmileIDSampleEnvironment => (live?.environment === 'production' ? 'production' : 'sandbox');
 
 /// The API translates document and country names; an unsupported locale comes back in English.
-export const smileIDSampleCatalogueLocale = (): string => Intl.DateTimeFormat().resolvedOptions().locale;
+export const smileIDSampleCatalogueLocale = (): string =>
+  smileIDSamplePinnedLanguage() ?? getLocales()[0]?.languageTag ?? 'en';
 
 /// Enhanced Document Verification's own list, which `live`'s token decides; any other product has none.
 export const smileIDSampleEnsureEnabled = (

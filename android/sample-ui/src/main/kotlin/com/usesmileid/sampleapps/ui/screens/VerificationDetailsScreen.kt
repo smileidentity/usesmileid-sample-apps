@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.localizedTitle
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -53,10 +55,10 @@ fun VerificationDetailsScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.VERIFICATION_DETAILS_SCREEN),
     ) {
-        UseSmileIDSampleTopAppBar(title = "Verification details", onBack = onBack) {
+        UseSmileIDSampleTopAppBar(title = UseSmileIDSampleStrings.detailsTitle, onBack = onBack) {
             if (job != null) {
                 UseSmileIDSampleTopAppBarButton(
-                    contentDescription = "Hide verification from the app list",
+                    contentDescription = UseSmileIDSampleStrings.detailsHide,
                     onClick = onDelete,
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Destructive,
                     testId = UseSmileIDSampleTestIds.DETAILS_DELETE,
@@ -78,8 +80,8 @@ fun VerificationDetailsScreen(
                 item {
                     // The id stays in the supporting line: which one was asked for is the whole diagnostic.
                     UseSmileIDSampleEmptyState(
-                        text = "No verification here",
-                        supportingText = "Nothing stored for jobId = $jobId",
+                        text = UseSmileIDSampleStrings.detailsMissingTitle,
+                        supportingText = UseSmileIDSampleStrings.detailsMissingBody(jobId),
                         testId = UseSmileIDSampleTestIds.DETAILS_EMPTY,
                     )
                 }
@@ -93,7 +95,7 @@ fun VerificationDetailsScreen(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Text(
-                                    text = job.product.label,
+                                    text = job.product.localizedTitle(),
                             style = UseSmileIDSampleTheme.type.textStyleTitle,
                             color = UseSmileIDSampleTheme.colors.textTitle,
                             modifier = Modifier.weight(1f),
@@ -107,14 +109,16 @@ fun VerificationDetailsScreen(
                 item {
                     UseSmileIDSampleSectionSurface(
                         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-                        label = "DETAILS",
+                        label = UseSmileIDSampleStrings.detailsSection,
                     ) {
+                        val jobIdLabel = UseSmileIDSampleStrings.detailsJobId
+                        val userIdLabel = UseSmileIDSampleStrings.detailsUserId
                         DetailRow("createdAt", "Created_at", job.createdAtLabel())
-                        DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy("Job ID", job.id) })
-                        DetailRow("message", "Message", job.message)
+                        DetailRow("jobId", "Job_id", job.shortId, onCopy = { onCopy(jobIdLabel, job.id) })
+                        DetailRow("message", UseSmileIDSampleStrings.detailsMessage, job.message)
                         // Coloured by the HTTP outcome, not the verdict: a blocked job still shows a green 200.
-                        DetailRow("status", "Status", job.httpStatusLabel(), valueColor = job.httpStatusColor())
-                        DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy("User ID", job.userId) })
+                        DetailRow("status", UseSmileIDSampleStrings.detailsStatus, job.httpStatusLabel(), valueColor = job.httpStatusColor())
+                        DetailRow("userId", "User_id", job.shortUserId, onCopy = { onCopy(userIdLabel, job.userId) })
                     }
                 }
             }

@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   UseSmileIDSampleStatus,
+  UseSmileIDSampleStrings,
   UseSmileIDSampleThemeProvider,
   smileIDSampleProducts,
   smileIDSampleRefreshLabel,
@@ -16,6 +17,8 @@ import { StyleSheet } from 'react-native';
 
 import VerificationDetails from '../app/(tabs)/verifications/[jobId]';
 import Profiles from '../app/profiles/index';
+
+const strings = UseSmileIDSampleStrings.forLanguage('en');
 
 /// A three-button nav bar's height.
 const BOTTOM_INSET = 48;
@@ -168,12 +171,12 @@ describe('a notice on a screen with no nav bar', () => {
 describe('what a refresh says', () => {
   it('uses the words the other three apps use', () => {
     expect(
-      smileIDSampleRefreshLabel({ kind: 'updated', status: UseSmileIDSampleStatus.Clear, message: 'Job completed', httpCode: 200 }),
+      smileIDSampleRefreshLabel({ kind: 'updated', status: UseSmileIDSampleStatus.Clear, message: 'Job completed', httpCode: 200 }, strings),
     ).toBe('Clear — Job completed');
-    expect(smileIDSampleRefreshLabel({ kind: 'stillProcessing' })).toBe('Still processing');
-    expect(smileIDSampleRefreshLabel({ kind: 'noSession' })).toBe('Scan a token first');
-    expect(smileIDSampleRefreshLabel({ kind: 'noServerJob' })).toBe('Not submitted under a scanned token');
-    expect(smileIDSampleRefreshLabel({ kind: 'partnerMismatch' })).toBe('Submitted by a different partner');
-    expect(smileIDSampleRefreshLabel({ kind: 'failed', reason: 'HTTP 401' })).toBe('Could not check status: HTTP 401');
+    expect(smileIDSampleRefreshLabel({ kind: 'stillProcessing' }, strings)).toBe('Still processing');
+    expect(smileIDSampleRefreshLabel({ kind: 'noSession' }, strings)).toBe('Scan a token first');
+    expect(smileIDSampleRefreshLabel({ kind: 'noServerJob' }, strings)).toBe('Not submitted under a scanned token');
+    expect(smileIDSampleRefreshLabel({ kind: 'partnerMismatch' }, strings)).toBe('Submitted by a different partner');
+    expect(smileIDSampleRefreshLabel({ kind: 'failed', reason: 'HTTP 401' }, strings)).toBe('Could not check status: HTTP 401');
   });
 });

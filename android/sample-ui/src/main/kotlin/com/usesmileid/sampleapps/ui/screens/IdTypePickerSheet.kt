@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
@@ -23,22 +24,23 @@ fun IdTypePickerSheet(
     modifier: Modifier = Modifier,
 ) {
     UseSmileIDSampleFullHeightBottomSheet(
-        title = "ID type",
+        title = UseSmileIDSampleStrings.pickerIdTypeTitle,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
         testId = UseSmileIDSampleTestIds.ID_TYPE_SHEET,
     ) {
         CataloguePicker(
             catalogue = catalogue,
-            what = "ID types",
+            loadingLabel = UseSmileIDSampleStrings.pickerIdTypeLoading,
+            failedLabel = UseSmileIDSampleStrings.pickerIdTypeLoadFailed,
             query = query,
             onQueryChange = onQueryChange,
-            searchPlaceholder = "Search ID type",
+            searchPlaceholder = UseSmileIDSampleStrings.pickerIdTypeSearch,
             searchTestId = UseSmileIDSampleTestIds.ID_TYPE_SEARCH,
             label = { it.label },
             emptyTestId = UseSmileIDSampleTestIds.ID_TYPE_EMPTY,
-            emptyLabel = "No ID type matches “$query”",
-            nothingToList = "No ID types for ${country?.name ?: "this country"}" to "Choose another country",
+            emptyLabel = UseSmileIDSampleStrings.pickerIdTypeNoMatch(query),
+            nothingToList = UseSmileIDSampleStrings.pickerIdTypeEmpty(country?.name ?: UseSmileIDSampleStrings.pickerThisCountry) to UseSmileIDSampleStrings.pickerChooseAnotherCountry,
             onRetry = onRetry,
         ) { idType ->
             UseSmileIDSampleOptionRow(

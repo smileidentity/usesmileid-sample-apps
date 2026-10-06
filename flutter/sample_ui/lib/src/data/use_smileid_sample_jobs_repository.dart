@@ -58,7 +58,7 @@ mixin UseSmileIDSampleJobRefreshMixin
     try {
       final UseSmileIDSampleJob? row = await find(jobId);
       if (row == null) {
-        return const UseSmileIDSampleStatusFailed(_gone);
+        return const UseSmileIDSampleStatusFailed.notStored();
       }
       if (row.sessionId == null) {
         return const UseSmileIDSampleStatusNoServerJob();
@@ -81,9 +81,7 @@ mixin UseSmileIDSampleJobRefreshMixin
         );
       } on Object catch (error) {
         // The type, never the message: this text goes on screen and a client error carries the URL.
-        return UseSmileIDSampleStatusFailed(
-          'Unexpected error: ${error.runtimeType}',
-        );
+        return UseSmileIDSampleStatusFailed.unexpected('${error.runtimeType}');
       }
       if (outcome is! UseSmileIDSampleStatusUpdated) {
         return outcome;
@@ -95,15 +93,12 @@ mixin UseSmileIDSampleJobRefreshMixin
         message: outcome.message,
         httpStatus: outcome.httpCode,
       );
-      return written ? outcome : const UseSmileIDSampleStatusFailed(_gone);
+      return written ? outcome : const UseSmileIDSampleStatusFailed.notStored();
     } finally {
       // Released on a cancelled caller too, or the row is unrefreshable for the process.
       _inFlight.remove(jobId);
     }
   }
-
-  /// A delete landing mid-refresh wins, so the sequence says so rather than resurrecting the row.
-  static const String _gone = 'The verification is no longer stored';
 }
 
 /// Jobs that live as long as the process, which is what a test and a preview want.

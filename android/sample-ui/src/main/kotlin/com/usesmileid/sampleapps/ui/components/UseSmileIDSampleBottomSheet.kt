@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -105,7 +106,7 @@ fun UseSmileIDSampleFullHeightBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 UseSmileIDSampleTopAppBarButton(
-                    contentDescription = "Close $title",
+                    contentDescription = UseSmileIDSampleStrings.commonCloseNamed(title),
                     onClick = onDismissRequest,
                     emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
                 ) { tint -> ArrowBackGlyph(tint = tint) }

@@ -46,6 +46,7 @@ export {
 export {
   UseSmileIDSampleProductSection,
   smileIDSampleProductFrom,
+  smileIDSampleProductTitle,
   smileIDSampleProducts,
   smileIDSampleProductsOf,
   type UseSmileIDSampleProduct,
@@ -62,7 +63,6 @@ export {
 } from './state/use-smile-id-sample-launch-args';
 export {
   USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
-  USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL,
   USE_SMILE_ID_SAMPLE_NO_PROFILE_PARTNER_NAME,
   smileIDSampleDecodeProfiles,
   smileIDSampleEncodeProfiles,
@@ -171,6 +171,26 @@ export {
   smileIDSampleAppearanceLabel,
   smileIDSampleAppearances,
 } from './model/use-smile-id-sample-appearance';
+export {
+  UseSmileIDSampleLanguage,
+  smileIDSampleLanguageIsRightToLeft,
+  smileIDSampleLanguageLabel,
+  smileIDSampleLanguages,
+  smileIDSampleResolvedLanguage,
+  smileIDSampleShippedLanguage,
+} from './model/use-smile-id-sample-language';
+export {
+  UseSmileIDSampleStrings,
+  type UseSmileIDSampleLanguage as UseSmileIDSampleStringsLanguage,
+  useSmileIDSampleLanguages,
+} from './use-smile-id-sample-strings';
+export {
+  UseSmileIDSampleStringsProvider,
+  useSmileIDSampleDeviceLanguages,
+  useSmileIDSampleLanguageShown,
+  useSmileIDSampleRightToLeft,
+  useSmileIDSampleStrings,
+} from './use-smile-id-sample-strings-context';
 export { useSmileIDSampleSettingsStore } from './state/use-smile-id-sample-settings-store';
 
 export { LicensesScreen, type UseSmileIDSampleLicence } from './screens/licenses-screen';
@@ -236,8 +256,8 @@ export {
   smileIDSampleContactProblem,
   smileIDSampleContactSubmitted,
   smileIDSampleDetailsContactProblem,
-  SMILE_ID_SAMPLE_EMAIL_ERROR,
-  SMILE_ID_SAMPLE_PHONE_ERROR,
+  smileIDSampleContactProblemText,
+  type UseSmileIDSampleContactProblem,
 } from './state/use-smile-id-sample-contact-rules';
 export {
   smileIDSampleAspectRatios,
@@ -271,7 +291,6 @@ export {
   smileIDSampleCaptureAsLabel,
   smileIDSampleCaptureAsOptions,
   smileIDSampleMatchDocumentId,
-  smileIDSampleMatchDocumentLabel,
 } from './model/use-smile-id-sample-capture-as';
 export {
   smileIDSampleAllowedRequiredFields,
@@ -281,7 +300,9 @@ export {
   smileIDSampleCatalogueIdTypes,
   smileIDSamplePassport,
   smileIDSampleCatalogueAdvice,
+  smileIDSampleCatalogueAdviceText,
   smileIDSampleCatalogueDefaultAdvice,
+  type UseSmileIDSampleCatalogueAdvice,
   smileIDSampleCatalogueEnabledCountries,
   smileIDSampleCatalogueEnabledDocuments,
   smileIDSampleDecodeDocuments,
@@ -345,6 +366,7 @@ export { IdTypePickerSheet } from './screens/id-type-picker-sheet';
 export { DocumentPickerSheet } from './screens/document-picker-sheet';
 export { CaptureAsSheet } from './screens/capture-as-sheet';
 export { AppearanceSheet } from './screens/appearance-sheet';
+export { LanguageSheet } from './screens/language-sheet';
 export { CaptureModeSheet } from './screens/capture-mode-sheet';
 export { GenericDocumentSheet } from './screens/generic-document-sheet';
 export { ProfilesScreen, type UseSmileIDSampleProfilesState } from './screens/profiles-screen';
@@ -394,13 +416,15 @@ export {
   smileIDSampleEnvironmentBaseUrl,
   smileIDSampleEnvironmentFor,
   smileIDSampleEnvironmentHosts,
-  smileIDSampleEnvironmentLabels,
+  smileIDSampleEnvironmentLabel,
 } from './model/use-smile-id-sample-environment';
 export {
   smileIDSampleBindsIdDetails,
   smileIDSampleBindsRequiredUserDetails,
   smileIDSampleConsentIsComplete,
   smileIDSampleDecodeToken,
+  smileIDSampleTokenRejectionText,
+  type UseSmileIDSampleTokenRejection,
   smileIDSampleTokenSession,
   type UseSmileIDSampleTokenConsent,
   type UseSmileIDSampleTokenDecode,

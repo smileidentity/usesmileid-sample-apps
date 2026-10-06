@@ -346,6 +346,18 @@
         "description": "One appearance row; suffixed system (the default), light or dark."
       },
       {
+        "id": "sample_setting_language",
+        "description": "Language row, a select trigger showing the language the app is showing: System (<language>) while System is selected, naming the shipped language the device's language resolves to (English when it ships none), else the chosen language's own name. Opens sample_language_sheet."
+      },
+      {
+        "id": "sample_language_sheet",
+        "description": "Language option sheet root."
+      },
+      {
+        "id": "sample_language_option",
+        "description": "One language row; suffixed system (the default) or a language id from spec/l10n/languages.json."
+      },
+      {
         "id": "sample_setting_consent_step",
         "description": "Consent screen switch → include/omit consent() in the flow."
       },

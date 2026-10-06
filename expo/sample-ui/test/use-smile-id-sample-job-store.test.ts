@@ -224,7 +224,7 @@ describe('refresh', () => {
 
   it('reports a missing row rather than throwing', async () => {
     const outcome = await store().refresh('nope', session(), NOW, sourceReturning(updated));
-    expect(outcome).toEqual({ kind: 'failed', reason: 'The verification is no longer stored' });
+    expect(outcome).toEqual({ kind: 'failed', reason: '', failure: 'notStored' });
   });
 
   it('reports a transport failure by type, never by message', async () => {
@@ -237,7 +237,7 @@ describe('refresh', () => {
         throw error;
       },
     });
-    expect(outcome).toEqual({ kind: 'failed', reason: 'Unexpected error: TypeError' });
+    expect(outcome).toEqual({ kind: 'failed', reason: 'TypeError', failure: 'unexpected' });
     expect(JSON.stringify(outcome)).not.toContain('SECRET');
   });
 

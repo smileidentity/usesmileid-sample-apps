@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.gallery
 
+import com.usesmileid.sampleapps.ui.label
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -473,7 +474,7 @@ private fun gallerySections(): List<GallerySectionSpec> {
         GallerySectionSpec("PRODUCT GRID") {
             val products = UseSmileIDSampleProduct.entries
             val hues = products.mapNotNull { smileProductHues[it.id] }
-            UseSmileIDSampleSectionHeader(text = UseSmileIDSampleProductSection.Authentication.label)
+            UseSmileIDSampleSectionHeader(text = UseSmileIDSampleProductSection.Authentication.label())
             UseSmileIDSampleProductGrid(itemCount = products.size) { index ->
                 UseSmileIDSampleProductCard(
                     title = products[index].cardTitle,

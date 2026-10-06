@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../use_smileid_sample_strings.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// Which settings row a toggle belongs to, so a caller can name one without naming every field.
@@ -37,21 +38,26 @@ enum UseSmileIDSampleSetting {
 /// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
 enum UseSmileIDSampleCaptureMode {
   /// Captures when the document is held steady.
-  auto('auto', 'Automatic'),
+  auto('auto'),
 
   /// The shutter shows at once.
-  manual('manual', 'Manual'),
+  manual('manual'),
 
   /// Automatic, with the shutter after the SDK's 10 seconds.
-  autoWithFallback('autoWithFallback', 'Automatic with manual fallback');
+  autoWithFallback('autoWithFallback');
 
-  const UseSmileIDSampleCaptureMode(this.id, this.label);
+  const UseSmileIDSampleCaptureMode(this.id);
 
   /// The id that suffixes this row's test id and is what the store keeps.
   final String id;
 
   /// What the row and the Settings line say.
-  final String label;
+  String label(UseSmileIDSampleStrings strings) => switch (this) {
+    UseSmileIDSampleCaptureMode.auto => strings.captureModeAuto,
+    UseSmileIDSampleCaptureMode.manual => strings.captureModeManual,
+    UseSmileIDSampleCaptureMode.autoWithFallback =>
+      strings.captureModeAutoWithFallback,
+  };
 }
 
 /// The app's theme choice; System follows the device's own theme.
@@ -78,12 +84,69 @@ enum UseSmileIDSampleAppearance {
   };
 
   /// System names the device's theme, never the one the app renders, so the row says why it looks as it does.
-  String label({required bool deviceDark}) => switch (this) {
-    UseSmileIDSampleAppearance.system =>
-      deviceDark ? 'System (Dark)' : 'System (Light)',
-    UseSmileIDSampleAppearance.light => 'Light',
-    UseSmileIDSampleAppearance.dark => 'Dark',
-  };
+  String label(UseSmileIDSampleStrings strings, {required bool deviceDark}) =>
+      switch (this) {
+        UseSmileIDSampleAppearance.system =>
+          deviceDark
+              ? strings.appearanceSystemDark
+              : strings.appearanceSystemLight,
+        UseSmileIDSampleAppearance.light => strings.appearanceLight,
+        UseSmileIDSampleAppearance.dark => strings.appearanceDark,
+      };
+}
+
+/// The app's language: System follows the device; the rest are in `spec/l10n/languages.json`.
+enum UseSmileIDSampleLanguage {
+  /// Follows the device.
+  system('system', ''),
+
+  /// English.
+  en('en', 'English'),
+
+  /// French.
+  fr('fr', 'Français'),
+
+  /// Arabic, right to left.
+  ar('ar', 'العربية'),
+
+  /// Hebrew, right to left.
+  he('he', 'עברית');
+
+  const UseSmileIDSampleLanguage(this.id, this.endonym);
+
+  /// The id that suffixes this row's test id and is what the store keeps.
+  final String id;
+
+  /// The language's name in itself, which no other language translates.
+  final String endonym;
+
+  /// Whether the language reads right to left.
+  bool get rightToLeft => this == ar || this == he;
+
+  /// System resolves to the first device language the app ships, else English.
+  UseSmileIDSampleLanguage resolved(List<String> deviceLanguages) =>
+      this != system
+      ? this
+      : deviceLanguages
+                .map(shipped)
+                .whereType<UseSmileIDSampleLanguage>()
+                .firstOrNull ??
+            en;
+
+  /// System names the language the device resolves to; a named language is its own endonym.
+  String label(UseSmileIDSampleStrings strings, List<String> deviceLanguages) =>
+      this == system
+      ? strings.languageSystem(language: resolved(deviceLanguages).endonym)
+      : endonym;
+
+  /// The shipped language a BCP 47 tag names, by its language subtag; Android still reports Hebrew as `iw`.
+  static UseSmileIDSampleLanguage? shipped(String tag) {
+    final String language = tag.split(RegExp('[-_]')).first.toLowerCase();
+    final String id = language == 'iw' ? 'he' : language;
+    return values
+        .where((UseSmileIDSampleLanguage l) => l != system && l.id == id)
+        .firstOrNull;
+  }
 }
 
 /// The Settings state. Three of these decide whether a step is composed into the SDK flow at all.
@@ -101,6 +164,7 @@ class UseSmileIDSampleSettings {
     this.selfieFirst = false,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
     this.appearance = UseSmileIDSampleAppearance.system,
+    this.language = UseSmileIDSampleLanguage.system,
   });
 
   /// The head-turn challenge.
@@ -132,6 +196,9 @@ class UseSmileIDSampleSettings {
 
   /// Typed like [captureMode]; System follows the device.
   final UseSmileIDSampleAppearance appearance;
+
+  /// Typed like [appearance]; System follows the device's own language.
+  final UseSmileIDSampleLanguage language;
 
   /// Reads one row, so a caller can diff two states without naming every field.
   bool operator [](UseSmileIDSampleSetting setting) => switch (setting) {
@@ -184,6 +251,10 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleAppearance appearance,
   ) => _copy(appearance: appearance);
 
+  /// A copy with [language] chosen.
+  UseSmileIDSampleSettings withLanguage(UseSmileIDSampleLanguage language) =>
+      _copy(language: language);
+
   UseSmileIDSampleSettings _copy({
     bool? enhancedSmartSelfie,
     bool? agentMode,
@@ -195,6 +266,7 @@ class UseSmileIDSampleSettings {
     bool? selfieFirst,
     UseSmileIDSampleCaptureMode? captureMode,
     UseSmileIDSampleAppearance? appearance,
+    UseSmileIDSampleLanguage? language,
   }) => UseSmileIDSampleSettings(
     enhancedSmartSelfie: enhancedSmartSelfie ?? this.enhancedSmartSelfie,
     agentMode: agentMode ?? this.agentMode,
@@ -206,6 +278,7 @@ class UseSmileIDSampleSettings {
     selfieFirst: selfieFirst ?? this.selfieFirst,
     captureMode: captureMode ?? this.captureMode,
     appearance: appearance ?? this.appearance,
+    language: language ?? this.language,
   );
 
   @override
@@ -220,7 +293,8 @@ class UseSmileIDSampleSettings {
       other.allowSkipBack == allowSkipBack &&
       other.selfieFirst == selfieFirst &&
       other.captureMode == captureMode &&
-      other.appearance == appearance;
+      other.appearance == appearance &&
+      other.language == language;
 
   @override
   int get hashCode => Object.hash(
@@ -234,5 +308,6 @@ class UseSmileIDSampleSettings {
     selfieFirst,
     captureMode,
     appearance,
+    language,
   );
 }

@@ -13,6 +13,7 @@ import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// What the verifications list draws.
@@ -119,7 +120,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
               children: <Widget>[
                 Expanded(
                   child: Text(
-                    'Verifications',
+                    context.strings.verificationsTitle,
                     style: UseSmileIDSampleType.textStyleHeadingPage.copyWith(
                       color: colors.textTitle,
                     ),
@@ -143,7 +144,9 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                           child: Center(
                             widthFactor: 1,
                             child: Text(
-                              state.selectMode ? 'Cancel' : 'Select',
+                              state.selectMode
+                                  ? context.strings.commonCancel
+                                  : context.strings.verificationsSelect,
                               softWrap: false,
                               style: UseSmileIDSampleType.linkFont.copyWith(
                                 fontWeight: FontWeight.w700,
@@ -169,7 +172,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                 for (final UseSmileIDSampleJobFilter chip
                     in UseSmileIDSampleJobFilter.values)
                   UseSmileIDSampleFilterChip(
-                    label: chip.label,
+                    label: chip.label(context.strings),
                     count: state.countFor(chip),
                     selected: chip == state.filter,
                     onTap: () => onFilterChanged(chip),
@@ -184,11 +187,13 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
           if (state.jobs != null && visible.isEmpty)
             UseSmileIDSampleEmptyState(
               text: state.jobs!.isEmpty
-                  ? 'No verifications yet'
-                  : 'Nothing ${state.filter.label.toLowerCase()}',
+                  ? context.strings.verificationsEmptyTitle
+                  : context.strings.verificationsFilteredEmptyTitle(
+                      filter: state.filter.label(context.strings).toLowerCase(),
+                    ),
               supportingText: state.jobs!.isEmpty
-                  ? 'Start a product above and the job lands here.'
-                  : 'Other filters still have verifications.',
+                  ? context.strings.verificationsEmptyBody
+                  : context.strings.verificationsFilteredEmptyBody,
               testId: UseSmileIDSampleTestIds.verificationsEmpty,
             ),
           for (final UseSmileIDSampleJobDay day in days) ...<Widget>[
@@ -200,8 +205,12 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                 relative: useSmileIDSampleRelativeDay(
                   day.startMillis,
                   state.nowMillis,
+                  context.strings,
                 ),
-                absolute: useSmileIDSampleAbsoluteDay(day.startMillis),
+                absolute: useSmileIDSampleAbsoluteDay(
+                  day.startMillis,
+                  UseSmileIDSampleStringsScope.languageOf(context).id,
+                ),
               ),
             ),
             for (final UseSmileIDSampleJob job in day.jobs)
@@ -231,9 +240,11 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
           bottom: bottomInset + SmileDimens.spacingXxs,
           child: UseSmileIDSampleToast(
             message: state.removedCount == 1
-                ? '1 verification hidden from App list'
-                : '${state.removedCount} verifications hidden from App list',
-            actionLabel: 'Undo',
+                ? context.strings.verificationsHiddenOne
+                : context.strings.verificationsHiddenMany(
+                    count: state.removedCount ?? 0,
+                  ),
+            actionLabel: context.strings.commonUndo,
             onAction: onUndo,
           ),
         ),

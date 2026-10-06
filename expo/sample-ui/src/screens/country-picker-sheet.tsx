@@ -4,6 +4,7 @@ import { UseSmileIDSampleOptionRow } from '../components/use-smile-id-sample-opt
 import type { UseSmileIDSampleCatalogue } from '../state/use-smile-id-sample-catalogue';
 import { smileIDSampleFlag, type UseSmileIDSampleCountry } from '../state/use-smile-id-sample-id-details';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   catalogue: UseSmileIDSampleCatalogue<UseSmileIDSampleCountry>;
@@ -24,37 +25,41 @@ export const CountryPickerSheet = ({
   onSelect,
   onRetry,
   onDismiss,
-}: Props) => (
-  <UseSmileIDSampleBottomSheet
-    visible
-    fullHeight
-    title="Country"
-    onDismiss={onDismiss}
-    testID={UseSmileIDSampleTestIds.COUNTRY_SHEET}
-  >
-    <UseSmileIDSampleCataloguePicker
-      catalogue={catalogue}
-      what="countries"
-      query={query}
-      onQueryChange={onQueryChange}
-      searchPlaceholder="Search country"
-      searchTestID={UseSmileIDSampleTestIds.COUNTRY_SEARCH}
-      label={(country) => country.name}
-      emptyTestID={UseSmileIDSampleTestIds.COUNTRY_EMPTY}
-      emptyLabel={(text) => `No country matches “${text}”`}
-      nothingToList={['No countries for this product', 'Try another product']}
-      onRetry={onRetry}
-      leadingCircle
-      row={(country) => (
-        <UseSmileIDSampleOptionRow
-          key={country.code}
-          label={country.name}
-          selected={country.code === selected?.code}
-          onPress={() => onSelect(country)}
-          leadingText={smileIDSampleFlag(country.code)}
-          testID={UseSmileIDSampleSuffixedTestIds.countryOption(country.code)}
-        />
-      )}
-    />
-  </UseSmileIDSampleBottomSheet>
-);
+}: Props) => {
+  const strings = useSmileIDSampleStrings();
+  return (
+    <UseSmileIDSampleBottomSheet
+      visible
+      fullHeight
+      title={strings.pickerCountryTitle}
+      onDismiss={onDismiss}
+      testID={UseSmileIDSampleTestIds.COUNTRY_SHEET}
+    >
+      <UseSmileIDSampleCataloguePicker
+        catalogue={catalogue}
+        loadingLabel={strings.pickerCountryLoading}
+        failedLabel={strings.pickerCountryLoadFailed}
+        query={query}
+        onQueryChange={onQueryChange}
+        searchPlaceholder={strings.pickerCountrySearch}
+        searchTestID={UseSmileIDSampleTestIds.COUNTRY_SEARCH}
+        label={(country) => country.name}
+        emptyTestID={UseSmileIDSampleTestIds.COUNTRY_EMPTY}
+        emptyLabel={(text) => strings.pickerCountryNoMatch({ query: text })}
+        nothingToList={[strings.pickerCountryEmpty, strings.pickerCountryEmptyHint]}
+        onRetry={onRetry}
+        leadingCircle
+        row={(country) => (
+          <UseSmileIDSampleOptionRow
+            key={country.code}
+            label={country.name}
+            selected={country.code === selected?.code}
+            onPress={() => onSelect(country)}
+            leadingText={smileIDSampleFlag(country.code)}
+            testID={UseSmileIDSampleSuffixedTestIds.countryOption(country.code)}
+          />
+        )}
+      />
+    </UseSmileIDSampleBottomSheet>
+  );
+};

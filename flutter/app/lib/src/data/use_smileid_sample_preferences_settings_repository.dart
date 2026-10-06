@@ -68,6 +68,17 @@ class UseSmileIDSamplePreferencesSettingsRepository
               .firstOrNull ??
           defaults.captureMode,
       appearance: _appearance(),
+      language:
+          UseSmileIDSampleLanguage.values
+              .where(
+                (UseSmileIDSampleLanguage language) =>
+                    language.id ==
+                    _preferences.getString(
+                      UseSmileIDSampleSettingsKeys.language,
+                    ),
+              )
+              .firstOrNull ??
+          defaults.language,
     ).normalised();
   }
 
@@ -152,6 +163,26 @@ class UseSmileIDSamplePreferencesSettingsRepository
             appearance.id,
           );
           await _preferences.remove(UseSmileIDSampleSettingsKeys.darkMode);
+          done.complete(await read());
+        })
+        .catchError((Object error, StackTrace stack) {
+          if (!done.isCompleted) done.completeError(error, stack);
+        });
+    return done.future;
+  }
+
+  @override
+  Future<UseSmileIDSampleSettings> setLanguage(
+    UseSmileIDSampleLanguage language,
+  ) {
+    final Completer<UseSmileIDSampleSettings> done =
+        Completer<UseSmileIDSampleSettings>();
+    _writes = _writes
+        .then((_) async {
+          await _preferences.setString(
+            UseSmileIDSampleSettingsKeys.language,
+            language.id,
+          );
           done.complete(await read());
         })
         .catchError((Object error, StackTrace stack) {

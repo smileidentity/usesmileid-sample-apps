@@ -64,9 +64,9 @@
     {
       "name": "appLocale",
       "type": "string",
-      "values": "BCP 47 tag, e.g. fr-FR",
+      "values": "BCP 47 tag, e.g. fr-FR; its language picks one from spec/l10n/languages.json",
       "default": null,
-      "description": "In-app locale override. Needed because changing the device locale is not reliably scriptable on every OEM."
+      "description": "Language for this launch, over the stored Language setting and never saved to it. Needed because changing the device locale is not reliably scriptable on every OEM. A language the app does not ship falls back to the stored setting."
     },
     {
       "name": "holdCamera",

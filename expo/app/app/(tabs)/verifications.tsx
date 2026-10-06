@@ -4,6 +4,7 @@ import {
   smileIDSampleRemovalNotice,
   useSmileIDSampleJobStore,
   useSmileIDSampleTransientNotice,
+  useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
@@ -14,6 +15,7 @@ import { useSmileIDSampleNoticeStyle } from '../../src/use-smile-id-sample-notic
 import { useSmileIDSampleSetSelectMode } from '../../src/use-smile-id-sample-select-mode';
 
 export default function Verifications() {
+  const strings = useSmileIDSampleStrings();
   const router = useRouter();
   const notice = useSmileIDSampleTransientNotice();
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
@@ -42,8 +44,8 @@ export default function Verifications() {
     if (removals.length === 0) return;
     const count = consumeRemoval();
     if (count === null) return;
-    show({ ...smileIDSampleRemovalNotice(count), onAction: () => void undoRemove() });
-  }, [removals, consumeRemoval, undoRemove, show]);
+    show({ ...smileIDSampleRemovalNotice(count, strings), onAction: () => void undoRemove() });
+  }, [removals, consumeRemoval, undoRemove, show, strings]);
 
   return (
     <View style={styles.host}>

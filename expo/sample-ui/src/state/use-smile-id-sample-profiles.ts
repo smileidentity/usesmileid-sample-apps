@@ -1,3 +1,5 @@
+import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
+
 /// The fields the design labels "attached to every job", which is why every product collects them.
 export type UseSmileIDSampleUserDetails = {
   readonly firstName: string;
@@ -33,21 +35,14 @@ export const USE_SMILE_ID_SAMPLE_NO_PROFILE_PARTNER_NAME = 'Smile ID';
 /// What a plain launch has always sent as the partner id, so no profile changes nothing on the wire.
 export const USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID = 'p-1';
 
-/// What the header, settings card and form say while there is no profile.
-export const USE_SMILE_ID_SAMPLE_NO_PROFILE_LABEL = 'No profile yet';
-
-const NO_USER_DETAILS_CAPTION = 'No user details yet';
-
-/// A profile naming neither an organisation nor a person, which only a token binding both names allows.
-const UNNAMED_PROFILE = 'Unnamed profile';
 
 /// The person the details name, so it can never disagree with them.
 export const smileIDSampleProfilePerson = (profile: UseSmileIDSampleProfile): string =>
   `${profile.defaults.firstName} ${profile.defaults.lastName}`.trim();
 
 /// What a row calls it: the organisation, or the person when it names none.
-export const smileIDSampleProfileTitle = (profile: UseSmileIDSampleProfile): string =>
-  profile.organisation.trim() || smileIDSampleProfilePerson(profile) || UNNAMED_PROFILE;
+export const smileIDSampleProfileTitle = (profile: UseSmileIDSampleProfile, strings: UseSmileIDSampleStrings): string =>
+  profile.organisation.trim() || smileIDSampleProfilePerson(profile) || strings.profilesUnnamed;
 
 /// The person's initials, as the design has them, falling back to the organisation.
 export const smileIDSampleProfileInitials = (profile: UseSmileIDSampleProfile): string => {
@@ -62,8 +57,8 @@ export const smileIDSampleProfileInitials = (profile: UseSmileIDSampleProfile): 
 };
 
 /// What a row says under the organisation: the person, or a placeholder until details are saved.
-export const smileIDSampleProfileCaption = (profile: UseSmileIDSampleProfile): string =>
-  smileIDSampleProfilePerson(profile) || NO_USER_DETAILS_CAPTION;
+export const smileIDSampleProfileCaption = (profile: UseSmileIDSampleProfile, strings: UseSmileIDSampleStrings): string =>
+  smileIDSampleProfilePerson(profile) || strings.profilesNoDetails;
 
 /// What the consent screen names as the partner: the app's own name when no profile names one.
 export const smileIDSamplePartnerName = (profile: UseSmileIDSampleProfile | null): string =>

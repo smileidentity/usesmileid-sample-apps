@@ -17,6 +17,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// The details every product collects before its flow starts, filled from the profile the run is for.
@@ -99,10 +100,11 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
               children: <Widget>[
                 UseSmileIDSampleProfileRow(
                   organisation:
-                      profile?.title ?? UseSmileIDSampleProfiles.noProfileLabel,
+                      profile?.title(context.strings) ??
+                      context.strings.profilesNoProfile,
                   supportingText: profile == null
-                      ? 'Your details below will create one'
-                      : 'Tap to switch profile',
+                      ? context.strings.userDetailsNoProfile
+                      : context.strings.userDetailsSwitchProfile,
                   initials: profile?.initials ?? '',
                   selected: false,
                   avatarColor: avatarColorForProfile(profileIndex),
@@ -113,7 +115,9 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                   testId: UseSmileIDSampleTestIds.userDetailsProfile,
                 ),
                 const SizedBox(height: SmileDimens.spacingXs),
-                const UseSmileIDSampleSectionLabel(text: 'YOUR DETAILS'),
+                UseSmileIDSampleSectionLabel(
+                  text: context.strings.userDetailsSection,
+                ),
                 const SizedBox(height: SmileDimens.spacingXs),
                 DecoratedBox(
                   decoration: BoxDecoration(
@@ -130,10 +134,11 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                       children: <Widget>[
                         if (profile == null) ...<Widget>[
                           UseSmileIDSampleKeyValueEditRow(
-                            label: 'Profile name (optional)',
+                            label: context.strings.userDetailsProfileName,
                             value: organisation,
                             onChanged: onOrganisationChanged ?? (_) {},
-                            placeholder: 'Shown on the consent screen',
+                            placeholder:
+                                context.strings.userDetailsProfileNameHint,
                             testId: UseSmileIDSampleTestIds.userDetailsField(
                               organisationFieldId,
                             ),
@@ -150,6 +155,7 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                           UseSmileIDSampleKeyValueEditRow(
                             label: requirement.labelFor(
                               UseSmileIDSampleUserField.values[i],
+                              context.strings,
                             ),
                             value:
                                 requirement.supplies(
@@ -167,10 +173,9 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                                 requirement.supplies(
                                   UseSmileIDSampleUserField.values[i],
                                 )
-                                ? 'Provided by token'
-                                : UseSmileIDSampleUserField
-                                      .values[i]
-                                      .placeholder,
+                                ? context.strings.userDetailsFromToken
+                                : UseSmileIDSampleUserField.values[i]
+                                      .placeholder(context.strings),
                             enabled: !requirement.supplies(
                               UseSmileIDSampleUserField.values[i],
                             ),
@@ -200,10 +205,10 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                   child: Text(
                     // What is OUTSTANDING, which depends on what has been typed and not only on
                     // what the requirement asks: a satisfied form has nothing left to name.
-                    details.contactProblem ??
+                    details.contactProblem?.message(context.strings) ??
                         (satisfied
-                            ? 'Tap any field to edit.'
-                            : requirement.prompt),
+                            ? context.strings.userDetailsEditHint
+                            : requirement.prompt(context.strings)),
                     style: UseSmileIDSampleType.textStyleCaption.copyWith(
                       color: details.contactProblem == null
                           ? colors.textMuted
@@ -215,8 +220,10 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                   const SizedBox(height: SmileDimens.spacingXs),
                   _RememberCard(
                     label: profile == null
-                        ? 'Save as a new profile'
-                        : 'Save to ${profile.title}',
+                        ? context.strings.userDetailsSaveNew
+                        : context.strings.userDetailsSaveTo(
+                            profile: profile.title(context.strings),
+                          ),
                     remember: saveToProfile,
                     onChanged: onSaveToProfileChanged,
                     colors: colors,
@@ -231,7 +238,7 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(SmileDimens.spacingMd),
             child: UseSmileIDSampleButton(
-              text: 'Continue',
+              text: context.strings.commonContinue,
               onPressed: onContinue,
               enabled: satisfied,
               testId: UseSmileIDSampleTestIds.userDetailsContinue,

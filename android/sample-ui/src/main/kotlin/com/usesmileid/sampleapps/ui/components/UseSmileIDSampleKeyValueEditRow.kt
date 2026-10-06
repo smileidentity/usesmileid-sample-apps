@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -47,7 +48,7 @@ fun UseSmileIDSampleKeyValueEditRow(
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = if (required) "$label *" else label,
+            text = if (required) UseSmileIDSampleStrings.commonRequiredNamed(label) else label,
             style = UseSmileIDSampleTheme.type.textStyleSubtitle.copy(fontSize = ROW_TEXT_SIZE),
             color = colors.textTitle,
         )

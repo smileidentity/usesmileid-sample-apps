@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'package:flutter/widgets.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
@@ -44,6 +44,10 @@ void useSmileIDSampleEnsureEnabled(
   }
 }
 
+/// The language the app is pinned to, by `appLocale` or the Language setting; null follows the device.
+String? useSmileIDSampleCatalogueLanguage;
+
 /// The API translates document and country names; an unsupported locale comes back in English.
 String useSmileIDSampleCatalogueLocale() =>
-    PlatformDispatcher.instance.locale.toLanguageTag();
+    useSmileIDSampleCatalogueLanguage ??
+    WidgetsBinding.instance.platformDispatcher.locale.toLanguageTag();

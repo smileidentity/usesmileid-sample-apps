@@ -20,6 +20,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import androidx.compose.ui.graphics.Color
@@ -40,8 +43,10 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 /** One ABOUT or LEGAL row: an id, a title, the line beneath it, and where it goes. */
 data class UseSmileIDSampleNavRow(
     val id: String,
-    val title: String,
+    @StringRes val title: Int,
+    /** A host name, never translated; [supportingTextRes] is the translated alternative. */
     val supportingText: String? = null,
+    @StringRes val supportingTextRes: Int? = null,
     @DrawableRes val icon: Int = R.drawable.sample_ic_product_mark,
     /** Opened externally. Null means the app handles the row itself, which only the licences row does. */
     val url: String? = null,
@@ -70,6 +75,8 @@ data class UseSmileIDSampleSettingsState(
     val hasProfile: Boolean = true,
     /** The device's own theme, which the System label names; the shell reads it where the app's choice cannot mask it. */
     val deviceDark: Boolean,
+    /** The device's languages, which the System label resolves. */
+    val deviceLanguages: List<String> = emptyList(),
 )
 
 /** Settings, which every other screen's configuration comes from. */
@@ -81,6 +88,7 @@ fun SettingsScreen(
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
     onCaptureModeClick: () -> Unit,
     onAppearanceClick: () -> Unit,
+    onLanguageClick: () -> Unit,
     /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
     onOpenScenarioDrawer: (() -> Unit)?,
     onSignOut: () -> Unit,
@@ -98,17 +106,21 @@ fun SettingsScreen(
     ) {
         item {
             Text(
-                text = "Settings",
+                text = UseSmileIDSampleStrings.settingsTitle,
                 style = UseSmileIDSampleTheme.type.textStyleHeadingPage,
                 color = UseSmileIDSampleTheme.colors.textTitle,
                 modifier = Modifier.padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
             )
         }
 
-        section("PROFILE") {
+        section(R.string.sample_settings_section_profile) {
             UseSmileIDSampleProfileRow(
                 organisation = state.organisation,
-                supportingText = if (state.hasProfile) "Tap to configure" else "Tap to create one",
+                supportingText = if (state.hasProfile) {
+                    UseSmileIDSampleStrings.settingsProfileConfigure
+                } else {
+                    UseSmileIDSampleStrings.settingsProfileCreate
+                },
                 initials = state.initials,
                 selected = false,
                 onClick = onProfileClick,
@@ -119,14 +131,14 @@ fun SettingsScreen(
         }
 
         // Mutually exclusive, so each row says what turning it on does to the other.
-        section("CAPTURE") {
+        section(R.string.sample_settings_section_capture) {
             SwitchRow(
-                title = ENHANCED_SMART_SELFIE_TITLE,
+                title = UseSmileIDSampleStrings.settingsEnhancedSmartSelfie,
                 icon = R.drawable.sample_ic_setting_smile,
                 supportingText = if (state.settings.agentMode) {
-                    "Turns Agent mode off"
+                    UseSmileIDSampleStrings.settingsEnhancedSmartSelfieMutex
                 } else {
-                    "Face capture uses head-turns"
+                    UseSmileIDSampleStrings.settingsEnhancedSmartSelfieBody
                 },
                 checked = state.settings.enhancedSmartSelfie,
                 setting = UseSmileIDSampleSetting.EnhancedSmartSelfie,
@@ -135,12 +147,12 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Agent mode",
+                title = UseSmileIDSampleStrings.settingsAgentMode,
                 icon = R.drawable.sample_ic_setting_agent,
                 supportingText = if (state.settings.enhancedSmartSelfie) {
-                    "Turns $ENHANCED_SMART_SELFIE_TITLE off"
+                    UseSmileIDSampleStrings.settingsAgentModeMutex(UseSmileIDSampleStrings.settingsEnhancedSmartSelfie)
                 } else {
-                    "Operator captures for the applicant"
+                    UseSmileIDSampleStrings.settingsAgentModeBody
                 },
                 checked = state.settings.agentMode,
                 setting = UseSmileIDSampleSetting.AgentMode,
@@ -149,9 +161,9 @@ fun SettingsScreen(
             )
         }
 
-        section("APPEARANCE") {
+        section(R.string.sample_settings_section_appearance) {
             UseSmileIDSampleSettingRow(
-                title = "Theme",
+                title = UseSmileIDSampleStrings.settingsTheme,
                 supportingText = state.settings.appearance.label(state.deviceDark),
                 onClick = onAppearanceClick,
                 leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_dark_mode, tint = tint) },
@@ -160,14 +172,25 @@ fun SettingsScreen(
             )
         }
 
-        section("SDK SCREENS — SHOW OR SKIP FLOW STEPS") {
+        section(R.string.sample_settings_section_language) {
+            UseSmileIDSampleSettingRow(
+                title = UseSmileIDSampleStrings.settingsLanguage,
+                supportingText = state.settings.language.label(state.deviceLanguages),
+                onClick = onLanguageClick,
+                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_setting_language, tint = tint) },
+                trailing = { UseSmileIDSampleSettingRowChevron() },
+                testId = UseSmileIDSampleTestIds.SETTING_LANGUAGE,
+            )
+        }
+
+        section(R.string.sample_settings_section_sdk_screens) {
             SwitchRow(
-                title = "Consent screen",
+                title = UseSmileIDSampleStrings.settingsConsent,
                 icon = R.drawable.sample_ic_setting_consent,
                 supportingText = if (state.consentBoundByToken) {
-                    "The token grants consent, so the screen is skipped"
+                    UseSmileIDSampleStrings.settingsConsentBound
                 } else {
-                    "Ask permission before KYC checks"
+                    UseSmileIDSampleStrings.settingsConsentBody
                 },
                 checked = state.settings.consentStep,
                 setting = UseSmileIDSampleSetting.ConsentStep,
@@ -176,9 +199,9 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Instruction screen",
+                title = UseSmileIDSampleStrings.settingsInstructions,
                 icon = R.drawable.sample_ic_setting_instructions,
-                supportingText = "Prep tips before capture",
+                supportingText = UseSmileIDSampleStrings.settingsInstructionsBody,
                 checked = state.settings.instructionsStep,
                 setting = UseSmileIDSampleSetting.InstructionsStep,
                 testId = UseSmileIDSampleTestIds.SETTING_INSTRUCTIONS_STEP,
@@ -186,9 +209,9 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Preview screen",
+                title = UseSmileIDSampleStrings.settingsPreview,
                 icon = R.drawable.sample_ic_setting_preview,
-                supportingText = "Confirm or retake after capture",
+                supportingText = UseSmileIDSampleStrings.settingsPreviewBody,
                 checked = state.settings.previewStep,
                 setting = UseSmileIDSampleSetting.PreviewStep,
                 testId = UseSmileIDSampleTestIds.SETTING_PREVIEW_STEP,
@@ -197,10 +220,10 @@ fun SettingsScreen(
         }
 
         // The design draws no such section either; it sits with the other capture choices.
-        section(DOCUMENT_CAPTURE_SECTION) {
+        section(R.string.sample_settings_section_document_capture) {
             UseSmileIDSampleSettingRow(
-                title = "Capture mode",
-                supportingText = state.settings.captureMode.label,
+                title = UseSmileIDSampleStrings.settingsCaptureMode,
+                supportingText = state.settings.captureMode.label(),
                 onClick = onCaptureModeClick,
                 leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_document_verification, tint = tint) },
                 trailing = { UseSmileIDSampleSettingRowChevron() },
@@ -208,9 +231,9 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Gallery upload",
+                title = UseSmileIDSampleStrings.settingsGalleryUpload,
                 icon = R.drawable.sample_ic_setting_preview,
-                supportingText = "The system picker needs no permission",
+                supportingText = UseSmileIDSampleStrings.settingsGalleryUploadBody,
                 checked = state.settings.galleryUpload,
                 setting = UseSmileIDSampleSetting.GalleryUpload,
                 testId = UseSmileIDSampleTestIds.SETTING_GALLERY_UPLOAD,
@@ -218,9 +241,9 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Skip the back",
+                title = UseSmileIDSampleStrings.settingsSkipBack,
                 icon = R.drawable.sample_ic_setting_instructions,
-                supportingText = "A Skip button on the back-side capture",
+                supportingText = UseSmileIDSampleStrings.settingsSkipBackBody,
                 checked = state.settings.allowSkipBack,
                 setting = UseSmileIDSampleSetting.AllowSkipBack,
                 testId = UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK,
@@ -228,9 +251,9 @@ fun SettingsScreen(
             )
             UseSmileIDSampleSettingRowDivider()
             SwitchRow(
-                title = "Selfie first",
+                title = UseSmileIDSampleStrings.settingsSelfieFirst,
                 icon = R.drawable.sample_ic_setting_smile,
-                supportingText = "The selfie before the document",
+                supportingText = UseSmileIDSampleStrings.settingsSelfieFirstBody,
                 checked = state.settings.selfieFirst,
                 setting = UseSmileIDSampleSetting.SelfieFirst,
                 testId = UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST,
@@ -240,7 +263,7 @@ fun SettingsScreen(
 
         // The design draws no control for the drawer, so this placement is ours, and debug-only.
         if (onOpenScenarioDrawer != null) {
-            section("DEBUG") {
+            section(label = { DEBUG_SECTION }) {
                 UseSmileIDSampleSettingRow(
                     title = "Scenarios",
                     supportingText = "Choose how the environment misbehaves",
@@ -252,14 +275,14 @@ fun SettingsScreen(
             }
         }
 
-        section("ABOUT") {
+        section(R.string.sample_settings_section_about) {
             ABOUT_ROWS.forEachIndexed { index, row ->
                 if (index > 0) UseSmileIDSampleSettingRowDivider()
                 NavRow(row = row, onClick = onNavRowClick)
             }
         }
 
-        section("LEGAL") {
+        section(R.string.sample_settings_section_legal) {
             LEGAL_ROWS.forEachIndexed { index, row ->
                 if (index > 0) UseSmileIDSampleSettingRowDivider()
                 NavRow(row = row, onClick = onNavRowClick)
@@ -268,7 +291,7 @@ fun SettingsScreen(
 
         item {
             UseSmileIDSampleDestructiveRow(
-                text = "Sign out",
+                text = UseSmileIDSampleStrings.settingsSignOut,
                 onClick = { confirmingSignOut = true },
                 modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
                 testId = UseSmileIDSampleTestIds.SIGN_OUT,
@@ -291,9 +314,9 @@ fun SettingsScreen(
     }
     if (confirmingSignOut) {
         UseSmileIDSampleConfirmDialog(
-            title = "Sign out?",
-            text = "This ends the token session and deletes every profile on this device.",
-            confirmLabel = "Sign out",
+            title = UseSmileIDSampleStrings.settingsSignOutTitle,
+            text = UseSmileIDSampleStrings.settingsSignOutBody,
+            confirmLabel = UseSmileIDSampleStrings.settingsSignOut,
             confirmTestId = UseSmileIDSampleTestIds.SIGN_OUT_CONFIRM,
             onConfirm = {
                 confirmingSignOut = false
@@ -306,12 +329,17 @@ fun SettingsScreen(
 
 /** A labelled group of rows on one surface, which is how the design draws every settings section. */
 private fun androidx.compose.foundation.lazy.LazyListScope.section(
-    label: String,
+    @StringRes label: Int,
+    content: @Composable () -> Unit,
+) = section(label = { stringResource(label) }, content = content)
+
+private fun androidx.compose.foundation.lazy.LazyListScope.section(
+    label: @Composable () -> String,
     content: @Composable () -> Unit,
 ) = item {
     UseSmileIDSampleSectionSurface(
         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
-        label = label,
+        label = label(),
     ) {
         content()
     }
@@ -344,8 +372,8 @@ private fun SwitchRow(
 @Composable
 private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow) -> Unit) {
     UseSmileIDSampleSettingRow(
-        title = row.title,
-        supportingText = row.supportingText,
+        title = stringResource(row.title),
+        supportingText = row.supportingTextRes?.let { stringResource(it) } ?: row.supportingText,
         onClick = { onClick(row) },
         leading = { tint -> UseSmileIDSampleIcon(id = row.icon, tint = tint) },
         trailing = { UseSmileIDSampleSettingRowChevron() },
@@ -353,25 +381,22 @@ private fun NavRow(row: UseSmileIDSampleNavRow, onClick: (UseSmileIDSampleNavRow
     )
 }
 
-/** The document-capture section's label, which the design does not draw. */
-internal const val DOCUMENT_CAPTURE_SECTION = "DOCUMENT CAPTURE"
-
-// The design marks the trademark here and nowhere else on this screen (node 5206:2898).
-private const val ENHANCED_SMART_SELFIE_TITLE = "Enhanced SmartSelfie\u2122"
+// Instrumentation, so it stays English.
+private const val DEBUG_SECTION = "DEBUG"
 
 // Each URL is recorded in spec/screens.json and asserted against it.
 private val ABOUT_ROWS = listOf(
     UseSmileIDSampleNavRow(
         id = "documentation",
-        title = "Documentation",
+        title = R.string.sample_settings_documentation,
         supportingText = "docs.usesmileid.com",
         icon = R.drawable.sample_ic_setting_docs,
         url = "https://docs.usesmileid.com/",
     ),
     UseSmileIDSampleNavRow(
         id = "support",
-        title = "Support",
-        supportingText = "Contact the Smile team",
+        title = R.string.sample_settings_support,
+        supportingTextRes = R.string.sample_settings_support_body,
         icon = R.drawable.sample_ic_setting_support,
         url = "https://smile.id/contact-us",
     ),
@@ -381,14 +406,14 @@ private val LEGAL_ROWS = listOf(
     // Both of these serve their document as an embedded PDF, so they leave the app (see opensInApp).
     UseSmileIDSampleNavRow(
         id = "terms",
-        title = "Terms of Service",
+        title = R.string.sample_settings_terms,
         icon = R.drawable.sample_ic_setting_terms,
         url = "https://smile.id/terms-and-conditions",
         opensInApp = false,
     ),
     UseSmileIDSampleNavRow(
         id = "privacy",
-        title = "Privacy Policy",
+        title = R.string.sample_settings_privacy,
         icon = R.drawable.sample_ic_setting_privacy,
         url = "https://smile.id/privacy-policy",
         opensInApp = false,
@@ -396,7 +421,7 @@ private val LEGAL_ROWS = listOf(
     // No url: Apache-2.0 §4 asks the notice to travel with the distribution, so it is a screen here.
     UseSmileIDSampleNavRow(
         id = "licenses",
-        title = "Open-source licenses",
+        title = R.string.sample_settings_licenses,
         icon = R.drawable.sample_ic_setting_licenses,
     ),
 )

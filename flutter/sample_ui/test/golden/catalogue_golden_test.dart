@@ -210,6 +210,17 @@ void main() {
     );
   });
 
+  testWidgets('language survives max text scale', (WidgetTester tester) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      UseSmileIDSampleLanguageSheet(
+        selected: UseSmileIDSampleLanguage.system,
+        deviceLanguages: const <String>['en-US'],
+        onSelect: (UseSmileIDSampleLanguage _) {},
+      ),
+    );
+  });
+
   testWidgets('appearance survives max text scale', (
     WidgetTester tester,
   ) async {
@@ -245,6 +256,18 @@ void main() {
           deviceDark: Theme.of(context).brightness == Brightness.dark,
           onSelect: (UseSmileIDSampleAppearance _) {},
         ),
+      ),
+    );
+  });
+
+  testWidgets('language', (WidgetTester tester) async {
+    await goldens(
+      tester,
+      'sheet_language',
+      () => UseSmileIDSampleLanguageSheet(
+        selected: UseSmileIDSampleLanguage.system,
+        deviceLanguages: const <String>['en-US'],
+        onSelect: (UseSmileIDSampleLanguage _) {},
       ),
     );
   });

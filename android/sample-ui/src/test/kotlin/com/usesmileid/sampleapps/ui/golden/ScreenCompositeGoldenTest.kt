@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.ui.golden
 
+import com.usesmileid.sampleapps.ui.label
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -179,7 +180,7 @@ private fun hueOf(product: UseSmileIDSampleProduct) = requireNotNull(smileProduc
 
 @Composable
 private fun SectionHeaders() = Column(verticalArrangement = stack) {
-    UseSmileIDSampleProductSection.entries.forEach { UseSmileIDSampleSectionHeader(text = it.label) }
+    UseSmileIDSampleProductSection.entries.forEach { UseSmileIDSampleSectionHeader(text = it.label()) }
 }
 
 @OptIn(ExperimentalLayoutApi::class)

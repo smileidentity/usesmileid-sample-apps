@@ -6,6 +6,7 @@ import '../components/use_smileid_sample_search_field.dart';
 import '../components/use_smileid_sample_skeleton.dart';
 import '../state/use_smileid_sample_catalogue.dart';
 import '../state/use_smileid_sample_id_details.dart';
+import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 
 /// Picks a country, filtering on the NAME and never the ISO code.
@@ -35,13 +36,18 @@ class UseSmileIDSampleCountryPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) =>
       UseSmileIDSampleCataloguePicker<UseSmileIDSampleCountry>(
         catalogue: catalogue,
-        what: 'countries',
-        searchPlaceholder: 'Search country',
+        loadingLabel: context.strings.pickerCountryLoading,
+        failedLabel: context.strings.pickerCountryLoadFailed,
+        searchPlaceholder: context.strings.pickerCountrySearch,
         searchTestId: UseSmileIDSampleTestIds.countrySearch,
         label: (UseSmileIDSampleCountry it) => it.name,
         emptyTestId: UseSmileIDSampleTestIds.countryEmpty,
-        emptyLabel: (String query) => 'No country matches “$query”',
-        nothingToList: ('No countries for this product', 'Try another product'),
+        emptyLabel: (String query) =>
+            context.strings.pickerCountryNoMatch(query: query),
+        nothingToList: (
+          context.strings.pickerCountryEmpty,
+          context.strings.pickerCountryEmptyHint,
+        ),
         onRetry: onRetry,
         leadingCircle: true,
         row: (UseSmileIDSampleCountry country) => UseSmileIDSampleOptionRow(
@@ -85,15 +91,19 @@ class UseSmileIDSampleIdTypePickerSheet extends StatelessWidget {
   Widget build(BuildContext context) =>
       UseSmileIDSampleCataloguePicker<UseSmileIDSampleKycIdType>(
         catalogue: catalogue,
-        what: 'ID types',
-        searchPlaceholder: 'Search ID type',
+        loadingLabel: context.strings.pickerIdTypeLoading,
+        failedLabel: context.strings.pickerIdTypeLoadFailed,
+        searchPlaceholder: context.strings.pickerIdTypeSearch,
         searchTestId: UseSmileIDSampleTestIds.idTypeSearch,
         label: (UseSmileIDSampleKycIdType it) => it.label,
         emptyTestId: UseSmileIDSampleTestIds.idTypeEmpty,
-        emptyLabel: (String query) => 'No ID type matches “$query”',
+        emptyLabel: (String query) =>
+            context.strings.pickerIdTypeNoMatch(query: query),
         nothingToList: (
-          'No ID types for ${country?.name ?? 'this country'}',
-          'Choose another country',
+          context.strings.pickerIdTypeEmpty(
+            country: country?.name ?? context.strings.pickerThisCountry,
+          ),
+          context.strings.pickerChooseAnotherCountry,
         ),
         onRetry: onRetry,
         row: (UseSmileIDSampleKycIdType type) => UseSmileIDSampleOptionRow(
@@ -136,15 +146,19 @@ class UseSmileIDSampleDocumentPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) =>
       UseSmileIDSampleCataloguePicker<UseSmileIDSampleDocument>(
         catalogue: catalogue,
-        what: 'documents',
-        searchPlaceholder: 'Search document',
+        loadingLabel: context.strings.pickerDocumentLoading,
+        failedLabel: context.strings.pickerDocumentLoadFailed,
+        searchPlaceholder: context.strings.pickerDocumentSearch,
         searchTestId: UseSmileIDSampleTestIds.documentSearch,
         label: (UseSmileIDSampleDocument it) => it.name,
         emptyTestId: UseSmileIDSampleTestIds.documentEmpty,
-        emptyLabel: (String query) => 'No document matches “$query”',
+        emptyLabel: (String query) =>
+            context.strings.pickerDocumentNoMatch(query: query),
         nothingToList: (
-          'No documents for ${country?.name ?? 'this country'}',
-          'Choose another country',
+          context.strings.pickerDocumentEmpty(
+            country: country?.name ?? context.strings.pickerThisCountry,
+          ),
+          context.strings.pickerChooseAnotherCountry,
         ),
         onRetry: onRetry,
         row: (UseSmileIDSampleDocument document) => UseSmileIDSampleOptionRow(
@@ -161,7 +175,8 @@ class UseSmileIDSampleCataloguePicker<T> extends StatefulWidget {
   /// Every string the picker says, so the three sheets share one behaviour.
   const UseSmileIDSampleCataloguePicker({
     required this.catalogue,
-    required this.what,
+    required this.loadingLabel,
+    required this.failedLabel,
     required this.searchPlaceholder,
     required this.searchTestId,
     required this.label,
@@ -177,8 +192,11 @@ class UseSmileIDSampleCataloguePicker<T> extends StatefulWidget {
   /// The list, which may still be arriving.
   final UseSmileIDSampleCatalogue<T> catalogue;
 
-  /// What is listed, in "Loading countries" and "Couldn't load countries".
-  final String what;
+  /// What the skeleton announces while the list loads.
+  final String loadingLabel;
+
+  /// What the error state says when the list did not load.
+  final String failedLabel;
 
   /// The search field's placeholder.
   final String searchPlaceholder;
@@ -259,7 +277,7 @@ class _UseSmileIDSampleCataloguePickerState<T>
         ),
         if (_gate.visible)
           UseSmileIDSampleSkeletonRows(
-            announcement: 'Loading ${widget.what}',
+            announcement: widget.loadingLabel,
             leadingCircle: widget.leadingCircle,
             testId: UseSmileIDSampleTestIds.catalogueLoading,
           )
@@ -274,11 +292,13 @@ class _UseSmileIDSampleCataloguePickerState<T>
       // The first 300 ms draw nothing, so a fast answer never flashes a skeleton.
       case UseSmileIDSampleCatalogueLoading<T>():
         return const <Widget>[];
-      case UseSmileIDSampleCatalogueFailed<T>(:final String advice):
+      case UseSmileIDSampleCatalogueFailed<T>(
+        :final UseSmileIDSampleCatalogueAdvice advice,
+      ):
         return <Widget>[
           UseSmileIDSampleEmptyState(
-            text: "Couldn't load ${widget.what}",
-            supportingText: advice,
+            text: widget.failedLabel,
+            supportingText: advice.message(context.strings),
             testId: UseSmileIDSampleTestIds.catalogueError,
             onRetry: widget.onRetry,
             retryTestId: UseSmileIDSampleTestIds.catalogueRetry,

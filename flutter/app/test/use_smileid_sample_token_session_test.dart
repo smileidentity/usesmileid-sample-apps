@@ -146,7 +146,7 @@ void main() {
             span.span.inMilliseconds,
           );
           expect(session.environment, environment);
-          expect(session.hasExpired(_now), span.inPast, reason: span.label);
+          expect(session.hasExpired(_now), span.inPast, reason: span.name);
         }
       }
     });
@@ -640,7 +640,11 @@ void main() {
 
       expect(byId(UseSmileIDSampleTestIds.scanTokenScreen), findsOne);
       expect(
-        find.text(UseSmileIDSampleScanReason.sessionEnded.caption),
+        find.text(
+          UseSmileIDSampleScanReason.sessionEnded.caption(
+            UseSmileIDSampleStrings.forLanguage('en'),
+          ),
+        ),
         findsOne,
       );
       expect(
@@ -669,7 +673,11 @@ void main() {
       unawaited(router.push(UseSmileIDSampleRoutes.scanToken));
       await tester.pumpAndSettle();
       expect(
-        find.text(UseSmileIDSampleScanReason.sessionEnded.caption),
+        find.text(
+          UseSmileIDSampleScanReason.sessionEnded.caption(
+            UseSmileIDSampleStrings.forLanguage('en'),
+          ),
+        ),
         findsNothing,
       );
     });

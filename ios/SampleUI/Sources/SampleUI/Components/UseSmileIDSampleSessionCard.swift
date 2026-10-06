@@ -17,10 +17,10 @@ public struct UseSmileIDSampleSessionCard: View {
     HStack(spacing: SmileSpacing.spacingSm) {
       VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
         UseSmileIDSampleText(
-          "ACTIVE TOKEN SESSION",
+          UseSmileIDSampleStrings.sessionActive,
           style: UseSmileIDSampleTheme.type.textStyleOverline.with(tracking: smileLabelTracking)
         )
-        UseSmileIDSampleText("Linked to session \(sessionId)", style: UseSmileIDSampleTheme.type.textStyleCaption)
+        UseSmileIDSampleText(UseSmileIDSampleStrings.sessionLinkedTo(sessionId: sessionId), style: UseSmileIDSampleTheme.type.textStyleCaption)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       // The one value that must stay whole, so the text beside it yields instead.
@@ -64,15 +64,15 @@ public struct UseSmileIDSampleSessionEndedBanner: View {
   public var body: some View {
     HStack(spacing: SmileSpacing.spacingSm) {
       VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
-        UseSmileIDSampleText("TOKEN SESSION ENDED", style: UseSmileIDSampleTheme.type.textStyleOverline)
+        UseSmileIDSampleText(UseSmileIDSampleStrings.sessionEnded, style: UseSmileIDSampleTheme.type.textStyleOverline)
           .foregroundColor(colors.banner.text)
-        UseSmileIDSampleText("Scan a token to relink", style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
+        UseSmileIDSampleText(UseSmileIDSampleStrings.sessionRelink, style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
           .foregroundColor(colors.banner.title)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       // Widened to the touch target, as the spec's text action asks.
       Button(action: onScan) {
-        UseSmileIDSampleText("Scan", style: UseSmileIDSampleTheme.type.linkFont)
+        UseSmileIDSampleText(UseSmileIDSampleStrings.sessionScan, style: UseSmileIDSampleTheme.type.linkFont)
           .foregroundColor(colors.primary)
           .fixedSize()
           .padding(.horizontal, SmileSpacing.spacingXs)

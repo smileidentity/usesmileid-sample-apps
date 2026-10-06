@@ -15,6 +15,7 @@ import {
 } from '../state/use-smile-id-sample-id-details';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 type Props = {
   initial: UseSmileIDSampleGenericDocument;
@@ -24,6 +25,7 @@ type Props = {
 
 /// Builds the generic document "Capture as: Generic document" hands the SDK. Nothing is kept until Done.
 export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
+  const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const [draft, setDraft] = useState(initial);
   const chips = {
@@ -34,21 +36,21 @@ export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
   return (
     <UseSmileIDSampleBottomSheet
       visible
-      title="Generic document"
+      title={strings.genericDocumentTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_SHEET}
     >
       <View style={{ rowGap: theme.dimens.spacing.sm }}>
-        <UseSmileIDSampleSectionLabel text="DISPLAY NAME" />
+        <UseSmileIDSampleSectionLabel text={strings.genericDocumentDisplayName} />
         <UseSmileIDSampleTextInput
           value={draft.displayName}
           onValueChange={(displayName) => setDraft({ ...draft, displayName })}
-          placeholder="Document"
+          placeholder={strings.genericDocumentDefaultName}
           testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_NAME}
         />
         <UseSmileIDSampleSettingRow
-          title="Back side"
-          supportingText="Capture the back after the front"
+          title={strings.genericDocumentBackSide}
+          supportingText={strings.genericDocumentBackSideHint}
           trailing={
             <UseSmileIDSampleSwitch
               checked={draft.hasBackSide}
@@ -57,12 +59,12 @@ export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
             />
           }
         />
-        <UseSmileIDSampleSectionLabel text="ORIENTATION" />
+        <UseSmileIDSampleSectionLabel text={strings.genericDocumentOrientation} />
         <View style={[styles.chips, chips]}>
           {smileIDSampleOrientations.map((orientation) => (
             <UseSmileIDSampleFilterChip
               key={orientation.id}
-              label={orientation.label}
+              label={orientation.label(strings)}
               count={null}
               selected={orientation.id === draft.orientation}
               onPress={() => setDraft({ ...draft, orientation: orientation.id })}
@@ -70,12 +72,12 @@ export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
             />
           ))}
         </View>
-        <UseSmileIDSampleSectionLabel text="ASPECT RATIO" />
+        <UseSmileIDSampleSectionLabel text={strings.genericDocumentAspectRatio} />
         <View style={[styles.chips, chips]}>
           {smileIDSampleAspectRatios.map((ratio) => (
             <UseSmileIDSampleFilterChip
               key={ratio.id}
-              label={ratio.label}
+              label={ratio.label(strings)}
               count={null}
               selected={ratio.id === draft.aspectRatio}
               onPress={() => setDraft({ ...draft, aspectRatio: ratio.id })}
@@ -84,11 +86,11 @@ export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
           ))}
         </View>
         <UseSmileIDSampleButton
-          text="Done"
+          text={strings.commonDone}
           onPress={() =>
             onDone({
               ...draft,
-              displayName: draft.displayName.trim() || 'Document',
+              displayName: draft.displayName.trim() || strings.genericDocumentDefaultName,
             })
           }
           testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_DONE}

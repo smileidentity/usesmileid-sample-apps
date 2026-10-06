@@ -152,7 +152,7 @@ public actor UseSmileIDSampleJobStore {
     defer { inFlight.remove(jobId) }
 
     guard let row = entity(jobId)?.record else {
-      return .failed(reason: "The verification is no longer stored")
+      return .failed(reason: UseSmileIDSampleStrings.jobErrorNotStored)
     }
     guard row.sessionId != nil else { return .noServerJob }
     guard let session = live, !session.hasExpired(at: now) else { return .noSession }
@@ -168,15 +168,15 @@ public actor UseSmileIDSampleJobStore {
     } catch let error as URLError where error.code == .cancelled {
       throw CancellationError()
     } catch is URLError {
-      return .failed(reason: "Could not reach the server")
+      return .failed(reason: UseSmileIDSampleStrings.jobErrorUnreachable)
     } catch {
       // The type, never the message: this text goes on screen and a client error carries the URL.
-      return .failed(reason: "Unexpected error: \(type(of: error))")
+      return .failed(reason: UseSmileIDSampleStrings.jobErrorUnexpected(type: "\(type(of: error))"))
     }
 
     guard case .updated(let status, let message, let httpCode) = outcome else { return outcome }
     let written = applyStatus(jobId, status: status, message: message, httpStatus: httpCode)
-    return written ? outcome : .failed(reason: "The verification is no longer stored")
+    return written ? outcome : .failed(reason: UseSmileIDSampleStrings.jobErrorNotStored)
   }
 
   /// Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent.

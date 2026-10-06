@@ -1,9 +1,12 @@
 import type { UseSmileIDSampleJob } from './use-smile-id-sample-job';
 
 
-/// A day of jobs under one header, which is the shape the verifications list renders.
+/// The two days a header names in words rather than by date.
+type UseSmileIDSampleRelativeDay = 'today' | 'yesterday';
+
+/// A day of jobs under one header, which is the shape the verifications list renders; `relative` is null past yesterday.
 export type UseSmileIDSampleJobDay = {
-  readonly relative: string;
+  readonly relative: UseSmileIDSampleRelativeDay | null;
   readonly absolute: string;
   readonly jobs: readonly UseSmileIDSampleJob[];
 };
@@ -52,9 +55,8 @@ export const smileIDSampleGroupByDay = (
   return [...buckets.entries()]
     .sort(([a], [b]) => b - a)
     .map(([day, rows]) => ({
-      // A day with no relative word renders the absolute date alone; the header adds no second copy.
-      relative: day === today ? 'TODAY' : day === yesterday ? 'YESTERDAY' : '',
-      absolute: format(new Date(day)).toUpperCase(),
+      relative: day === today ? 'today' : day === yesterday ? 'yesterday' : null,
+      absolute: format(new Date(day)).toLocaleUpperCase(locale),
       jobs: rows,
     }));
 };
