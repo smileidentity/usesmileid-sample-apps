@@ -57,6 +57,10 @@ class CommittedSourceTest(unittest.TestCase):
     def test_a_trailing_space_survives_on_android_without_literal_quotes(self):
         self.assertEqual(gen.android_escape("Lire les ", formatted=False), '"Lire les "')
 
+    def test_direction_marks_are_escaped_where_source_would_hide_them(self):
+        self.assertEqual(gen.dart_string("\u2066x\u2069"), "'\\u2066x\\u2069'")
+        self.assertEqual(gen.ts_string("\u2066x\u2069"), "'\\u2066x\\u2069'")
+
     def test_hebrew_is_iw_only_in_android_resource_folders(self):
         data = gen.load()
         android = gen.android_outputs(data)

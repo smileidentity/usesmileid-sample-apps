@@ -291,12 +291,20 @@ def ios_outputs(data: dict) -> dict[str, str]:
     return outputs
 
 
+# Direction controls written as escapes: invisible in source, and Dart's analyzer rejects them raw.
+DIRECTION_MARKS = "\u200e\u200f\u202a\u202b\u202c\u202d\u202e\u2066\u2067\u2068\u2069"
+
+
+def escape_direction_marks(text: str) -> str:
+    return "".join(f"\\u{ord(c):04x}" if c in DIRECTION_MARKS else c for c in text)
+
+
 # Flutter
 
 
 def dart_string(value: str) -> str:
     text = value.replace("\\", "\\\\").replace("'", "\\'").replace("$", "\\$").replace("\n", "\\n")
-    return f"'{text}'"
+    return f"'{escape_direction_marks(text)}'"
 
 
 def dart_strings(data: dict) -> str:
@@ -357,7 +365,7 @@ def flutter_outputs(data: dict) -> dict[str, str]:
 
 def ts_string(value: str) -> str:
     text = value.replace("\\", "\\\\").replace("'", "\\'").replace("\n", "\\n")
-    return f"'{text}'"
+    return f"'{escape_direction_marks(text)}'"
 
 
 def ts_strings(data: dict) -> str:
