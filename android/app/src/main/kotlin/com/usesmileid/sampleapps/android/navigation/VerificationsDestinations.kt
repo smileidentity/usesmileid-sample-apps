@@ -17,6 +17,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -100,7 +101,8 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         )
         // Collected, not polled: the store emits each removal batch exactly once, so a removal made
         // on the details screen is confirmed here too.
-        val resources = LocalResources.current
+        // Read through state: the collector outlives a language change, which swaps the resources.
+        val resources by rememberUpdatedState(LocalResources.current)
         LaunchedEffect(Unit) {
             app.jobStore.removals.collect { count ->
                 notice.show(
