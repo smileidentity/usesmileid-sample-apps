@@ -263,9 +263,9 @@ const PortalLine = ({ style, onPress }: { style: StyleProp<TextStyle>; onPress?:
       style={styles.portal}
     >
       <Text style={style}>
-        Get a v3 token from the{' '}
-        <Text style={{ color: theme.colors.textLink, textDecorationLine: 'underline' }}>{strings.scanPortalLink}</Text>, under
-        Security settings.
+        {strings.scanPortalPrefix}
+        <Text style={{ color: theme.colors.textLink, textDecorationLine: 'underline' }}>{strings.scanPortalLink}</Text>
+        {strings.scanPortalSuffix}
       </Text>
     </Pressable>
   );

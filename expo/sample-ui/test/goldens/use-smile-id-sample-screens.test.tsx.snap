@@ -32918,8 +32918,7 @@ exports[`scanToken dark default 1`] = `
               ]
             }
           >
-            Get a v3 token from the
-             
+            Get a v3 token from the 
             <Text
               style={
                 {
@@ -33966,8 +33965,7 @@ exports[`scanToken dark redirected 1`] = `
               ]
             }
           >
-            Get a v3 token from the
-             
+            Get a v3 token from the 
             <Text
               style={
                 {
@@ -35014,8 +35012,7 @@ exports[`scanToken light default 1`] = `
               ]
             }
           >
-            Get a v3 token from the
-             
+            Get a v3 token from the 
             <Text
               style={
                 {
@@ -36062,8 +36059,7 @@ exports[`scanToken light redirected 1`] = `
               ]
             }
           >
-            Get a v3 token from the
-             
+            Get a v3 token from the 
             <Text
               style={
                 {
