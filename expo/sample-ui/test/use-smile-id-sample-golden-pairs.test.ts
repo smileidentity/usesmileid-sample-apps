@@ -185,7 +185,8 @@ const readPixelPairs = (files: readonly string[]) => {
   const pairs = new Map<string, { light?: string; dark?: string }>();
   for (const file of files) {
     const dir = join(__dirname, 'goldens', file.replace(/\.test\.tsx\.snap$/, ''));
-    for (const png of readdirSync(dir).filter((name) => name.endsWith('.png'))) {
+    // The right-to-left goldens are light-only extras, outside the light and dark pairing.
+    for (const png of readdirSync(dir).filter((name) => name.endsWith('.png') && !name.endsWith('.ar.png'))) {
       const parsed = png.match(/^([^.]+)\.(light|dark)\.(.+)\.png$/);
       if (!parsed) throw new Error(`${png} is not named <component>.<light|dark>.<state>.png`);
       const id = `${parsed[1]}/${parsed[3]}`;
@@ -215,6 +216,13 @@ const twinsIn = (pairs: ReadonlyMap<string, { light?: string; dark?: string }>):
 describe('the recorded pixel goldens', () => {
   const trees = readPairs();
   const pixels = readPixelPairs(snapshotFiles);
+
+  it('include the right-to-left states', () => {
+    const arabic = snapshotFiles.flatMap((file) =>
+      readdirSync(join(__dirname, 'goldens', file.replace(/\.test\.tsx\.snap$/, ''))).filter((name) => name.endsWith('.ar.png')),
+    );
+    expect(arabic.sort()).toEqual(['kycIdForm.light.selected.ar.png', 'settings.light.ar.png']);
+  });
 
   it('paint exactly the states the style trees record, in both schemes', () => {
     const halves = (map: ReadonlyMap<string, { light?: string; dark?: string }>) =>
