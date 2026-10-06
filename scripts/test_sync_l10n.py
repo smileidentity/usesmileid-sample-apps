@@ -48,6 +48,15 @@ class CommittedSourceTest(unittest.TestCase):
         self.assertEqual([language["id"] for language in data["languages"]], ["en", "fr", "ar", "he"])
         self.assertEqual(set(data["sdk"]), {"fr", "ar", "he"})
 
+    def test_no_value_carries_androids_whitespace_quotes(self):
+        data = gen.load()
+        for language, strings in data["sdk"].items():
+            for key, value in strings.items():
+                self.assertFalse(value.startswith('"') and value.endswith('"'), f"{language} {key}")
+
+    def test_a_trailing_space_survives_on_android_without_literal_quotes(self):
+        self.assertEqual(gen.android_escape("Lire les ", formatted=False), '"Lire les "')
+
     def test_hebrew_is_iw_only_in_android_resource_folders(self):
         data = gen.load()
         android = gen.android_outputs(data)

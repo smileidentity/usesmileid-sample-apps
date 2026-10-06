@@ -20,13 +20,13 @@
     <string name="si_consent_learn_more_description">{smile_id} et {partner} traitent vos données personnelles et biométriques pour vérifier votre identité et prévenir la fraude. Nous conservons vos données pendant {retention} afin de respecter nos obligations légales. Nous pouvons partager vos données avec certains partenaires pour finaliser cette vérification.</string>
     <string name="si_consent_learn_more_description_smile_id">Smile ID</string>
     <string name="si_consent_learn_more_description_retention">5 ans</string>
-    <string name="si_consent_learn_more_dsar_prefix">\"Vous pouvez retirer votre consentement, accéder à vos données ou exercer vos droits via notre \"</string>
+    <string name="si_consent_learn_more_dsar_prefix">"Vous pouvez retirer votre consentement, accéder à vos données ou exercer vos droits via notre "</string>
     <string name="si_consent_learn_more_dsar_link">page DSAR</string>
-    <string name="si_consent_learn_more_privacy_prefix">\"Tous les détails se trouvent dans les \"</string>
+    <string name="si_consent_learn_more_privacy_prefix">"Tous les détails se trouvent dans les "</string>
     <string name="si_consent_learn_more_privacy_smile_link">Smile ID</string>
-    <string name="si_consent_learn_more_privacy_and">\" et \"</string>
+    <string name="si_consent_learn_more_privacy_and">" et "</string>
     <string name="si_consent_learn_more_privacy_partner_link">%1$s</string>
-    <string name="si_consent_learn_more_privacy_suffix">\" politiques de confidentialité.\"</string>
+    <string name="si_consent_learn_more_privacy_suffix">" politiques de confidentialité."</string>
     <string name="si_instructions_title_prefix">Préparez-vous à capturer votre</string>
     <string name="si_instructions_emphasis_selfie">selfie</string>
     <string name="si_instructions_capture_guidelines">Consignes de capture</string>

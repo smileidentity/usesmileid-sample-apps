@@ -20,13 +20,13 @@
     <string name="si_consent_learn_more_description">{smile_id} ו־{partner} מעבדים את הנתונים האישיים והביומטריים שלך כדי לאמת את זהותך ולמנוע הונאות. אנו שומרים את הנתונים שלך למשך {retention} כדי לעמוד בדרישות החוק. ייתכן שנשתף נתונים עם שותפים מסוימים להשלמת בדיקה זו.</string>
     <string name="si_consent_learn_more_description_smile_id">Smile ID</string>
     <string name="si_consent_learn_more_description_retention">5 שנים</string>
-    <string name="si_consent_learn_more_dsar_prefix">\"באפשרותך לבטל את ההסכמה, לגשת לנתוניך או לממש את זכויותיך דרך \"</string>
+    <string name="si_consent_learn_more_dsar_prefix">"באפשרותך לבטל את ההסכמה, לגשת לנתוניך או לממש את זכויותיך דרך "</string>
     <string name="si_consent_learn_more_dsar_link">דף DSAR</string>
-    <string name="si_consent_learn_more_privacy_prefix">\"כל הפרטים מופיעים ב\"</string>
+    <string name="si_consent_learn_more_privacy_prefix">כל הפרטים מופיעים ב</string>
     <string name="si_consent_learn_more_privacy_smile_link">Smile ID</string>
-    <string name="si_consent_learn_more_privacy_and">\" וב־\"</string>
+    <string name="si_consent_learn_more_privacy_and">" וב־"</string>
     <string name="si_consent_learn_more_privacy_partner_link">%1$s</string>
-    <string name="si_consent_learn_more_privacy_suffix">\" — מדיניות הפרטיות.\"</string>
+    <string name="si_consent_learn_more_privacy_suffix">" — מדיניות הפרטיות."</string>
     <string name="si_instructions_title_prefix">היכונו לצילום</string>
     <string name="si_instructions_emphasis_selfie">סלפי</string>
     <string name="si_instructions_capture_guidelines">הנחיות צילום</string>
