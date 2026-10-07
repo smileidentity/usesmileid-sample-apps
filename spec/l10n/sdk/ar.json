@@ -97,7 +97,6 @@
   "si_document_capturing": "جارٍ التقاط المستند…",
   "si_document_capture_complete": "تم التقاط المستند",
   "si_document_capture_unsatisfied": "فُقد المستند. حاول مرة أخرى.",
-  "si_document_capture_timeout": "انتهت مهلة الالتقاط. حاول مرة أخرى.",
   "si_document_gallery_image_too_small": "الصورة المحددة صغيرة جدًا. اختر صورة بدقة أعلى.",
   "si_document_gallery_image_failed": "تعذّر تحميل الصورة المحددة. جرّب صورة أخرى.",
   "si_document_capture_back": "التقاط الوجه الخلفي للهوية",

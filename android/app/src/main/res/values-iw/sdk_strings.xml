@@ -99,7 +99,6 @@
     <string name="si_document_capturing">מצלם מסמך…</string>
     <string name="si_document_capture_complete">המסמך צולם</string>
     <string name="si_document_capture_unsatisfied">המסמך אבד. נסה שוב.</string>
-    <string name="si_document_capture_timeout">פג הזמן הקצוב לצילום. נסה שוב.</string>
     <string name="si_document_gallery_image_too_small">התמונה שנבחרה קטנה מדי. בחר תמונה ברזולוציה גבוהה יותר.</string>
     <string name="si_document_gallery_image_failed">לא ניתן היה לטעון את התמונה שנבחרה. נסה תמונה אחרת.</string>
     <string name="si_document_capture_back">צלם את גב התעודה</string>

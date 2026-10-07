@@ -97,7 +97,6 @@
 "si_document_capturing" = "Capture du document en cours…";
 "si_document_capture_complete" = "Document capturé";
 "si_document_capture_unsatisfied" = "Document perdu. Réessayez.";
-"si_document_capture_timeout" = "Délai de capture dépassé. Réessayez.";
 "si_document_gallery_image_too_small" = "L’image sélectionnée est trop petite. Choisissez une photo de meilleure résolution.";
 "si_document_gallery_image_failed" = "Impossible de charger l’image sélectionnée. Essayez-en une autre.";
 "si_document_capture_back" = "Capturer le verso de la pièce d’identité";
