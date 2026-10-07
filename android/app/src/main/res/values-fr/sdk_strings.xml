@@ -99,7 +99,6 @@
     <string name="si_document_capturing">Capture du document en cours…</string>
     <string name="si_document_capture_complete">Document capturé</string>
     <string name="si_document_capture_unsatisfied">Document perdu. Réessayez.</string>
-    <string name="si_document_capture_timeout">Délai de capture dépassé. Réessayez.</string>
     <string name="si_document_gallery_image_too_small">L’image sélectionnée est trop petite. Choisissez une photo de meilleure résolution.</string>
     <string name="si_document_gallery_image_failed">Impossible de charger l’image sélectionnée. Essayez-en une autre.</string>
     <string name="si_document_capture_back">Capturer le verso de la pièce d’identité</string>
