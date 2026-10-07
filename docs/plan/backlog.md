@@ -9,19 +9,26 @@ pull request that finishes it.
 ### Coverage: a 95% gate in every app
 
 None of the four apps measures line coverage, so the 95% rule in AGENTS.md can't be checked. Measure
-each app's current number, then gate it in its `verify.sh`: `flutter test --coverage` with lcov,
-jest's `--coverage` with `coverageThreshold`, `xcodebuild -enableCodeCoverage YES` with `xccov`, and
-on Android the Gradle plugin's built-in `enableUnitTestCoverage` (JaCoCo, no new dependency) with a
-`JacocoCoverageVerification` threshold. Leave out the files `scripts/` generates.
+each app's current number, then gate it in its `verify.sh`. The number is one per app (the shell and
+its `sample-ui` together), over every source file, generated files under `scripts/` left out:
 
-The number is one per app: the shell and its `sample-ui` together. Each `verify.sh` runs its tests in
-several invocations (Expo's three jest runs, iOS's three `xcodebuild test` runs, Flutter's two
-packages, Android's two modules), so collect coverage on the full runs only, from the command line
-rather than in config, and merge them (`lcov -a`, `xcrun xcresulttool merge`, JaCoCo's merged
-report) before checking the gate. Document the command per platform in `docs/` with the gate.
+- **Count untested files as zero.** `flutter test --coverage` and jest's `--coverage` report only the
+  files a test loads. Add the missing `lib/` files to Flutter's lcov with zero hits, and pass
+  `--collectCoverageFrom` for `src/` on the jest command line (the configs' `roots` point at
+  `test/`). The report's file count must match the source file count.
+- **Merge, then check once.** Collect coverage on the full runs from the command line, not in
+  config, write lcov (or the platform's report), merge (`lcov -a` for Flutter and Expo,
+  `xcrun xcresulttool merge` for iOS, JaCoCo's merged report for Android's `app` and `sample-ui`),
+  and check the merged total with one script. jest's `coverageThreshold` checks only its own run, so
+  it isn't the gate.
+- **iOS runs:** merge the library's unit tests, its goldens and the shell's unit tests; leave out the
+  UI suites, which CI runs as separate jobs, and the Release probe run.
+- **Android:** the Gradle plugin's built-in `enableUnitTestCoverage` (JaCoCo, no new dependency)
+  with a `JacocoCoverageVerification` threshold on the merged report.
 
-The gate follows the ratchet in AGENTS.md *Testing*: an app below 95% gates at its measured number.
-Done when every `verify.sh` gates its measured coverage, at 95% once the app reaches it.
+Document the command per platform in `docs/` with the gate. The gate follows the ratchet in
+AGENTS.md *Testing*: an app below 95% gates at its measured number. Done when every `verify.sh`
+gates its measured coverage, at 95% once the app reaches it.
 
 ## UI and design fidelity
 
