@@ -4,6 +4,17 @@ Known work on the four sample apps that is not done yet. Each item says what is 
 what done looks like. Pick one up by opening a pull request that names it; remove the item in the same
 pull request that finishes it.
 
+## Testing
+
+### Coverage: a 95% gate in every app
+
+None of the four apps measures line coverage, so the 95% rule in AGENTS.md can't be checked. Measure
+each app's current number, then gate it in its `verify.sh`: `flutter test --coverage` with lcov,
+jest's `coverageThreshold`, `xcodebuild -enableCodeCoverage YES` with `xccov`, and on Android the
+Gradle plugin's built-in `enableUnitTestCoverage` (JaCoCo, no new dependency) with a
+`JacocoCoverageVerification` threshold. Leave out the files `scripts/` generates. Done when every
+`verify.sh` fails below 95%.
+
 ## UI and design fidelity
 
 ### Expo: the scenario drawer is not presented
