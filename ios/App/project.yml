@@ -14,7 +14,7 @@ packages:
   # the two on package identity, so a drift here fails resolution instead of building two SDKs.
   UseSmileID:
     url: https://github.com/smileidentity/ios-spm.git
-    exactVersion: 12.2.0
+    exactVersion: 12.2.0-SNAPSHOT.20261007161142.37649529577
 
 settings:
   base:
