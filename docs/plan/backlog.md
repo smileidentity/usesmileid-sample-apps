@@ -10,10 +10,18 @@ pull request that finishes it.
 
 None of the four apps measures line coverage, so the 95% rule in AGENTS.md can't be checked. Measure
 each app's current number, then gate it in its `verify.sh`: `flutter test --coverage` with lcov,
-jest's `coverageThreshold`, `xcodebuild -enableCodeCoverage YES` with `xccov`, and on Android the
-Gradle plugin's built-in `enableUnitTestCoverage` (JaCoCo, no new dependency) with a
-`JacocoCoverageVerification` threshold. Leave out the files `scripts/` generates. The gate follows
-the ratchet in AGENTS.md *Testing* for an app that first measures below 95%. Done when every `verify.sh` fails below 95%.
+jest's `--coverage` with `coverageThreshold`, `xcodebuild -enableCodeCoverage YES` with `xccov`, and
+on Android the Gradle plugin's built-in `enableUnitTestCoverage` (JaCoCo, no new dependency) with a
+`JacocoCoverageVerification` threshold. Leave out the files `scripts/` generates.
+
+The number is one per app: the shell and its `sample-ui` together. Each `verify.sh` runs its tests in
+several invocations (Expo's three jest runs, iOS's three `xcodebuild test` runs, Flutter's two
+packages, Android's two modules), so collect coverage on the full runs only, from the command line
+rather than in config, and merge them (`lcov -a`, `xcrun xcresulttool merge`, JaCoCo's merged
+report) before checking the gate. Document the command per platform in `docs/` with the gate.
+
+The gate follows the ratchet in AGENTS.md *Testing*: an app below 95% gates at its measured number.
+Done when every `verify.sh` gates its measured coverage, at 95% once the app reaches it.
 
 ## UI and design fidelity
 

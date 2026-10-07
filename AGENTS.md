@@ -222,14 +222,14 @@ deterministic.
 - **Test first.** For any change in behaviour, a feature or a fix, write the failing test before the
   code that makes it pass; a bug fix starts with a test that reproduces the bug and fails without the
   fix. A change with no behaviour (docs, a dependency bump, regenerated files) needs none.
-- **Line coverage stays at or above 95%, and aims for 100%.** No pull request lowers an app's
-  coverage. An app at or above 95% that a change would take below it gets the missing tests in the
+- **Line coverage stays at or above 95%, and aims for 100%.** No pull request takes an app below
+  its gate. An app at or above 95% that a change would take below it gets the missing tests in the
   same pull request. An app that first measures below 95% gates at that number, and each pull
   request that adds tests raises the gate, until it reaches 95%; a pull request there need not
   backfill code it didn't touch. Generated code is left out of the number; hand-written code that
   can't be tested as written gets a seam, not a coverage exclusion. No app measures it yet: until
-  its `verify.sh` gates the number (see the backlog), report the coverage of the code you changed in
-  the pull request.
+  its `verify.sh` gates the number (see the backlog), report the app's overall coverage before and
+  after the change in the pull request, with the command you ran to measure it.
 - **Spec validation** — a unit test per app asserting its scenario list, launch arguments and
   result-card fields match `spec/` exactly. Cheapest test in the repo and the one that keeps four
   apps aligned.
@@ -304,8 +304,8 @@ Because every commit is public, each PR holds to these:
 Before finishing any change:
 
 - [ ] The platform's `verify.sh` is green, or you state exactly what you could not run and why
-- [ ] A behaviour change started from a failing test, and the PR reports the coverage of the code it
-      changed, at 95% or above once the app's gate exists (see *Testing*)
+- [ ] A behaviour change started from a failing test, and the app's coverage holds at its gate; until
+      the gate exists, the PR reports the coverage before and after and how it was measured (see *Testing*)
 - [ ] `spec/` and the four apps still agree, or the PR says which platform follows and when
 - [ ] UI change → goldens updated, light and dark, plus the font-scale and contrast predicates
 - [ ] New scenario, screen or affordance → `spec/` updated in the same PR, IDs stable
