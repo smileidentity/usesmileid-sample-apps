@@ -222,12 +222,14 @@ deterministic.
 - **Test first.** For any change in behaviour, a feature or a fix, write the failing test before the
   code that makes it pass; a bug fix starts with a test that reproduces the bug and fails without the
   fix. A change with no behaviour (docs, a dependency bump, regenerated files) needs none.
-- **Line coverage stays at or above 95%, and aims for 100%.** A pull request that would leave it
-  below 95% in any of the four apps adds the missing tests in the same pull request; above the
-  floor, prefer changes that raise it. Generated code is left out of the number; hand-written code that can't be tested
-  as written gets a seam, not a coverage exclusion.
-  No app measures it yet: until its `verify.sh` gates the number (see the backlog), report the
-  coverage of the code you changed in the pull request.
+- **Line coverage stays at or above 95%, and aims for 100%.** No pull request lowers an app's
+  coverage. An app at or above 95% that a change would take below it gets the missing tests in the
+  same pull request. An app that first measures below 95% gates at that number, and each pull
+  request that adds tests raises the gate, until it reaches 95%; a pull request there need not
+  backfill code it didn't touch. Generated code is left out of the number; hand-written code that
+  can't be tested as written gets a seam, not a coverage exclusion. No app measures it yet: until
+  its `verify.sh` gates the number (see the backlog), report the coverage of the code you changed in
+  the pull request.
 - **Spec validation** — a unit test per app asserting its scenario list, launch arguments and
   result-card fields match `spec/` exactly. Cheapest test in the repo and the one that keeps four
   apps aligned.

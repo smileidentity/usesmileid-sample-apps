@@ -12,9 +12,8 @@ None of the four apps measures line coverage, so the 95% rule in AGENTS.md can't
 each app's current number, then gate it in its `verify.sh`: `flutter test --coverage` with lcov,
 jest's `coverageThreshold`, `xcodebuild -enableCodeCoverage YES` with `xccov`, and on Android the
 Gradle plugin's built-in `enableUnitTestCoverage` (JaCoCo, no new dependency) with a
-`JacocoCoverageVerification` threshold. Leave out the files `scripts/` generates. An app that
-measures below 95% gates at its measured number first and raises the gate with each pull request
-that adds tests, until it reaches 95%. Done when every `verify.sh` fails below 95%.
+`JacocoCoverageVerification` threshold. Leave out the files `scripts/` generates. The gate follows
+the ratchet in AGENTS.md *Testing* for an app that first measures below 95%. Done when every `verify.sh` fails below 95%.
 
 ## UI and design fidelity
 
