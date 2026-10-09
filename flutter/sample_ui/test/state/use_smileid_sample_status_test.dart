@@ -79,6 +79,10 @@ void main() {
   });
 
   test("each status's pill is its role's soft fill, in both schemes", () {
+    expect(
+      UseSmileIDSampleStatus.values.map((UseSmileIDSampleStatus it) => it.role),
+      <String>['success', 'warning', 'error', 'neutral', 'info'],
+    );
     for (final UseSmileIDSampleColors scheme in <UseSmileIDSampleColors>[
       UseSmileIDSampleColorSchemes.light,
       UseSmileIDSampleColorSchemes.dark,
