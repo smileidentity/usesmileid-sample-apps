@@ -190,6 +190,7 @@
 "status_clear" = "Validée";
 "status_attention" = "À examiner";
 "status_blocked" = "Bloquée";
+"status_error" = "Erreur";
 "status_processing" = "En cours";
 "job_result_approved" = "Approuvée";
 "job_result_provisional" = "Provisoire — à examiner";

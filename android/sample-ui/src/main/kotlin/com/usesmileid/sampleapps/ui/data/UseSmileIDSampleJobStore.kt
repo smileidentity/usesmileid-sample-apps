@@ -184,6 +184,7 @@ class UseSmileIDSampleJobStore(
             UseSmileIDSampleStatus.Clear -> "Approved"
             UseSmileIDSampleStatus.Attention -> "Provisional — needs review"
             UseSmileIDSampleStatus.Blocked -> "Rejected"
+            UseSmileIDSampleStatus.Error -> "Job failed"
             UseSmileIDSampleStatus.Processing -> "Submitted, awaiting result"
         }
 

@@ -118,7 +118,7 @@ class UseSmileIDSampleSearchTokens {
 /// One background/text pair per feedback role the four job statuses map onto.
 @immutable
 class UseSmileIDSampleBadgeTokens {
-  /// Takes four pairs, one per role, rather than a role-to-colour function.
+  /// Takes five pairs, one per role, rather than a role-to-colour function.
   const UseSmileIDSampleBadgeTokens({
     required this.successBackground,
     required this.successText,
@@ -128,6 +128,8 @@ class UseSmileIDSampleBadgeTokens {
     required this.errorText,
     required this.infoBackground,
     required this.infoText,
+    required this.neutralBackground,
+    required this.neutralText,
   });
 
   /// Clear.
@@ -153,6 +155,12 @@ class UseSmileIDSampleBadgeTokens {
 
   /// Processing's label.
   final Color infoText;
+
+  /// Error.
+  final Color neutralBackground;
+
+  /// Error's label.
+  final Color neutralText;
 }
 
 /// Colours the label/value rows draw, with a distinct fill for a value that is a link.
@@ -507,6 +515,8 @@ UseSmileIDSampleBadgeTokens softBadgeTokens() {
     errorText: fill('error').text,
     infoBackground: fill('info').background,
     infoText: fill('info').text,
+    neutralBackground: fill('neutral').background,
+    neutralText: fill('neutral').text,
   );
 }
 

@@ -701,7 +701,7 @@ def emit_kotlin_product_hues(hues: dict) -> str:
 
 def emit_kotlin_soft_badge_fills(fills: dict) -> str:
     """The soft status pills, keyed by the feedback role the four job statuses map onto."""
-    roles = ["success", "info", "warning", "error"]
+    roles = ["success", "info", "warning", "error", "neutral"]
     missing = [role for role in roles if role not in fills]
     if missing:
         raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
@@ -1007,7 +1007,7 @@ def emit_dart_product_hues(hues: dict) -> str:
 
 def emit_dart_soft_badge_fills(fills: dict) -> str:
     """The soft status pills, keyed by the feedback role the four job statuses map onto."""
-    roles = ["success", "info", "warning", "error"]
+    roles = ["success", "info", "warning", "error", "neutral"]
     missing = [role for role in roles if role not in fills]
     if missing:
         raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
@@ -1289,7 +1289,7 @@ def emit_swift_product_hues(hues: dict) -> str:
 
 def emit_swift_soft_badge_fills(fills: dict) -> str:
     """The soft status pills, keyed by the feedback role the four job statuses map onto."""
-    roles = ["success", "info", "warning", "error"]
+    roles = ["success", "info", "warning", "error", "neutral"]
     missing = [role for role in roles if role not in fills]
     if missing:
         raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")
@@ -1535,7 +1535,7 @@ def emit_ts_product_hues(hues: dict) -> str:
 
 def emit_ts_soft_badge_fills(fills: dict) -> str:
     """The soft status pills, keyed by the feedback role the four job statuses map onto."""
-    roles = ["success", "info", "warning", "error"]
+    roles = ["success", "info", "warning", "error", "neutral"]
     missing = [role for role in roles if role not in fills]
     if missing:
         raise TokenError(f"spec/design-tokens.json softBadgeFills.fills is missing {missing}")

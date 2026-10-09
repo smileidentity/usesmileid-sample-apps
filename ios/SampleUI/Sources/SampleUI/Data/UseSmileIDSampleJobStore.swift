@@ -268,6 +268,7 @@ public actor UseSmileIDSampleJobStore {
     case .clear: "Approved"
     case .attention: "Provisional \u{2014} needs review"
     case .blocked: "Rejected"
+    case .error: "Job failed"
     case .processing: "Submitted, awaiting result"
     }
   }

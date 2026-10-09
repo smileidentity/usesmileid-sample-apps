@@ -192,6 +192,7 @@
     <string name="sample_status_clear">سليمة</string>
     <string name="sample_status_attention">تحتاج مراجعة</string>
     <string name="sample_status_blocked">محظورة</string>
+    <string name="sample_status_error">خطأ</string>
     <string name="sample_status_processing">قيد المعالجة</string>
     <string name="sample_job_result_approved">مقبولة</string>
     <string name="sample_job_result_provisional">مؤقتة — تحتاج مراجعة</string>

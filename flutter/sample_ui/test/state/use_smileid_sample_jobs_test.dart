@@ -151,12 +151,12 @@ void main() {
   });
 
   group('filters', () {
-    test('are the four the design draws, and Processing is not among them', () {
+    test('are the design\'s four plus Error, and Processing is not among them', () {
       expect(
         UseSmileIDSampleJobFilter.values.map(
           (UseSmileIDSampleJobFilter f) => f.label(_en),
         ),
-        <String>['All', 'Clear', 'Attention', 'Blocked'],
+        <String>['All', 'Clear', 'Attention', 'Blocked', 'Error'],
       );
       expect(
         UseSmileIDSampleJobFilter.values.map(
@@ -182,6 +182,7 @@ void main() {
       expect(state.countFor(UseSmileIDSampleJobFilter.clear), 6);
       expect(state.countFor(UseSmileIDSampleJobFilter.attention), 2);
       expect(state.countFor(UseSmileIDSampleJobFilter.blocked), 2);
+      expect(state.countFor(UseSmileIDSampleJobFilter.error), 0);
       expect(state.visible, hasLength(2));
     });
   });

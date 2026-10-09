@@ -767,6 +767,10 @@ public enum UseSmileIDSampleStrings {
     text("status_blocked")
   }
 
+  public static var statusError: String {
+    text("status_error")
+  }
+
   public static var statusProcessing: String {
     text("status_processing")
   }

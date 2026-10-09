@@ -25,6 +25,8 @@ const pairFor = (badge: BadgeTokens, role: string): { background: string; foregr
       return { background: badge.warningBackground, foreground: badge.warningText };
     case 'error':
       return { background: badge.errorBackground, foreground: badge.errorText };
+    case 'neutral':
+      return { background: badge.neutralBackground, foreground: badge.neutralText };
     default:
       return { background: badge.infoBackground, foreground: badge.infoText };
   }

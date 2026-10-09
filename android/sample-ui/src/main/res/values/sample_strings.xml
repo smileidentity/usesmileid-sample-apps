@@ -192,6 +192,7 @@
     <string name="sample_status_clear">Clear</string>
     <string name="sample_status_attention">Attention</string>
     <string name="sample_status_blocked">Blocked</string>
+    <string name="sample_status_error">Error</string>
     <string name="sample_status_processing">Processing</string>
     <string name="sample_job_result_approved">Approved</string>
     <string name="sample_job_result_provisional">Provisional — needs review</string>

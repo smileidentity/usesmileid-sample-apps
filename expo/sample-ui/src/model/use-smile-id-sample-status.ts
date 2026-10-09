@@ -1,10 +1,11 @@
 import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 
-/// The four job statuses, Title case as the design sets them.
+/// The five job statuses, Title case as the design sets them.
 export const UseSmileIDSampleStatus = {
   Clear: 'Clear',
   Attention: 'Attention',
   Blocked: 'Blocked',
+  Error: 'Error',
   Processing: 'Processing',
 } as const;
 
@@ -19,6 +20,8 @@ export const smileIDSampleStatusLabel = (status: UseSmileIDSampleStatus, strings
       return strings.statusAttention;
     case UseSmileIDSampleStatus.Blocked:
       return strings.statusBlocked;
+    case UseSmileIDSampleStatus.Error:
+      return strings.statusError;
     case UseSmileIDSampleStatus.Processing:
       return strings.statusProcessing;
   }
@@ -33,6 +36,8 @@ export const smileIDSampleStatusRole = (status: UseSmileIDSampleStatus): string 
       return 'warning';
     case UseSmileIDSampleStatus.Blocked:
       return 'error';
+    case UseSmileIDSampleStatus.Error:
+      return 'neutral';
     case UseSmileIDSampleStatus.Processing:
       return 'info';
   }

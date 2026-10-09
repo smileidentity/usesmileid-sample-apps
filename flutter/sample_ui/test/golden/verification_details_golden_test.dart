@@ -47,6 +47,17 @@ void main() {
     );
   });
 
+  /// A job that failed: the API's `error`, drawn with its own neutral badge rather than Blocked's.
+  testWidgets('verification details error', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verification_details_error',
+      () => _details(
+        job: _job(status: UseSmileIDSampleStatus.error, message: 'Job failed'),
+      ),
+    );
+  });
+
   testWidgets('verification details attention', (WidgetTester tester) async {
     await _screenGoldens(
       tester,

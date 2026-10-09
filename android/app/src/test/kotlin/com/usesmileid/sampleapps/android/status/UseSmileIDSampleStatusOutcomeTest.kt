@@ -22,11 +22,11 @@ class UseSmileIDSampleStatusOutcomeTest {
         }
     }
 
-    /** The design draws four badges and the API has five states, so `error` shares Blocked deliberately. */
+    /** `error` is the job failing, not a `block` verdict, so it gets its own badge. */
     @Test
-    fun `error lands on blocked rather than inventing a badge`() {
+    fun `error is its own status, not blocked`() {
         assertEquals(
-            UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Blocked, "Upstream failed", 200),
+            UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Error, "Upstream failed", 200),
             statusOutcome(200, response("error", "Upstream failed")),
         )
     }

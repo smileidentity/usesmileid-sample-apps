@@ -26,7 +26,7 @@ Rules:
 | `test-ids.json` | The `sample_*` accessibility IDs flows assert on | scaffold: grows with each screen |
 | `app-identity.json` | Application ids, display names and URL schemes per platform, plus the ids reserved by the SDK repos' development samples | settled |
 | `routes.json` | The shared route table — ids, deep-link paths, typed arguments and the per-platform binding | **added 2026-08-13** |
-| `screens.json` | 22 screens, 59 states, each linked to its design node or marked `"design": "in-repo"` where the design has no frame; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12**; document features added 2026-09-28 |
+| `screens.json` | 22 screens, 60 states, each linked to its design node or marked `"design": "in-repo"` where the design has no frame; plus who owns each screen (sample vs SDK) and the open questions the design set raised | **filled 2026-08-12**; document features added 2026-09-28 |
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
 | `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |

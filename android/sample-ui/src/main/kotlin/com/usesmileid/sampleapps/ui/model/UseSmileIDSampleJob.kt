@@ -36,6 +36,7 @@ enum class UseSmileIDSampleJobFilter(val id: String, val status: UseSmileIDSampl
     Clear("clear", UseSmileIDSampleStatus.Clear),
     Attention("attention", UseSmileIDSampleStatus.Attention),
     Blocked("blocked", UseSmileIDSampleStatus.Blocked),
+    Error("error", UseSmileIDSampleStatus.Error),
     ;
 
     fun matches(job: UseSmileIDSampleJob) = status == null || job.status == status

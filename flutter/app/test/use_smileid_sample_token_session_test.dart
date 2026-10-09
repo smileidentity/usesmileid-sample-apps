@@ -408,7 +408,7 @@ void main() {
               ('clear', UseSmileIDSampleStatus.clear),
               ('attention', UseSmileIDSampleStatus.attention),
               ('block', UseSmileIDSampleStatus.blocked),
-              ('error', UseSmileIDSampleStatus.blocked),
+              ('error', UseSmileIDSampleStatus.error),
             ]) {
           final UseSmileIDSampleStatusRefresh outcome =
               useSmileIDSampleStatusOutcome(200, body(api));

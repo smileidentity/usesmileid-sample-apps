@@ -35,6 +35,7 @@ describe('the profile hue', () => {
 describe('a restored status', () => {
   it('resolves a value it recognises', () => {
     expect(smileIDSampleStatusFrom('Blocked')).toBe(UseSmileIDSampleStatus.Blocked);
+    expect(smileIDSampleStatusFrom('Error')).toBe(UseSmileIDSampleStatus.Error);
   });
 
   it('falls back rather than throwing, so a rename cannot crash a restore', () => {

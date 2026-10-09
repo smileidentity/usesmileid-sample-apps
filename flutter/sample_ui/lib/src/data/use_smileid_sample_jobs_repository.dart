@@ -231,6 +231,7 @@ const Map<UseSmileIDSampleStatus, String> _fixtureMessages =
       UseSmileIDSampleStatus.clear: 'Approved',
       UseSmileIDSampleStatus.attention: 'Provisional — needs review',
       UseSmileIDSampleStatus.blocked: 'Rejected',
+      UseSmileIDSampleStatus.error: 'Job failed',
       UseSmileIDSampleStatus.processing: 'Submitted, awaiting result',
     };
 

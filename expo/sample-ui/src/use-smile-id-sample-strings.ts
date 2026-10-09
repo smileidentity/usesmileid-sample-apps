@@ -198,6 +198,7 @@ type Key =
   | 'status_clear'
   | 'status_attention'
   | 'status_blocked'
+  | 'status_error'
   | 'status_processing'
   | 'job_result_approved'
   | 'job_result_provisional'
@@ -1095,6 +1096,10 @@ export class UseSmileIDSampleStrings {
     return this.values.status_blocked;
   }
 
+  get statusError(): string {
+    return this.values.status_error;
+  }
+
   get statusProcessing(): string {
     return this.values.status_processing;
   }
@@ -1765,6 +1770,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_clear: 'Clear',
     status_attention: 'Attention',
     status_blocked: 'Blocked',
+    status_error: 'Error',
     status_processing: 'Processing',
     job_result_approved: 'Approved',
     job_result_provisional: 'Provisional — needs review',
@@ -2077,6 +2083,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_clear: 'Validée',
     status_attention: 'À examiner',
     status_blocked: 'Bloquée',
+    status_error: 'Erreur',
     status_processing: 'En cours',
     job_result_approved: 'Approuvée',
     job_result_provisional: 'Provisoire — à examiner',
@@ -2389,6 +2396,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_clear: 'سليمة',
     status_attention: 'تحتاج مراجعة',
     status_blocked: 'محظورة',
+    status_error: 'خطأ',
     status_processing: 'قيد المعالجة',
     job_result_approved: 'مقبولة',
     job_result_provisional: 'مؤقتة — تحتاج مراجعة',
@@ -2701,6 +2709,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_clear: 'תקין',
     status_attention: 'דורש בדיקה',
     status_blocked: 'חסום',
+    status_error: 'שגיאה',
     status_processing: 'בעיבוד',
     job_result_approved: 'אושר',
     job_result_provisional: 'זמני — דורש בדיקה',

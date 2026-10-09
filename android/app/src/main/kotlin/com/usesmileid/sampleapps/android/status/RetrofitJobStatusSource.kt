@@ -21,11 +21,12 @@ internal fun statusOutcome(code: Int, body: UseSmileIDSampleStatusResponse?): Us
         ?: UseSmileIDSampleStatusRefresh.Failed("Unrecognised status '${body.status}'")
 }
 
-/** Five API states onto the four badges the design draws: `error` lands on Blocked and leans on the server's message. */
+/** The four final API states onto their badges. `error` is its own badge: the job failed, which is not a `block` verdict. */
 private fun String.toSampleStatus(): UseSmileIDSampleStatus? = when (this) {
     "clear" -> UseSmileIDSampleStatus.Clear
     "attention" -> UseSmileIDSampleStatus.Attention
-    "block", "error" -> UseSmileIDSampleStatus.Blocked
+    "block" -> UseSmileIDSampleStatus.Blocked
+    "error" -> UseSmileIDSampleStatus.Error
     else -> null
 }
 

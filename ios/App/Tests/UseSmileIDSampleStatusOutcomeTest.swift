@@ -8,8 +8,8 @@ final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
     XCTAssertEqual(outcome("clear"), .updated(status: .clear, message: "Approved", httpCode: 200))
     XCTAssertEqual(outcome("attention"), .updated(status: .attention, message: "Approved", httpCode: 200))
     XCTAssertEqual(outcome("block"), .updated(status: .blocked, message: "Approved", httpCode: 200))
-    // `error` has no badge of its own, so it lands on Blocked and leans on the server's message.
-    XCTAssertEqual(outcome("error"), .updated(status: .blocked, message: "Approved", httpCode: 200))
+    // `error` is the job failing, not a `block` verdict, so it gets its own badge.
+    XCTAssertEqual(outcome("error"), .updated(status: .error, message: "Approved", httpCode: 200))
     XCTAssertEqual(outcome("processing"), .stillProcessing)
   }
 

@@ -253,7 +253,7 @@ describe('the status call', () => {
     expect(smileIDSampleStatusOutcome(200, body('clear'))).toMatchObject({ kind: 'updated', status: 'Clear' });
     expect(smileIDSampleStatusOutcome(200, body('attention'))).toMatchObject({ status: 'Attention' });
     expect(smileIDSampleStatusOutcome(200, body('block'))).toMatchObject({ status: 'Blocked' });
-    expect(smileIDSampleStatusOutcome(200, body('error'))).toMatchObject({ status: 'Blocked' });
+    expect(smileIDSampleStatusOutcome(200, body('error'))).toMatchObject({ status: 'Error' });
     expect(smileIDSampleStatusOutcome(200, body('processing'))).toEqual({ kind: 'stillProcessing' });
     expect(smileIDSampleStatusOutcome(200, body('weird'))).toEqual({ kind: 'failed', reason: "Unrecognised status 'weird'" });
     expect(smileIDSampleStatusOutcome(401, body('clear'))).toEqual({ kind: 'failed', reason: 'HTTP 401' });

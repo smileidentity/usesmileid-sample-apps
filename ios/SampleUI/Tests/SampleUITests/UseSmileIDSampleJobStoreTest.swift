@@ -186,7 +186,7 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     let jobs = await store.jobs
 
     XCTAssertEqual(jobs.count, 11)
-    XCTAssertEqual(counts(jobs), [.all: 11, .clear: 6, .attention: 2, .blocked: 2])
+    XCTAssertEqual(counts(jobs), [.all: 11, .clear: 6, .attention: 2, .blocked: 2, .error: 0])
     XCTAssertEqual(jobs.first?.createdAt, Self.fixedNow, "re-seeding must not re-date a stored row")
   }
 
@@ -214,6 +214,22 @@ final class UseSmileIDSampleJobStoreTest: XCTestCase {
     for filter in UseSmileIDSampleJobFilter.allCases where filter != .all {
       XCTAssertTrue(fixtures.filter(filter.matches).allSatisfy { $0.status == filter.status })
     }
+  }
+
+  func testAFailedJobIsListedUnderErrorAndNotUnderBlocked() {
+    let job = UseSmileIDSampleJobStore.fixtures(now: Self.fixedNow)[0]
+    let failed = UseSmileIDSampleJob(
+      id: job.id,
+      userId: job.userId,
+      product: job.product,
+      status: .error,
+      createdAt: job.createdAt,
+      message: "Job failed",
+      httpStatus: 200
+    )
+    XCTAssertTrue(UseSmileIDSampleJobFilter.error.matches(failed))
+    XCTAssertFalse(UseSmileIDSampleJobFilter.blocked.matches(failed))
+    XCTAssertTrue(UseSmileIDSampleJobFilter.all.matches(failed))
   }
 
   private func counts(_ jobs: [UseSmileIDSampleJob]) -> [UseSmileIDSampleJobFilter: Int] {

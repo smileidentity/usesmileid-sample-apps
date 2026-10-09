@@ -1,6 +1,6 @@
 import '../use_smileid_sample_strings.dart';
 
-/// The four job statuses, Title case as the design sets them — never upper-cased.
+/// The five job statuses, Title case as the design sets them — never upper-cased.
 enum UseSmileIDSampleStatus {
   /// Cleared.
   clear('success'),
@@ -10,6 +10,9 @@ enum UseSmileIDSampleStatus {
 
   /// Blocked.
   blocked('error'),
+
+  /// The job failed: the API's `error`, which is not a `block` verdict.
+  error('neutral'),
 
   /// Still processing.
   processing('info');
@@ -21,6 +24,7 @@ enum UseSmileIDSampleStatus {
     UseSmileIDSampleStatus.clear => strings.statusClear,
     UseSmileIDSampleStatus.attention => strings.statusAttention,
     UseSmileIDSampleStatus.blocked => strings.statusBlocked,
+    UseSmileIDSampleStatus.error => strings.statusError,
     UseSmileIDSampleStatus.processing => strings.statusProcessing,
   };
 

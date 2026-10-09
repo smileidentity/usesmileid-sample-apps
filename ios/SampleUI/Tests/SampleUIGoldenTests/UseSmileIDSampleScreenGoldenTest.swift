@@ -88,6 +88,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("verification_details_blocked") { details(Self.fixture(.blocked, index: 4)) }
   }
 
+  func testVerificationDetailsError() {
+    goldens("verification_details_error") { details(Self.failed) }
+  }
+
   func testVerificationDetailsProcessing() {
     goldens("verification_details_processing") { details(Self.processing) }
   }
@@ -519,6 +523,23 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     let job = fixtures[index]
     XCTAssertEqual(job.status, status, "fixture \(index) is no longer \(status.label)")
     return job
+  }
+
+  /// No fixture fails (the design's counts have none), so the blocked job stands in, failed.
+  private static var failed: UseSmileIDSampleJob {
+    let job = fixture(.blocked, index: 4)
+    return UseSmileIDSampleJob(
+      id: job.id,
+      userId: job.userId,
+      product: job.product,
+      status: .error,
+      createdAt: job.createdAt,
+      message: "Job failed",
+      httpStatus: job.httpStatus,
+      sandbox: job.sandbox,
+      sessionId: job.sessionId,
+      partnerId: job.partnerId
+    )
   }
 
   /// What a real 202 says: a message long enough to need a second line of its own column.

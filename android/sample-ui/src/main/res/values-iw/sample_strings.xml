@@ -192,6 +192,7 @@
     <string name="sample_status_clear">תקין</string>
     <string name="sample_status_attention">דורש בדיקה</string>
     <string name="sample_status_blocked">חסום</string>
+    <string name="sample_status_error">שגיאה</string>
     <string name="sample_status_processing">בעיבוד</string>
     <string name="sample_job_result_approved">אושר</string>
     <string name="sample_job_result_provisional">זמני — דורש בדיקה</string>

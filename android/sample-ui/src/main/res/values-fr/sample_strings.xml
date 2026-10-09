@@ -192,6 +192,7 @@
     <string name="sample_status_clear">Validée</string>
     <string name="sample_status_attention">À examiner</string>
     <string name="sample_status_blocked">Bloquée</string>
+    <string name="sample_status_error">Erreur</string>
     <string name="sample_status_processing">En cours</string>
     <string name="sample_job_result_approved">Approuvée</string>
     <string name="sample_job_result_provisional">Provisoire — à examiner</string>

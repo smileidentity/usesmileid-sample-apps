@@ -131,19 +131,19 @@ void main() {
     );
   });
 
-  test('the four statuses are Title case, not upper-cased', () {
+  test('the five statuses are Title case, not upper-cased', () {
     expect(
       UseSmileIDSampleStatus.values.map(
         (UseSmileIDSampleStatus it) => it.label(_en),
       ),
-      <String>['Clear', 'Attention', 'Blocked', 'Processing'],
+      <String>['Clear', 'Attention', 'Blocked', 'Error', 'Processing'],
     );
   });
 
   test('each status maps onto the feedback role the spec names', () {
     expect(
       UseSmileIDSampleStatus.values.map((UseSmileIDSampleStatus it) => it.role),
-      <String>['success', 'warning', 'error', 'info'],
+      <String>['success', 'warning', 'error', 'neutral', 'info'],
     );
   });
 }
