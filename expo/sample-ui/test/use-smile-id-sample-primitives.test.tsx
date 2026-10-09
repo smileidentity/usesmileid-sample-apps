@@ -112,6 +112,7 @@ const cases: { component: string; states: Record<string, Case> }[] = [
       clear: { element: () => <UseSmileIDSampleStatusBadge status={UseSmileIDSampleStatus.Clear} /> },
       attention: { element: () => <UseSmileIDSampleStatusBadge status={UseSmileIDSampleStatus.Attention} /> },
       blocked: { element: () => <UseSmileIDSampleStatusBadge status={UseSmileIDSampleStatus.Blocked} /> },
+      error: { element: () => <UseSmileIDSampleStatusBadge status={UseSmileIDSampleStatus.Error} /> },
       processing: { element: () => <UseSmileIDSampleStatusBadge status={UseSmileIDSampleStatus.Processing} /> },
     },
   },
@@ -150,7 +151,7 @@ describe.each(cases)('$component', ({ states }) => {
 describe('golden coverage', () => {
   it('records both schemes for every state, which is what a dark-mode token defect shows up in', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(60);
+    expect(total * schemes.length).toBe(62);
   });
 
   it('covers all eight U1 primitives', () => {

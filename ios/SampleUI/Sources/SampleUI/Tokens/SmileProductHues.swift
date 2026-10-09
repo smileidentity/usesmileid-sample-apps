@@ -124,6 +124,10 @@ public let smileSoftBadgeFills: [String: SmileSoftBadgeFill] = [
   "error": SmileSoftBadgeFill(
     background: Color(hex: 0xfde4e1),
     text: Color(hex: 0xa11209)
+  ),
+  "neutral": SmileSoftBadgeFill(
+    background: Color(hex: 0xeaecf0),
+    text: Color(hex: 0x5e646e)
   )
 ]
 

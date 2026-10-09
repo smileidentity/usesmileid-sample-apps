@@ -2055,6 +2055,35 @@ exports[`StatusBadge dark clear 1`] = `
 </Text>
 `;
 
+exports[`StatusBadge dark error 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 11,
+        "letterSpacing": 0,
+        "lineHeight": 16,
+        "marginBottom": 0,
+        "marginTop": 0,
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 32,
+        "color": "#5e646e",
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 3.1610000000000005,
+      },
+      undefined,
+    ]
+  }
+>
+  Error
+</Text>
+`;
+
 exports[`StatusBadge dark processing 1`] = `
 <Text
   style={
@@ -2168,6 +2197,35 @@ exports[`StatusBadge light clear 1`] = `
   }
 >
   Clear
+</Text>
+`;
+
+exports[`StatusBadge light error 1`] = `
+<Text
+  style={
+    [
+      {
+        "fontFamily": "DMSans-Bold",
+        "fontSize": 11,
+        "letterSpacing": 0,
+        "lineHeight": 16,
+        "marginBottom": 0,
+        "marginTop": 0,
+      },
+      {
+        "backgroundColor": "#eaecf0",
+        "borderRadius": 32,
+        "color": "#5e646e",
+        "letterSpacing": 0.88,
+        "overflow": "hidden",
+        "paddingHorizontal": 8,
+        "paddingVertical": 3.1610000000000005,
+      },
+      undefined,
+    ]
+  }
+>
+  Error
 </Text>
 `;
 

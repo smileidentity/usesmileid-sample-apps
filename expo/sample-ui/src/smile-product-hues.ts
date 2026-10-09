@@ -120,6 +120,10 @@ export const smileSoftBadgeFills: Readonly<Record<string, SmileSoftBadgeFill>> =
     background: '#fde4e1',
     text: '#a11209',
   },
+  neutral: {
+    background: '#eaecf0',
+    text: '#5e646e',
+  },
 };
 
 /** The design's `color/border-strong`, for a control ring that `color.border` is too pale to draw. */

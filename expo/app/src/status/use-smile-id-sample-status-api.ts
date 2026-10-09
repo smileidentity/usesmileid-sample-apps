@@ -30,7 +30,7 @@ export const smileIDSampleStatusOutcome = (code: number, body: unknown): UseSmil
   return { kind: 'updated', status, message: response.message, httpCode: code };
 };
 
-/// Five API states onto four badges; `error` is Blocked.
+/// The four final API states onto their badges; `error` is the job failing, not a `block` verdict.
 const statusFor = (status: string): UseSmileIDSampleStatus | null => {
   switch (status) {
     case 'clear':
@@ -38,8 +38,9 @@ const statusFor = (status: string): UseSmileIDSampleStatus | null => {
     case 'attention':
       return UseSmileIDSampleStatus.Attention;
     case 'block':
-    case 'error':
       return UseSmileIDSampleStatus.Blocked;
+    case 'error':
+      return UseSmileIDSampleStatus.Error;
     default:
       return null;
   }

@@ -200,6 +200,7 @@
   "status_clear": "תקין",
   "status_attention": "דורש בדיקה",
   "status_blocked": "חסום",
+  "status_error": "שגיאה",
   "status_processing": "בעיבוד",
   "job_result_approved": "אושר",
   "job_result_provisional": "זמני — דורש בדיקה",

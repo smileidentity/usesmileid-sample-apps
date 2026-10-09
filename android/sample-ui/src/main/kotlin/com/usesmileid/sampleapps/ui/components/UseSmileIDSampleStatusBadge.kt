@@ -27,6 +27,7 @@ fun UseSmileIDSampleStatusBadge(
         UseSmileIDSampleStatus.Clear -> badge.successBackground to badge.successText
         UseSmileIDSampleStatus.Attention -> badge.warningBackground to badge.warningText
         UseSmileIDSampleStatus.Blocked -> badge.errorBackground to badge.errorText
+        UseSmileIDSampleStatus.Error -> badge.neutralBackground to badge.neutralText
         UseSmileIDSampleStatus.Processing -> badge.infoBackground to badge.infoText
     }
     StatusPill(label = status.label(), background = background, foreground = foreground, modifier = modifier, testId = testId)

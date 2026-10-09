@@ -69,8 +69,9 @@ UseSmileIDSampleStatusRefresh useSmileIDSampleStatusOutcome(
   final UseSmileIDSampleStatus? badge = switch (status) {
     'clear' => UseSmileIDSampleStatus.clear,
     'attention' => UseSmileIDSampleStatus.attention,
-    // `error` lands on Blocked, as on Android.
-    'block' || 'error' => UseSmileIDSampleStatus.blocked,
+    'block' => UseSmileIDSampleStatus.blocked,
+    // The job failing, not a `block` verdict, as on Android.
+    'error' => UseSmileIDSampleStatus.error,
     _ => null,
   };
   return badge == null

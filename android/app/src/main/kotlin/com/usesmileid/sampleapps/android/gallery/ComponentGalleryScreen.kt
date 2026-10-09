@@ -564,7 +564,7 @@ private val COUNTRIES = listOf(
     "🇿🇦" to "South Africa",
 )
 
-private val FILTERS = listOf("All" to 11, "Clear" to 6, "Attention" to 2, "Blocked" to 2)
+private val FILTERS = listOf("All" to 11, "Clear" to 6, "Attention" to 2, "Blocked" to 2, "Error" to 0)
 
 @Composable
 private fun GallerySection(label: String, content: @Composable () -> Unit) {

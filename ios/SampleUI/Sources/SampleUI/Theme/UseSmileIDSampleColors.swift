@@ -35,7 +35,7 @@ public struct UseSmileIDSampleSearchTokens: Equatable, Sendable {
   public let borderFocus: Color
 }
 
-/// One background/text pair per feedback role the four job statuses map onto.
+/// One background/text pair per feedback role the five job statuses map onto.
 public struct UseSmileIDSampleBadgeTokens: Equatable, Sendable {
   public let successBackground: Color
   public let successText: Color
@@ -45,6 +45,8 @@ public struct UseSmileIDSampleBadgeTokens: Equatable, Sendable {
   public let errorText: Color
   public let infoBackground: Color
   public let infoText: Color
+  public let neutralBackground: Color
+  public let neutralText: Color
 }
 
 public struct UseSmileIDSampleDataFieldTokens: Equatable, Sendable {
@@ -153,7 +155,9 @@ private func softBadgeTokens() -> UseSmileIDSampleBadgeTokens {
     errorBackground: fill("error").background,
     errorText: fill("error").text,
     infoBackground: fill("info").background,
-    infoText: fill("info").text
+    infoText: fill("info").text,
+    neutralBackground: fill("neutral").background,
+    neutralText: fill("neutral").text
   )
 }
 

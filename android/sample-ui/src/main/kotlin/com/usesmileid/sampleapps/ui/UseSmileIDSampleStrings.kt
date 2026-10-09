@@ -197,6 +197,7 @@ object UseSmileIDSampleStrings {
     val statusClear: String @Composable get() = stringResource(R.string.sample_status_clear)
     val statusAttention: String @Composable get() = stringResource(R.string.sample_status_attention)
     val statusBlocked: String @Composable get() = stringResource(R.string.sample_status_blocked)
+    val statusError: String @Composable get() = stringResource(R.string.sample_status_error)
     val statusProcessing: String @Composable get() = stringResource(R.string.sample_status_processing)
     val jobResultApproved: String @Composable get() = stringResource(R.string.sample_job_result_approved)
     val jobResultProvisional: String @Composable get() = stringResource(R.string.sample_job_result_provisional)

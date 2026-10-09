@@ -63,6 +63,7 @@ public enum UseSmileIDSampleJobFilter: String, CaseIterable, Sendable {
   case clear
   case attention
   case blocked
+  case error
 
   public var id: String {
     rawValue
@@ -74,6 +75,7 @@ public enum UseSmileIDSampleJobFilter: String, CaseIterable, Sendable {
     case .clear: UseSmileIDSampleStrings.statusClear
     case .attention: UseSmileIDSampleStrings.statusAttention
     case .blocked: UseSmileIDSampleStrings.statusBlocked
+    case .error: UseSmileIDSampleStrings.statusError
     }
   }
 
@@ -83,6 +85,7 @@ public enum UseSmileIDSampleJobFilter: String, CaseIterable, Sendable {
     case .clear: .clear
     case .attention: .attention
     case .blocked: .blocked
+    case .error: .error
     }
   }
 

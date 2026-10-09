@@ -60,6 +60,8 @@ data class BadgeTokens(
     val errorText: Color,
     val infoBackground: Color,
     val infoText: Color,
+    val neutralBackground: Color,
+    val neutralText: Color,
 )
 
 /** Colours the label/value rows draw, with a distinct fill for a value that is a link. */
@@ -362,6 +364,8 @@ private fun softBadgeTokens(): BadgeTokens {
         errorText = fill("error").text,
         infoBackground = fill("info").background,
         infoText = fill("info").text,
+        neutralBackground = fill("neutral").background,
+        neutralText = fill("neutral").text,
     )
 }
 

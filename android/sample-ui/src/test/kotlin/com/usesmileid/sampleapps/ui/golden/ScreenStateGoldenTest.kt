@@ -23,6 +23,7 @@ class ScreenStateGoldenTest {
         "verificationDetails.attention" to "screen_verification_details_attention",
         "verificationDetails.clear" to "screen_verification_details_clear",
         "verificationDetails.blocked" to "screen_verification_details_blocked",
+        "verificationDetails.error" to "screen_verification_details_error",
         "verificationDetails.processing" to "screen_verification_details_processing",
         "userDetails.empty" to "screen_user_details_empty",
         "userDetails.editing" to "screen_user_details_editing",

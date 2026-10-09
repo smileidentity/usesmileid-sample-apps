@@ -104,6 +104,16 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
+      error: {
+        element: () =>
+          details({
+            state: {
+              job: { ...fixtures[0]!, status: UseSmileIDSampleStatus.Error, message: 'Job failed', httpStatus: 200 },
+              jobId: fixtures[0]!.id,
+              refreshing: false,
+            },
+          }),
+      },
       // A deep link can name a row this build has no copy of, and the id is the whole diagnostic.
       noRow: {
         element: () => details({ state: { job: null, jobId: 'job_99ky31za00', refreshing: false } }),
@@ -132,7 +142,7 @@ describe('the recording environment', () => {
 describe('verifications coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(16);
+    expect(total * schemes.length).toBe(18);
   });
 });
 
@@ -143,6 +153,7 @@ describe('the filter counts', () => {
       clear: 6,
       attention: 2,
       blocked: 2,
+      error: 0,
     });
   });
 
@@ -153,12 +164,13 @@ describe('the filter counts', () => {
       clear: 6,
       attention: 2,
       blocked: 0,
+      error: 0,
     });
   });
 
   it('gives each chip a count node a flow can read by id', async () => {
     const rendered = await renderInTheme(list(), false);
-    for (const id of ['all', 'clear', 'attention', 'blocked']) {
+    for (const id of ['all', 'clear', 'attention', 'blocked', 'error']) {
       expect(rendered.queryByTestId(`sample_filter_count_${id}`)).not.toBeNull();
     }
   });

@@ -62,6 +62,8 @@ export type BadgeTokens = {
   readonly errorText: string;
   readonly infoBackground: string;
   readonly infoText: string;
+  readonly neutralBackground: string;
+  readonly neutralText: string;
 };
 
 export type SmileColors = {
@@ -126,6 +128,8 @@ const softBadgeTokens = (): BadgeTokens => {
     errorText: fill('error').text,
     infoBackground: fill('info').background,
     infoText: fill('info').text,
+    neutralBackground: fill('neutral').background,
+    neutralText: fill('neutral').text,
   };
 };
 

@@ -288,6 +288,7 @@ final class UseSmileIDSampleStrings {
   String get statusClear => _values['status_clear']!;
   String get statusAttention => _values['status_attention']!;
   String get statusBlocked => _values['status_blocked']!;
+  String get statusError => _values['status_error']!;
   String get statusProcessing => _values['status_processing']!;
   String get jobResultApproved => _values['job_result_approved']!;
   String get jobResultProvisional => _values['job_result_provisional']!;
@@ -656,6 +657,7 @@ final class UseSmileIDSampleStrings {
       'status_clear': 'Clear',
       'status_attention': 'Attention',
       'status_blocked': 'Blocked',
+      'status_error': 'Error',
       'status_processing': 'Processing',
       'job_result_approved': 'Approved',
       'job_result_provisional': 'Provisional — needs review',
@@ -1004,6 +1006,7 @@ final class UseSmileIDSampleStrings {
       'status_clear': 'Validée',
       'status_attention': 'À examiner',
       'status_blocked': 'Bloquée',
+      'status_error': 'Erreur',
       'status_processing': 'En cours',
       'job_result_approved': 'Approuvée',
       'job_result_provisional': 'Provisoire — à examiner',
@@ -1349,6 +1352,7 @@ final class UseSmileIDSampleStrings {
       'status_clear': 'سليمة',
       'status_attention': 'تحتاج مراجعة',
       'status_blocked': 'محظورة',
+      'status_error': 'خطأ',
       'status_processing': 'قيد المعالجة',
       'job_result_approved': 'مقبولة',
       'job_result_provisional': 'مؤقتة — تحتاج مراجعة',
@@ -1680,6 +1684,7 @@ final class UseSmileIDSampleStrings {
       'status_clear': 'תקין',
       'status_attention': 'דורש בדיקה',
       'status_blocked': 'חסום',
+      'status_error': 'שגיאה',
       'status_processing': 'בעיבוד',
       'job_result_approved': 'אושר',
       'job_result_provisional': 'זמני — דורש בדיקה',

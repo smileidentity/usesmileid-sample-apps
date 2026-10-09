@@ -17,6 +17,7 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "verificationDetails.attention": "verification_details_attention",
     "verificationDetails.clear": "verification_details_clear",
     "verificationDetails.blocked": "verification_details_blocked",
+    "verificationDetails.error": "verification_details_error",
     "verificationDetails.processing": "verification_details_processing",
     "userDetails.empty": "user_details_empty",
     "userDetails.editing": "user_details_editing",

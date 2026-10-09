@@ -34,6 +34,7 @@ public struct UseSmileIDSampleStatusBadge: View {
     case .clear: return (badge.successBackground, badge.successText)
     case .attention: return (badge.warningBackground, badge.warningText)
     case .blocked: return (badge.errorBackground, badge.errorText)
+    case .error: return (badge.neutralBackground, badge.neutralText)
     case .processing: return (badge.infoBackground, badge.infoText)
     }
   }

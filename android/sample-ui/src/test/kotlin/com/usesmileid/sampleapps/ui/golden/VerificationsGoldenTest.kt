@@ -86,6 +86,9 @@ class VerificationsGoldenTest : GoldenTest() {
     fun verification_details_blocked() = goldens("screen_verification_details_blocked") { Details(BLOCKED) }
 
     @Test
+    fun verification_details_error() = goldens("screen_verification_details_error") { Details(ERROR) }
+
+    @Test
     fun verification_details_processing() = goldens("screen_verification_details_processing") { Details(PROCESSING) }
 
     @Test
@@ -107,6 +110,9 @@ class VerificationsGoldenTest : GoldenTest() {
         val CLEAR = JOBS.first { it.status == UseSmileIDSampleStatus.Clear }
         val ATTENTION = JOBS.first { it.status == UseSmileIDSampleStatus.Attention }
         val BLOCKED = JOBS.first { it.status == UseSmileIDSampleStatus.Blocked }
+
+        /** No fixture fails (the design's counts have none), so the blocked job stands in, failed. */
+        val ERROR = BLOCKED.copy(status = UseSmileIDSampleStatus.Error, message = "Job failed")
 
         /** What a real 202 says: a message long enough to need a second line of its own column. */
         val PROCESSING = JOBS.first { it.status == UseSmileIDSampleStatus.Processing }

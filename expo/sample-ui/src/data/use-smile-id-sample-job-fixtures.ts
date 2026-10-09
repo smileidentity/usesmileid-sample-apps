@@ -30,6 +30,8 @@ const message = (status: UseSmileIDSampleStatus): string => {
       return 'Provisional — needs review';
     case UseSmileIDSampleStatus.Blocked:
       return 'Rejected';
+    case UseSmileIDSampleStatus.Error:
+      return 'Job failed';
     case UseSmileIDSampleStatus.Processing:
       return 'Submitted, awaiting result';
   }

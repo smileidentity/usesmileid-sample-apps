@@ -42,6 +42,10 @@ class UseSmileIDSampleStatusBadge extends StatelessWidget {
         badge.errorBackground,
         badge.errorText,
       ),
+      UseSmileIDSampleStatus.error => (
+        badge.neutralBackground,
+        badge.neutralText,
+      ),
       UseSmileIDSampleStatus.processing => (
         badge.infoBackground,
         badge.infoText,

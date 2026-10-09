@@ -119,8 +119,13 @@
         "error": {
           "background": "#FDE4E1",
           "text": "#A11209"
+        },
+        "neutral": {
+          "background": "#EAECF0",
+          "text": "#5E646E"
         }
       },
+      "neutralSource": "ADDED 2026-10-09 for the Error status, which the design has no frame for: GET /v3/status returns `error` as a final state of its own (the API's five states are processing, clear, attention, block and error), and filing it under Blocked read as a refusal. The pair is the design system's grey200 background with grey600 text (≈5:1), so it stays token-sourced rather than a new hue.",
       "fillsSource": "Read off the four JobRow badge instances on the Verifications board 2026-08-17 (nodes 5206:2429, 2430, 2432, 2433), where each pair is bound to a design variable — color/ok-bg + color/ok-fg, color/info-*, color/warn-*, color/err-*. These are the values the earlier prototype recording could only describe as 'pale'.",
       "labelCase": "Title case, not UPPERCASE. The design sets 'Clear' / 'Processing' / 'Attention' / 'Blocked' at 11/700 with 0.88 tracking — the Label type style at label size, but not upper-cased. Date and section headers DO upper-case the same style, which is why the app upper-cased this one too.",
       "designSystem": {

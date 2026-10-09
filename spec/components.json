@@ -172,13 +172,14 @@
         "clear",
         "attention",
         "blocked",
+        "error",
         "processing"
       ],
       "usedBy": [
         "verifications",
         "verificationDetails"
       ],
-      "notes": "CORRECTED 2026-08-12 from the prototype recording, RESOLVED 2026-08-17 against nodes 5206:2429–2433. The design uses soft tinted pills, not the design system's saturated badge fills, and the four exact pairs now live in design-tokens.json → softBadgeFills.fills, generated per platform. Do not reach for the current badge.* tokens. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Processing→info. TWO THINGS A PORT GETS WRONG: the label is Title case, NOT upper-cased (the same 11/700 label style IS upper-cased for date and section headers, which is how Android came to upper-case this too); and the pill takes radius.control, not radius.chip.",
+      "notes": "CORRECTED 2026-08-12 from the prototype recording, RESOLVED 2026-08-17 against nodes 5206:2429–2433. The design uses soft tinted pills, not the design system's saturated badge fills, and the four exact pairs now live in design-tokens.json → softBadgeFills.fills, generated per platform. Do not reach for the current badge.* tokens. Vocabulary maps to roles: Clear→success, Attention→warning, Blocked→error, Error→neutral, Processing→info. Error (added 2026-10-09) has no design frame: the API's `error` state is a failed job, not a block, so it takes the neutral grey pair added to softBadgeFills. TWO THINGS A PORT GETS WRONG: the label is Title case, NOT upper-cased (the same 11/700 label style IS upper-cased for date and section headers, which is how Android came to upper-case this too); and the pill takes radius.control, not radius.chip.",
       "fillTreatment": "SOFT — a pale tinted fill with a dark same-hue label, for ALL FOUR statuses (pale green Clear, pale amber Attention, pale red Blocked, pale blue Processing).",
       "decision": "DECIDED 2026-08-13: ship the design's SOFT tinted pills for all four statuses. Implemented by adding soft variants to the design system (never by hardcoding the Figma hexes), so it stays token-driven."
     },
@@ -561,7 +562,7 @@
       "usedBy": [
         "verifications"
       ],
-      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta. The UNSELECTED border is the shared cardStroke pair, not filter.chip-border: on dark the chips were the loudest thing on the verifications screen once the rows quietened."
+      "notes": "Label plus a count (All 11, Clear 6, Attention 2, Blocked 2, Error 0 — the Error chip was added 2026-10-09 and has no design frame). Counts are live and must update after a delete — that is the assertion the delete flow keys off. TYPE CORRECTED 2026-08-17 against node 5206:2415: the label is 12.5/700 and the count is 11/700 with 0.88 tracking. The generated filter-chip font is 14/400, which is neither, so do not reach for it unchanged. The unselected count's COLOUR is an open disagreement — see the filterChipCountColour delta. The UNSELECTED border is the shared cardStroke pair, not filter.chip-border: on dark the chips were the loudest thing on the verifications screen once the rows quietened."
     },
     {
       "name": "EmptyState",

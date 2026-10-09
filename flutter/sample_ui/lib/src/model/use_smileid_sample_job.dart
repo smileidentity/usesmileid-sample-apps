@@ -174,7 +174,10 @@ enum UseSmileIDSampleJobFilter {
   attention('attention', UseSmileIDSampleStatus.attention),
 
   /// Blocked only.
-  blocked('blocked', UseSmileIDSampleStatus.blocked);
+  blocked('blocked', UseSmileIDSampleStatus.blocked),
+
+  /// Failed jobs only.
+  error('error', UseSmileIDSampleStatus.error);
 
   const UseSmileIDSampleJobFilter(this.id, this.status);
 

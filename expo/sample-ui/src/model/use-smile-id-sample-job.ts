@@ -67,6 +67,7 @@ export const smileIDSampleJobFilters: readonly UseSmileIDSampleJobFilter[] = [
   { id: 'clear', label: (strings) => strings.statusClear, status: UseSmileIDSampleStatus.Clear },
   { id: 'attention', label: (strings) => strings.statusAttention, status: UseSmileIDSampleStatus.Attention },
   { id: 'blocked', label: (strings) => strings.statusBlocked, status: UseSmileIDSampleStatus.Blocked },
+  { id: 'error', label: (strings) => strings.statusError, status: UseSmileIDSampleStatus.Error },
 ];
 
 export const smileIDSampleJobMatches = (

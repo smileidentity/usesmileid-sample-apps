@@ -70,12 +70,13 @@ struct UseSmileIDSampleStatusResponse: Decodable {
   let userId: String?
   let createdAt: String?
 
-  /// Five API states onto the four badges: `error` lands on Blocked and leans on the server's message.
+  /// The four final API states onto their badges; `error` is the job failing, not a `block` verdict.
   var sampleStatus: UseSmileIDSampleStatus? {
     switch status {
     case "clear": .clear
     case "attention": .attention
-    case "block", "error": .blocked
+    case "block": .blocked
+    case "error": .error
     default: nil
     }
   }

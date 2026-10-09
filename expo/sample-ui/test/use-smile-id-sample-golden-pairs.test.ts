@@ -20,6 +20,7 @@ const identicalOnPurpose: Record<string, string> = {
   'StatusBadge/clear': 'the soft badge fills are specified as one pair per role, not per scheme',
   'StatusBadge/attention': 'the soft badge fills are specified as one pair per role, not per scheme',
   'StatusBadge/blocked': 'the soft badge fills are specified as one pair per role, not per scheme',
+  'StatusBadge/error': 'the soft badge fills are specified as one pair per role, not per scheme',
   'StatusBadge/processing': 'the soft badge fills are specified as one pair per role, not per scheme',
   'DateGroupHeader/withRelativeWord': 'the whole header is color.text.muted — the darkMuted delta',
   'DateGroupHeader/absoluteOnly': 'the whole header is color.text.muted — the darkMuted delta',
@@ -43,7 +44,7 @@ const snapshotFiles = [
   'use-smile-id-sample-profiles-screens.test.tsx.snap',
 ];
 
-const expectedStates = 161;
+const expectedStates = 163;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();

@@ -226,6 +226,11 @@
           "node": "5206-2717"
         },
         {
+          "state": "error",
+          "design": "in-repo",
+          "note": "The job failed: GET /v3/status returned `error`, a final state of its own, not a `block` verdict. Neutral pill; the server's message as it came."
+        },
+        {
           "state": "processing",
           "node": "5206-2756",
           "note": "202 Accepted, pull-to-refresh present."

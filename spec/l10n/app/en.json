@@ -200,6 +200,7 @@
   "status_clear": "Clear",
   "status_attention": "Attention",
   "status_blocked": "Blocked",
+  "status_error": "Error",
   "status_processing": "Processing",
   "job_result_approved": "Approved",
   "job_result_provisional": "Provisional — needs review",

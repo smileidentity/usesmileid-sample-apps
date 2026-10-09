@@ -61,6 +61,7 @@ fun UseSmileIDSampleStatus.label(): String = when (this) {
     UseSmileIDSampleStatus.Clear -> UseSmileIDSampleStrings.statusClear
     UseSmileIDSampleStatus.Attention -> UseSmileIDSampleStrings.statusAttention
     UseSmileIDSampleStatus.Blocked -> UseSmileIDSampleStrings.statusBlocked
+    UseSmileIDSampleStatus.Error -> UseSmileIDSampleStrings.statusError
     UseSmileIDSampleStatus.Processing -> UseSmileIDSampleStrings.statusProcessing
 }
 
@@ -102,6 +103,7 @@ val UseSmileIDSampleStatus.labelRes: Int
         UseSmileIDSampleStatus.Clear -> R.string.sample_status_clear
         UseSmileIDSampleStatus.Attention -> R.string.sample_status_attention
         UseSmileIDSampleStatus.Blocked -> R.string.sample_status_blocked
+        UseSmileIDSampleStatus.Error -> R.string.sample_status_error
         UseSmileIDSampleStatus.Processing -> R.string.sample_status_processing
     }
 
