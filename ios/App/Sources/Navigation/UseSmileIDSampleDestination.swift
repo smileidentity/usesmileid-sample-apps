@@ -336,7 +336,17 @@ private struct UseSmileIDSampleVerificationsHost: View {
       onJobTap: { router.push(.verificationDetails(jobId: $0.id)) },
       onRemove: { app.removeJobs($0) }
     )
+    // No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
+    .task(id: app.session?.id) {
+      while await app.refreshProcessingJobs() > 0 {
+        try? await Task.sleep(nanoseconds: Self.processingPollNanoseconds)
+        if Task.isCancelled { return }
+      }
+    }
   }
+
+  /// How often the list asks about rows still processing while it is on screen.
+  private static let processingPollNanoseconds: UInt64 = 5_000_000_000
 }
 
 /// The profiles list and its created confirmation; the id is consumed on sight, so returning cannot re-show it.

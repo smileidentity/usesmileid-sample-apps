@@ -49,6 +49,10 @@ UseSmileIDSampleStatusRefresh useSmileIDSampleStatusOutcome(
   int code,
   String body,
 ) {
+  // The server answers 404 until an accepted job has a state; the caller has already ruled out a job it never submitted.
+  if (code == 404) {
+    return const UseSmileIDSampleStatusStillProcessing();
+  }
   final Object? json;
   try {
     json = jsonDecode(body);

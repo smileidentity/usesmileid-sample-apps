@@ -44,6 +44,62 @@ void main() {
 
   setUp(() => store = UseSmileIDSampleMemoryJobsRepository());
 
+  group('the list\'s check', () {
+    test(
+      'asks about every processing row and counts those still processing',
+      () async {
+        await store.add(row(id: 'job_done'));
+        await store.add(row(id: 'job_waiting'));
+        final _ById source = _ById(<String, UseSmileIDSampleStatusRefresh>{
+          'job_done': updated,
+          'job_waiting': const UseSmileIDSampleStatusStillProcessing(),
+        });
+
+        final int pending = await store.refreshProcessing(
+          session: session(),
+          nowMillis: now,
+          source: source,
+        );
+
+        expect(pending, 1);
+        expect(source.asked, <String>{'job_done', 'job_waiting'});
+        expect(
+          (await store.find('job_done'))?.status,
+          UseSmileIDSampleStatus.clear,
+        );
+      },
+    );
+
+    test(
+      'does not count rows the session cannot ask about, so the list stops',
+      () async {
+        await store.add(row(id: 'job_fixture', sessionId: null));
+        await store.add(row(id: 'job_other', partnerId: 'partner_2'));
+        final _ById source = _ById(
+          const <String, UseSmileIDSampleStatusRefresh>{},
+        );
+
+        expect(
+          await store.refreshProcessing(
+            session: session(),
+            nowMillis: now,
+            source: source,
+          ),
+          0,
+        );
+        expect(
+          await store.refreshProcessing(
+            session: null,
+            nowMillis: now,
+            source: source,
+          ),
+          0,
+        );
+        expect(source.asked, isEmpty);
+      },
+    );
+  });
+
   group('refresh', () {
     test('reads the row, asks the source and writes back', () async {
       await store.add(row());
@@ -397,3 +453,23 @@ class _Gated implements UseSmileIDSampleJobStatusSource {
 }
 
 final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');
+
+/// A source answering per job, and remembering which it was asked about.
+class _ById implements UseSmileIDSampleJobStatusSource {
+  _ById(this.answers);
+
+  final Map<String, UseSmileIDSampleStatusRefresh> answers;
+
+  /// The jobs it was asked about.
+  final Set<String> asked = <String>{};
+
+  @override
+  Future<UseSmileIDSampleStatusRefresh> check({
+    required String jobId,
+    required String token,
+    required bool sandbox,
+  }) async {
+    asked.add(jobId);
+    return answers[jobId] ?? const UseSmileIDSampleStatusStillProcessing();
+  }
+}

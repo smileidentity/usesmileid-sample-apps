@@ -179,6 +179,17 @@ public actor UseSmileIDSampleJobStore {
     return written ? outcome : .failed(reason: UseSmileIDSampleStrings.jobErrorNotStored)
   }
 
+  /// The list's check: asks about every processing row, silently, and returns how many the server still has processing, so the list polls only while one can change.
+  public func refreshProcessing(live: UseSmileIDSampleTokenSession?, now: Date) async throws -> Int {
+    var stillProcessing = 0
+    for job in jobs where job.status == .processing {
+      if try await refresh(job.id, live: live, now: now) == .stillProcessing {
+        stillProcessing += 1
+      }
+    }
+    return stillProcessing
+  }
+
   /// Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent.
   public func seedFixtures(now: Date) {
     write(inserting: Self.fixtures(now: now).map { UseSmileIDSampleJobRecord(job: $0) })

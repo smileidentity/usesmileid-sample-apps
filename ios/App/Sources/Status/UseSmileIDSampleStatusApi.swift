@@ -52,6 +52,10 @@ func useSmileIDSampleStatusOutcome(
   code: Int,
   body: UseSmileIDSampleStatusResponse?
 ) -> UseSmileIDSampleStatusRefresh {
+  // The server answers 404 until an accepted job has a state; the caller has already ruled out a job it never submitted.
+  if code == 404 {
+    return .stillProcessing
+  }
   guard let body, (200..<300).contains(code) else { return .failed(reason: "HTTP \(code)") }
   if body.status == UseSmileIDSampleStatusResponse.processing {
     return .stillProcessing

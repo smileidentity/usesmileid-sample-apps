@@ -257,6 +257,9 @@ describe('the status call', () => {
     expect(smileIDSampleStatusOutcome(200, body('processing'))).toEqual({ kind: 'stillProcessing' });
     expect(smileIDSampleStatusOutcome(200, body('weird'))).toEqual({ kind: 'failed', reason: "Unrecognised status 'weird'" });
     expect(smileIDSampleStatusOutcome(401, body('clear'))).toEqual({ kind: 'failed', reason: 'HTTP 401' });
+    // The server answers 404 until an accepted job has a state, so a check just after submitting is not a failure.
+    expect(smileIDSampleStatusOutcome(404, body('not_found'))).toEqual({ kind: 'stillProcessing' });
+    expect(smileIDSampleStatusOutcome(404, null)).toEqual({ kind: 'stillProcessing' });
     expect(smileIDSampleStatusOutcome(200, null)).toEqual({ kind: 'failed', reason: 'HTTP 200' });
   });
 });

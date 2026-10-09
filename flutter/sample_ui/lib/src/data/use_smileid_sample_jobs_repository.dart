@@ -38,12 +38,44 @@ abstract interface class UseSmileIDSampleJobsRepository {
     required int nowMillis,
     required UseSmileIDSampleJobStatusSource source,
   });
+
+  /// The list's check: asks about every processing row, silently, and returns how many the server still has processing.
+  Future<int> refreshProcessing({
+    required UseSmileIDSampleRefreshSession? session,
+    required int nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+  });
 }
 
 /// The refresh sequence, written once: it is the part that encodes the contract, and two copies drift.
 mixin UseSmileIDSampleJobRefreshMixin
     implements UseSmileIDSampleJobsRepository {
   final Set<String> _inFlight = <String>{};
+
+  @override
+  Future<int> refreshProcessing({
+    required UseSmileIDSampleRefreshSession? session,
+    required int nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+  }) async {
+    int stillProcessing = 0;
+    for (final UseSmileIDSampleJob job
+        in await read() ?? const <UseSmileIDSampleJob>[]) {
+      if (job.status != UseSmileIDSampleStatus.processing) {
+        continue;
+      }
+      final UseSmileIDSampleStatusRefresh? outcome = await refresh(
+        jobId: job.id,
+        session: session,
+        nowMillis: nowMillis,
+        source: source,
+      );
+      if (outcome is UseSmileIDSampleStatusStillProcessing) {
+        stillProcessing++;
+      }
+    }
+    return stillProcessing;
+  }
 
   @override
   Future<UseSmileIDSampleStatusRefresh?> refresh({

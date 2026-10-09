@@ -41,6 +41,7 @@ import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.rememberVerificationsScreenState
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen as VerificationDetailsContent
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen as VerificationsContent
@@ -67,6 +68,13 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
         // Against the list minus the ids going away: the delete is suspend and has not landed yet.
         if (app.jobs.orEmpty().none { it.id !in ids && screen.filter.matches(it) }) {
             screen.filter = UseSmileIDSampleJobFilter.All
+        }
+    }
+
+    // No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
+    LaunchedEffect(app.session?.id) {
+        while (app.jobStore.refreshProcessing(app.session, System.currentTimeMillis()) > 0) {
+            delay(PROCESSING_POLL_MILLIS)
         }
     }
 
@@ -188,3 +196,6 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
         )
     }
 }
+
+/** How often the list asks about rows still processing while it is on screen. */
+private const val PROCESSING_POLL_MILLIS = 5_000L

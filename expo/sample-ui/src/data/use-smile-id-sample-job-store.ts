@@ -45,6 +45,11 @@ type Actions = {
     nowMillis: number,
     source: UseSmileIDSampleJobStatusSource,
   ) => Promise<UseSmileIDSampleStatusRefresh | null>;
+  refreshProcessing: (
+    session: UseSmileIDSampleRefreshSession | null,
+    nowMillis: number,
+    source: UseSmileIDSampleJobStatusSource,
+  ) => Promise<number>;
   find: (jobId: string) => UseSmileIDSampleJob | null;
   consumeRemoval: () => number | null;
   seedFixtures: (nowMillis: number) => Promise<void>;
@@ -199,6 +204,17 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
       // rest of the process — which is what a `finally` buys that an early return does not.
       inFlight.delete(jobId);
     }
+  },
+
+  /// The list's check: asks about every processing row, silently, and returns how many the server still has processing.
+  refreshProcessing: async (session, nowMillis, source) => {
+    let stillProcessing = 0;
+    for (const row of get().jobs ?? []) {
+      if (row.status !== 'Processing') continue;
+      const outcome = await get().refresh(row.id, session, nowMillis, source);
+      if (outcome?.kind === 'stillProcessing') stillProcessing += 1;
+    }
+    return stillProcessing;
   },
 
   find: (jobId) => (get().jobs ?? []).find((row) => row.id === jobId) ?? null,

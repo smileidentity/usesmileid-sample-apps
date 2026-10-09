@@ -421,6 +421,18 @@ void main() {
       },
     );
 
+    // The server answers 404 until an accepted job has a state, so a check just after submitting is not a failure.
+    test('a 404 is still processing, not a failure', () {
+      expect(
+        useSmileIDSampleStatusOutcome(404, '{"status":"not_found"}'),
+        isA<UseSmileIDSampleStatusStillProcessing>(),
+      );
+      expect(
+        useSmileIDSampleStatusOutcome(404, 'not json'),
+        isA<UseSmileIDSampleStatusStillProcessing>(),
+      );
+    });
+
     test(
       'a failed exchange or an unknown state says so rather than guessing',
       () {

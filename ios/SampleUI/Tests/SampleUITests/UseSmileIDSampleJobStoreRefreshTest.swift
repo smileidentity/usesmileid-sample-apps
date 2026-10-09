@@ -195,6 +195,37 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     XCTAssertEqual(outcome, Self.updated, "the guard was never released")
   }
 
+  func testTheListsCheckAsksAboutEveryProcessingRowAndCountsThoseStillProcessing() async throws {
+    let source = UseSmileIDSampleFakeStatusSource { call in
+      call.jobId == "job-done" ? Self.updated : .stillProcessing
+    }
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-done", sessionId: "s-1"))
+    await store.add(Self.job(id: "job-waiting", sessionId: "s-1"))
+
+    let pending = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    XCTAssertEqual(pending, 1)
+    XCTAssertEqual(Set(source.calls.map(\.jobId)), ["job-done", "job-waiting"])
+    let done = await store.jobs.first { $0.id == "job-done" }
+    XCTAssertEqual(done?.status, .clear)
+    // A cleared row is not asked about again.
+    _ = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    XCTAssertEqual(source.calls.filter { $0.jobId == "job-done" }.count, 1)
+  }
+
+  func testRowsTheSessionCannotAskAboutAreNotCountedSoTheListStopsChecking() async throws {
+    let source = UseSmileIDSampleFakeStatusSource { _ in .stillProcessing }
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-fixture", sessionId: nil))
+    await store.add(Self.job(id: "job-other", sessionId: "s-1", partnerId: "partner-b"))
+
+    let withSession = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    let withoutSession = try await store.refreshProcessing(live: nil, now: useSmileIDSampleTestNow)
+    XCTAssertEqual(withSession, 0)
+    XCTAssertEqual(withoutSession, 0)
+    XCTAssertTrue(source.calls.isEmpty)
+  }
+
   private static func source() -> UseSmileIDSampleFakeStatusSource {
     UseSmileIDSampleFakeStatusSource { _ in .updated(status: .clear, message: "Approved", httpCode: 200) }
   }

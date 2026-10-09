@@ -50,9 +50,14 @@ class UseSmileIDSampleStatusOutcomeTest {
 
     @Test
     fun `an error response has no body, and reports its code`() {
-        assertEquals(UseSmileIDSampleStatusRefresh.Failed("HTTP 404"), statusOutcome(404, null))
         assertEquals(UseSmileIDSampleStatusRefresh.Failed("HTTP 401"), statusOutcome(401, null))
         assertEquals(UseSmileIDSampleStatusRefresh.Failed("HTTP 500"), statusOutcome(500, null))
+    }
+
+    /** The server answers 404 until an accepted job has a state, so a check just after submitting is not a failure. */
+    @Test
+    fun `404 is still processing, not a failure`() {
+        assertEquals(UseSmileIDSampleStatusRefresh.StillProcessing, statusOutcome(404, null))
     }
 
     /** A body on a non-2xx is still a failure: the code decides success, the body only decides which. */

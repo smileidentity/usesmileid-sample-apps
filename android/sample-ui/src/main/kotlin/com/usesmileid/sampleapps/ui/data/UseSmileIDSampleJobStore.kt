@@ -14,6 +14,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.sync.Mutex
@@ -131,6 +132,12 @@ class UseSmileIDSampleJobStore(
             withContext(NonCancellable) { inFlightLock.withLock { inFlight.remove(jobId) } }
         }
     }
+
+    /** The list's check: asks about every processing row, silently, and returns how many the server still has processing, so the list polls only while one can change. */
+    suspend fun refreshProcessing(live: UseSmileIDSampleTokenSession?, nowMillis: Long): Int =
+        jobs.first()
+            .filter { it.status == UseSmileIDSampleStatus.Processing }
+            .count { refresh(it.id, live, nowMillis) is UseSmileIDSampleStatusRefresh.StillProcessing }
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 

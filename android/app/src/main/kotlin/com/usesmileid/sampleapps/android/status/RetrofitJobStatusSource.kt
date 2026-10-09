@@ -15,6 +15,8 @@ class RetrofitJobStatusSource : UseSmileIDSampleJobStatusSource {
 
 /** The HTTP code and body onto an outcome. Pure, so the branch table is unit-testable. */
 internal fun statusOutcome(code: Int, body: UseSmileIDSampleStatusResponse?): UseSmileIDSampleStatusRefresh = when {
+    // The server answers 404 until an accepted job has a state; the caller has already ruled out a job it never submitted.
+    code == HTTP_NOT_FOUND -> UseSmileIDSampleStatusRefresh.StillProcessing
     body == null || code !in HTTP_SUCCESS -> UseSmileIDSampleStatusRefresh.Failed("HTTP $code")
     body.status == PROCESSING -> UseSmileIDSampleStatusRefresh.StillProcessing
     else -> body.status.toSampleStatus()?.let { UseSmileIDSampleStatusRefresh.Updated(it, body.message, code) }
@@ -32,3 +34,4 @@ private fun String.toSampleStatus(): UseSmileIDSampleStatus? = when (this) {
 
 private const val PROCESSING = "processing"
 private val HTTP_SUCCESS = 200..299
+private const val HTTP_NOT_FOUND = 404
