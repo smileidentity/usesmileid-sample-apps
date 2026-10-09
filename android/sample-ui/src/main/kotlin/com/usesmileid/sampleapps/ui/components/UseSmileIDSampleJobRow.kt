@@ -18,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -71,7 +72,7 @@ fun UseSmileIDSampleJobRow(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
                 itemVerticalAlignment = Alignment.CenterVertically,
             ) {
-                JobRowTile(product = product)
+                UseSmileIDSampleProductTile(product = product)
                 JobRowText(product = product, jobId = jobId, time = time, stacks = true)
                 UseSmileIDSampleStatusBadge(status = status, testId = statusTestId)
             }
@@ -81,7 +82,7 @@ fun UseSmileIDSampleJobRow(
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                JobRowTile(product = product)
+                UseSmileIDSampleProductTile(product = product)
                 JobRowText(
                     product = product,
                     jobId = jobId,
@@ -95,20 +96,21 @@ fun UseSmileIDSampleJobRow(
     }
 }
 
+/** A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen. */
 @Composable
-private fun JobRowTile(product: UseSmileIDSampleProduct) {
+internal fun UseSmileIDSampleProductTile(product: UseSmileIDSampleProduct, modifier: Modifier = Modifier, size: Dp = TILE_SIZE) {
     val hue = product.hue
     Surface(
-        modifier = Modifier.size(TILE_SIZE),
+        modifier = modifier.size(size),
         shape = UseSmileIDSampleTheme.shapes.rowTile,
         color = hue.tile,
     ) {
         Box(contentAlignment = Alignment.Center) {
             val icon = product.iconRes
             if (icon != null) {
-                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE)
+                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE * (size / TILE_SIZE))
             } else {
-                ProductMarkGlyph(tint = hue.icon)
+                ProductMarkGlyph(tint = hue.icon, size = SmileDimens.sizeIconMd * (size / TILE_SIZE))
             }
         }
     }

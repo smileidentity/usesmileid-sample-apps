@@ -71,6 +71,10 @@ object UseSmileIDSampleTestIds {
     const val REMEMBER_DETAILS_SWITCH = "sample_remember_details_switch"
     const val USER_DETAILS_PROFILE = "sample_user_details_profile"
     const val USER_DETAILS_CONTINUE = "sample_user_details_continue"
+    const val AUTH_USER_ID_SCREEN = "sample_auth_user_id_screen"
+    const val AUTH_USER_ID_INPUT = "sample_auth_user_id_input"
+    const val AUTH_USER_ID_REGISTER = "sample_auth_user_id_register"
+    const val AUTH_USER_ID_CONTINUE = "sample_auth_user_id_continue"
     const val COUNTRY_TRIGGER = "sample_country_trigger"
     const val ID_TYPE_TRIGGER = "sample_idtype_trigger"
     const val ID_NUMBER_INPUT = "sample_idnumber_input"
@@ -205,6 +209,10 @@ object UseSmileIDSampleTestIds {
         REMEMBER_DETAILS_SWITCH,
         USER_DETAILS_PROFILE,
         USER_DETAILS_CONTINUE,
+        AUTH_USER_ID_SCREEN,
+        AUTH_USER_ID_INPUT,
+        AUTH_USER_ID_REGISTER,
+        AUTH_USER_ID_CONTINUE,
         COUNTRY_TRIGGER,
         ID_TYPE_TRIGGER,
         ID_NUMBER_INPUT,
@@ -270,6 +278,8 @@ object UseSmileIDSampleTestIds {
     fun detailCopy(field: String) = "sample_detail_copy_$field"
 
     fun userDetailsField(field: String) = "sample_user_details_field_$field"
+
+    fun authUserIdOption(index: Int) = "sample_auth_user_id_option_$index"
 
     fun countryOption(isoCode: String) = "sample_country_option_$isoCode"
 

@@ -3,12 +3,15 @@ package com.usesmileid.sampleapps.android.flow
 import com.usesmileid.core.exception.UseSmileIDValidationException
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 
 /** §7.3's entry gate: the SDK's non-throwing pre-flight plus its per-payload validators. */
 fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
     // Ahead of the payloads, because no form fixes a missing or run-out session (TOK-A5).
     if (snapshot.sessionExpired || snapshot.session == null) return FlowPreflight.NeedsSession
+    // Ahead of the SDK's own check, which would end the run: the user ID screen resolves it.
+    if (snapshot.product == UseSmileIDSampleProduct.SmartSelfieAuth && snapshot.userId.isBlank()) return FlowPreflight.NeedsUserId
     val builder = UseSmileIDFlowBuilder().apply { applying(snapshot) }
     // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
     val requirement = snapshot.liveSession?.bindings.userDetailsRequirement()
@@ -36,6 +39,9 @@ sealed interface FlowPreflight {
 
     /** The forms can resolve it. */
     data class NeedsDetails(val issues: List<UseSmileIDValidationException>) : FlowPreflight
+
+    /** SmartSelfie Authentication with no enrolled user to run as; the user ID screen resolves it. */
+    data object NeedsUserId : FlowPreflight
 
     /** Only a new token resolves it, so the journey goes back to the scanner rather than to a form. */
     data object NeedsSession : FlowPreflight

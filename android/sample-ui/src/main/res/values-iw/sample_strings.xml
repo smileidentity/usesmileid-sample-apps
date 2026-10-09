@@ -87,6 +87,13 @@
     <string name="sample_user_details_no_profile">הפרטים שלכם למטה ייצרו פרופיל</string>
     <string name="sample_user_details_switch_profile">הקישו כדי להחליף פרופיל</string>
     <string name="sample_user_details_section">הפרטים שלכם</string>
+    <string name="sample_auth_user_id_enter">הזן מזהה משתמש</string>
+    <string name="sample_auth_user_id_placeholder">user_…</string>
+    <string name="sample_auth_user_id_or">או</string>
+    <string name="sample_auth_user_id_previous">בחר מזהה משתמש קודם</string>
+    <string name="sample_auth_user_id_previous_body">מזהה של משתמש שכבר אומת. תקבל אותו מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.</string>
+    <string name="sample_auth_user_id_empty_title">אימות משתמש רשום</string>
+    <string name="sample_auth_user_id_run">הפעל אימות</string>
     <string name="sample_user_details_profile_name">שם הפרופיל (אופציונלי)</string>
     <string name="sample_user_details_profile_name_hint">מוצג במסך ההסכמה</string>
     <string name="sample_user_details_from_token">סופק על ידי הטוקן</string>

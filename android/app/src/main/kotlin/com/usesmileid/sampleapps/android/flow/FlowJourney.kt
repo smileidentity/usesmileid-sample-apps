@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.flow
 
+import com.ramcosta.composedestinations.generated.destinations.AuthUserIdScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.IdDetailsFormScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
@@ -28,12 +29,11 @@ internal fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProd
     }
 
 /** What follows user details, shared with that form's own Continue so the two routes cannot drift. */
-internal fun UseSmileIDSampleAppState.stepAfterUserDetails(product: UseSmileIDSampleProduct): Direction =
-    if (product.needsIdDetails && !tokenBindsIdDetails(product)) {
-        IdDetailsFormScreenDestination(productId = product.id)
-    } else {
-        sdkFlow(product.id)
-    }
+internal fun UseSmileIDSampleAppState.stepAfterUserDetails(product: UseSmileIDSampleProduct): Direction = when {
+    product == UseSmileIDSampleProduct.SmartSelfieAuth -> AuthUserIdScreenDestination(productId = product.id)
+    product.needsIdDetails && !tokenBindsIdDetails(product) -> IdDetailsFormScreenDestination(productId = product.id)
+    else -> sdkFlow(product.id)
+}
 
 /**
  * The wizard's last hop, carrying the launched presentation (R3). Without it the in-shell route is

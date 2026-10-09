@@ -306,6 +306,51 @@
       "note": "DECIDED 2026-08-13: product → Consent Details Form → SDK flow. The prototype shows the SDK consent screen BEFORE this form; that wiring is stale and is not being updated, so do not implement the prototype's order. Not in the design (decided 2026-09-25): the form fills from the active profile, and a profile row above the card opens the switch sheet. Continue with the save switch on writes the typed details back to the active profile, or creates one and makes it active when there is none; a field the token supplies is never stored."
     },
     {
+      "id": "authUserId",
+      "title": "Authentication user ID",
+      "owner": "sample",
+      "board": "04",
+      "route": "push",
+      "flowPosition": "SmartSelfie Authentication only: after the user details form and BEFORE the SDK flow starts.",
+      "states": [
+        {
+          "state": "noJobs",
+          "node": "6014-1663",
+          "note": "No stored verification carries an enrolled user. Explains where an ID comes from, offers SmartSelfie Enrollment ('Run a verification'), and an empty 'Enter a user ID' field. Continue stays disabled until one is typed."
+        },
+        {
+          "state": "previousIds",
+          "node": "6014-1663",
+          "note": "'Enter a user ID' above 'or' and 'Select previous user ID': the distinct user IDs of stored jobs from products that enrol a user (every capture product but SmartSelfie Authentication), newest first, leaving out Blocked and Error. Nothing picked: Continue disabled."
+        },
+        {
+          "state": "selected",
+          "node": "6014-1663",
+          "note": "A previous ID picked: its row takes the pale fill and check, the field shows it, Continue enables."
+        },
+        {
+          "state": "typed",
+          "design": "in-repo",
+          "note": "An ID typed that is none of the previous ones: no row is checked, Continue enables. Surrounding whitespace is trimmed."
+        }
+      ],
+      "components": [
+        "TopAppBar",
+        "TextInput",
+        "OptionRow",
+        "JobRow",
+        "Button"
+      ],
+      "testIds": [
+        "sample_auth_user_id_screen",
+        "sample_auth_user_id_input",
+        "sample_auth_user_id_option",
+        "sample_auth_user_id_register",
+        "sample_auth_user_id_continue"
+      ],
+      "note": "DECIDED 2026-10-09: the sample never makes up a user ID. SmartSelfie Authentication needs the ID of a user already enrolled, and every SDK rejects the run without one, so the app asks for it here. Every other product sends none, and the server issues the ID."
+    },
+    {
       "id": "consent",
       "title": "Consent",
       "owner": "sdk",

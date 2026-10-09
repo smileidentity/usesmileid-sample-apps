@@ -85,6 +85,13 @@
 "user_details_no_profile" = "Vos informations ci-dessous en créeront un";
 "user_details_switch_profile" = "Touchez pour changer de profil";
 "user_details_section" = "VOS INFORMATIONS";
+"auth_user_id_enter" = "Saisir un ID utilisateur";
+"auth_user_id_placeholder" = "user_…";
+"auth_user_id_or" = "ou";
+"auth_user_id_previous" = "Choisir un ID utilisateur précédent";
+"auth_user_id_previous_body" = "L'ID d'un utilisateur déjà vérifié. Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous en donne un.";
+"auth_user_id_empty_title" = "Authentifier un utilisateur enregistré";
+"auth_user_id_run" = "Lancer une vérification";
 "user_details_profile_name" = "Nom du profil (facultatif)";
 "user_details_profile_name_hint" = "Affiché sur l’écran de consentement";
 "user_details_from_token" = "Fourni par le jeton";

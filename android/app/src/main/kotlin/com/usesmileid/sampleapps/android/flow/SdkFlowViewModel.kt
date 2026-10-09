@@ -2,7 +2,6 @@ package com.usesmileid.sampleapps.android.flow
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import java.util.UUID
 import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestinationNavArgs
 
@@ -29,19 +28,7 @@ class SdkFlowViewModel(private val savedStateHandle: SavedStateHandle) : ViewMod
         resultDelivered = true
     }
 
-    /**
-     * The id this run submits under. Every other snapshot field is rebuilt from a saveable store, so
-     * without this a run surviving process death would silently resume under a different id.
-     */
-    fun runUserId(enrolled: String?): String {
-        savedStateHandle.get<String>(KEY_RUN_USER_ID)?.let { return it }
-        val id = enrolled ?: UUID.randomUUID().toString()
-        savedStateHandle[KEY_RUN_USER_ID] = id
-        return id
-    }
-
     private companion object {
         const val KEY_RUN_STARTED = "sampleRunStarted"
-        const val KEY_RUN_USER_ID = "sampleRunUserId"
     }
 }

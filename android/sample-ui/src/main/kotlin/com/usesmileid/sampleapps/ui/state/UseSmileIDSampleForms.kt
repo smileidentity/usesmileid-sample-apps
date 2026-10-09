@@ -13,6 +13,7 @@ class UseSmileIDSampleForms(
     idDetails: UseSmileIDSampleIdDetails = UseSmileIDSampleIdDetails(),
     saveToProfile: Boolean = true,
     organisation: String = "",
+    authUserId: String = "",
 ) {
     var userDetails by mutableStateOf(userDetails)
         private set
@@ -27,6 +28,14 @@ class UseSmileIDSampleForms(
     /** The new profile's name, asked only while there is no profile. */
     var organisation by mutableStateOf(organisation)
         private set
+
+    /** The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up. */
+    var authUserId by mutableStateOf(authUserId)
+        private set
+
+    fun authUserId(value: String) {
+        authUserId = value
+    }
 
     fun setUserField(field: UseSmileIDSampleUserField, value: String) {
         userDetails = field.write(userDetails, value)
@@ -51,6 +60,7 @@ class UseSmileIDSampleForms(
     fun startRun(profile: UseSmileIDSampleProfile?) {
         profile?.let(::fillFrom)
         idDetails = UseSmileIDSampleIdDetails()
+        authUserId = ""
     }
 
     /** A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays. */
@@ -106,6 +116,7 @@ class UseSmileIDSampleForms(
     fun clear() {
         fillFrom(null)
         idDetails = UseSmileIDSampleIdDetails()
+        authUserId = ""
     }
 
     companion object {
@@ -128,6 +139,7 @@ class UseSmileIDSampleForms(
                     }.orEmpty(),
                     id.captureAsOverride?.name.orEmpty(),
                     with(id.genericDocument) { listOf(displayName, hasBackSide.toString(), orientation.name, aspectRatio.name).joinToString(FIELD) },
+                    it.authUserId,
                 )
             },
             restore = { saved ->
@@ -164,6 +176,7 @@ class UseSmileIDSampleForms(
                             )
                         } ?: UseSmileIDSampleGenericDocument(),
                     ),
+                    authUserId = at(13),
                 )
             },
         )

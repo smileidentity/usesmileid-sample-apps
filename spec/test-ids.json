@@ -210,6 +210,28 @@
         "description": "Primary action that launches the SDK flow."
       }
     ],
+    "authUserId": [
+      {
+        "id": "sample_auth_user_id_screen",
+        "description": "Authentication user ID screen root, shown before SmartSelfie Authentication's SDK flow."
+      },
+      {
+        "id": "sample_auth_user_id_input",
+        "description": "The 'Enter a user ID' field. Shows a picked previous ID too."
+      },
+      {
+        "id": "sample_auth_user_id_option",
+        "description": "One previous user ID; suffixed with its position, newest first, e.g. sample_auth_user_id_option_0."
+      },
+      {
+        "id": "sample_auth_user_id_register",
+        "description": "'Run a verification' card shown when no stored job carries an enrolled user; starts SmartSelfie Enrollment."
+      },
+      {
+        "id": "sample_auth_user_id_continue",
+        "description": "Launches the SDK flow with the chosen ID. Disabled until one is typed or picked."
+      }
+    ],
     "kyc": [
       {
         "id": "sample_kyc_form_screen",

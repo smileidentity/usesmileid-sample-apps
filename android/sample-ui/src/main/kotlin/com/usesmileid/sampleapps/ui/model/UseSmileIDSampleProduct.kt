@@ -74,6 +74,9 @@ enum class UseSmileIDSampleProduct(
     ),
     ;
 
+    /** Whether a run enrols the user it submits, so its user ID can later be authenticated. */
+    val enrollsUser: Boolean get() = capture && this != SmartSelfieAuth
+
     companion object {
         fun of(section: UseSmileIDSampleProductSection) = entries.filter { it.section == section }
     }
