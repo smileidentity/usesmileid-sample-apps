@@ -248,7 +248,7 @@ describe('the status call', () => {
     expect(smileIDSampleStatusUrl('job_1', false)).toBe('https://api.smileidentity.com/v3/status/job_1');
   });
 
-  it('maps five API states onto the four badges', () => {
+  it('maps the five API states onto their badges, and Processing onto still processing', () => {
     const body = (status: string) => ({ status, message: 'm', job_id: 'j', user_id: 'u', created_at: 'c' });
     expect(smileIDSampleStatusOutcome(200, body('clear'))).toMatchObject({ kind: 'updated', status: 'Clear' });
     expect(smileIDSampleStatusOutcome(200, body('attention'))).toMatchObject({ status: 'Attention' });

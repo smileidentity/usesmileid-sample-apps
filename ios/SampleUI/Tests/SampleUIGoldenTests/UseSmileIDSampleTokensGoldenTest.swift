@@ -90,12 +90,13 @@ private struct SemanticColours: View {
 private struct SoftBadgeFills: View {
   @Environment(\.useSmileIDSampleColors) private var colors
 
-  /// The four job statuses, in the vocabulary the design uses, mapped onto their feedback roles.
+  /// The five job statuses, in the vocabulary the design uses, mapped onto their feedback roles.
   private var pills: [(String, Color, Color)] {
     [
       ("Clear", colors.badge.successBackground, colors.badge.successText),
       ("Attention", colors.badge.warningBackground, colors.badge.warningText),
       ("Blocked", colors.badge.errorBackground, colors.badge.errorText),
+      ("Error", colors.badge.neutralBackground, colors.badge.neutralText),
       ("Processing", colors.badge.infoBackground, colors.badge.infoText)
     ]
   }
