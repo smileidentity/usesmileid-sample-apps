@@ -151,20 +151,23 @@ void main() {
   });
 
   group('filters', () {
-    test('are the design\'s four plus Error, and Processing is not among them', () {
-      expect(
-        UseSmileIDSampleJobFilter.values.map(
-          (UseSmileIDSampleJobFilter f) => f.label(_en),
-        ),
-        <String>['All', 'Clear', 'Attention', 'Blocked', 'Error'],
-      );
-      expect(
-        UseSmileIDSampleJobFilter.values.map(
-          (UseSmileIDSampleJobFilter f) => f.status,
-        ),
-        isNot(contains(UseSmileIDSampleStatus.processing)),
-      );
-    });
+    test(
+      'are the design\'s four plus Error, and Processing is not among them',
+      () {
+        expect(
+          UseSmileIDSampleJobFilter.values.map(
+            (UseSmileIDSampleJobFilter f) => f.label(_en),
+          ),
+          <String>['All', 'Clear', 'Attention', 'Blocked', 'Error'],
+        );
+        expect(
+          UseSmileIDSampleJobFilter.values.map(
+            (UseSmileIDSampleJobFilter f) => f.status,
+          ),
+          isNot(contains(UseSmileIDSampleStatus.processing)),
+        );
+      },
+    );
 
     // The count under a chip is what that chip would show, not what the ACTIVE one shows: a reader
     // switching filters has to see where the rows went.
