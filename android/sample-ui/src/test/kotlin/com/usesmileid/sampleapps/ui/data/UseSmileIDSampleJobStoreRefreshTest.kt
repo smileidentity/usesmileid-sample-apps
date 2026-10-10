@@ -187,6 +187,51 @@ class UseSmileIDSampleJobStoreRefreshTest {
         assertEquals(200, stored?.httpStatus)
     }
 
+    @Test
+    fun `a 404 reads as processing while the job is new, and as a failure after the window`() = runTest {
+        val store = store(FakeStatusSource { _, _, _ -> UseSmileIDSampleStatusRefresh.NotRecorded })
+        store.add(job("job-new", sessionId = "s-1").copy(createdAtMillis = NOW - 60_000L))
+        store.add(job("job-old", sessionId = "s-1").copy(createdAtMillis = NOW - UseSmileIDSampleJobStore.NOT_RECORDED_WINDOW_MILLIS))
+
+        assertEquals(UseSmileIDSampleStatusRefresh.StillProcessing, store.refresh("job-new", session(id = "s-1"), NOW))
+        assertEquals(UseSmileIDSampleStatusRefresh.Failed("HTTP 404"), store.refresh("job-old", session(id = "s-1"), NOW))
+    }
+
+    @Test
+    fun `the list backs off from 5 seconds to a minute and stops after twelve checks`() {
+        assertEquals(
+            listOf(5_000L, 10_000L, 20_000L, 40_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, null),
+            (0..12).map { UseSmileIDSampleJobStore.processingPollDelayMillis(it) },
+        )
+    }
+
+    @Test
+    fun `the list's check asks about every processing row and counts those still processing`() = runTest {
+        val source = FakeStatusSource { jobId, _, _ ->
+            if (jobId == "job-done") updated() else UseSmileIDSampleStatusRefresh.StillProcessing
+        }
+        val store = store(source)
+        store.add(job("job-done", sessionId = "s-1"))
+        store.add(job("job-waiting", sessionId = "s-1"))
+        store.add(job("job-cleared", sessionId = "s-1").copy(status = UseSmileIDSampleStatus.Clear))
+
+        assertEquals(1, store.refreshProcessing(session(id = "s-1"), NOW))
+        assertEquals(setOf("job-done", "job-waiting"), source.calls.map { it.first }.toSet())
+        assertEquals(UseSmileIDSampleStatus.Clear, store.find("job-done")?.status)
+    }
+
+    @Test
+    fun `rows the session cannot ask about are not counted, so the list stops checking`() = runTest {
+        val source = FakeStatusSource { _, _, _ -> UseSmileIDSampleStatusRefresh.StillProcessing }
+        val store = store(source)
+        store.add(job("job-fixture", sessionId = null))
+        store.add(job("job-other", sessionId = "s-1", partnerId = "partner-b"))
+
+        assertEquals(0, store.refreshProcessing(session(id = "s-1"), NOW))
+        assertEquals(0, store.refreshProcessing(live = null, nowMillis = NOW))
+        assertTrue(source.calls.isEmpty())
+    }
+
     private fun store(source: UseSmileIDSampleJobStatusSource) = UseSmileIDSampleJobStore(FakeJobDao(), source)
 
     private fun updated() = UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Clear, "Approved", 200)

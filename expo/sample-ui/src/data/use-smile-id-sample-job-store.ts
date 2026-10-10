@@ -7,9 +7,11 @@ import {
   type UseSmileIDSampleJob,
 } from '../model/use-smile-id-sample-job';
 import type { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
-import type {
-  UseSmileIDSampleJobStatusSource,
-  UseSmileIDSampleStatusRefresh,
+import {
+  SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL,
+  SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS,
+  type UseSmileIDSampleJobStatusSource,
+  type UseSmileIDSampleStatusRefresh,
 } from './use-smile-id-sample-job-status-source';
 
 const STORAGE_KEY = 'sample.jobs.v3';
@@ -45,6 +47,11 @@ type Actions = {
     nowMillis: number,
     source: UseSmileIDSampleJobStatusSource,
   ) => Promise<UseSmileIDSampleStatusRefresh | null>;
+  refreshProcessing: (
+    session: UseSmileIDSampleRefreshSession | null,
+    nowMillis: number,
+    source: UseSmileIDSampleJobStatusSource,
+  ) => Promise<number>;
   find: (jobId: string) => UseSmileIDSampleJob | null;
   consumeRemoval: () => number | null;
   seedFixtures: (nowMillis: number) => Promise<void>;
@@ -185,6 +192,11 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
         const name = error instanceof Error ? error.name : 'Error';
         return { kind: 'failed', reason: name, failure: 'unexpected' };
       }
+      if (outcome.kind === 'notRecorded') {
+        return nowMillis - row.createdAtMillis < SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS
+          ? { kind: 'stillProcessing' }
+          : { kind: 'failed', reason: SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL };
+      }
       if (outcome.kind !== 'updated') return outcome;
 
       const written = await get().applyStatus(
@@ -199,6 +211,17 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
       // rest of the process — which is what a `finally` buys that an early return does not.
       inFlight.delete(jobId);
     }
+  },
+
+  /// The list's check: asks about every processing row, silently, and returns how many the server still has processing.
+  refreshProcessing: async (session, nowMillis, source) => {
+    let stillProcessing = 0;
+    for (const row of get().jobs ?? []) {
+      if (row.status !== 'Processing') continue;
+      const outcome = await get().refresh(row.id, session, nowMillis, source);
+      if (outcome?.kind === 'stillProcessing') stillProcessing += 1;
+    }
+    return stillProcessing;
   },
 
   find: (jobId) => (get().jobs ?? []).find((row) => row.id === jobId) ?? null,

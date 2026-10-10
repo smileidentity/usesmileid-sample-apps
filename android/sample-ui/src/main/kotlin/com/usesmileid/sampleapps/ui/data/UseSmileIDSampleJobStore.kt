@@ -14,6 +14,7 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.sync.Mutex
@@ -118,6 +119,13 @@ class UseSmileIDSampleJobStore(
                     UseSmileIDSampleStatusRefresh.Reason.Unexpected(e::class.simpleName.orEmpty()),
                 )
             }
+            if (outcome is UseSmileIDSampleStatusRefresh.NotRecorded) {
+                return if (nowMillis - row.createdAtMillis < NOT_RECORDED_WINDOW_MILLIS) {
+                    UseSmileIDSampleStatusRefresh.StillProcessing
+                } else {
+                    UseSmileIDSampleStatusRefresh.Failed(NOT_RECORDED_DETAIL)
+                }
+            }
             if (outcome !is UseSmileIDSampleStatusRefresh.Updated) return outcome
             val written = applyStatus(
                 jobId = jobId,
@@ -132,12 +140,34 @@ class UseSmileIDSampleJobStore(
         }
     }
 
+    /** The list's check: asks about every processing row, silently, and returns how many the server still has processing, so the list polls only while one can change. */
+    suspend fun refreshProcessing(live: UseSmileIDSampleTokenSession?, nowMillis: Long): Int =
+        jobs.first()
+            .filter { it.status == UseSmileIDSampleStatus.Processing }
+            .count { refresh(it.id, live, nowMillis) is UseSmileIDSampleStatusRefresh.StillProcessing }
+
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 
     /** Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent. */
     suspend fun seedFixtures(nowMillis: Long) = dao.insert(fixtures(nowMillis).map { it.toEntity() })
 
     companion object {
+        /** How long a 404 reads as a job the server has not recorded yet; after it, as a job it never will. */
+        const val NOT_RECORDED_WINDOW_MILLIS = 10L * 60L * 1000L
+
+        private const val NOT_RECORDED_DETAIL = "HTTP 404"
+
+        /** The wait before the list's next check of rows still processing, backing off from 5s to a minute; null once it has asked enough. */
+        fun processingPollDelayMillis(attempt: Int): Long? = when {
+            attempt >= PROCESSING_POLL_ATTEMPTS -> null
+            else -> minOf(PROCESSING_POLL_FIRST_MILLIS shl minOf(attempt, PROCESSING_POLL_MAX_SHIFT), PROCESSING_POLL_CAP_MILLIS)
+        }
+
+        private const val PROCESSING_POLL_ATTEMPTS = 12
+        private const val PROCESSING_POLL_FIRST_MILLIS = 5_000L
+        private const val PROCESSING_POLL_CAP_MILLIS = 60_000L
+        private const val PROCESSING_POLL_MAX_SHIFT = 4
+
         @Volatile
         private var instance: UseSmileIDSampleJobStore? = null
 

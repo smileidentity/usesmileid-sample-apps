@@ -1,8 +1,10 @@
 import {
   UseSmileIDSampleTransientNoticeHost,
   VerificationsScreen,
+  smileIDSampleProcessingPollDelayMillis,
   smileIDSampleRemovalNotice,
   useSmileIDSampleJobStore,
+  useSmileIDSampleSessionStore,
   useSmileIDSampleTransientNotice,
   useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
@@ -10,6 +12,7 @@ import { useFocusEffect, useRouter } from 'expo-router';
 import { useCallback, useEffect, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 
+import { smileIDSampleStatusApi } from '../../src/status/use-smile-id-sample-status-api';
 import { useSmileIDSampleListInset } from '../../src/use-smile-id-sample-list-inset';
 import { useSmileIDSampleNoticeStyle } from '../../src/use-smile-id-sample-notice-inset';
 import { useSmileIDSampleSetSelectMode } from '../../src/use-smile-id-sample-select-mode';
@@ -30,6 +33,34 @@ export default function Verifications() {
   const bottomInset = useSmileIDSampleListInset();
   const noticeStyle = useSmileIDSampleNoticeStyle(bottomInset);
   const setSelecting = useSmileIDSampleSetSelectMode();
+
+  // No endpoint lists a partner's jobs, so the focused list asks about each processing row, and again while one still is.
+  const refreshProcessing = useSmileIDSampleJobStore((state) => state.refreshProcessing);
+  const liveSessionId = useSmileIDSampleSessionStore((state) => state.live?.id ?? null);
+  useFocusEffect(
+    useCallback(() => {
+      let poll: ReturnType<typeof setTimeout> | undefined;
+      let left = false;
+      let attempt = 0;
+      const check = async () => {
+        const pending = await refreshProcessing(
+          useSmileIDSampleSessionStore.getState().live,
+          Date.now(),
+          smileIDSampleStatusApi,
+        );
+        if (left || pending === 0) return;
+        const wait = smileIDSampleProcessingPollDelayMillis(attempt++);
+        if (wait !== null) poll = setTimeout(() => void check(), wait);
+      };
+      void check();
+      return () => {
+        left = true;
+        clearTimeout(poll);
+      };
+      // The session id restarts the check: a newly scanned session can answer rows the last could not.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [refreshProcessing, liveSessionId]),
+  );
 
   // A tab stays mounted when you leave it, so select mode left on would hide the bar on every tab.
   useFocusEffect(useCallback(() => () => setSelecting(false), [setSelecting]));

@@ -5,9 +5,11 @@ import {
   useSmileIDSampleJobStore,
   type UseSmileIDSampleRefreshSession,
 } from '../src/data/use-smile-id-sample-job-store';
-import type {
-  UseSmileIDSampleJobStatusSource,
-  UseSmileIDSampleStatusRefresh,
+import {
+  SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS,
+  smileIDSampleProcessingPollDelayMillis,
+  type UseSmileIDSampleJobStatusSource,
+  type UseSmileIDSampleStatusRefresh,
 } from '../src/data/use-smile-id-sample-job-status-source';
 import type { UseSmileIDSampleJob } from '../src/model/use-smile-id-sample-job';
 import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
@@ -153,6 +155,57 @@ describe('applyStatus', () => {
     await store().applyStatus('job_1', UseSmileIDSampleStatus.Clear, 'Approved', 200);
     expect(store().jobs?.[0]?.httpStatus).toBe(200);
     expect(await AsyncStorage.getItem('sample.jobs.v3')).not.toContain('200 OK');
+  });
+});
+
+describe('a 404', () => {
+  it('reads as processing while the job is new, and as a failure after the window', async () => {
+    await store().add(job({ id: 'job_new', createdAtMillis: NOW - 60_000 }));
+    await store().add(job({ id: 'job_old', createdAtMillis: NOW - SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS }));
+    const source = sourceReturning({ kind: 'notRecorded' });
+    expect(await store().refresh('job_new', session(), NOW, source)).toEqual({ kind: 'stillProcessing' });
+    expect(await store().refresh('job_old', session(), NOW, source)).toEqual({ kind: 'failed', reason: 'HTTP 404' });
+  });
+});
+
+it('the list backs off from 5 seconds to a minute and stops after twelve checks', () => {
+  expect(Array.from({ length: 13 }, (_, attempt) => smileIDSampleProcessingPollDelayMillis(attempt))).toEqual([
+    5_000, 10_000, 20_000, 40_000, 60_000, 60_000, 60_000, 60_000, 60_000, 60_000, 60_000, 60_000, null,
+  ]);
+});
+
+describe("the list's check", () => {
+  it('asks about every processing row and counts those still processing', async () => {
+    await store().add(job({ id: 'job_done' }));
+    await store().add(job({ id: 'job_waiting' }));
+    await store().add(job({ id: 'job_cleared', status: UseSmileIDSampleStatus.Clear }));
+    const asked: string[] = [];
+    const pending = await store().refreshProcessing(session(), NOW, {
+      check: async (jobId) => {
+        asked.push(jobId);
+        return jobId === 'job_done'
+          ? { kind: 'updated', status: UseSmileIDSampleStatus.Clear, message: 'Approved', httpCode: 200 }
+          : { kind: 'stillProcessing' };
+      },
+    });
+    expect(pending).toBe(1);
+    expect(asked.sort()).toEqual(['job_done', 'job_waiting']);
+    expect(store().find('job_done')?.status).toBe(UseSmileIDSampleStatus.Clear);
+  });
+
+  it('does not count rows the session cannot ask about, so the list stops', async () => {
+    await store().add(job({ id: 'job_fixture', sessionId: null }));
+    await store().add(job({ id: 'job_other', partnerId: 'partner_2' }));
+    const asked: string[] = [];
+    const source: UseSmileIDSampleJobStatusSource = {
+      check: async (jobId) => {
+        asked.push(jobId);
+        return { kind: 'stillProcessing' };
+      },
+    };
+    expect(await store().refreshProcessing(session(), NOW, source)).toBe(0);
+    expect(await store().refreshProcessing(null, NOW, source)).toBe(0);
+    expect(asked).toEqual([]);
   });
 });
 

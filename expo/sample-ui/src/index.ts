@@ -228,6 +228,7 @@ export {
 } from './data/use-smile-id-sample-job-store';
 export {
   smileIDSampleRefreshLabel,
+  smileIDSampleProcessingPollDelayMillis,
   type UseSmileIDSampleJobStatusSource,
   type UseSmileIDSampleStatusRefresh,
 } from './data/use-smile-id-sample-job-status-source';

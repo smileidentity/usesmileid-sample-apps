@@ -201,7 +201,8 @@
         "sample_verifications_empty"
       ],
       "additions": [
-        "An empty-list message, which the design does not draw. The app seeds no verification rows — a persisted row claims a job was submitted, and the eleven fixtures never were — so a first launch shows the chips over nothing until a real submission lands. Two texts behind one id: nothing yet, versus nothing matching the active filter."
+        "An empty-list message, which the design does not draw. The app seeds no verification rows — a persisted row claims a job was submitted, and the eleven fixtures never were — so a first launch shows the chips over nothing until a real submission lands. Two texts behind one id: nothing yet, versus nothing matching the active filter.",
+        "ADDED 2026-10-09: while the list is the screen on top, it checks every row still processing through GET /v3/status, silently, and checks again while the server still has one processing, backing off from 5 seconds to a minute and stopping after twelve checks. It also stops when none are left or when no live session can ask about them. A 404 from that endpoint means the server has not recorded the job's state yet: it counts as still processing for 10 minutes after the job was created, and as a failure ('HTTP 404') after that."
       ],
       "note": "SELECT MODE REPLACES THE BOTTOM CHROME: the selection bar is full-bleed at the bottom with a top border, and the nav bar is NOT behind it (node 5206:2491). The header's trailing action becomes \"Cancel\". The bar is the screen's state but the shell's slot, so the content inset does not change when one bar replaces the other. The removal confirmation is transient — never saved across navigation, or opening a verification and coming back replays a confirmation you already spent."
     },

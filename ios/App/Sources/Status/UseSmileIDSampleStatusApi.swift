@@ -52,6 +52,10 @@ func useSmileIDSampleStatusOutcome(
   code: Int,
   body: UseSmileIDSampleStatusResponse?
 ) -> UseSmileIDSampleStatusRefresh {
+  // The server answers 404 until an accepted job has a state; the store decides how long that reads as processing.
+  if code == 404 {
+    return .notRecorded
+  }
   guard let body, (200..<300).contains(code) else { return .failed(reason: "HTTP \(code)") }
   if body.status == UseSmileIDSampleStatusResponse.processing {
     return .stillProcessing

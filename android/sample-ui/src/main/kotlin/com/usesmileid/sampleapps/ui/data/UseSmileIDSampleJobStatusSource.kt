@@ -24,6 +24,9 @@ sealed interface UseSmileIDSampleStatusRefresh {
     /** 202 — still running; the row already says Processing. */
     data object StillProcessing : UseSmileIDSampleStatusRefresh
 
+    /** 404 — the server has no state for the job yet. The store reads it as still processing while the job is new, and as a failure after that. */
+    data object NotRecorded : UseSmileIDSampleStatusRefresh
+
     /** No live session, so no credential to ask with. A precondition, not an error. */
     data object NoSession : UseSmileIDSampleStatusRefresh
 

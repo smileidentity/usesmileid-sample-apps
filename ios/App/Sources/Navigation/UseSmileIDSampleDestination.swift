@@ -301,6 +301,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     switch outcome {
     case .updated(let status, let message, _): UseSmileIDSampleStrings.statusRefreshResult(status: status.label, message: message)
     case .stillProcessing: UseSmileIDSampleStrings.statusRefreshProcessing
+    case .notRecorded: UseSmileIDSampleStrings.statusRefreshFailed(reason: UseSmileIDSampleJobStore.notRecordedDetail)
     case .noSession: UseSmileIDSampleStrings.statusRefreshNoSession
     case .noServerJob: UseSmileIDSampleStrings.statusRefreshNotTokenJob
     case .partnerMismatch: UseSmileIDSampleStrings.statusRefreshOtherPartner
@@ -336,6 +337,18 @@ private struct UseSmileIDSampleVerificationsHost: View {
       onJobTap: { router.push(.verificationDetails(jobId: $0.id)) },
       onRemove: { app.removeJobs($0) }
     )
+    // No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
+    .task(id: app.session?.id) {
+      var attempt = 0
+      while await app.refreshProcessingJobs() > 0 {
+        guard let delay = UseSmileIDSampleJobStore.processingPollDelay(attempt: attempt) else { return }
+        attempt += 1
+        try? await Task.sleep(nanoseconds: UInt64(delay * 1000000000))
+        if Task.isCancelled {
+          return
+        }
+      }
+    }
   }
 }
 

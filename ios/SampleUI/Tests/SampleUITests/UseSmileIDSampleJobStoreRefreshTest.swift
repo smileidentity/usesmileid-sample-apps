@@ -195,6 +195,59 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     XCTAssertEqual(outcome, Self.updated, "the guard was never released")
   }
 
+  func testA404ReadsAsProcessingWhileTheJobIsNewAndAsAFailureAfterTheWindow() async throws {
+    let store = Self.store(UseSmileIDSampleFakeStatusSource { _ in .notRecorded })
+    await store.add(Self.job(id: "job-new", sessionId: "s-1", createdAt: useSmileIDSampleTestNow.addingTimeInterval(-60)))
+    await store.add(Self.job(
+      id: "job-old",
+      sessionId: "s-1",
+      createdAt: useSmileIDSampleTestNow.addingTimeInterval(-UseSmileIDSampleJobStore.notRecordedWindow)
+    ))
+
+    let new = try await store.refresh("job-new", live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    let old = try await store.refresh("job-old", live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    XCTAssertEqual(new, .stillProcessing)
+    XCTAssertEqual(old, .failed(reason: "HTTP 404"))
+  }
+
+  func testTheListBacksOffFromFiveSecondsToAMinuteAndStopsAfterTwelveChecks() {
+    XCTAssertEqual(
+      (0...12).map { UseSmileIDSampleJobStore.processingPollDelay(attempt: $0) },
+      [5, 10, 20, 40, 60, 60, 60, 60, 60, 60, 60, 60, nil]
+    )
+  }
+
+  func testTheListsCheckAsksAboutEveryProcessingRowAndCountsThoseStillProcessing() async throws {
+    let source = UseSmileIDSampleFakeStatusSource { call in
+      call.jobId == "job-done" ? Self.updated : .stillProcessing
+    }
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-done", sessionId: "s-1"))
+    await store.add(Self.job(id: "job-waiting", sessionId: "s-1"))
+
+    let pending = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    XCTAssertEqual(pending, 1)
+    XCTAssertEqual(Set(source.calls.map(\.jobId)), ["job-done", "job-waiting"])
+    let done = await store.jobs.first { $0.id == "job-done" }
+    XCTAssertEqual(done?.status, .clear)
+    // A cleared row is not asked about again.
+    _ = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    XCTAssertEqual(source.calls.count { $0.jobId == "job-done" }, 1)
+  }
+
+  func testRowsTheSessionCannotAskAboutAreNotCountedSoTheListStopsChecking() async throws {
+    let source = UseSmileIDSampleFakeStatusSource { _ in .stillProcessing }
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-fixture", sessionId: nil))
+    await store.add(Self.job(id: "job-other", sessionId: "s-1", partnerId: "partner-b"))
+
+    let withSession = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    let withoutSession = try await store.refreshProcessing(live: nil, now: useSmileIDSampleTestNow)
+    XCTAssertEqual(withSession, 0)
+    XCTAssertEqual(withoutSession, 0)
+    XCTAssertTrue(source.calls.isEmpty)
+  }
+
   private static func source() -> UseSmileIDSampleFakeStatusSource {
     UseSmileIDSampleFakeStatusSource { _ in .updated(status: .clear, message: "Approved", httpCode: 200) }
   }
@@ -229,14 +282,15 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     id: String,
     sessionId: String?,
     sandbox: Bool = true,
-    partnerId: String? = useSmileIDSampleTestPartner
+    partnerId: String? = useSmileIDSampleTestPartner,
+    createdAt: Date = Date(timeIntervalSince1970: 0)
   ) -> UseSmileIDSampleJob {
     UseSmileIDSampleJob(
       id: id,
       userId: "user-\(id)",
       product: .smartSelfieEnrollment,
       status: .processing,
-      createdAt: Date(timeIntervalSince1970: 0),
+      createdAt: createdAt,
       message: "Submitted",
       httpStatus: 202,
       sandbox: sandbox,

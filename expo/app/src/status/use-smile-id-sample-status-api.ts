@@ -17,6 +17,8 @@ export const smileIDSampleStatusUrl = (jobId: string, sandbox: boolean): string 
 
 /// The HTTP code and body onto an outcome.
 export const smileIDSampleStatusOutcome = (code: number, body: unknown): UseSmileIDSampleStatusRefresh => {
+  // The server answers 404 until an accepted job has a state; the store decides how long that reads as processing.
+  if (code === 404) return { kind: 'notRecorded' };
   const response = body as { status?: unknown; message?: unknown } | null;
   if (response === null || typeof response !== 'object' || code < 200 || code >= 300) {
     return { kind: 'failed', reason: `HTTP ${code}` };

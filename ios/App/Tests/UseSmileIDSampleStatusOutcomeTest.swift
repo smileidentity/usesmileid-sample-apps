@@ -22,6 +22,12 @@ final class UseSmileIDSampleStatusOutcomeTest: XCTestCase {
     XCTAssertEqual(outcome("clear", code: 500), .failed(reason: "HTTP 500"))
   }
 
+  /// The server answers 404 until an accepted job has a state; the store decides how long that reads as processing.
+  func testA404IsAJobTheServerHasNotRecordedNotAFailure() {
+    XCTAssertEqual(useSmileIDSampleStatusOutcome(code: 404, body: nil), .notRecorded)
+    XCTAssertEqual(outcome("not_found", code: 404), .notRecorded)
+  }
+
   func testAMissingBodyIsAFailureCarryingTheCode() {
     XCTAssertEqual(
       useSmileIDSampleStatusOutcome(code: 200, body: nil),

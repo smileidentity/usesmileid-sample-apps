@@ -285,6 +285,23 @@ class UseSmileIDSampleJobsNotifier
     return outcome;
   }
 
+  /// The list's check of its processing rows; returns how many the server still has processing.
+  Future<int> refreshProcessingJobs({
+    required UseSmileIDSampleRefreshSession? session,
+    required int nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+  }) async {
+    final int stillProcessing = await ref
+        .read(useSmileIDSampleJobsRepositoryProvider)
+        .refreshProcessing(
+          session: session,
+          nowMillis: nowMillis,
+          source: source,
+        );
+    ref.invalidateSelf();
+    return stillProcessing;
+  }
+
   /// Hides rows and returns how many were taken, which is what the confirmation reports.
   Future<int> removeJobs(Set<String> ids) async {
     final int taken = await ref

@@ -49,6 +49,10 @@ UseSmileIDSampleStatusRefresh useSmileIDSampleStatusOutcome(
   int code,
   String body,
 ) {
+  // The server answers 404 until an accepted job has a state; the store decides how long that reads as processing.
+  if (code == 404) {
+    return const UseSmileIDSampleStatusNotRecorded();
+  }
   final Object? json;
   try {
     json = jsonDecode(body);

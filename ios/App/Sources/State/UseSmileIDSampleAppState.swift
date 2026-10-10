@@ -170,6 +170,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     try? await jobStore.refresh(jobId, live: session, now: Date())
   }
 
+  /// The list's check of its processing rows; how many the server still has processing, or 0 once the list is left.
+  func refreshProcessingJobs() async -> Int {
+    await (try? jobStore.refreshProcessing(live: session, now: Date())) ?? 0
+  }
+
   func undoJobRemoval() {
     Task { [jobStore] in await jobStore.undoRemove() }
   }
