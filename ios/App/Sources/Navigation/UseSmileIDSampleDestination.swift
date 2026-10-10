@@ -67,7 +67,12 @@ struct UseSmileIDSampleDestination: View {
     case .authUserId(let productId):
       AuthUserIdScreen(
         userId: app.authUserId,
-        previousUserIds: useSmileIDSamplePreviousAuthUserIds(app.jobs ?? []),
+        // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
+        previousUserIds: useSmileIDSamplePreviousAuthUserIds(
+          app.jobs ?? [],
+          partnerId: app.session?.partnerId,
+          sandbox: app.useSandbox
+        ),
         onUserIdChange: { app.authUserId = $0 },
         onRegister: {
           app.fillFormForRun(.smartSelfieEnrollment)

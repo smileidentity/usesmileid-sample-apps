@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../catalogue/use_smileid_sample_catalogue_providers.dart';
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
@@ -120,13 +121,22 @@ class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
     final List<UseSmileIDSampleJob> jobs =
         ref.watch(useSmileIDSampleJobsProvider).value ??
         const <UseSmileIDSampleJob>[];
+    final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
+      ref.watch(useSmileIDSampleSessionProvider).live,
+      DateTime.now().millisecondsSinceEpoch,
+    );
     void back() =>
         useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
     return UseSmileIDSampleAboveShellPage(
       onBack: back,
       child: UseSmileIDSampleAuthUserIdScreen(
         userId: forms.authUserId,
-        previousUserIds: useSmileIDSamplePreviousAuthUserIds(jobs),
+        // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
+        previousUserIds: useSmileIDSamplePreviousAuthUserIds(
+          jobs,
+          partnerId: live?.partnerId,
+          sandbox: useSmileIDSampleUseSandbox(live),
+        ),
         onUserIdChanged: ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .setAuthUserId,
@@ -142,8 +152,13 @@ class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
           );
         },
         onBack: back,
-        onContinue: () =>
-            context.push(UseSmileIDSampleRoutes.sdkFlow(productId)),
+        onContinue: () {
+          // Once: a second quick tap would stack a second flow, and so a second run.
+          if (!(ModalRoute.of(context)?.isCurrent ?? true)) {
+            return;
+          }
+          context.push(UseSmileIDSampleRoutes.sdkFlow(productId));
+        },
       ),
     );
   }

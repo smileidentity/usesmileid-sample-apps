@@ -4,7 +4,16 @@ import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status'
 import { useSmileIDSampleFormsStore } from '../src/state/use-smile-id-sample-forms-store';
 import { smileIDSamplePreviousAuthUserIds } from '../src/state/use-smile-id-sample-auth-user-ids';
 
-const job = (userId: string, productId: string, status: UseSmileIDSampleStatus, at: number): UseSmileIDSampleJob => ({
+const PARTNER = 'partner-a';
+
+const job = (
+  userId: string,
+  productId: string,
+  status: UseSmileIDSampleStatus,
+  at: number,
+  partnerId: string | null = PARTNER,
+  sandbox = true,
+): UseSmileIDSampleJob => ({
   id: `job_${at}`,
   userId,
   product: smileIDSampleProductFrom(productId)!,
@@ -12,9 +21,9 @@ const job = (userId: string, productId: string, status: UseSmileIDSampleStatus, 
   createdAtMillis: at,
   message: '',
   httpStatus: 200,
-  sandbox: true,
+  sandbox,
   sessionId: null,
-  partnerId: null,
+  partnerId,
 });
 
 /// Which earlier runs offer a user ID to authenticate: those that enrolled one and were not refused or failed.
@@ -26,7 +35,7 @@ describe('the previous user IDs', () => {
         job('user_b', 'biometricKyc', UseSmileIDSampleStatus.Attention, 3),
         job('user_c', 'documentVerification', UseSmileIDSampleStatus.Processing, 2),
         job('user_a', 'enhancedDocumentVerification', UseSmileIDSampleStatus.Clear, 4),
-      ]),
+      ], PARTNER, true),
     ).toEqual(['user_a', 'user_b', 'user_c']);
   });
 
@@ -38,9 +47,20 @@ describe('the previous user IDs', () => {
         job('user_auth', 'smartSelfieAuth', UseSmileIDSampleStatus.Clear, 3),
         job('user_ekyc', 'enhancedKyc', UseSmileIDSampleStatus.Clear, 4),
         job(' ', 'smartSelfieEnrollment', UseSmileIDSampleStatus.Clear, 5),
-      ]),
+      ], PARTNER, true),
     ).toEqual([]);
   });
+});
+
+it("leaves out another partner's users, or this partner's in the other environment", () => {
+  const jobs = [
+    job('user_mine', 'smartSelfieEnrollment', UseSmileIDSampleStatus.Clear, 1),
+    job('user_theirs', 'smartSelfieEnrollment', UseSmileIDSampleStatus.Clear, 2, 'partner-b'),
+    job('user_production', 'smartSelfieEnrollment', UseSmileIDSampleStatus.Clear, 3, PARTNER, false),
+    job('user_fixture', 'smartSelfieEnrollment', UseSmileIDSampleStatus.Clear, 4, null),
+  ];
+  expect(smileIDSamplePreviousAuthUserIds(jobs, PARTNER, true)).toEqual(['user_mine']);
+  expect(smileIDSamplePreviousAuthUserIds(jobs, null, true)).toEqual([]);
 });
 
 describe("authentication's user ID in the forms", () => {

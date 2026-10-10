@@ -5,6 +5,8 @@ import {
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
   useSmileIDSampleJobStore,
+  smileIDSampleLiveSession,
+  useSmileIDSampleSessionStore,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
@@ -24,6 +26,7 @@ export default function AuthUserId() {
   const setAuthUserId = useSmileIDSampleFormsStore((state) => state.setAuthUserId);
   const startRun = useSmileIDSampleFormsStore((state) => state.startRun);
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
+  const live = useSmileIDSampleSessionStore((state) => smileIDSampleLiveSession(state, state.nowMillis));
   const load = useSmileIDSampleJobStore((state) => state.load);
 
   // A cold link lands here without the list, which is otherwise the screen that loads the store.
@@ -34,7 +37,11 @@ export default function AuthUserId() {
 
   return (
     <AuthUserIdScreen
-      state={{ userId, previousUserIds: smileIDSamplePreviousAuthUserIds(jobs ?? []) }}
+      // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
+      state={{
+        userId,
+        previousUserIds: smileIDSamplePreviousAuthUserIds(jobs ?? [], live?.partnerId ?? null, live?.environment !== 'production'),
+      }}
       onUserIdChange={setAuthUserId}
       onRegister={() => {
         const enrollment = smileIDSampleProductFrom('smartSelfieEnrollment');
@@ -43,7 +50,8 @@ export default function AuthUserId() {
         router.replace(smileIDSampleEntryFor(enrollment, route, scenario));
       }}
       onBack={() => back()}
-      onContinue={() => router.push(`/flow/${productId}/run`)}
+      // Navigate, not push: a second quick tap must not mount a second run.
+      onContinue={() => router.navigate(`/flow/${productId}/run`)}
     />
   );
 }

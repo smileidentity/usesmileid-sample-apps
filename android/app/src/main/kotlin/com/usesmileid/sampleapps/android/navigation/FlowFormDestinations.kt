@@ -87,7 +87,8 @@ fun AuthUserIdScreen(productId: String, navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     AuthUserIdContent(
         userId = app.forms.authUserId,
-        previousUserIds = previousAuthUserIds(app.jobs.orEmpty()),
+        // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
+        previousUserIds = previousAuthUserIds(app.jobs.orEmpty(), app.session?.partnerId, app.useSandbox),
         onUserIdChange = app.forms::authUserId,
         onRegister = {
             app.forms.startRun(app.profiles.active)
