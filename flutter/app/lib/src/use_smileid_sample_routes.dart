@@ -88,6 +88,9 @@ abstract final class UseSmileIDSampleRoutes {
   static String genericDocument(String productId) =>
       '/flow/$productId/id-details/generic-document';
 
+  /// SmartSelfie Authentication's user ID, asked before its flow.
+  static String authUserId(String productId) => '/flow/$productId/user-id';
+
   /// The SDK flow itself.
   static String sdkFlow(String productId) => '/flow/$productId/run';
 
@@ -254,6 +257,13 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           ),
     ),
     GoRoute(
+      path: '/flow/:productId/user-id',
+      builder: (BuildContext context, GoRouterState state) =>
+          UseSmileIDSampleAuthUserIdTab(
+            productId: state.pathParameters['productId']!,
+          ),
+    ),
+    GoRoute(
       path: '/flow/:productId/run',
       // Turned back before it mounts: leaving a route that replaced the shell duplicates its key.
       redirect: (BuildContext context, GoRouterState state) =>
@@ -271,6 +281,8 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
           onNeedsDetails: () =>
               context.go(UseSmileIDSampleRoutes.consentDetailsForm(productId)),
           onNeedsSession: () => context.go(UseSmileIDSampleRoutes.scanToken),
+          onNeedsUserId: () =>
+              context.go(UseSmileIDSampleRoutes.authUserId(productId)),
           // `go`, not a pop: the wizard beneath must not be reachable back INTO from the result.
           onResult: (String jobId) =>
               context.go(UseSmileIDSampleRoutes.verificationDetails(jobId)),

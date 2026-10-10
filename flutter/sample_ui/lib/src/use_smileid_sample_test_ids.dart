@@ -282,6 +282,22 @@ abstract final class UseSmileIDSampleTestIds {
   /// The consent form's continue.
   static const String userDetailsContinue = 'sample_user_details_continue';
 
+  /// SmartSelfie Authentication's user ID screen, shown before its flow.
+  static const String authUserIdScreen = 'sample_auth_user_id_screen';
+
+  /// The "Enter a user ID" field.
+  static const String authUserIdInput = 'sample_auth_user_id_input';
+
+  /// One previous user ID, suffixed with its position, newest first.
+  static String authUserIdOption(int index) =>
+      'sample_auth_user_id_option_$index';
+
+  /// The "Run a verification" card shown when no stored job enrolled a user.
+  static const String authUserIdRegister = 'sample_auth_user_id_register';
+
+  /// Launches the flow with the chosen ID.
+  static const String authUserIdContinue = 'sample_auth_user_id_continue';
+
   /// The ID details form, shown only for the products that need one.
   static const String kycFormScreen = 'sample_kyc_form_screen';
 
@@ -513,6 +529,10 @@ abstract final class UseSmileIDSampleTestIds {
     rememberDetailsSwitch,
     userDetailsProfile,
     userDetailsContinue,
+    authUserIdScreen,
+    authUserIdInput,
+    authUserIdRegister,
+    authUserIdContinue,
     kycFormScreen,
     countryTrigger,
     idTypeTrigger,

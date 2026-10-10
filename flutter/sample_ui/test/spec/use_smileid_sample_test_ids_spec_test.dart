@@ -50,6 +50,7 @@ void main() {
         UseSmileIDSampleTestIds.profileRow('x'),
         UseSmileIDSampleTestIds.profileConfigField('x'),
         UseSmileIDSampleTestIds.userDetailsField('x'),
+        UseSmileIDSampleTestIds.authUserIdOption(0).replaceAll('_0', '_x'),
         UseSmileIDSampleTestIds.countryOption('x'),
         UseSmileIDSampleTestIds.idTypeOption('x'),
         UseSmileIDSampleTestIds.documentOption('x'),

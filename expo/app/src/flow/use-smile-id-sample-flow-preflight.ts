@@ -17,6 +17,8 @@ export type UseSmileIDSampleFlowPreflight =
   | { readonly kind: 'ready' }
   /// The forms can resolve it.
   | { readonly kind: 'needsDetails'; readonly issues: readonly UseSmileIDValidationException[] }
+  /// SmartSelfie Authentication with no enrolled user to run as; the user ID screen resolves it.
+  | { readonly kind: 'needsUserId' }
   /// Only a new token resolves it.
   | { readonly kind: 'needsSession' }
   /// No form can resolve it, and it must still never reach the SDK.
@@ -28,6 +30,8 @@ export const smileIDSamplePreflight = (
 ): UseSmileIDSampleFlowPreflight => {
   // Ahead of the payloads: no form fixes a missing or lapsed session.
   if (snapshot.sessionExpired || snapshot.session === null) return { kind: 'needsSession' };
+  // Ahead of the SDK's own check, which would end the run: the user ID screen resolves it.
+  if (snapshot.product.id === 'smartSelfieAuth' && snapshot.userId.length === 0) return { kind: 'needsUserId' };
   const builder = new UseSmileIDFlowBuilder();
   smileIDSampleApplying(builder, snapshot);
   const requirement = smileIDSampleRequirementFrom(smileIDSampleSnapshotSession(snapshot)?.bindings);

@@ -178,6 +178,19 @@ void main() {
   });
 
   group('the gate and the builder under a session', () {
+    test('authentication without a user ID goes to the user ID screen', () {
+      expect(
+        useSmileIDSamplePreflight(
+          _snapshot(
+            UseSmileIDSampleProduct.smartSelfieAuth,
+            session: _mint(),
+            userId: '',
+          ),
+        ),
+        isA<UseSmileIDSampleFlowNeedsUserId>(),
+      );
+    });
+
     test('an ended session goes to the scanner ahead of any form', () {
       expect(
         useSmileIDSamplePreflight(
@@ -362,6 +375,18 @@ void main() {
         ),
         UseSmileIDSampleRoutes.consentDetailsForm(
           UseSmileIDSampleProduct.biometricKyc.id,
+        ),
+      );
+    });
+
+    test('authentication asks for its user ID after the details form', () {
+      expect(
+        UseSmileIDSampleJourney.afterUserDetails(
+          UseSmileIDSampleProduct.smartSelfieAuth,
+          null,
+        ),
+        UseSmileIDSampleRoutes.authUserId(
+          UseSmileIDSampleProduct.smartSelfieAuth.id,
         ),
       );
     });
@@ -709,6 +734,7 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   UseSmileIDSampleScenario scenario = UseSmileIDSampleScenario.normal,
   UseSmileIDSampleTokenSession? session,
   bool sessionExpired = false,
+  String userId = 'user_1',
 }) => UseSmileIDSampleFlowLaunchSnapshot(
   product: product,
   route: UseSmileIDSampleFlowRoute.fullscreen,
@@ -722,7 +748,7 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   consentStep: true,
   instructionsStep: true,
   previewStep: true,
-  userId: 'user_1',
+  userId: userId,
   partnerId: 'profile-1',
   partnerName: 'Kobo Bank',
   callbackUrl: '',

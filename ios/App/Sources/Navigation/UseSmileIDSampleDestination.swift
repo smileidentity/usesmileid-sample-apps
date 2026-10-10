@@ -64,6 +64,20 @@ struct UseSmileIDSampleDestination: View {
         // A deep link to this form skips the product tap, so the lists start here if nothing has.
         app.ensureCatalogue(Self.product(productId))
       }
+    case .authUserId(let productId):
+      AuthUserIdScreen(
+        userId: app.authUserId,
+        previousUserIds: useSmileIDSamplePreviousAuthUserIds(app.jobs ?? []),
+        onUserIdChange: { app.authUserId = $0 },
+        onRegister: {
+          app.fillFormForRun(.smartSelfieEnrollment)
+          router.open(app.entry(for: .smartSelfieEnrollment))
+        },
+        onBack: { router.pop() },
+        // Pushed once: two quick taps would stack two flow levels, and so two runs.
+        onContinue: { Self.product(productId).map { router.pushOnce(app.sdkFlow($0)) } }
+      )
+      .navigationBarHidden(true)
     case .idDetailsForm(let productId):
       KycIdFormScreen(
         state: idFormState(productId),

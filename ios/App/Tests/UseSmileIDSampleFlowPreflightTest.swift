@@ -14,6 +14,15 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete, session: nil)), .needsSession)
   }
 
+  func testAuthenticationWithoutAUserIdGoesToTheUserIdScreenNotToTheSdk() {
+    XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieAuth, userDetails: complete)), .needsUserId)
+  }
+
+  func testAuthenticationWithAnEnrolledUserIdPassesTheGate() {
+    let enrolled = snapshot(.smartSelfieAuth, userDetails: complete, userId: "user_01m4gahg4ceceatsw25mc5dd1h")
+    XCTAssertEqual(useSmileIDSamplePreflight(enrolled), .ready)
+  }
+
   func testCompleteDetailsPassTheGate() {
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete)), .ready)
   }
@@ -136,7 +145,8 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     enhancedLiveness: Bool = false,
     consentStep: Bool = true,
     session: UseSmileIDSampleTokenSession? = useSmileIDSampleTestSession,
-    sessionExpired: Bool = false
+    sessionExpired: Bool = false,
+    userId: String = ""
   ) -> FlowLaunchSnapshot {
     FlowLaunchSnapshot(
       product: product,
@@ -147,6 +157,7 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
       allowAgentMode: agentMode,
       enableEnhancedLiveness: enhancedLiveness,
       consentStep: consentStep,
+      userId: userId,
       partnerId: "0000",
       partnerName: "UpTech Finance",
       session: session,

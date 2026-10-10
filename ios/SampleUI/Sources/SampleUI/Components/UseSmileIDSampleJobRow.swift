@@ -75,12 +75,7 @@ public struct UseSmileIDSampleJobRow: View {
   }
 
   private var tile: some View {
-    UseSmileIDSampleIcon(product.icon, tint: product.hue?.icon ?? colors.textMuted, size: Self.tileIconSize)
-      .frame(width: tileSize, height: tileSize)
-      .background(
-        RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.rowTile, style: .continuous)
-          .fill(product.hue?.tile ?? colors.surfaceTile)
-      )
+    UseSmileIDSampleProductTile(product, side: tileSize)
   }
 
   private var text: some View {
@@ -93,10 +88,5 @@ public struct UseSmileIDSampleJobRow: View {
     // One line each at the design's scale, as the design draws it; unlimited once the badge stacks.
     .lineLimit(sizeCategory.isAccessibilityCategory ? nil : 1)
     .frame(maxWidth: .infinity, alignment: .leading)
-  }
-
-  /// The board's 18 glyph in its 36 tile; no icon token carries it.
-  private static var tileIconSize: CGFloat {
-    18
   }
 }

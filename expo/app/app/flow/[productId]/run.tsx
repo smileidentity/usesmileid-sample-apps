@@ -22,7 +22,7 @@ import {
   type UseSmileIDResult,
 } from '@smileid/usesmileid';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useId, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { smileIDSampleApplying } from '../../../src/flow/use-smile-id-sample-flow-builder-config';
 import {
@@ -44,8 +44,7 @@ export default function SdkFlowRun() {
   const idDetails = useSmileIDSampleFormsStore((state) => state.idDetails);
   const settings = useSmileIDSampleSettingsStore((state) => state.settings);
   const addJob = useSmileIDSampleJobStore((state) => state.add);
-  // React's own per-mount id: reading a clock during render is the impurity that makes it drift.
-  const runUserId = `user_${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const authUserId = useSmileIDSampleFormsStore((state) => state.authUserId);
   /// A cancel delivered after teardown would otherwise act on whatever replaced this route.
   const left = useRef(false);
 
@@ -84,7 +83,7 @@ export default function SdkFlowRun() {
       galleryUpload: settings.galleryUpload,
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
-      userId: runUserId,
+      userId: authUserId.trim(),
       partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
       partnerName: smileIDSamplePartnerName(profile),
       callbackUrl: profile?.callbackUrl ?? '',
@@ -118,6 +117,9 @@ export default function SdkFlowRun() {
   if (snapshot === null) return <Redirect href="/products" />;
   if (preflight?.kind === 'needsSession') {
     return <SendToScanner intent={{ productId: snapshot.product.id, route: snapshot.route, resumeAt: 'flow' }} />;
+  }
+  if (preflight?.kind === 'needsUserId') {
+    return <Redirect href={`/flow/${productId}/user-id`} />;
   }
   if (preflight?.kind === 'needsDetails') {
     return <Redirect href={`/flow/${productId}/details`} />;

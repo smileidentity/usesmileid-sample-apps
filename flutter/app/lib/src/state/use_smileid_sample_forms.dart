@@ -9,6 +9,7 @@ class UseSmileIDSampleForms {
     this.idDetails = const UseSmileIDSampleIdDetails(),
     this.saveToProfile = true,
     this.organisation = '',
+    this.authUserId = '',
   });
 
   /// The consent form's four fields.
@@ -23,17 +24,22 @@ class UseSmileIDSampleForms {
   /// The new profile's name, asked only while there is no profile.
   final String organisation;
 
+  /// The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up.
+  final String authUserId;
+
   /// A copy with one part replaced.
   UseSmileIDSampleForms copyWith({
     UseSmileIDSampleUserDetails? userDetails,
     UseSmileIDSampleIdDetails? idDetails,
     bool? saveToProfile,
     String? organisation,
+    String? authUserId,
   }) => UseSmileIDSampleForms(
     userDetails: userDetails ?? this.userDetails,
     idDetails: idDetails ?? this.idDetails,
     saveToProfile: saveToProfile ?? this.saveToProfile,
     organisation: organisation ?? this.organisation,
+    authUserId: authUserId ?? this.authUserId,
   );
 }
 
@@ -57,6 +63,10 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
   void setSaveToProfile(bool save) =>
       state = state.copyWith(saveToProfile: save);
 
+  /// Types or picks SmartSelfie Authentication's user ID.
+  void setAuthUserId(String userId) =>
+      state = state.copyWith(authUserId: userId);
+
   /// Types the new profile's organisation.
   void setOrganisation(String organisation) =>
       state = state.copyWith(organisation: organisation);
@@ -75,6 +85,7 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
   void startRun(UseSmileIDSampleProfile? profile) =>
       state = (profile == null ? state : _filled(profile)).copyWith(
         idDetails: const UseSmileIDSampleIdDetails(),
+        authUserId: '',
       );
 
   /// Chooses a country; a different one clears the ID type, document and "Capture as" override, and the typed number stays.

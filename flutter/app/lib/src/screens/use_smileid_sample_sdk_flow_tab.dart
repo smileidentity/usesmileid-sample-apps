@@ -22,6 +22,7 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
     required this.onLeave,
     required this.onNeedsDetails,
     required this.onNeedsSession,
+    required this.onNeedsUserId,
     required this.onResult,
     super.key,
   });
@@ -37,6 +38,9 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
 
   /// Where a run whose session has ended goes.
   final VoidCallback onNeedsSession;
+
+  /// Where SmartSelfie Authentication goes with no user ID to run as.
+  final VoidCallback onNeedsUserId;
 
   /// Where a delivered result lands, by the job id the server issued.
   final void Function(String jobId) onResult;
@@ -166,7 +170,7 @@ class _UseSmileIDSampleSdkFlowTabState
       galleryUpload: settings.galleryUpload,
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
-      userId: _runUserId(),
+      userId: forms.authUserId.trim(),
       partnerId: profiles.partnerId,
       partnerName: profiles.partnerName,
       callbackUrl: profiles.active?.callbackUrl ?? '',
@@ -174,9 +178,6 @@ class _UseSmileIDSampleSdkFlowTabState
       sessionExpired: useSmileIDSampleSessionEnded(record, entryMillis),
     );
   }
-
-  String _runUserId() =>
-      'user_${DateTime.now().millisecondsSinceEpoch.toRadixString(36)}';
 
   void _actOnPreflight() {
     if (!mounted) {
@@ -191,6 +192,9 @@ class _UseSmileIDSampleSdkFlowTabState
       case UseSmileIDSampleFlowNeedsDetails():
         _left = true;
         widget.onNeedsDetails();
+      case UseSmileIDSampleFlowNeedsUserId():
+        _left = true;
+        widget.onNeedsUserId();
       case UseSmileIDSampleFlowNeedsSession():
         _left = true;
         ref

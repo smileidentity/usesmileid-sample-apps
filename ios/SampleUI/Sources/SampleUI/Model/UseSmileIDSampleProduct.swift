@@ -77,6 +77,11 @@ public enum UseSmileIDSampleProduct: String, CaseIterable, Sendable {
     self != .enhancedKyc
   }
 
+  /// Whether a run enrols the user it submits, so its user ID can later be authenticated.
+  public var enrollsUser: Bool {
+    capture && self != .smartSelfieAuth
+  }
+
   public var needsIdDetails: Bool {
     switch self {
     case .smartSelfieEnrollment, .smartSelfieAuth: false

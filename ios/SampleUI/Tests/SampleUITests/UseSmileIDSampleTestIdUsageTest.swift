@@ -6,7 +6,7 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
   /// Ids not yet on a view; delete an entry when its screen lands, because a stale list fails.
   private static let notYetApplied: Set<String> = [
     "productCardPrefix", "settingNavPrefix", "detailFieldPrefix", "detailCopyPrefix",
-    "userDetailsFieldPrefix", "countryOptionPrefix", "idTypeOptionPrefix",
+    "userDetailsFieldPrefix", "authUserIdOptionPrefix", "countryOptionPrefix", "idTypeOptionPrefix",
     "profileRowPrefix", "profileConfigFieldPrefix", "tokenEnvironmentPrefix",
     "scenarioItemPrefix", "themeItemPrefix",
     "jobRowPrefix", "filterChipPrefix", "filterCountPrefix", "selectionCheckboxPrefix",

@@ -116,6 +116,45 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  func testAuthUserIdNoJobs() {
+    goldens("auth_user_id_no_jobs") { authUserId("", previous: []) }
+  }
+
+  func testAuthUserIdPrevious() {
+    goldens("auth_user_id_previous") { authUserId("", previous: Self.previousUserIds) }
+  }
+
+  func testAuthUserIdSelected() {
+    goldens("auth_user_id_selected") { authUserId(Self.previousUserIds[0], previous: Self.previousUserIds) }
+  }
+
+  func testAuthUserIdTyped() {
+    goldens("auth_user_id_typed") { authUserId("user_01typedbyhand0000000000", previous: Self.previousUserIds) }
+  }
+
+  func testAuthUserIdSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      authUserId(Self.previousUserIds[0], previous: Self.previousUserIds)
+    }
+  }
+
+  private func authUserId(_ userId: String, previous: [String]) -> some View {
+    AuthUserIdScreen(
+      userId: userId,
+      previousUserIds: previous,
+      onUserIdChange: { _ in },
+      onRegister: {},
+      onBack: {},
+      onContinue: {}
+    )
+  }
+
+  private static let previousUserIds = [
+    "user_01m4gahg4ceceatsw25mc5dd1h",
+    "user_01r4l94gahg4ceceatsw25mc5d",
+    "user_01r4l94gahg4ceceatsw25mc51"
+  ]
+
   func testUserDetailsEmpty() {
     goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails(), profile: nil) }
   }

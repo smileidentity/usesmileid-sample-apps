@@ -123,6 +123,7 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     case .licenses: "Route.licenses"
     case .verificationDetails: "Route.verificationDetails(jobId:)"
     case .consentDetailsForm: "Route.consentDetailsForm(productId:)"
+    case .authUserId: "Route.authUserId(productId:)"
     case .idDetailsForm: "Route.idDetailsForm(productId:)"
     case .sdkFlow: "Route.sdkFlow(productId:presentation:)"
     case .profiles: "Route.profiles"

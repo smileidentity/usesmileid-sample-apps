@@ -48,9 +48,7 @@ struct SdkFlowScreen: View {
     guard let snapshot = buildSnapshot(
       productId: productId,
       route: presentation,
-      app: app,
-      // A prior enrolment's id, so authentication has something enrolled.
-      userId: app.flowResult.userId ?? UUID().uuidString
+      app: app
     ) else {
       useSmileIDSampleLeaveFlow(router, run, flow)
       return
@@ -59,6 +57,8 @@ struct SdkFlowScreen: View {
     case .needsDetails:
       // The flow goes from underneath it: a deep link seats no form below the run.
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .consentDetailsForm(productId: snapshot.product.id))
+    case .needsUserId:
+      useSmileIDSampleLeaveFlow(router, run, flow, landing: .authUserId(productId: snapshot.product.id))
     case .needsSession:
       // The scanner, not a form: the run needs a token, and no form holds one.
       app.interruptedRun = UseSmileIDSampleRunIntent(productId: snapshot.product.id, route: snapshot.route)

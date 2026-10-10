@@ -6,6 +6,8 @@ enum FlowPreflight: Equatable {
   case ready
   /// The forms can resolve it.
   case needsDetails(issues: [String])
+  /// SmartSelfie Authentication with no enrolled user to run as; the user ID screen resolves it.
+  case needsUserId
   /// Only a new token resolves it, so the journey goes back to the scanner rather than to a form.
   case needsSession
   /// No form can resolve it, and it must still never reach the SDK.
@@ -18,6 +20,10 @@ func useSmileIDSamplePreflight(_ snapshot: FlowLaunchSnapshot) -> FlowPreflight 
   // Ahead of the payloads: no form fixes a missing or run-out session.
   if snapshot.sessionExpired || snapshot.session == nil {
     return .needsSession
+  }
+  // Ahead of the SDK's own check, which would end the run: the user ID screen resolves it.
+  if snapshot.product == .smartSelfieAuth, snapshot.userId.isEmpty {
+    return .needsUserId
   }
   let validator = FlowValidator.shared
   let requirement = UseSmileIDSampleUserDetailsRequirement(bindings: snapshot.liveSession?.bindings)

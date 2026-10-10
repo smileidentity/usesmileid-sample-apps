@@ -104,6 +104,51 @@ class _UseSmileIDSampleUserDetailsTabState
   }
 }
 
+/// SmartSelfie Authentication's user ID, typed or picked from runs that enrolled one; the run never makes one up.
+class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
+  /// [productId] is the run's, carried through to the flow.
+  const UseSmileIDSampleAuthUserIdTab({required this.productId, super.key});
+
+  /// The product the flow will run, always SmartSelfie Authentication.
+  final String productId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final UseSmileIDSampleForms forms = ref.watch(
+      useSmileIDSampleFormsProvider,
+    );
+    final List<UseSmileIDSampleJob> jobs =
+        ref.watch(useSmileIDSampleJobsProvider).value ??
+        const <UseSmileIDSampleJob>[];
+    void back() =>
+        useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
+    return UseSmileIDSampleAboveShellPage(
+      onBack: back,
+      child: UseSmileIDSampleAuthUserIdScreen(
+        userId: forms.authUserId,
+        previousUserIds: useSmileIDSamplePreviousAuthUserIds(jobs),
+        onUserIdChanged: ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .setAuthUserId,
+        onRegister: () {
+          ref
+              .read(useSmileIDSampleFormsProvider.notifier)
+              .startRun(ref.read(useSmileIDSampleProfilesProvider).active);
+          context.go(
+            useSmileIDSampleEntryFor(
+              ref,
+              UseSmileIDSampleProduct.smartSelfieEnrollment,
+            ),
+          );
+        },
+        onBack: back,
+        onContinue: () =>
+            context.push(UseSmileIDSampleRoutes.sdkFlow(productId)),
+      ),
+    );
+  }
+}
+
 /// The ID-details form, with its pickers and capture sheets as layers over it.
 class UseSmileIDSampleKycFormTab extends ConsumerStatefulWidget {
   /// [openSheet] names a sheet a deep link asked for, so the link opens this page with it up.

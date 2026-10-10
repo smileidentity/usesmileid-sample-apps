@@ -25,6 +25,12 @@ class UseSmileIDSampleFlowNeedsDetails extends UseSmileIDSampleFlowPreflight {
   final List<UseSmileIDValidationException> issues;
 }
 
+/// SmartSelfie Authentication with no enrolled user to run as; the user ID screen resolves it.
+class UseSmileIDSampleFlowNeedsUserId extends UseSmileIDSampleFlowPreflight {
+  /// No fields.
+  const UseSmileIDSampleFlowNeedsUserId();
+}
+
 /// Only a new token resolves it, so the journey goes to the scanner.
 class UseSmileIDSampleFlowNeedsSession extends UseSmileIDSampleFlowPreflight {
   /// No fields.
@@ -47,6 +53,11 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   // Ahead of the payloads: no form fixes a missing or ended session.
   if (snapshot.sessionExpired || snapshot.session == null) {
     return const UseSmileIDSampleFlowNeedsSession();
+  }
+  // Ahead of the SDK's own check, which would end the run: the user ID screen resolves it.
+  if (snapshot.product == UseSmileIDSampleProduct.smartSelfieAuth &&
+      snapshot.userId.isEmpty) {
+    return const UseSmileIDSampleFlowNeedsUserId();
   }
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(builder, snapshot);
