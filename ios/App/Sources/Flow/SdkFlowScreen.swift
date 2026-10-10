@@ -109,6 +109,10 @@ struct SdkFlowResultHandler {
     // Popping the flow *is* the cancel, so the host fires none of its own.
     case .cancelled:
       useSmileIDSampleLeaveFlow(router, run, flow)
+    // Only a flow with `skipApiSubmission` hands the job back unsent, and the sample never asks for
+    // that, so there is no job to show.
+    case .captured:
+      useSmileIDSampleLeaveFlow(router, run, flow)
     }
   }
 
@@ -120,6 +124,8 @@ struct SdkFlowResultHandler {
       app.flowResult.recordResultCallback(status: .failed, error: error.useSmileIDSampleMessage)
     case .cancelled:
       app.flowResult.recordResultCallback(status: .cancelled)
+    case .captured:
+      app.flowResult.recordResultCallback(status: .succeeded)
     }
   }
 
