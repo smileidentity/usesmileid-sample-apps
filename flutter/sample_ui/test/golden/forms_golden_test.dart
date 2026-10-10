@@ -44,6 +44,44 @@ void main() {
     );
   });
 
+  testWidgets('auth user id with no jobs', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_auth_user_id_no_jobs',
+      () => _authUserId(userId: '', previous: const <String>[]),
+    );
+  });
+
+  testWidgets('auth user id with previous ids', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_auth_user_id_previous',
+      () => _authUserId(userId: '', previous: _previousUserIds),
+    );
+  });
+
+  testWidgets('auth user id selected', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_auth_user_id_selected',
+      () => _authUserId(
+        userId: _previousUserIds.first,
+        previous: _previousUserIds,
+      ),
+    );
+  });
+
+  testWidgets('auth user id typed', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_auth_user_id_typed',
+      () => _authUserId(
+        userId: 'user_01typedbyhand0000000000',
+        previous: _previousUserIds,
+      ),
+    );
+  });
+
   testWidgets('user details complete', (WidgetTester tester) async {
     await _screenGoldens(
       tester,
@@ -412,3 +450,19 @@ final UseSmileIDSampleIdDetails _documentSelected = UseSmileIDSampleIdDetails(
     'ZA',
   ).firstWhere((UseSmileIDSampleDocument it) => it.subType == 'green_book'),
 );
+
+const List<String> _previousUserIds = <String>[
+  'user_01m4gahg4ceceatsw25mc5dd1h',
+  'user_01r4l94gahg4ceceatsw25mc5d',
+  'user_01r4l94gahg4ceceatsw25mc51',
+];
+
+Widget _authUserId({required String userId, required List<String> previous}) =>
+    UseSmileIDSampleAuthUserIdScreen(
+      userId: userId,
+      previousUserIds: previous,
+      onUserIdChanged: (_) {},
+      onRegister: () {},
+      onBack: () {},
+      onContinue: () {},
+    );

@@ -66,6 +66,8 @@ final class UseSmileIDSampleAppState: ObservableObject {
   /// The new profile's name, asked only while there is no profile.
   @Published var organisationDraft = ""
   @Published var idDetails = UseSmileIDSampleIdDetails()
+  /// The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up.
+  @Published var authUserId = ""
 
   /// The pickers' search text, cleared on open so a sheet never reopens filtered.
   @Published var countryQuery = ""
@@ -231,6 +233,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     store.clearTokenSession()
     fillForm(from: nil)
     idDetails = UseSmileIDSampleIdDetails()
+    authUserId = ""
     profiles.clear()
     store.setProfiles(UseSmileIDSampleProfiles())
     profileDrafts = [:]
@@ -449,6 +452,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
   func fillFormForRun(_ product: UseSmileIDSampleProduct) {
     fillFromActive()
     idDetails = UseSmileIDSampleIdDetails()
+    authUserId = ""
     if product.catalogueFamily != nil, sessionActive {
       catalogue.begin(environment: environment, locale: catalogueLocale)
       ensureCatalogue(product)

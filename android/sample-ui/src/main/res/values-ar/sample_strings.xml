@@ -87,6 +87,13 @@
     <string name="sample_user_details_no_profile">ستُنشئ بياناتك أدناه ملفًا شخصيًا</string>
     <string name="sample_user_details_switch_profile">انقر لتبديل الملف الشخصي</string>
     <string name="sample_user_details_section">بياناتك</string>
+    <string name="sample_auth_user_id_enter">أدخل معرّف مستخدم</string>
+    <string name="sample_auth_user_id_placeholder">user_…</string>
+    <string name="sample_auth_user_id_or">أو</string>
+    <string name="sample_auth_user_id_previous">اختر معرّف مستخدم سابقًا</string>
+    <string name="sample_auth_user_id_previous_body">معرّف مستخدم تم التحقق منه من قبل. تحصل عليه من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.</string>
+    <string name="sample_auth_user_id_empty_title">مصادقة مستخدم مسجّل</string>
+    <string name="sample_auth_user_id_run">إجراء تحقق</string>
     <string name="sample_user_details_profile_name">اسم الملف الشخصي (اختياري)</string>
     <string name="sample_user_details_profile_name_hint">يظهر في شاشة الموافقة</string>
     <string name="sample_user_details_from_token">مقدَّم من الرمز</string>

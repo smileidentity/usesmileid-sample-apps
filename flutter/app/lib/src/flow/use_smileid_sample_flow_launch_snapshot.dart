@@ -80,7 +80,7 @@ class UseSmileIDSampleFlowLaunchSnapshot {
   /// Whether the document products capture the selfie first.
   final bool selfieFirst;
 
-  /// The id this run submits under.
+  /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   final String userId;
 
   /// The active profile's id, which the SDK submits as the partner.

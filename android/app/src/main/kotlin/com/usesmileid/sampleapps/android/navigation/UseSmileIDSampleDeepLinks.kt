@@ -13,6 +13,7 @@ internal object UseSmileIDSampleDeepLinks {
     const val SETTINGS = "$SCHEME://settings"
 
     const val CONSENT_DETAILS_FORM = "$SCHEME://flow/{productId}/details"
+    const val AUTH_USER_ID = "$SCHEME://flow/{productId}/user-id"
     const val ID_DETAILS_FORM = "$SCHEME://flow/{productId}/id-details"
     const val COUNTRY_PICKER = "$SCHEME://flow/{productId}/id-details/country"
     const val ID_TYPE_PICKER = "$SCHEME://flow/{productId}/id-details/id-type"

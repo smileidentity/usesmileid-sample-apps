@@ -61,6 +61,7 @@ describe('suffixed ids derive from their base id', () => {
       UseSmileIDSampleSuffixedTestIds.detailField('x'),
       UseSmileIDSampleSuffixedTestIds.detailCopy('x'),
       UseSmileIDSampleSuffixedTestIds.userDetailsField('x'),
+      UseSmileIDSampleSuffixedTestIds.authUserIdOption(1),
       UseSmileIDSampleSuffixedTestIds.countryOption('x'),
       UseSmileIDSampleSuffixedTestIds.idTypeOption('x'),
       UseSmileIDSampleSuffixedTestIds.profileRow('x'),

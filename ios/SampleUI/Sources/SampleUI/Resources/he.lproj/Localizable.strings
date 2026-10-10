@@ -85,6 +85,13 @@
 "user_details_no_profile" = "הפרטים שלכם למטה ייצרו פרופיל";
 "user_details_switch_profile" = "הקישו כדי להחליף פרופיל";
 "user_details_section" = "הפרטים שלכם";
+"auth_user_id_enter" = "הזן מזהה משתמש";
+"auth_user_id_placeholder" = "user_…";
+"auth_user_id_or" = "או";
+"auth_user_id_previous" = "בחר מזהה משתמש קודם";
+"auth_user_id_previous_body" = "מזהה של משתמש שכבר אומת. תקבל אותו מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.";
+"auth_user_id_empty_title" = "אימות משתמש רשום";
+"auth_user_id_run" = "הפעל אימות";
 "user_details_profile_name" = "שם הפרופיל (אופציונלי)";
 "user_details_profile_name_hint" = "מוצג במסך ההסכמה";
 "user_details_from_token" = "סופק על ידי הטוקן";

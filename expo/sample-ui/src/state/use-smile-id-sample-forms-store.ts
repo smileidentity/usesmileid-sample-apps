@@ -26,12 +26,15 @@ type State = {
   readonly saveToProfile: boolean;
   /// The new profile's name, asked only while there is no profile.
   readonly organisation: string;
+  /// The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up.
+  readonly authUserId: string;
 };
 
 type Actions = {
   setUserField: (field: UseSmileIDSampleUserField, value: string) => void;
   setSaveToProfile: (enabled: boolean) => void;
   setOrganisation: (value: string) => void;
+  setAuthUserId: (value: string) => void;
   /// A run starts from the profile it runs as; whatever was typed for another is dropped.
   fillFrom: (profile: UseSmileIDSampleProfile) => void;
   /// A product tap: fills from the active profile, and never carries the last run's ID details into this one.
@@ -60,6 +63,7 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
   idDetails: smileIDSampleIdDetailsDefaults,
   saveToProfile: true,
   organisation: '',
+  authUserId: '',
 
   setUserField: (field, value) =>
     set((state) => ({ userDetails: smileIDSampleUserFieldWrite(field, state.userDetails, value) })),
@@ -68,12 +72,15 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
 
   setOrganisation: (value) => set({ organisation: value }),
 
+  setAuthUserId: (value) => set({ authUserId: value }),
+
   fillFrom: (profile) => set({ userDetails: profile.defaults, saveToProfile: true, organisation: '' }),
 
   startRun: (profile) =>
     set({
       ...(profile === null ? {} : { userDetails: profile.defaults, saveToProfile: true, organisation: '' }),
       idDetails: smileIDSampleIdDetailsDefaults,
+      authUserId: '',
     }),
 
   /// A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays.
@@ -122,5 +129,6 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       idDetails: smileIDSampleIdDetailsDefaults,
       saveToProfile: true,
       organisation: '',
+      authUserId: '',
     }),
 }));

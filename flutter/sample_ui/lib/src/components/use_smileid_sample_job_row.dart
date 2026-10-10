@@ -55,7 +55,7 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
     // A Row at the design's scale keeps the badge inline; a Wrap above it lets the badge drop.
     // One layout cannot do both: a flexible child inside a Wrap claims the whole line.
     final bool stacks = MediaQuery.textScalerOf(context).scale(1) > 1;
-    final Widget tile = _JobRowTile(product: product);
+    final Widget tile = UseSmileIDSampleProductTile(product: product);
     final Widget badge = UseSmileIDSampleStatusBadge(
       status: status,
       testId: statusTestId,
@@ -122,17 +122,27 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
   }
 }
 
-class _JobRowTile extends StatelessWidget {
-  const _JobRowTile({required this.product});
+/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
+class UseSmileIDSampleProductTile extends StatelessWidget {
+  /// [side] defaults to the board's 36, whose glyph is 18; a larger tile scales the glyph with it.
+  const UseSmileIDSampleProductTile({
+    required this.product,
+    this.side = _tileSize,
+    super.key,
+  });
 
+  /// Whose hue and icon the tile draws.
   final UseSmileIDSampleProduct product;
+
+  /// The tile's width and height.
+  final double side;
 
   @override
   Widget build(BuildContext context) {
     final SmileProductHue hue = productHue(product);
     return Container(
-      width: _tileSize,
-      height: _tileSize,
+      width: side,
+      height: side,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: hue.tile,
@@ -141,7 +151,7 @@ class _JobRowTile extends StatelessWidget {
       child: UseSmileIDSampleIcon(
         asset: productIcon(product),
         tint: hue.icon,
-        size: _tileIconSize,
+        size: side * _tileIconSize / _tileSize,
       ),
     );
   }

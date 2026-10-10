@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.annotation.parameters.DeepLink
+import com.ramcosta.composedestinations.generated.destinations.AuthUserIdScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
@@ -61,8 +62,7 @@ fun SdkFlowScreen(
     // Once per entry: the ViewModel and its args are scoped to this back-stack entry, so no key can change.
     val snapshot = remember {
         viewModel.snapshot
-            // A prior enrollment's id when the card holds one, so authentication has something enrolled.
-            ?: buildSnapshot(viewModel.args, app, viewModel.runUserId(app.flowResult.userId))
+            ?: buildSnapshot(viewModel.args, app)
                 ?.also { viewModel.snapshot = it }
     }
     if (snapshot == null) {
@@ -75,6 +75,14 @@ fun SdkFlowScreen(
             LaunchedEffect(Unit) {
                 navigator.navigate(ConsentDetailsFormScreenDestination(productId = snapshot.product.id)) {
                     // The graph, not the screen: a deep link synthesizes a form beneath the flow (§8.1).
+                    popUpTo(FlowNavGraph) { inclusive = true }
+                }
+            }
+            return
+        }
+        FlowPreflight.NeedsUserId -> {
+            LaunchedEffect(Unit) {
+                navigator.navigate(AuthUserIdScreenDestination(productId = snapshot.product.id)) {
                     popUpTo(FlowNavGraph) { inclusive = true }
                 }
             }

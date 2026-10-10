@@ -146,6 +146,26 @@
       "notes": "The owner's 'Consent Details Form'. Shown for every product, seeded from the active profile."
     },
     {
+      "id": "authUserId",
+      "screen": "authUserId",
+      "path": "/flow/:productId/user-id",
+      "presentation": "push",
+      "args": [
+        {
+          "name": "productId",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "platform": {
+        "android": "AuthUserIdScreenDestination",
+        "ios": "Route.authUserId(productId:)",
+        "flutter": "/flow/:productId/user-id",
+        "expo": "app/flow/[productId]/user-id.tsx"
+      },
+      "notes": "SmartSelfie Authentication only. Continue goes to the SDK flow with the chosen ID."
+    },
+    {
       "id": "idDetailsForm",
       "screen": "kycIdForm",
       "path": "/flow/:productId/id-details",

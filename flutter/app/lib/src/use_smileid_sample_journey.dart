@@ -21,7 +21,9 @@ abstract final class UseSmileIDSampleJourney {
   static String afterUserDetails(
     UseSmileIDSampleProduct product,
     UseSmileIDSampleTokenBindings? live,
-  ) => useSmileIDSampleFlowPlan(live, product).showIdDetailsForm
+  ) => product == UseSmileIDSampleProduct.smartSelfieAuth
+      ? UseSmileIDSampleRoutes.authUserId(product.id)
+      : useSmileIDSampleFlowPlan(live, product).showIdDetailsForm
       ? UseSmileIDSampleRoutes.idDetailsForm(product.id)
       : UseSmileIDSampleRoutes.sdkFlow(product.id);
 

@@ -75,12 +75,7 @@ public struct UseSmileIDSampleJobRow: View {
   }
 
   private var tile: some View {
-    UseSmileIDSampleIcon(product.icon, tint: product.hue?.icon ?? colors.textMuted, size: Self.tileIconSize)
-      .frame(width: tileSize, height: tileSize)
-      .background(
-        RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.rowTile, style: .continuous)
-          .fill(product.hue?.tile ?? colors.surfaceTile)
-      )
+    UseSmileIDSampleProductTile(product, side: tileSize, iconSize: Self.tileIconSize)
   }
 
   private var text: some View {
@@ -95,7 +90,7 @@ public struct UseSmileIDSampleJobRow: View {
     .frame(maxWidth: .infinity, alignment: .leading)
   }
 
-  /// The board's 18 glyph in its 36 tile; no icon token carries it.
+  /// The board's 18 glyph, fixed while the tile scales with the text; no icon token carries it.
   private static var tileIconSize: CGFloat {
     18
   }

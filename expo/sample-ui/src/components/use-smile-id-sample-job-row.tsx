@@ -74,7 +74,7 @@ export const UseSmileIDSampleJobRow = ({
           },
         ]}
       >
-        <JobRowTile product={product} />
+        <UseSmileIDSampleProductTile product={product} />
         <JobRowText product={product} jobId={jobId} time={time} stacks={stacks} />
         <UseSmileIDSampleStatusBadge status={status} testID={statusTestID} />
       </View>
@@ -82,19 +82,26 @@ export const UseSmileIDSampleJobRow = ({
   );
 };
 
-const JobRowTile = ({ product }: { product: UseSmileIDSampleProduct }) => {
+/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
+export const UseSmileIDSampleProductTile = ({
+  product,
+  side = TILE_SIZE,
+}: {
+  product: UseSmileIDSampleProduct;
+  side?: number;
+}) => {
   const hue = smileIDSampleProductHue(product);
   return (
     <View
       style={[
         styles.tile,
-        { width: TILE_SIZE, height: TILE_SIZE, borderRadius: TILE_RADIUS, backgroundColor: hue.tile },
+        { width: side, height: side, borderRadius: TILE_RADIUS, backgroundColor: hue.tile },
       ]}
     >
       <UseSmileIDSampleIcon
         name={smileIDSampleProductIcon(product)}
         tint={hue.icon}
-        size={TILE_ICON_SIZE}
+        size={(side * TILE_ICON_SIZE) / TILE_SIZE}
       />
     </View>
   );

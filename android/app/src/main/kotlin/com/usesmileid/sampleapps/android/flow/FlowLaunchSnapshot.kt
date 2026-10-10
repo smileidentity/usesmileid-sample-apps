@@ -31,6 +31,7 @@ data class FlowLaunchSnapshot(
     val galleryUpload: Boolean = false,
     val allowSkipBack: Boolean = false,
     val selfieFirst: Boolean = false,
+    /** SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues. */
     val userId: String,
     val partnerId: String,
     val partnerName: String,
@@ -48,7 +49,6 @@ data class FlowLaunchSnapshot(
 fun buildSnapshot(
     args: SdkFlowScreenDestinationNavArgs,
     app: UseSmileIDSampleAppState,
-    userId: String,
 ): FlowLaunchSnapshot? {
     val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == args.productId } ?: return null
     // The clock is read here rather than through the app state's ticking value: the snapshot is taken
@@ -73,7 +73,7 @@ fun buildSnapshot(
         galleryUpload = app.settings.galleryUpload,
         allowSkipBack = app.settings.allowSkipBack,
         selfieFirst = app.settings.selfieFirst,
-        userId = userId,
+        userId = app.forms.authUserId.trim(),
         partnerId = app.profiles.partnerId,
         partnerName = app.profiles.partnerName,
         callbackUrl = app.profiles.active?.callbackUrl.orEmpty(),

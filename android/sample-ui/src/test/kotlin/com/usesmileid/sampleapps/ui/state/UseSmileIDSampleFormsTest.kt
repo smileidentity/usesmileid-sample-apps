@@ -86,6 +86,16 @@ class UseSmileIDSampleFormsTest {
     }
 
     @Test
+    fun the_authentication_user_id_survives_the_saver_and_a_new_run_or_sign_out_drops_it() {
+        val scope = SaverScope { true }
+        val chosen = UseSmileIDSampleForms().apply { authUserId("user_01m4gahg4ceceatsw25mc5dd1h") }
+        val saved = with(UseSmileIDSampleForms.Saver) { scope.save(chosen) } as List<*>
+        assertEquals("user_01m4gahg4ceceatsw25mc5dd1h", UseSmileIDSampleForms.Saver.restore(saved)?.authUserId)
+        assertEquals("", chosen.apply { startRun(null) }.authUserId)
+        assertEquals("", UseSmileIDSampleForms().apply { authUserId("user_x"); clear() }.authUserId)
+    }
+
+    @Test
     fun the_capture_as_override_survives_the_saver_and_an_unknown_value_restores_as_match() {
         val scope = SaverScope { true }
         val chosen = UseSmileIDSampleForms().apply { setCaptureAs(UseSmileIDSampleCaptureAs.Passport) }

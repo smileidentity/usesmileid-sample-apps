@@ -125,6 +125,13 @@ final class UseSmileIDSampleStrings {
   String get userDetailsSwitchProfile =>
       _values['user_details_switch_profile']!;
   String get userDetailsSection => _values['user_details_section']!;
+  String get authUserIdEnter => _values['auth_user_id_enter']!;
+  String get authUserIdPlaceholder => _values['auth_user_id_placeholder']!;
+  String get authUserIdOr => _values['auth_user_id_or']!;
+  String get authUserIdPrevious => _values['auth_user_id_previous']!;
+  String get authUserIdPreviousBody => _values['auth_user_id_previous_body']!;
+  String get authUserIdEmptyTitle => _values['auth_user_id_empty_title']!;
+  String get authUserIdRun => _values['auth_user_id_run']!;
   String get userDetailsProfileName => _values['user_details_profile_name']!;
   String get userDetailsProfileNameHint =>
       _values['user_details_profile_name_hint']!;
@@ -545,6 +552,14 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'Your details below will create one',
       'user_details_switch_profile': 'Tap to switch profile',
       'user_details_section': 'YOUR DETAILS',
+      'auth_user_id_enter': 'Enter a user ID',
+      'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_or': 'or',
+      'auth_user_id_previous': 'Select a previous user ID',
+      'auth_user_id_previous_body':
+          'The ID of a user who has already been verified. A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you one.',
+      'auth_user_id_empty_title': 'Authenticate a registered user',
+      'auth_user_id_run': 'Run a verification',
       'user_details_profile_name': 'Profile name (optional)',
       'user_details_profile_name_hint': 'Shown on the consent screen',
       'user_details_from_token': 'Provided by token',
@@ -889,6 +904,14 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'Vos informations ci-dessous en créeront un',
       'user_details_switch_profile': 'Touchez pour changer de profil',
       'user_details_section': 'VOS INFORMATIONS',
+      'auth_user_id_enter': 'Saisir un ID utilisateur',
+      'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_or': 'ou',
+      'auth_user_id_previous': 'Choisir un ID utilisateur précédent',
+      'auth_user_id_previous_body':
+          'L\'ID d\'un utilisateur déjà vérifié. Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous en donne un.',
+      'auth_user_id_empty_title': 'Authentifier un utilisateur enregistré',
+      'auth_user_id_run': 'Lancer une vérification',
       'user_details_profile_name': 'Nom du profil (facultatif)',
       'user_details_profile_name_hint': 'Affiché sur l’écran de consentement',
       'user_details_from_token': 'Fourni par le jeton',
@@ -1240,6 +1263,14 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'ستُنشئ بياناتك أدناه ملفًا شخصيًا',
       'user_details_switch_profile': 'انقر لتبديل الملف الشخصي',
       'user_details_section': 'بياناتك',
+      'auth_user_id_enter': 'أدخل معرّف مستخدم',
+      'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_or': 'أو',
+      'auth_user_id_previous': 'اختر معرّف مستخدم سابقًا',
+      'auth_user_id_previous_body':
+          'معرّف مستخدم تم التحقق منه من قبل. تحصل عليه من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
+      'auth_user_id_empty_title': 'مصادقة مستخدم مسجّل',
+      'auth_user_id_run': 'إجراء تحقق',
       'user_details_profile_name': 'اسم الملف الشخصي (اختياري)',
       'user_details_profile_name_hint': 'يظهر في شاشة الموافقة',
       'user_details_from_token': 'مقدَّم من الرمز',
@@ -1574,6 +1605,14 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'הפרטים שלכם למטה ייצרו פרופיל',
       'user_details_switch_profile': 'הקישו כדי להחליף פרופיל',
       'user_details_section': 'הפרטים שלכם',
+      'auth_user_id_enter': 'הזן מזהה משתמש',
+      'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_or': 'או',
+      'auth_user_id_previous': 'בחר מזהה משתמש קודם',
+      'auth_user_id_previous_body':
+          'מזהה של משתמש שכבר אומת. תקבל אותו מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
+      'auth_user_id_empty_title': 'אימות משתמש רשום',
+      'auth_user_id_run': 'הפעל אימות',
       'user_details_profile_name': 'שם הפרופיל (אופציונלי)',
       'user_details_profile_name_hint': 'מוצג במסך ההסכמה',
       'user_details_from_token': 'סופק על ידי הטוקן',

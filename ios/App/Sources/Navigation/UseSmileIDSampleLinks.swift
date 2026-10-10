@@ -58,6 +58,7 @@ enum UseSmileIDSampleLinks {
     let productId = segments[1]
     switch segments[2] {
     case "details": return .consentDetailsForm(productId: productId)
+    case "user-id": return .authUserId(productId: productId)
     case "id-details": return .idDetailsForm(productId: productId)
     case "run":
       return .sdkFlow(productId: productId, presentation: UseSmileIDSampleFlowRoute(id: query["route"]))

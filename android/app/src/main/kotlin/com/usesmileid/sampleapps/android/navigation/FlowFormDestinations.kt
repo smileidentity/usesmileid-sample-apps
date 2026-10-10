@@ -11,6 +11,8 @@ import com.ramcosta.composedestinations.annotation.parameters.DeepLink
 import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.ramcosta.composedestinations.generated.navgraphs.FlowNavGraph
+import com.usesmileid.sampleapps.android.flow.entryFor
 import com.usesmileid.sampleapps.android.flow.sdkFlow
 import com.usesmileid.sampleapps.android.flow.stepAfterUserDetails
 import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
@@ -29,6 +31,8 @@ import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet as DocumentPicke
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerContent
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsContent
+import com.usesmileid.sampleapps.ui.screens.AuthUserIdScreen as AuthUserIdContent
+import com.usesmileid.sampleapps.ui.state.previousAuthUserIds
 import com.usesmileid.sampleapps.ui.state.settledItems
 
 /** The pre-flow wizard's routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
@@ -74,6 +78,27 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
             onPicked = app.forms::fillFrom,
         )
     }
+}
+
+/** SmartSelfie Authentication's user ID, typed or picked from runs that enrolled one; the run never makes one up. */
+@Destination<FlowGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.AUTH_USER_ID)])
+@Composable
+fun AuthUserIdScreen(productId: String, navigator: DestinationsNavigator) {
+    val app = LocalUseSmileIDSampleAppState.current
+    AuthUserIdContent(
+        userId = app.forms.authUserId,
+        // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
+        previousUserIds = previousAuthUserIds(app.jobs.orEmpty(), app.session?.partnerId, app.useSandbox),
+        onUserIdChange = app.forms::authUserId,
+        onRegister = {
+            app.forms.startRun(app.profiles.active)
+            navigator.navigate(app.entryFor(UseSmileIDSampleProduct.SmartSelfieEnrollment)) {
+                popUpTo(FlowNavGraph) { inclusive = true }
+            }
+        },
+        onBack = { navigator.navigateUp() },
+        onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
+    )
 }
 
 /** Only for products that need ID details. */

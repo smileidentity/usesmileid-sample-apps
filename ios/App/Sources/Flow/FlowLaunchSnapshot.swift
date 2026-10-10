@@ -19,6 +19,7 @@ struct FlowLaunchSnapshot: Equatable {
   let galleryUpload: Bool
   let allowSkipBack: Bool
   let selfieFirst: Bool
+  /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   let userId: String
   let partnerId: String
   let partnerName: String
@@ -86,8 +87,7 @@ struct FlowLaunchSnapshot: Equatable {
 func buildSnapshot(
   productId: String,
   route: UseSmileIDSampleFlowRoute,
-  app: UseSmileIDSampleAppState,
-  userId: String
+  app: UseSmileIDSampleAppState
 ) -> FlowLaunchSnapshot? {
   guard let product = UseSmileIDSampleProduct(rawValue: productId) else { return nil }
   // Read here, not through the ticking value, which would re-render the host once a second.
@@ -110,7 +110,7 @@ func buildSnapshot(
     galleryUpload: app.settings.galleryUpload,
     allowSkipBack: app.settings.allowSkipBack,
     selfieFirst: app.settings.selfieFirst,
-    userId: userId,
+    userId: app.authUserId.trimmingCharacters(in: .whitespaces),
     partnerId: app.profiles.partnerId,
     partnerName: app.profiles.partnerName,
     callbackUrl: app.profiles.active?.callbackUrl ?? "",

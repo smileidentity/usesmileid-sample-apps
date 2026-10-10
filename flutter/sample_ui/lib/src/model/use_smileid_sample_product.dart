@@ -111,6 +111,10 @@ enum UseSmileIDSampleProduct {
   /// The card's second run.
   final String cardFamily;
 
+  /// Whether a run enrols the user it submits, so its user ID can later be authenticated.
+  bool get enrollsUser =>
+      capture && this != UseSmileIDSampleProduct.smartSelfieAuth;
+
   /// The full name in the app's language; [label] stays the English the spec records.
   String title(UseSmileIDSampleStrings strings) => switch (this) {
     UseSmileIDSampleProduct.smartSelfieEnrollment =>

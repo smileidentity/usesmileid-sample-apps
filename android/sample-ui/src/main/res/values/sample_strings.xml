@@ -87,6 +87,13 @@
     <string name="sample_user_details_no_profile">Your details below will create one</string>
     <string name="sample_user_details_switch_profile">Tap to switch profile</string>
     <string name="sample_user_details_section">YOUR DETAILS</string>
+    <string name="sample_auth_user_id_enter">Enter a user ID</string>
+    <string name="sample_auth_user_id_placeholder">user_…</string>
+    <string name="sample_auth_user_id_or">or</string>
+    <string name="sample_auth_user_id_previous">Select a previous user ID</string>
+    <string name="sample_auth_user_id_previous_body">The ID of a user who has already been verified. A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you one.</string>
+    <string name="sample_auth_user_id_empty_title">Authenticate a registered user</string>
+    <string name="sample_auth_user_id_run">Run a verification</string>
     <string name="sample_user_details_profile_name">Profile name (optional)</string>
     <string name="sample_user_details_profile_name_hint">Shown on the consent screen</string>
     <string name="sample_user_details_from_token">Provided by token</string>

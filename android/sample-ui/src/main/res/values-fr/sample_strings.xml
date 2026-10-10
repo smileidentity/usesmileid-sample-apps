@@ -87,6 +87,13 @@
     <string name="sample_user_details_no_profile">Vos informations ci-dessous en créeront un</string>
     <string name="sample_user_details_switch_profile">Touchez pour changer de profil</string>
     <string name="sample_user_details_section">VOS INFORMATIONS</string>
+    <string name="sample_auth_user_id_enter">Saisir un ID utilisateur</string>
+    <string name="sample_auth_user_id_placeholder">user_…</string>
+    <string name="sample_auth_user_id_or">ou</string>
+    <string name="sample_auth_user_id_previous">Choisir un ID utilisateur précédent</string>
+    <string name="sample_auth_user_id_previous_body">L\'ID d\'un utilisateur déjà vérifié. Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous en donne un.</string>
+    <string name="sample_auth_user_id_empty_title">Authentifier un utilisateur enregistré</string>
+    <string name="sample_auth_user_id_run">Lancer une vérification</string>
     <string name="sample_user_details_profile_name">Nom du profil (facultatif)</string>
     <string name="sample_user_details_profile_name_hint">Affiché sur l’écran de consentement</string>
     <string name="sample_user_details_from_token">Fourni par le jeton</string>

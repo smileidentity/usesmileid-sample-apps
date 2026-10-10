@@ -124,6 +124,18 @@ describe('the gate', () => {
     expect(smileIDSamplePreflight(snapshot()).kind).toBe('ready');
   });
 
+  it('sends authentication without a user ID to the user ID screen, not the SDK', () => {
+    expect(smileIDSamplePreflight(snapshot({ product: productFor('smartSelfieAuth'), userId: '' })).kind).toBe(
+      'needsUserId',
+    );
+  });
+
+  it('asks no other product for a user ID, because the server issues one', () => {
+    for (const product of smileIDSampleProducts.filter((it) => it.id !== 'smartSelfieAuth')) {
+      expect(smileIDSamplePreflight(snapshot({ product, userId: '' })).kind).not.toBe('needsUserId');
+    }
+  });
+
   it('sends a run with no session to the scanner rather than the SDK', () => {
     expect(smileIDSamplePreflight(snapshot({ session: null })).kind).toBe('needsSession');
   });
@@ -141,7 +153,9 @@ describe('the gate', () => {
       snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
     const reported =
-      outcome.kind === 'ready' || outcome.kind === 'needsSession' ? '' : outcome.issues.map((issue) => issue.message).join('; ');
+      outcome.kind === 'needsDetails' || outcome.kind === 'misconfigured'
+        ? outcome.issues.map((issue) => issue.message).join('; ')
+        : '';
     expect(reported).toContain('givenNames');
     expect(reported).toContain('lastName');
   });

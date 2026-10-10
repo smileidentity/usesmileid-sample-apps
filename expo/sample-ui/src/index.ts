@@ -97,7 +97,7 @@ export { UseSmileIDSampleDataFieldRow } from './components/use-smile-id-sample-d
 export { UseSmileIDSampleDateGroupHeader } from './components/use-smile-id-sample-date-group-header';
 export { UseSmileIDSampleEmptyState } from './components/use-smile-id-sample-empty-state';
 export { UseSmileIDSampleFilterChip } from './components/use-smile-id-sample-filter-chip';
-export { UseSmileIDSampleJobRow } from './components/use-smile-id-sample-job-row';
+export { UseSmileIDSampleJobRow, UseSmileIDSampleProductTile } from './components/use-smile-id-sample-job-row';
 export { UseSmileIDSampleKeyValueEditRow } from './components/use-smile-id-sample-key-value-edit-row';
 export { UseSmileIDSampleOptionRow } from './components/use-smile-id-sample-option-row';
 export { UseSmileIDSampleProfileRow } from './components/use-smile-id-sample-profile-row';
@@ -338,6 +338,7 @@ export {
   smileIDSampleCatalogueIdTypesOf,
   type UseSmileIDSampleCatalogueStore,
 } from './data/use-smile-id-sample-catalogue-store';
+export { smileIDSamplePreviousAuthUserIds } from './state/use-smile-id-sample-auth-user-ids';
 export { useSmileIDSampleFormsStore } from './state/use-smile-id-sample-forms-store';
 
 export { UseSmileIDSamplePickerList } from './components/use-smile-id-sample-picker-list';
@@ -361,6 +362,7 @@ export {
   UserDetailsScreen,
   type UseSmileIDSampleUserDetailsState,
 } from './screens/user-details-screen';
+export { AuthUserIdScreen, type UseSmileIDSampleAuthUserIdState } from './screens/auth-user-id-screen';
 export { KycIdFormScreen, type UseSmileIDSampleKycIdFormState } from './screens/kyc-id-form-screen';
 export { CountryPickerSheet } from './screens/country-picker-sheet';
 export { IdTypePickerSheet } from './screens/id-type-picker-sheet';

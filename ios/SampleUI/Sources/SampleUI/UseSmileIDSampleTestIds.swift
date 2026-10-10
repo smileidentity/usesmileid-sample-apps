@@ -56,6 +56,10 @@ public enum UseSmileIDSampleTestIds {
     "\(userDetailsFieldPrefix)_\(field)"
   }
 
+  public static func authUserIdOption(_ index: Int) -> String {
+    "\(authUserIdOptionPrefix)_\(index)"
+  }
+
   public static func countryOption(_ code: String) -> String {
     "\(countryOptionPrefix)_\(code)"
   }
@@ -203,6 +207,12 @@ public enum UseSmileIDSampleTestIds {
   public static let rememberDetailsSwitch = "sample_remember_details_switch"
   public static let userDetailsProfile = "sample_user_details_profile"
 
+  public static let authUserIdScreen = "sample_auth_user_id_screen"
+  public static let authUserIdInput = "sample_auth_user_id_input"
+  public static let authUserIdOptionPrefix = "sample_auth_user_id_option"
+  public static let authUserIdRegister = "sample_auth_user_id_register"
+  public static let authUserIdContinue = "sample_auth_user_id_continue"
+
   public static let profilesScreen = "sample_profiles_screen"
   public static let createProfile = "sample_create_profile"
   public static let profileConfigScreen = "sample_profile_config_screen"
@@ -282,6 +292,7 @@ public enum UseSmileIDSampleTestIds {
     detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty, detailsRefresh,
     userDetailsScreen, userDetailsFieldPrefix, userDetailsHint, userDetailsContinue,
     rememberDetailsSwitch, userDetailsProfile,
+    authUserIdScreen, authUserIdInput, authUserIdOptionPrefix, authUserIdRegister, authUserIdContinue,
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,

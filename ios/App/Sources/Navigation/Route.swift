@@ -8,6 +8,7 @@ enum Route: Hashable, Codable {
   case licenses
   case verificationDetails(jobId: String)
   case consentDetailsForm(productId: String)
+  case authUserId(productId: String)
   case idDetailsForm(productId: String)
   case sdkFlow(productId: String, presentation: UseSmileIDSampleFlowRoute)
   case profiles
@@ -21,7 +22,7 @@ extension Route {
     switch self {
     case .verifications, .verificationDetails: .verifications
     case .settings, .licenses, .profiles, .profileConfig: .settings
-    case .products, .consentDetailsForm, .idDetailsForm, .sdkFlow, .scanToken: .products
+    case .products, .consentDetailsForm, .authUserId, .idDetailsForm, .sdkFlow, .scanToken: .products
     }
   }
 

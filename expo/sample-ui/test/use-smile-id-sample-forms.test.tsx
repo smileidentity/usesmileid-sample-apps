@@ -39,6 +39,7 @@ import { GenericDocumentSheet } from '../src/screens/generic-document-sheet';
 import { DocumentPickerSheet } from '../src/screens/document-picker-sheet';
 import { IdTypePickerSheet } from '../src/screens/id-type-picker-sheet';
 import { KycIdFormScreen } from '../src/screens/kyc-id-form-screen';
+import { AuthUserIdScreen } from '../src/screens/auth-user-id-screen';
 import { UserDetailsScreen } from '../src/screens/user-details-screen';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { focusField, renderInTheme, rightToLeft, schemes, styleTree } from './render-in-theme';
@@ -215,7 +216,32 @@ const AppearanceOnDevice = () => (
   />
 );
 
+const PREVIOUS_USER_IDS = [
+  'user_01m4gahg4ceceatsw25mc5dd1h',
+  'user_01r4l94gahg4ceceatsw25mc5d',
+  'user_01r4l94gahg4ceceatsw25mc51',
+];
+
+const authUserId = (userId: string, previousUserIds: readonly string[]) => (
+  <AuthUserIdScreen
+    state={{ userId, previousUserIds }}
+    onUserIdChange={noop}
+    onRegister={noop}
+    onBack={noop}
+    onContinue={noop}
+  />
+);
+
 const cases: { screen: string; states: Record<string, Case> }[] = [
+  {
+    screen: 'authUserId',
+    states: {
+      noJobs: { element: () => authUserId('', []) },
+      previousIds: { element: () => authUserId('', PREVIOUS_USER_IDS) },
+      selected: { element: () => authUserId(PREVIOUS_USER_IDS[0]!, PREVIOUS_USER_IDS) },
+      typed: { element: () => authUserId('user_01typedbyhand0000000000', PREVIOUS_USER_IDS) },
+    },
+  },
   {
     screen: 'userDetails',
     states: {
@@ -409,7 +435,7 @@ describe('id details in Arabic', () => {
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(68);
+    expect(total * schemes.length).toBe(76);
   });
 });
 

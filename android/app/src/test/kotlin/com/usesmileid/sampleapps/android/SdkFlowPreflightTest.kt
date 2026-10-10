@@ -45,6 +45,19 @@ class SdkFlowPreflightTest {
     }
 
     @Test
+    fun `authentication without a user ID goes to the user ID screen, not to the SDK`() {
+        val verdict = preflight(snapshotFor(UseSmileIDSampleProduct.SmartSelfieAuth).copy(userId = "  "))
+        assertEquals(FlowPreflight.NeedsUserId, verdict)
+    }
+
+    @Test
+    fun `no other product needs a user ID, because the server issues one`() {
+        UseSmileIDSampleProduct.entries.filter { it != UseSmileIDSampleProduct.SmartSelfieAuth }.forEach { product ->
+            assertEquals("$product", FlowPreflight.Ready, preflight(snapshotFor(product).copy(userId = "")))
+        }
+    }
+
+    @Test
     fun `missing user details route to the forms rather than the SDK`() {
         UseSmileIDSampleProduct.entries.forEach { product ->
             val verdict = preflight(snapshotFor(product).copy(userDetails = UseSmileIDSampleUserDetails()))
@@ -317,7 +330,8 @@ class SdkFlowPreflightTest {
         consentStep = true,
         instructionsStep = true,
         previewStep = true,
-        userId = "sample-user",
+        // Only authentication carries one; every other product leaves it to the server.
+        userId = if (product == UseSmileIDSampleProduct.SmartSelfieAuth) ENROLLED_USER_ID else "",
         partnerId = "p-1",
         partnerName = "UpTech Finance",
         callbackUrl = "",
@@ -326,5 +340,6 @@ class SdkFlowPreflightTest {
 
     private companion object {
         const val NOW_MILLIS = 1_755_500_000_000L
+        const val ENROLLED_USER_ID = "user_01m4gahg4ceceatsw25mc5dd1h"
     }
 }

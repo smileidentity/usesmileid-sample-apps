@@ -75,6 +75,11 @@ export const UseSmileIDSampleTestIds = {
   REMEMBER_DETAILS_SWITCH: 'sample_remember_details_switch',
   USER_DETAILS_PROFILE: 'sample_user_details_profile',
   USER_DETAILS_CONTINUE: 'sample_user_details_continue',
+  AUTH_USER_ID_SCREEN: 'sample_auth_user_id_screen',
+  AUTH_USER_ID_INPUT: 'sample_auth_user_id_input',
+  AUTH_USER_ID_OPTION: 'sample_auth_user_id_option',
+  AUTH_USER_ID_REGISTER: 'sample_auth_user_id_register',
+  AUTH_USER_ID_CONTINUE: 'sample_auth_user_id_continue',
   // kyc
   KYC_FORM_SCREEN: 'sample_kyc_form_screen',
   COUNTRY_TRIGGER: 'sample_country_trigger',
@@ -173,6 +178,7 @@ export const UseSmileIDSampleSuffixedTestIds = {
   detailField: (field: string) => `${UseSmileIDSampleTestIds.DETAIL_FIELD}_${field}`,
   detailCopy: (field: string) => `${UseSmileIDSampleTestIds.DETAIL_COPY}_${field}`,
   userDetailsField: (field: string) => `${UseSmileIDSampleTestIds.USER_DETAILS_FIELD}_${field}`,
+  authUserIdOption: (index: number) => `${UseSmileIDSampleTestIds.AUTH_USER_ID_OPTION}_${index}`,
   countryOption: (isoCode: string) => `${UseSmileIDSampleTestIds.COUNTRY_OPTION}_${isoCode}`,
   idTypeOption: (typeId: string) => `${UseSmileIDSampleTestIds.ID_TYPE_OPTION}_${typeId}`,
   /// Suffixed with the code, and `_<subType>` on a standalone sub-type row.

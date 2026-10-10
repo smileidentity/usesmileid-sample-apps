@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../catalogue/use_smileid_sample_catalogue_providers.dart';
+import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
@@ -99,6 +100,65 @@ class _UseSmileIDSampleUserDetailsTabState
         onSaveToProfileChanged: edits.setSaveToProfile,
         organisation: forms.organisation,
         onOrganisationChanged: edits.setOrganisation,
+      ),
+    );
+  }
+}
+
+/// SmartSelfie Authentication's user ID, typed or picked from runs that enrolled one; the run never makes one up.
+class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
+  /// [productId] is the run's, carried through to the flow.
+  const UseSmileIDSampleAuthUserIdTab({required this.productId, super.key});
+
+  /// The product the flow will run, always SmartSelfie Authentication.
+  final String productId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final UseSmileIDSampleForms forms = ref.watch(
+      useSmileIDSampleFormsProvider,
+    );
+    final List<UseSmileIDSampleJob> jobs =
+        ref.watch(useSmileIDSampleJobsProvider).value ??
+        const <UseSmileIDSampleJob>[];
+    final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
+      ref.watch(useSmileIDSampleSessionProvider).live,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    void back() =>
+        useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
+    return UseSmileIDSampleAboveShellPage(
+      onBack: back,
+      child: UseSmileIDSampleAuthUserIdScreen(
+        userId: forms.authUserId,
+        // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
+        previousUserIds: useSmileIDSamplePreviousAuthUserIds(
+          jobs,
+          partnerId: live?.partnerId,
+          sandbox: useSmileIDSampleUseSandbox(live),
+        ),
+        onUserIdChanged: ref
+            .read(useSmileIDSampleFormsProvider.notifier)
+            .setAuthUserId,
+        onRegister: () {
+          ref
+              .read(useSmileIDSampleFormsProvider.notifier)
+              .startRun(ref.read(useSmileIDSampleProfilesProvider).active);
+          context.go(
+            useSmileIDSampleEntryFor(
+              ref,
+              UseSmileIDSampleProduct.smartSelfieEnrollment,
+            ),
+          );
+        },
+        onBack: back,
+        onContinue: () {
+          // Once: a second quick tap would stack a second flow, and so a second run.
+          if (!(ModalRoute.of(context)?.isCurrent ?? true)) {
+            return;
+          }
+          context.push(UseSmileIDSampleRoutes.sdkFlow(productId));
+        },
       ),
     );
   }

@@ -31,6 +31,7 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly allowSkipBack: boolean;
   readonly selfieFirst: boolean;
   /// The id this run submits under; only authentication sends it.
+  /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   readonly userId: string;
   readonly partnerId: string;
   readonly partnerName: string;

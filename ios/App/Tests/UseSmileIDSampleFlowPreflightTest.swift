@@ -14,6 +14,15 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete, session: nil)), .needsSession)
   }
 
+  func testAuthenticationWithoutAUserIdGoesToTheUserIdScreenNotToTheSdk() {
+    XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieAuth, userDetails: complete)), .needsUserId)
+  }
+
+  func testAuthenticationWithAnEnrolledUserIdPassesTheGate() {
+    let enrolled = snapshot(.smartSelfieAuth, userDetails: complete, userId: "user_01m4gahg4ceceatsw25mc5dd1h")
+    XCTAssertEqual(useSmileIDSamplePreflight(enrolled), .ready)
+  }
+
   func testCompleteDetailsPassTheGate() {
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete)), .ready)
   }
@@ -101,7 +110,9 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
           // Both families filled, so each product finds the field it submits.
           document: UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3),
           idNumber: "1234567"
-        )
+        ),
+        // Only authentication carries one; every other product leaves it to the server.
+        userId: product == .smartSelfieAuth ? "user_01m4gahg4ceceatsw25mc5dd1h" : ""
       )
       XCTAssertEqual(useSmileIDSamplePreflight(filled), .ready, product.id)
     }
@@ -136,7 +147,8 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     enhancedLiveness: Bool = false,
     consentStep: Bool = true,
     session: UseSmileIDSampleTokenSession? = useSmileIDSampleTestSession,
-    sessionExpired: Bool = false
+    sessionExpired: Bool = false,
+    userId: String = ""
   ) -> FlowLaunchSnapshot {
     FlowLaunchSnapshot(
       product: product,
@@ -147,6 +159,7 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
       allowAgentMode: agentMode,
       enableEnhancedLiveness: enhancedLiveness,
       consentStep: consentStep,
+      userId: userId,
       partnerId: "0000",
       partnerName: "UpTech Finance",
       session: session,

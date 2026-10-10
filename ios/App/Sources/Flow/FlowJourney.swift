@@ -20,7 +20,10 @@ extension UseSmileIDSampleAppState {
 
   /// Shared with the form's own Continue, so the two routes cannot drift.
   func stepAfterUserDetails(_ product: UseSmileIDSampleProduct) -> Route {
-    product.needsIdDetails && !tokenBindsIdDetails(product)
+    if product == .smartSelfieAuth {
+      return .authUserId(productId: product.id)
+    }
+    return product.needsIdDetails && !tokenBindsIdDetails(product)
       ? .idDetailsForm(productId: product.id)
       : sdkFlow(product)
   }

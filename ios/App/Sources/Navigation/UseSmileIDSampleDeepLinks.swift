@@ -8,6 +8,7 @@ enum UseSmileIDSampleDeepLinks {
   static let settings = "\(scheme)://settings"
 
   static let consentDetailsForm = "\(scheme)://flow/{productId}/details"
+  static let authUserId = "\(scheme)://flow/{productId}/user-id"
   static let idDetailsForm = "\(scheme)://flow/{productId}/id-details"
   static let countryPicker = "\(scheme)://flow/{productId}/id-details/country"
   static let idTypePicker = "\(scheme)://flow/{productId}/id-details/id-type"

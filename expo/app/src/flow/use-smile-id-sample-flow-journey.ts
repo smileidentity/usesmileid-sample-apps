@@ -31,10 +31,12 @@ export const smileIDSampleEntryFor = (
 export const smileIDSampleStepAfterUserDetails = (
   product: UseSmileIDSampleProduct,
   bindings: UseSmileIDSampleTokenBindings | null,
-): Href =>
-  smileIDSampleFlowPlan(bindings, product).showIdDetailsForm
+): Href => {
+  if (product.id === 'smartSelfieAuth') return `/flow/${product.id}/user-id`;
+  return smileIDSampleFlowPlan(bindings, product).showIdDetailsForm
     ? `/flow/${product.id}/id-details`
     : `/flow/${product.id}/run`;
+};
 
 /// A product's first step, past the form when the token binds all it collects.
 export const smileIDSampleFirstStepFor = (

@@ -181,3 +181,7 @@ export const smileIDSampleProductCardFamily = (product: UseSmileIDSampleProduct,
   if (product.cardFamily === UseSmileIDSampleMarks.SMART_SELFIE) return product.cardFamily;
   return product.cardFamily === 'KYC' ? strings.productFamilyKyc : strings.productFamilyVerification;
 };
+
+/// Whether a run enrols the user it submits, so its user ID can later be authenticated.
+export const smileIDSampleProductEnrollsUser = (product: UseSmileIDSampleProduct): boolean =>
+  product.capture && product.id !== 'smartSelfieAuth';
