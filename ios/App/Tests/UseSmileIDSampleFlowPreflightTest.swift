@@ -110,7 +110,9 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
           // Both families filled, so each product finds the field it submits.
           document: UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3),
           idNumber: "1234567"
-        )
+        ),
+        // Only authentication carries one; every other product leaves it to the server.
+        userId: product == .smartSelfieAuth ? "user_01m4gahg4ceceatsw25mc5dd1h" : ""
       )
       XCTAssertEqual(useSmileIDSamplePreflight(filled), .ready, product.id)
     }
