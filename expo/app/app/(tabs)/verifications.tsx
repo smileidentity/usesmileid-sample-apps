@@ -1,6 +1,7 @@
 import {
   UseSmileIDSampleTransientNoticeHost,
   VerificationsScreen,
+  smileIDSampleProcessingPollDelayMillis,
   smileIDSampleRemovalNotice,
   useSmileIDSampleJobStore,
   useSmileIDSampleSessionStore,
@@ -40,13 +41,16 @@ export default function Verifications() {
     useCallback(() => {
       let poll: ReturnType<typeof setTimeout> | undefined;
       let left = false;
+      let attempt = 0;
       const check = async () => {
         const pending = await refreshProcessing(
           useSmileIDSampleSessionStore.getState().live,
           Date.now(),
           smileIDSampleStatusApi,
         );
-        if (!left && pending > 0) poll = setTimeout(() => void check(), PROCESSING_POLL_MILLIS);
+        if (left || pending === 0) return;
+        const wait = smileIDSampleProcessingPollDelayMillis(attempt++);
+        if (wait !== null) poll = setTimeout(() => void check(), wait);
       };
       void check();
       return () => {
@@ -92,6 +96,3 @@ export default function Verifications() {
 const styles = StyleSheet.create({
   host: { flex: 1 },
 });
-
-/// How often the list asks about rows still processing while it is on screen.
-const PROCESSING_POLL_MILLIS = 5_000;

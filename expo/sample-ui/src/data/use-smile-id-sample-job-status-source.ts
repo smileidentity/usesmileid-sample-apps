@@ -6,6 +6,8 @@ export type UseSmileIDSampleStatusRefresh =
   | { readonly kind: 'updated'; readonly status: UseSmileIDSampleStatus; readonly message: string; readonly httpCode: number }
   /// 202 — still running; the row already says Processing.
   | { readonly kind: 'stillProcessing' }
+  /// 404 — the server has no state for the job yet. The store reads it as still processing while the job is new, and as a failure after that.
+  | { readonly kind: 'notRecorded' }
   /// No live session, so no credential to ask with. A precondition, not an error.
   | { readonly kind: 'noSession' }
   /// Never submitted under a scanned session, so there is no server-side job.
@@ -31,6 +33,8 @@ export const smileIDSampleRefreshLabel = (
       return strings.statusRefreshResult({ status: smileIDSampleStatusLabel(outcome.status, strings), message: outcome.message });
     case 'stillProcessing':
       return strings.statusRefreshProcessing;
+    case 'notRecorded':
+      return strings.statusRefreshFailed({ reason: SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL });
     case 'noSession':
       return strings.statusRefreshNoSession;
     case 'noServerJob':
@@ -56,3 +60,13 @@ const smileIDSampleFailureText = (
       return failed.reason;
   }
 };
+
+/// How long a 404 reads as a job the server has not recorded yet; after it, as a job it never will.
+export const SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS = 10 * 60 * 1000;
+
+/// What a job the server never recorded reads as: the code it answered with.
+export const SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL = 'HTTP 404';
+
+/// The wait before the list's next check of rows still processing, backing off from 5s to a minute; null once it has asked enough.
+export const smileIDSampleProcessingPollDelayMillis = (attempt: number): number | null =>
+  attempt >= 12 ? null : Math.min(5_000 * 2 ** Math.min(attempt, 4), 60_000);

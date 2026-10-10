@@ -5,9 +5,11 @@ import {
   useSmileIDSampleJobStore,
   type UseSmileIDSampleRefreshSession,
 } from '../src/data/use-smile-id-sample-job-store';
-import type {
-  UseSmileIDSampleJobStatusSource,
-  UseSmileIDSampleStatusRefresh,
+import {
+  SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS,
+  smileIDSampleProcessingPollDelayMillis,
+  type UseSmileIDSampleJobStatusSource,
+  type UseSmileIDSampleStatusRefresh,
 } from '../src/data/use-smile-id-sample-job-status-source';
 import type { UseSmileIDSampleJob } from '../src/model/use-smile-id-sample-job';
 import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
@@ -154,6 +156,22 @@ describe('applyStatus', () => {
     expect(store().jobs?.[0]?.httpStatus).toBe(200);
     expect(await AsyncStorage.getItem('sample.jobs.v3')).not.toContain('200 OK');
   });
+});
+
+describe('a 404', () => {
+  it('reads as processing while the job is new, and as a failure after the window', async () => {
+    await store().add(job({ id: 'job_new', createdAtMillis: NOW - 60_000 }));
+    await store().add(job({ id: 'job_old', createdAtMillis: NOW - SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS }));
+    const source = sourceReturning({ kind: 'notRecorded' });
+    expect(await store().refresh('job_new', session(), NOW, source)).toEqual({ kind: 'stillProcessing' });
+    expect(await store().refresh('job_old', session(), NOW, source)).toEqual({ kind: 'failed', reason: 'HTTP 404' });
+  });
+});
+
+it('the list backs off from 5 seconds to a minute and stops after twelve checks', () => {
+  expect(Array.from({ length: 13 }, (_, attempt) => smileIDSampleProcessingPollDelayMillis(attempt))).toEqual([
+    5_000, 10_000, 20_000, 40_000, 60_000, 60_000, 60_000, 60_000, 60_000, 60_000, 60_000, 60_000, null,
+  ]);
 });
 
 describe("the list's check", () => {

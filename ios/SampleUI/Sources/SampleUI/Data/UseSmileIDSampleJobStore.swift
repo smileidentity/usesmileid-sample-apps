@@ -174,9 +174,25 @@ public actor UseSmileIDSampleJobStore {
       return .failed(reason: UseSmileIDSampleStrings.jobErrorUnexpected(type: "\(type(of: error))"))
     }
 
+    if outcome == .notRecorded {
+      let age = now.timeIntervalSince1970 * 1000 - Double(row.createdAtMillis)
+      return age < Self.notRecordedWindow * 1000 ? .stillProcessing : .failed(reason: Self.notRecordedDetail)
+    }
     guard case .updated(let status, let message, let httpCode) = outcome else { return outcome }
     let written = applyStatus(jobId, status: status, message: message, httpStatus: httpCode)
     return written ? outcome : .failed(reason: UseSmileIDSampleStrings.jobErrorNotStored)
+  }
+
+  /// How long a 404 reads as a job the server has not recorded yet, in seconds; after it, as a job it never will.
+  public static let notRecordedWindow: TimeInterval = 10 * 60
+
+  /// What a job the server never recorded reads as: the code it answered with.
+  public static let notRecordedDetail = "HTTP 404"
+
+  /// The wait before the list's next check of rows still processing, backing off from 5s to a minute; nil once it has asked enough.
+  public static func processingPollDelay(attempt: Int) -> TimeInterval? {
+    guard attempt < 12 else { return nil }
+    return min(5 * pow(2, Double(min(attempt, 4))), 60)
   }
 
   /// The list's check: asks about every processing row, silently, and returns how many the server still has processing, so the list polls only while one can change.

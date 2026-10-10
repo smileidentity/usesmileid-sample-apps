@@ -11,6 +11,8 @@ public enum UseSmileIDSampleStatusRefresh: Equatable, Sendable {
   case updated(status: UseSmileIDSampleStatus, message: String, httpCode: Int)
   /// 202 — still running; the row already says Processing.
   case stillProcessing
+  /// 404 — the server has no state for the job yet. The store reads it as still processing while the job is new, and as a failure after that.
+  case notRecorded
   /// No live session, so no credential to ask with. A precondition, not an error.
   case noSession
   /// Never submitted under a scanned session, so there is no server-side job.

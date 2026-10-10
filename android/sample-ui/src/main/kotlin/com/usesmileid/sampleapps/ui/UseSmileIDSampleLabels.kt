@@ -83,6 +83,7 @@ fun UseSmileIDSampleStatusRefresh.message(resources: Resources): String = when (
     is UseSmileIDSampleStatusRefresh.Updated ->
         resources.getString(R.string.sample_status_refresh_result, resources.getString(status.labelRes), message)
     UseSmileIDSampleStatusRefresh.StillProcessing -> resources.getString(R.string.sample_status_refresh_processing)
+    UseSmileIDSampleStatusRefresh.NotRecorded -> resources.getString(R.string.sample_status_refresh_failed, NOT_RECORDED_DETAIL)
     UseSmileIDSampleStatusRefresh.NoSession -> resources.getString(R.string.sample_status_refresh_no_session)
     UseSmileIDSampleStatusRefresh.NoServerJob -> resources.getString(R.string.sample_status_refresh_not_token_job)
     UseSmileIDSampleStatusRefresh.PartnerMismatch -> resources.getString(R.string.sample_status_refresh_other_partner)
@@ -191,3 +192,6 @@ fun rememberUseSmileIDSampleCaptureAsWording(): UseSmileIDSampleCaptureAsWording
         )
     }
 }
+
+/** What a job the server never recorded reads as: the code it answered with. */
+private const val NOT_RECORDED_DETAIL = "HTTP 404"

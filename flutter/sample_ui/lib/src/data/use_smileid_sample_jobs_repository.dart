@@ -115,6 +115,14 @@ mixin UseSmileIDSampleJobRefreshMixin
         // The type, never the message: this text goes on screen and a client error carries the URL.
         return UseSmileIDSampleStatusFailed.unexpected('${error.runtimeType}');
       }
+      if (outcome is UseSmileIDSampleStatusNotRecorded) {
+        return nowMillis - row.createdAtMillis <
+                useSmileIDSampleNotRecordedWindowMillis
+            ? const UseSmileIDSampleStatusStillProcessing()
+            : const UseSmileIDSampleStatusFailed(
+                useSmileIDSampleNotRecordedDetail,
+              );
+      }
       if (outcome is! UseSmileIDSampleStatusUpdated) {
         return outcome;
       }

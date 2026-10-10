@@ -301,6 +301,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     switch outcome {
     case .updated(let status, let message, _): UseSmileIDSampleStrings.statusRefreshResult(status: status.label, message: message)
     case .stillProcessing: UseSmileIDSampleStrings.statusRefreshProcessing
+    case .notRecorded: UseSmileIDSampleStrings.statusRefreshFailed(reason: UseSmileIDSampleJobStore.notRecordedDetail)
     case .noSession: UseSmileIDSampleStrings.statusRefreshNoSession
     case .noServerJob: UseSmileIDSampleStrings.statusRefreshNotTokenJob
     case .partnerMismatch: UseSmileIDSampleStrings.statusRefreshOtherPartner
@@ -338,15 +339,17 @@ private struct UseSmileIDSampleVerificationsHost: View {
     )
     // No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
     .task(id: app.session?.id) {
+      var attempt = 0
       while await app.refreshProcessingJobs() > 0 {
-        try? await Task.sleep(nanoseconds: Self.processingPollNanoseconds)
-        if Task.isCancelled { return }
+        guard let delay = UseSmileIDSampleJobStore.processingPollDelay(attempt: attempt) else { return }
+        attempt += 1
+        try? await Task.sleep(nanoseconds: UInt64(delay * 1000000000))
+        if Task.isCancelled {
+          return
+        }
       }
     }
   }
-
-  /// How often the list asks about rows still processing while it is on screen.
-  private static let processingPollNanoseconds: UInt64 = 5_000_000_000
 }
 
 /// The profiles list and its created confirmation; the id is consumed on sight, so returning cannot re-show it.

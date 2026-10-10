@@ -195,6 +195,28 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     XCTAssertEqual(outcome, Self.updated, "the guard was never released")
   }
 
+  func testA404ReadsAsProcessingWhileTheJobIsNewAndAsAFailureAfterTheWindow() async throws {
+    let store = Self.store(UseSmileIDSampleFakeStatusSource { _ in .notRecorded })
+    await store.add(Self.job(id: "job-new", sessionId: "s-1", createdAt: useSmileIDSampleTestNow.addingTimeInterval(-60)))
+    await store.add(Self.job(
+      id: "job-old",
+      sessionId: "s-1",
+      createdAt: useSmileIDSampleTestNow.addingTimeInterval(-UseSmileIDSampleJobStore.notRecordedWindow)
+    ))
+
+    let new = try await store.refresh("job-new", live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    let old = try await store.refresh("job-old", live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
+    XCTAssertEqual(new, .stillProcessing)
+    XCTAssertEqual(old, .failed(reason: "HTTP 404"))
+  }
+
+  func testTheListBacksOffFromFiveSecondsToAMinuteAndStopsAfterTwelveChecks() {
+    XCTAssertEqual(
+      (0...12).map { UseSmileIDSampleJobStore.processingPollDelay(attempt: $0) },
+      [5, 10, 20, 40, 60, 60, 60, 60, 60, 60, 60, 60, nil]
+    )
+  }
+
   func testTheListsCheckAsksAboutEveryProcessingRowAndCountsThoseStillProcessing() async throws {
     let source = UseSmileIDSampleFakeStatusSource { call in
       call.jobId == "job-done" ? Self.updated : .stillProcessing
@@ -210,7 +232,7 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     XCTAssertEqual(done?.status, .clear)
     // A cleared row is not asked about again.
     _ = try await store.refreshProcessing(live: Self.session(id: "s-1"), now: useSmileIDSampleTestNow)
-    XCTAssertEqual(source.calls.filter { $0.jobId == "job-done" }.count, 1)
+    XCTAssertEqual(source.calls.count { $0.jobId == "job-done" }, 1)
   }
 
   func testRowsTheSessionCannotAskAboutAreNotCountedSoTheListStopsChecking() async throws {
@@ -260,14 +282,15 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     id: String,
     sessionId: String?,
     sandbox: Bool = true,
-    partnerId: String? = useSmileIDSampleTestPartner
+    partnerId: String? = useSmileIDSampleTestPartner,
+    createdAt: Date = Date(timeIntervalSince1970: 0)
   ) -> UseSmileIDSampleJob {
     UseSmileIDSampleJob(
       id: id,
       userId: "user-\(id)",
       product: .smartSelfieEnrollment,
       status: .processing,
-      createdAt: Date(timeIntervalSince1970: 0),
+      createdAt: createdAt,
       message: "Submitted",
       httpStatus: 202,
       sandbox: sandbox,

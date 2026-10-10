@@ -21,12 +21,18 @@ class UseSmileIDSampleVerificationsTab extends ConsumerStatefulWidget {
       _UseSmileIDSampleVerificationsTabState();
 }
 
-/// How often the list asks about rows still processing while it is on screen.
-const Duration _processingPoll = Duration(seconds: 5);
+/// How soon a hidden list looks again to see whether it is back on screen; it asks the server nothing meanwhile.
+const Duration _hiddenRecheck = Duration(seconds: 5);
 
 class _UseSmileIDSampleVerificationsTabState
     extends ConsumerState<UseSmileIDSampleVerificationsTab> {
   Timer? _poll;
+
+  /// Bumped by every check, so only the newest one reschedules: a session scanned mid-check would otherwise start a second loop.
+  int _generation = 0;
+
+  /// The checks made since the list last found work, which sets the wait before the next.
+  int _attempt = 0;
 
   @override
   void initState() {
@@ -42,14 +48,19 @@ class _UseSmileIDSampleVerificationsTabState
   }
 
   /// No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
-  Future<void> _checkProcessing() async {
+  Future<void> _checkProcessing({bool restart = false}) async {
     _poll?.cancel();
+    final int generation = ++_generation;
+    if (restart) {
+      _attempt = 0;
+    }
     if (!mounted) {
       return;
     }
-    // Under a job's details the list waits: that page checks its own row and says what changed.
-    if (ModalRoute.of(context)?.isCurrent == false) {
-      _poll = Timer(_processingPoll, _checkProcessing);
+    // Under a job's details, or on another tab, the list waits: that page checks its own row and says what changed.
+    if (ModalRoute.of(context)?.isCurrent == false ||
+        !TickerMode.valuesOf(context).enabled) {
+      _poll = Timer(_hiddenRecheck, _checkProcessing);
       return;
     }
     final int now = DateTime.now().millisecondsSinceEpoch;
@@ -70,15 +81,22 @@ class _UseSmileIDSampleVerificationsTabState
           nowMillis: now,
           source: ref.read(useSmileIDSampleJobStatusSourceProvider),
         );
-    if (mounted && stillProcessing > 0) {
-      _poll = Timer(_processingPoll, _checkProcessing);
+    if (!mounted || generation != _generation || stillProcessing == 0) {
+      return;
+    }
+    final Duration? wait = useSmileIDSampleProcessingPollDelay(_attempt++);
+    if (wait != null) {
+      _poll = Timer(wait, _checkProcessing);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     // A newly scanned session can answer for rows the last one could not.
-    ref.listen(useSmileIDSampleSessionProvider, (_, _) => _checkProcessing());
+    ref.listen(
+      useSmileIDSampleSessionProvider,
+      (_, _) => _checkProcessing(restart: true),
+    );
     final AsyncValue<List<UseSmileIDSampleJob>> jobs = ref.watch(
       useSmileIDSampleJobsProvider,
     );

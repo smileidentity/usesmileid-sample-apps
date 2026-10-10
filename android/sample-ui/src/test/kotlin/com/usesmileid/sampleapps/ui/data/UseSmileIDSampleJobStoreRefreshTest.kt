@@ -188,6 +188,24 @@ class UseSmileIDSampleJobStoreRefreshTest {
     }
 
     @Test
+    fun `a 404 reads as processing while the job is new, and as a failure after the window`() = runTest {
+        val store = store(FakeStatusSource { _, _, _ -> UseSmileIDSampleStatusRefresh.NotRecorded })
+        store.add(job("job-new", sessionId = "s-1").copy(createdAtMillis = NOW - 60_000L))
+        store.add(job("job-old", sessionId = "s-1").copy(createdAtMillis = NOW - UseSmileIDSampleJobStore.NOT_RECORDED_WINDOW_MILLIS))
+
+        assertEquals(UseSmileIDSampleStatusRefresh.StillProcessing, store.refresh("job-new", session(id = "s-1"), NOW))
+        assertEquals(UseSmileIDSampleStatusRefresh.Failed("HTTP 404"), store.refresh("job-old", session(id = "s-1"), NOW))
+    }
+
+    @Test
+    fun `the list backs off from 5 seconds to a minute and stops after twelve checks`() {
+        assertEquals(
+            listOf(5_000L, 10_000L, 20_000L, 40_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, 60_000L, null),
+            (0..12).map { UseSmileIDSampleJobStore.processingPollDelayMillis(it) },
+        )
+    }
+
+    @Test
     fun `the list's check asks about every processing row and counts those still processing`() = runTest {
         val source = FakeStatusSource { jobId, _, _ ->
             if (jobId == "job-done") updated() else UseSmileIDSampleStatusRefresh.StillProcessing

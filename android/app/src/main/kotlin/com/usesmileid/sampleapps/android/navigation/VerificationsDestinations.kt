@@ -41,6 +41,7 @@ import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.rememberVerificationsScreenState
 import kotlinx.coroutines.flow.first
+import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen as VerificationDetailsContent
@@ -73,8 +74,9 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
 
     // No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
     LaunchedEffect(app.session?.id) {
+        var attempt = 0
         while (app.jobStore.refreshProcessing(app.session, System.currentTimeMillis()) > 0) {
-            delay(PROCESSING_POLL_MILLIS)
+            delay(UseSmileIDSampleJobStore.processingPollDelayMillis(attempt++) ?: break)
         }
     }
 
@@ -196,6 +198,3 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
         )
     }
 }
-
-/** How often the list asks about rows still processing while it is on screen. */
-private const val PROCESSING_POLL_MILLIS = 5_000L

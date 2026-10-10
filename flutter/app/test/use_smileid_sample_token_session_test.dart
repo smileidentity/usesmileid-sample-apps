@@ -421,15 +421,15 @@ void main() {
       },
     );
 
-    // The server answers 404 until an accepted job has a state, so a check just after submitting is not a failure.
-    test('a 404 is still processing, not a failure', () {
+    // The server answers 404 until an accepted job has a state; the store decides how long that reads as processing.
+    test('a 404 is a job the server has not recorded, not a failure', () {
       expect(
         useSmileIDSampleStatusOutcome(404, '{"status":"not_found"}'),
-        isA<UseSmileIDSampleStatusStillProcessing>(),
+        isA<UseSmileIDSampleStatusNotRecorded>(),
       );
       expect(
         useSmileIDSampleStatusOutcome(404, 'not json'),
-        isA<UseSmileIDSampleStatusStillProcessing>(),
+        isA<UseSmileIDSampleStatusNotRecorded>(),
       );
     });
 

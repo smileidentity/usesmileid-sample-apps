@@ -7,9 +7,11 @@ import {
   type UseSmileIDSampleJob,
 } from '../model/use-smile-id-sample-job';
 import type { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
-import type {
-  UseSmileIDSampleJobStatusSource,
-  UseSmileIDSampleStatusRefresh,
+import {
+  SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL,
+  SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS,
+  type UseSmileIDSampleJobStatusSource,
+  type UseSmileIDSampleStatusRefresh,
 } from './use-smile-id-sample-job-status-source';
 
 const STORAGE_KEY = 'sample.jobs.v3';
@@ -189,6 +191,11 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
         // The type, never the message: this text goes on screen and a client error carries the URL.
         const name = error instanceof Error ? error.name : 'Error';
         return { kind: 'failed', reason: name, failure: 'unexpected' };
+      }
+      if (outcome.kind === 'notRecorded') {
+        return nowMillis - row.createdAtMillis < SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS
+          ? { kind: 'stillProcessing' }
+          : { kind: 'failed', reason: SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL };
       }
       if (outcome.kind !== 'updated') return outcome;
 

@@ -12,12 +12,13 @@ void main() {
     bool sandbox = true,
     String? sessionId = 'sess_1',
     String? partnerId = 'partner_1',
+    int createdAtMillis = now,
   }) => UseSmileIDSampleJob(
     id: id,
     userId: 'user_1',
     product: UseSmileIDSampleProduct.values.first,
     status: UseSmileIDSampleStatus.processing,
-    createdAtMillis: now,
+    createdAtMillis: createdAtMillis,
     message: 'Submitted, awaiting result',
     httpStatus: 202,
     sandbox: sandbox,
@@ -43,6 +44,70 @@ void main() {
   late UseSmileIDSampleMemoryJobsRepository store;
 
   setUp(() => store = UseSmileIDSampleMemoryJobsRepository());
+
+  group('a 404', () {
+    test(
+      'reads as processing while the job is new, and as a failure after the window',
+      () async {
+        await store.add(row(id: 'job_new', createdAtMillis: now - 60000));
+        await store.add(
+          row(
+            id: 'job_old',
+            createdAtMillis: now - useSmileIDSampleNotRecordedWindowMillis,
+          ),
+        );
+        final _Returning source = _Returning(
+          const UseSmileIDSampleStatusNotRecorded(),
+        );
+
+        expect(
+          await store.refresh(
+            jobId: 'job_new',
+            session: session(),
+            nowMillis: now,
+            source: source,
+          ),
+          isA<UseSmileIDSampleStatusStillProcessing>(),
+        );
+        final UseSmileIDSampleStatusRefresh? old = await store.refresh(
+          jobId: 'job_old',
+          session: session(),
+          nowMillis: now,
+          source: source,
+        );
+        expect((old! as UseSmileIDSampleStatusFailed).reason, 'HTTP 404');
+      },
+    );
+  });
+
+  test(
+    'the list backs off from 5 seconds to a minute and stops after twelve checks',
+    () {
+      expect(
+        <Duration?>[
+          for (int i = 0; i <= 12; i++) useSmileIDSampleProcessingPollDelay(i),
+        ],
+        <Duration?>[
+          for (final int s in <int>[
+            5,
+            10,
+            20,
+            40,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+            60,
+          ])
+            Duration(seconds: s),
+          null,
+        ],
+      );
+    },
+  );
 
   group('the list\'s check', () {
     test(

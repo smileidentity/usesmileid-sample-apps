@@ -36,6 +36,12 @@ class UseSmileIDSampleStatusStillProcessing
   const UseSmileIDSampleStatusStillProcessing();
 }
 
+/// 404 — the server has no state for the job yet. The store reads it as still processing while the job is new, and as a failure after that.
+class UseSmileIDSampleStatusNotRecorded extends UseSmileIDSampleStatusRefresh {
+  /// No fields: the code is the whole message.
+  const UseSmileIDSampleStatusNotRecorded();
+}
+
 /// No live session, so no credential to ask with. A precondition, not an error.
 class UseSmileIDSampleStatusNoSession extends UseSmileIDSampleStatusRefresh {
   /// No fields: which session is missing is not the screen's business.
@@ -134,6 +140,9 @@ String useSmileIDSampleRefreshLabel(
     message: updated.message,
   ),
   UseSmileIDSampleStatusStillProcessing() => strings.statusRefreshProcessing,
+  UseSmileIDSampleStatusNotRecorded() => strings.statusRefreshFailed(
+    reason: useSmileIDSampleNotRecordedDetail,
+  ),
   UseSmileIDSampleStatusNoSession() => strings.statusRefreshNoSession,
   UseSmileIDSampleStatusNoServerJob() => strings.statusRefreshNotTokenJob,
   UseSmileIDSampleStatusPartnerMismatch() => strings.statusRefreshOtherPartner,
@@ -141,3 +150,18 @@ String useSmileIDSampleRefreshLabel(
     reason: failed.message(strings),
   ),
 };
+
+/// How long a 404 reads as a job the server has not recorded yet; after it, as a job it never will.
+const int useSmileIDSampleNotRecordedWindowMillis = 10 * 60 * 1000;
+
+/// What a job the server never recorded reads as: the code it answered with.
+const String useSmileIDSampleNotRecordedDetail = 'HTTP 404';
+
+/// The wait before the list's next check of rows still processing, backing off from 5s to a minute; null once it has asked enough.
+Duration? useSmileIDSampleProcessingPollDelay(int attempt) {
+  if (attempt >= 12) {
+    return null;
+  }
+  final int seconds = 5 * (1 << (attempt < 4 ? attempt : 4));
+  return Duration(seconds: seconds < 60 ? seconds : 60);
+}
