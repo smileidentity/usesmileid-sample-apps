@@ -75,7 +75,7 @@ public struct UseSmileIDSampleJobRow: View {
   }
 
   private var tile: some View {
-    UseSmileIDSampleProductTile(product, side: tileSize)
+    UseSmileIDSampleProductTile(product, side: tileSize, iconSize: Self.tileIconSize)
   }
 
   private var text: some View {
@@ -88,5 +88,10 @@ public struct UseSmileIDSampleJobRow: View {
     // One line each at the design's scale, as the design draws it; unlimited once the badge stacks.
     .lineLimit(sizeCategory.isAccessibilityCategory ? nil : 1)
     .frame(maxWidth: .infinity, alignment: .leading)
+  }
+
+  /// The board's 18 glyph, fixed while the tile scales with the text; no icon token carries it.
+  private static var tileIconSize: CGFloat {
+    18
   }
 }

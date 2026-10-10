@@ -4,17 +4,19 @@ import SwiftUI
 public struct UseSmileIDSampleProductTile: View {
   private let product: UseSmileIDSampleProduct
   private let side: CGFloat
+  private let iconSize: CGFloat
 
   @Environment(\.useSmileIDSampleColors) private var colors
 
-  /// `side` defaults to the job row's 36, whose glyph is the board's 18; a larger tile scales the glyph with it.
-  public init(_ product: UseSmileIDSampleProduct, side: CGFloat = 36) {
+  /// `side` defaults to the job row's 36; the glyph is half the side unless `iconSize` fixes it, as the job row's 18 is.
+  public init(_ product: UseSmileIDSampleProduct, side: CGFloat = 36, iconSize: CGFloat? = nil) {
     self.product = product
     self.side = side
+    self.iconSize = iconSize ?? side / 2
   }
 
   public var body: some View {
-    UseSmileIDSampleIcon(product.icon, tint: product.hue?.icon ?? colors.textMuted, size: side / 2)
+    UseSmileIDSampleIcon(product.icon, tint: product.hue?.icon ?? colors.textMuted, size: iconSize)
       .frame(width: side, height: side)
       .background(
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.rowTile, style: .continuous)

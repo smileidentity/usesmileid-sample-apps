@@ -133,7 +133,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testAuthUserIdSurvivesMaxDynamicType() {
-    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+    assertSurvivesMaxDynamicType {
       authUserId(Self.previousUserIds[0], previous: Self.previousUserIds)
     }
   }
