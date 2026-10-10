@@ -11,7 +11,7 @@ let package = Package(
   ],
   dependencies: [
     // Registry-only, permanently; the SDK repo substitutes its source layer by identity (§9.1).
-    .package(url: "https://github.com/smileidentity/ios-spm.git", exact: "12.2.0-SNAPSHOT.20261008123655.37777505377"),
+    .package(url: "https://github.com/smileidentity/ios-spm.git", exact: "12.2.0-SNAPSHOT.20261010165547.38069330173"),
     // Test-only, so it never reaches the SDK repo's Sample; same tool and pin as that repo's snapshot gate.
     .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.19.6")
   ],
