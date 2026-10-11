@@ -18,7 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -96,21 +95,21 @@ fun UseSmileIDSampleJobRow(
     }
 }
 
-/** A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen. */
+/** A product's hue tile with its icon: the job row's leading tile, and the enrolment row's on the authentication user ID screen. */
 @Composable
-internal fun UseSmileIDSampleProductTile(product: UseSmileIDSampleProduct, modifier: Modifier = Modifier, size: Dp = TILE_SIZE) {
+internal fun UseSmileIDSampleProductTile(product: UseSmileIDSampleProduct, modifier: Modifier = Modifier) {
     val hue = product.hue
     Surface(
-        modifier = modifier.size(size),
+        modifier = modifier.size(TILE_SIZE),
         shape = UseSmileIDSampleTheme.shapes.rowTile,
         color = hue.tile,
     ) {
         Box(contentAlignment = Alignment.Center) {
             val icon = product.iconRes
             if (icon != null) {
-                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE * (size / TILE_SIZE))
+                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE)
             } else {
-                ProductMarkGlyph(tint = hue.icon, size = SmileDimens.sizeIconMd * (size / TILE_SIZE))
+                ProductMarkGlyph(tint = hue.icon)
             }
         }
     }

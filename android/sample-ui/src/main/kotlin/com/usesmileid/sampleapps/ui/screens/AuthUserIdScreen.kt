@@ -1,36 +1,37 @@
 package com.usesmileid.sampleapps.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.style.TextAlign
 import com.smileid.designsystem.SmileDimens
-import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
+import com.usesmileid.sampleapps.ui.components.CheckGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleProductTile
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.tagged
@@ -54,42 +55,55 @@ fun AuthUserIdScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .imePadding()
             .testTag(UseSmileIDSampleTestIds.AUTH_USER_ID_SCREEN),
     ) {
         UseSmileIDSampleTopAppBar(title = UseSmileIDSampleProduct.SmartSelfieAuth.localizedTitle(), onBack = onBack)
-        LazyColumn(
-            modifier = Modifier.weight(1f),
-            contentPadding = PaddingValues(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingLg),
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = SmileDimens.spacingMd),
             verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         ) {
-            item {
-                Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                    UseSmileIDSampleProductTile(product = UseSmileIDSampleProduct.SmartSelfieAuth, size = SmileDimens.space64)
-                }
-            }
+            UseSmileIDSampleSectionLabel(text = UseSmileIDSampleStrings.authUserIdSection)
+            UseSmileIDSampleTextInput(
+                value = userId,
+                onValueChange = onUserIdChange,
+                placeholder = UseSmileIDSampleStrings.authUserIdPlaceholder,
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.None,
+                    autoCorrectEnabled = false,
+                    imeAction = ImeAction.Done,
+                ),
+                testId = UseSmileIDSampleTestIds.AUTH_USER_ID_INPUT,
+            )
+            Text(
+                text = UseSmileIDSampleStrings.authUserIdPreviousBody,
+                style = UseSmileIDSampleTheme.type.textStyleCaption,
+                color = UseSmileIDSampleTheme.colors.textMuted,
+            )
             if (previousUserIds.isEmpty()) {
-                item {
-                    Heading(UseSmileIDSampleStrings.authUserIdEmptyTitle)
-                    Body(UseSmileIDSampleStrings.authUserIdPreviousBody)
+                UseSmileIDSampleSectionSurface(
+                    label = UseSmileIDSampleStrings.authUserIdRun,
+                    modifier = Modifier.padding(top = SmileDimens.spacingSm),
+                ) {
+                    EnrollmentRow(onClick = onRegister)
                 }
-                item { Heading(UseSmileIDSampleStrings.authUserIdRun) }
-                item { RegisterCard(onClick = onRegister) }
-                item { Or() }
-                item { UserIdField(userId = userId, onUserIdChange = onUserIdChange) }
             } else {
-                item { UserIdField(userId = userId, onUserIdChange = onUserIdChange) }
-                item { Or() }
-                item {
-                    Heading(UseSmileIDSampleStrings.authUserIdPrevious)
-                    Body(UseSmileIDSampleStrings.authUserIdPreviousBody)
-                }
-                itemsIndexed(previousUserIds) { index, previous ->
-                    UseSmileIDSampleOptionRow(
-                        label = previous,
-                        selected = previous == chosen,
-                        onClick = { onUserIdChange(previous) },
-                        testId = UseSmileIDSampleTestIds.authUserIdOption(index),
-                    )
+                UseSmileIDSampleSectionSurface(
+                    label = UseSmileIDSampleStrings.authUserIdPrevious,
+                    modifier = Modifier.padding(top = SmileDimens.spacingSm),
+                ) {
+                    previousUserIds.forEachIndexed { index, previous ->
+                        if (index > 0) UseSmileIDSampleSettingRowDivider()
+                        PreviousIdRow(
+                            userId = previous,
+                            selected = previous == chosen,
+                            onClick = { onUserIdChange(previous) },
+                            testId = UseSmileIDSampleTestIds.authUserIdOption(index),
+                        )
+                    }
                 }
             }
         }
@@ -106,78 +120,49 @@ fun AuthUserIdScreen(
     }
 }
 
+/** The settings-row shape with the enrolment product's own hue tile, since the setting row's tile is neutral. */
 @Composable
-private fun UserIdField(userId: String, onUserIdChange: (String) -> Unit) {
-    Column(verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs)) {
-        Heading(UseSmileIDSampleStrings.authUserIdEnter)
-        UseSmileIDSampleTextInput(
-            value = userId,
-            onValueChange = onUserIdChange,
-            placeholder = UseSmileIDSampleStrings.authUserIdPlaceholder,
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.None,
-                autoCorrectEnabled = false,
-                imeAction = ImeAction.Done,
-            ),
-            testId = UseSmileIDSampleTestIds.AUTH_USER_ID_INPUT,
-        )
-    }
-}
-
-@Composable
-private fun RegisterCard(onClick: () -> Unit) {
-    val colors = UseSmileIDSampleTheme.colors
-    Surface(
+private fun EnrollmentRow(onClick: () -> Unit) {
+    Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(role = Role.Button, onClick = onClick)
+            .defaultMinSize(minHeight = SmileDimens.space64)
+            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm)
             .tagged(UseSmileIDSampleTestIds.AUTH_USER_ID_REGISTER),
-        shape = UseSmileIDSampleTheme.shapes.card,
-        color = colors.card.background,
-        border = BorderStroke(smileCardStrokeWidth, colors.cardStroke),
+        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Row(
-            modifier = Modifier.padding(SmileDimens.spacingSm),
-            horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            UseSmileIDSampleProductTile(product = UseSmileIDSampleProduct.SmartSelfieEnrollment)
-            Text(
-                text = UseSmileIDSampleProduct.SmartSelfieEnrollment.localizedTitle(),
-                style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
-                color = colors.card.title,
-            )
-        }
+        UseSmileIDSampleProductTile(product = UseSmileIDSampleProduct.SmartSelfieEnrollment)
+        Text(
+            text = UseSmileIDSampleProduct.SmartSelfieEnrollment.localizedTitle(),
+            style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
+            color = UseSmileIDSampleTheme.colors.textTitle,
+            modifier = Modifier.weight(1f),
+        )
+        UseSmileIDSampleSettingRowChevron()
     }
 }
 
+/** One earlier user ID, in body weight because it is a value the partner reads, not a row title; checked when it is the one in the field. */
 @Composable
-private fun Heading(text: String) {
-    Text(
-        text = text,
-        style = UseSmileIDSampleTheme.type.textStyleTitle,
-        color = UseSmileIDSampleTheme.colors.textTitle,
-        modifier = Modifier.semantics { heading() },
-    )
-}
-
-@Composable
-private fun Body(text: String) {
-    Text(
-        text = text,
-        style = UseSmileIDSampleTheme.type.textStyleCaption,
-        color = UseSmileIDSampleTheme.colors.textMuted,
-        modifier = Modifier.padding(top = SmileDimens.spacingXxs),
-    )
-}
-
-@Composable
-private fun Or() {
-    Text(
-        text = UseSmileIDSampleStrings.authUserIdOr,
-        style = UseSmileIDSampleTheme.type.textStyleCaption,
-        color = UseSmileIDSampleTheme.colors.textMuted,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.fillMaxWidth(),
-    )
+private fun PreviousIdRow(userId: String, selected: Boolean, onClick: () -> Unit, testId: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .defaultMinSize(minHeight = SmileDimens.sizeControlMd)
+            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingSm)
+            .tagged(testId),
+        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = userId,
+            style = UseSmileIDSampleTheme.type.textStyleBody,
+            color = UseSmileIDSampleTheme.colors.textTitle,
+            modifier = Modifier.weight(1f),
+        )
+        if (selected) CheckGlyph(tint = UseSmileIDSampleTheme.colors.primary)
+    }
 }
