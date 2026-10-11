@@ -90,8 +90,11 @@
     <string name="sample_auth_user_id_section">USER ID</string>
     <string name="sample_auth_user_id_placeholder">user_…</string>
     <string name="sample_auth_user_id_previous">PREVIOUS USER IDS</string>
-    <string name="sample_auth_user_id_previous_body">The ID of a user who has already been verified. A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you one.</string>
+    <string name="sample_auth_user_id_latest">LATEST</string>
+    <string name="sample_auth_user_id_hint">Type or paste the user ID of someone who is already enrolled.</string>
+    <string name="sample_auth_user_id_or">OR</string>
     <string name="sample_auth_user_id_run">RUN A VERIFICATION</string>
+    <string name="sample_auth_user_id_run_body">A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you a user ID.</string>
     <string name="sample_user_details_profile_name">Profile name (optional)</string>
     <string name="sample_user_details_profile_name_hint">Shown on the consent screen</string>
     <string name="sample_user_details_from_token">Provided by token</string>

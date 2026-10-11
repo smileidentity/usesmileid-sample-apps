@@ -32,7 +32,7 @@ import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet as IdTypePickerCon
 import com.usesmileid.sampleapps.ui.screens.KycIdFormScreen as KycIdFormContent
 import com.usesmileid.sampleapps.ui.screens.UserDetailsScreen as UserDetailsContent
 import com.usesmileid.sampleapps.ui.screens.AuthUserIdScreen as AuthUserIdContent
-import com.usesmileid.sampleapps.ui.state.previousAuthUserIds
+import com.usesmileid.sampleapps.ui.state.previousAuthUsers
 import com.usesmileid.sampleapps.ui.state.settledItems
 
 /** The pre-flow wizard's routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
@@ -88,7 +88,7 @@ fun AuthUserIdScreen(productId: String, navigator: DestinationsNavigator) {
     AuthUserIdContent(
         userId = app.forms.authUserId,
         // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
-        previousUserIds = previousAuthUserIds(app.jobs.orEmpty(), app.session?.partnerId, app.useSandbox),
+        previousUsers = previousAuthUsers(app.jobs.orEmpty(), app.session?.partnerId, app.useSandbox),
         onUserIdChange = app.forms::authUserId,
         onRegister = {
             app.forms.startRun(app.profiles.active)

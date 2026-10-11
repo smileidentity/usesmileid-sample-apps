@@ -33,13 +33,14 @@ fun UseSmileIDSampleStatusBadge(
     StatusPill(label = status.label(), background = background, foreground = foreground, modifier = modifier, testId = testId)
 }
 
+/** The pill shape and type every badge shares, in whichever soft fill the caller picks. */
 @Composable
-private fun StatusPill(
+internal fun StatusPill(
     label: String,
     background: Color,
     foreground: Color,
-    modifier: Modifier,
-    testId: String?,
+    modifier: Modifier = Modifier,
+    testId: String? = null,
 ) {
     Text(
         text = label,

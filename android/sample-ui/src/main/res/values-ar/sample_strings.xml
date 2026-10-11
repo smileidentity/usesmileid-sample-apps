@@ -90,8 +90,11 @@
     <string name="sample_auth_user_id_section">معرّف المستخدم</string>
     <string name="sample_auth_user_id_placeholder">user_…</string>
     <string name="sample_auth_user_id_previous">معرّفات المستخدمين السابقة</string>
-    <string name="sample_auth_user_id_previous_body">معرّف مستخدم تم التحقق منه من قبل. تحصل عليه من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.</string>
+    <string name="sample_auth_user_id_latest">الأحدث</string>
+    <string name="sample_auth_user_id_hint">اكتب أو الصق معرّف مستخدم مسجّل مسبقًا.</string>
+    <string name="sample_auth_user_id_or">أو</string>
     <string name="sample_auth_user_id_run">إجراء تحقق</string>
+    <string name="sample_auth_user_id_run_body">تحصل على معرّف مستخدم من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.</string>
     <string name="sample_user_details_profile_name">اسم الملف الشخصي (اختياري)</string>
     <string name="sample_user_details_profile_name_hint">يظهر في شاشة الموافقة</string>
     <string name="sample_user_details_from_token">مقدَّم من الرمز</string>

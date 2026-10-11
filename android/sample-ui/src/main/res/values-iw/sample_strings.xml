@@ -90,8 +90,11 @@
     <string name="sample_auth_user_id_section">מזהה משתמש</string>
     <string name="sample_auth_user_id_placeholder">user_…</string>
     <string name="sample_auth_user_id_previous">מזהי משתמש קודמים</string>
-    <string name="sample_auth_user_id_previous_body">מזהה של משתמש שכבר אומת. תקבל אותו מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.</string>
+    <string name="sample_auth_user_id_latest">האחרון</string>
+    <string name="sample_auth_user_id_hint">הקלידו או הדביקו מזהה של משתמש שכבר נרשם.</string>
+    <string name="sample_auth_user_id_or">או</string>
     <string name="sample_auth_user_id_run">הפעל אימות</string>
+    <string name="sample_auth_user_id_run_body">תקבלו מזהה משתמש מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.</string>
     <string name="sample_user_details_profile_name">שם הפרופיל (אופציונלי)</string>
     <string name="sample_user_details_profile_name_hint">מוצג במסך ההסכמה</string>
     <string name="sample_user_details_from_token">סופק על ידי הטוקן</string>

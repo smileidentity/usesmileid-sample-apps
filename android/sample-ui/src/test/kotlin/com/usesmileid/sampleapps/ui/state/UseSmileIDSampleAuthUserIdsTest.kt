@@ -37,7 +37,17 @@ class UseSmileIDSampleAuthUserIdsTest {
             job("user_c", UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleStatus.Processing, 2),
             job("user_a", UseSmileIDSampleProduct.EnhancedDocumentVerification, UseSmileIDSampleStatus.Clear, 4),
         )
-        assertEquals(listOf("user_a", "user_b", "user_c"), previousAuthUserIds(jobs, PARTNER, sandbox = true))
+        assertEquals(listOf("user_a", "user_b", "user_c"), previousAuthUsers(jobs, PARTNER, sandbox = true).map { it.userId })
+    }
+
+    @Test
+    fun `each user is offered with the newest run that enrolled it, so its row names that product and time`() {
+        val jobs = listOf(
+            job("user_a", UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleStatus.Clear, 1),
+            job("user_b", UseSmileIDSampleProduct.BiometricKyc, UseSmileIDSampleStatus.Clear, 2),
+            job("user_a", UseSmileIDSampleProduct.DocumentVerification, UseSmileIDSampleStatus.Clear, 3),
+        )
+        assertEquals(listOf("job_3", "job_2"), previousAuthUsers(jobs, PARTNER, sandbox = true).map { it.id })
     }
 
     @Test
@@ -49,7 +59,7 @@ class UseSmileIDSampleAuthUserIdsTest {
             job("user_ekyc", UseSmileIDSampleProduct.EnhancedKyc, UseSmileIDSampleStatus.Clear, 4),
             job(" ", UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleStatus.Clear, 5),
         )
-        assertEquals(emptyList<String>(), previousAuthUserIds(jobs, PARTNER, sandbox = true))
+        assertEquals(emptyList<String>(), previousAuthUsers(jobs, PARTNER, sandbox = true).map { it.userId })
     }
 
     @Test
@@ -60,8 +70,8 @@ class UseSmileIDSampleAuthUserIdsTest {
             job("user_production", UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleStatus.Clear, 3, sandbox = false),
             job("user_fixture", UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleStatus.Clear, 4, partnerId = null),
         )
-        assertEquals(listOf("user_mine"), previousAuthUserIds(jobs, PARTNER, sandbox = true))
-        assertEquals(emptyList<String>(), previousAuthUserIds(jobs, partnerId = null, sandbox = true))
+        assertEquals(listOf("user_mine"), previousAuthUsers(jobs, PARTNER, sandbox = true).map { it.userId })
+        assertEquals(emptyList<String>(), previousAuthUsers(jobs, partnerId = null, sandbox = true).map { it.userId })
     }
 
     private companion object {
