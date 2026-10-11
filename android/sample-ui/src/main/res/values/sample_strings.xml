@@ -52,7 +52,7 @@
     <string name="sample_scan_line_up">Line up the code inside the frame to link this device to a verification session.</string>
     <string name="sample_scan_portal_prefix">"Get a v3 token from the "</string>
     <string name="sample_scan_portal_link">Smile ID Portal</string>
-    <string name="sample_scan_portal_suffix">, under Security settings.</string>
+    <string name="sample_scan_portal_suffix">, under Developers › Security settings.</string>
     <string name="sample_scan_manual_entry">Or enter token manually</string>
     <string name="sample_scan_paste">Paste</string>
     <string name="sample_scan_link_token">Link token</string>

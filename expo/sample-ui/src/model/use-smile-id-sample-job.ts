@@ -34,6 +34,13 @@ export const smileIDSampleJobShortId = (job: UseSmileIDSampleJob) => short(job.i
 
 export const smileIDSampleJobShortUserId = (job: UseSmileIDSampleJob) => short(job.userId);
 
+const MIDDLE_HEAD = 9;
+const MIDDLE_TAIL = 7;
+
+/// Head and tail of the ID, since IDs from one session share a head.
+export const smileIDSampleJobMiddleUserId = ({ userId }: UseSmileIDSampleJob) =>
+  userId.length <= MIDDLE_HEAD + MIDDLE_TAIL + 1 ? userId : `${userId.slice(0, MIDDLE_HEAD)}…${userId.slice(-MIDDLE_TAIL)}`;
+
 /// Rebuilds a row read back from storage, resolving both enums by lookup so a rename cannot crash a restore.
 export const smileIDSampleJobFrom = (raw: Record<string, unknown>): UseSmileIDSampleJob | null => {
   // The id is the one field with no sensible substitute: a row nothing can address is not a row.

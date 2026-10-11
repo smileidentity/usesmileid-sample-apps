@@ -55,7 +55,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 @Composable
 fun AuthUserIdScreen(
     userId: String,
-    /** The newest run per enrolled user, newest first; each row names the product and time it came from. */
+    /** The newest run per enrolled user, newest first. */
     previousUsers: List<UseSmileIDSampleJob>,
     onUserIdChange: (String) -> Unit,
     onRegister: () -> Unit,
@@ -129,7 +129,7 @@ fun AuthUserIdScreen(
     }
 }
 
-/** One earlier user as a card laid out like a verifications row: product tile and name, ID and time beneath, LATEST where the status badge sits. Selected takes the primary border a chosen select trigger has, which costs the row no width. */
+/** An earlier user, laid out like a verifications row. */
 @Composable
 private fun PreviousUserRow(job: UseSmileIDSampleJob, time: String, latest: Boolean, selected: Boolean, onClick: () -> Unit, testId: String) {
     val colors = UseSmileIDSampleTheme.colors
@@ -151,7 +151,6 @@ private fun PreviousUserRow(job: UseSmileIDSampleJob, time: String, latest: Bool
             verticalAlignment = Alignment.CenterVertically,
         ) {
             UseSmileIDSampleProductTile(product = job.product)
-            // One line each at the design's scale, like a verifications row; enlarged type wraps, because eliding it would clip.
             val lines = if (stacks) Int.MAX_VALUE else 1
             Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs)) {
                 Text(
@@ -175,14 +174,14 @@ private fun PreviousUserRow(job: UseSmileIDSampleJob, time: String, latest: Bool
     }
 }
 
-/** LATEST in the info pill, on the newest user. */
+/** The newest user's pill. */
 @Composable
 private fun LatestPill() {
     val badge = UseSmileIDSampleTheme.colors.badge
     StatusPill(label = UseSmileIDSampleStrings.authUserIdLatest, background = badge.infoBackground, foreground = badge.infoText)
 }
 
-/** SmartSelfie Enrollment as a card with its hue tile and a chevron, because tapping it starts that flow. */
+/** Starts SmartSelfie Enrollment. */
 @Composable
 private fun EnrollmentRow(onClick: () -> Unit) {
     val colors = UseSmileIDSampleTheme.colors
@@ -214,7 +213,7 @@ private fun EnrollmentRow(onClick: () -> Unit) {
     }
 }
 
-/** A list's all-caps label with its hint beneath, so the partner knows what the cards below are before reading them. */
+/** A section label with its hint. */
 @Composable
 private fun ListSection(label: String, hint: String) {
     Column(verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXxs)) {
@@ -223,7 +222,7 @@ private fun ListSection(label: String, hint: String) {
     }
 }
 
-/** A hairline either side of OR, so the field and the card below read as two ways to the same ID. */
+/** OR between two hairlines. */
 @Composable
 private fun OrDivider() {
     val colors = UseSmileIDSampleTheme.colors
@@ -244,7 +243,7 @@ private fun OrDivider() {
     }
 }
 
-/** Muted supporting copy under a field or card. */
+/** Muted supporting copy. */
 @Composable
 private fun Caption(text: String) {
     Text(text = text, style = UseSmileIDSampleTheme.type.textStyleCaption, color = UseSmileIDSampleTheme.colors.textMuted)

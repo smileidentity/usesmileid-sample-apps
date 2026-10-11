@@ -52,7 +52,7 @@
     <string name="sample_scan_line_up">Placez le code dans le cadre pour relier cet appareil à une session de vérification.</string>
     <string name="sample_scan_portal_prefix">"Obtenez un jeton v3 depuis le "</string>
     <string name="sample_scan_portal_link">portail Smile ID</string>
-    <string name="sample_scan_portal_suffix">, dans les paramètres de sécurité.</string>
+    <string name="sample_scan_portal_suffix">, dans Développeurs › Paramètres de sécurité.</string>
     <string name="sample_scan_manual_entry">Ou saisissez le jeton manuellement</string>
     <string name="sample_scan_paste">Coller</string>
     <string name="sample_scan_link_token">Relier le jeton</string>

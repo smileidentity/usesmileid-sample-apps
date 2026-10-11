@@ -54,7 +54,7 @@
   "scan_line_up": "Line up the code inside the frame to link this device to a verification session.",
   "scan_portal_prefix": "Get a v3 token from the ",
   "scan_portal_link": "Smile ID Portal",
-  "scan_portal_suffix": ", under Security settings.",
+  "scan_portal_suffix": ", under Developers › Security settings.",
   "scan_manual_entry": "Or enter token manually",
   "scan_paste": "Paste",
   "scan_link_token": "Link token",

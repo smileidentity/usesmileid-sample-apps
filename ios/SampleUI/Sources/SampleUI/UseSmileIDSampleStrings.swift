@@ -347,32 +347,40 @@ public enum UseSmileIDSampleStrings {
     text("user_details_section")
   }
 
-  public static var authUserIdEnter: String {
-    text("auth_user_id_enter")
+  public static var authUserIdSection: String {
+    text("auth_user_id_section")
   }
 
   public static var authUserIdPlaceholder: String {
     text("auth_user_id_placeholder")
   }
 
-  public static var authUserIdOr: String {
-    text("auth_user_id_or")
-  }
-
   public static var authUserIdPrevious: String {
     text("auth_user_id_previous")
   }
 
-  public static var authUserIdPreviousBody: String {
-    text("auth_user_id_previous_body")
+  public static var authUserIdPreviousHint: String {
+    text("auth_user_id_previous_hint")
   }
 
-  public static var authUserIdEmptyTitle: String {
-    text("auth_user_id_empty_title")
+  public static var authUserIdLatest: String {
+    text("auth_user_id_latest")
+  }
+
+  public static var authUserIdHint: String {
+    text("auth_user_id_hint")
+  }
+
+  public static var authUserIdOr: String {
+    text("auth_user_id_or")
   }
 
   public static var authUserIdRun: String {
     text("auth_user_id_run")
+  }
+
+  public static var authUserIdRunBody: String {
+    text("auth_user_id_run_body")
   }
 
   public static var userDetailsProfileName: String {

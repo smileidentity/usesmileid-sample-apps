@@ -132,7 +132,7 @@ class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
       child: UseSmileIDSampleAuthUserIdScreen(
         userId: forms.authUserId,
         // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
-        previousUserIds: useSmileIDSamplePreviousAuthUserIds(
+        previousUsers: useSmileIDSamplePreviousAuthUsers(
           jobs,
           partnerId: live?.partnerId,
           sandbox: useSmileIDSampleUseSandbox(live),

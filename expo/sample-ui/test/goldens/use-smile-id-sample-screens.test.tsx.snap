@@ -32929,7 +32929,7 @@ exports[`scanToken dark default 1`] = `
             >
               Smile ID Portal
             </Text>
-            , under Security settings.
+            , under Developers › Security settings.
           </Text>
         </View>
       </View>
@@ -33976,7 +33976,7 @@ exports[`scanToken dark redirected 1`] = `
             >
               Smile ID Portal
             </Text>
-            , under Security settings.
+            , under Developers › Security settings.
           </Text>
         </View>
       </View>
@@ -35023,7 +35023,7 @@ exports[`scanToken light default 1`] = `
             >
               Smile ID Portal
             </Text>
-            , under Security settings.
+            , under Developers › Security settings.
           </Text>
         </View>
       </View>
@@ -36070,7 +36070,7 @@ exports[`scanToken light redirected 1`] = `
             >
               Smile ID Portal
             </Text>
-            , under Security settings.
+            , under Developers › Security settings.
           </Text>
         </View>
       </View>

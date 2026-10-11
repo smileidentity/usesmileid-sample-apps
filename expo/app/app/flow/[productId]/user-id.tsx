@@ -1,7 +1,7 @@
 import {
   AuthUserIdScreen,
   smileIDSampleProductFrom,
-  smileIDSamplePreviousAuthUserIds,
+  smileIDSamplePreviousAuthUsers,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
   useSmileIDSampleJobStore,
@@ -40,7 +40,7 @@ export default function AuthUserId() {
       // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
       state={{
         userId,
-        previousUserIds: smileIDSamplePreviousAuthUserIds(jobs ?? [], live?.partnerId ?? null, live?.environment !== 'production'),
+        previousUsers: smileIDSamplePreviousAuthUsers(jobs ?? [], live?.partnerId ?? null, live?.environment !== 'production'),
       }}
       onUserIdChange={setAuthUserId}
       onRegister={() => {

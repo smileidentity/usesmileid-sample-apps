@@ -50,7 +50,14 @@ public struct UseSmileIDSampleJob: Equatable, Sendable {
     Self.shortened(userId)
   }
 
+  /// Head and tail of the ID, since IDs from one session share a head.
+  public var middleUserId: String {
+    userId.count <= Self.middleHead + Self.middleTail + 1 ? userId : userId.prefix(Self.middleHead) + "\u{2026}" + userId.suffix(Self.middleTail)
+  }
+
   private static let shortIdLength = 8
+  private static let middleHead = 9
+  private static let middleTail = 7
 
   private static func shortened(_ value: String) -> String {
     value.count <= shortIdLength ? value : value.prefix(shortIdLength) + "\u{2026}"

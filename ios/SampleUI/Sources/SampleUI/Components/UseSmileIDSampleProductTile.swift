@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
+/// A product's hue tile with its icon.
 public struct UseSmileIDSampleProductTile: View {
   private let product: UseSmileIDSampleProduct
   private let side: CGFloat

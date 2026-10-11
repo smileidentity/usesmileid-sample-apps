@@ -125,13 +125,15 @@ final class UseSmileIDSampleStrings {
   String get userDetailsSwitchProfile =>
       _values['user_details_switch_profile']!;
   String get userDetailsSection => _values['user_details_section']!;
-  String get authUserIdEnter => _values['auth_user_id_enter']!;
+  String get authUserIdSection => _values['auth_user_id_section']!;
   String get authUserIdPlaceholder => _values['auth_user_id_placeholder']!;
-  String get authUserIdOr => _values['auth_user_id_or']!;
   String get authUserIdPrevious => _values['auth_user_id_previous']!;
-  String get authUserIdPreviousBody => _values['auth_user_id_previous_body']!;
-  String get authUserIdEmptyTitle => _values['auth_user_id_empty_title']!;
+  String get authUserIdPreviousHint => _values['auth_user_id_previous_hint']!;
+  String get authUserIdLatest => _values['auth_user_id_latest']!;
+  String get authUserIdHint => _values['auth_user_id_hint']!;
+  String get authUserIdOr => _values['auth_user_id_or']!;
   String get authUserIdRun => _values['auth_user_id_run']!;
+  String get authUserIdRunBody => _values['auth_user_id_run_body']!;
   String get userDetailsProfileName => _values['user_details_profile_name']!;
   String get userDetailsProfileNameHint =>
       _values['user_details_profile_name_hint']!;
@@ -505,11 +507,10 @@ final class UseSmileIDSampleStrings {
       'scan_flash_on': 'Turn flash on',
       'scan_flash_off': 'Turn flash off',
       'scan_point': 'Point at a Smile token QR',
-      'scan_line_up':
-          'Line up the code inside the frame to link this device to a verification session.',
+      'scan_line_up': 'Line up the code inside the frame to link this device to a verification session.',
       'scan_portal_prefix': 'Get a v3 token from the ',
       'scan_portal_link': 'Smile ID Portal',
-      'scan_portal_suffix': ', under Security settings.',
+      'scan_portal_suffix': ', under Developers › Security settings.',
       'scan_manual_entry': 'Or enter token manually',
       'scan_paste': 'Paste',
       'scan_link_token': 'Link token',
@@ -539,10 +540,8 @@ final class UseSmileIDSampleStrings {
       'token_error_exp': 'The token carries no numeric exp claim.',
       'token_error_exp_order':
           'The token\'s exp claim is not after its iat claim.',
-      'token_error_api_url_missing':
-          'The token carries no api_url claim, so nothing says which environment it was minted for.',
-      'token_error_api_url_unknown':
-          'The token\'s api_url names {host}, which is not a Smile ID environment.',
+      'token_error_api_url_missing': 'The token carries no api_url claim, so nothing says which environment it was minted for.',
+      'token_error_api_url_unknown': 'The token\'s api_url names {host}, which is not a Smile ID environment.',
       'token_error_api_url_invalid':
           'The token\'s api_url is not a URL, so it names no environment.',
       'token_callback_set': 'Set by the scanned token',
@@ -552,14 +551,16 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'Your details below will create one',
       'user_details_switch_profile': 'Tap to switch profile',
       'user_details_section': 'YOUR DETAILS',
-      'auth_user_id_enter': 'Enter a user ID',
+      'auth_user_id_section': 'USER ID',
       'auth_user_id_placeholder': 'user_…',
-      'auth_user_id_or': 'or',
-      'auth_user_id_previous': 'Select a previous user ID',
-      'auth_user_id_previous_body':
-          'The ID of a user who has already been verified. A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you one.',
-      'auth_user_id_empty_title': 'Authenticate a registered user',
-      'auth_user_id_run': 'Run a verification',
+      'auth_user_id_previous': 'PREVIOUS USER IDS',
+      'auth_user_id_previous_hint': 'Users enrolled by your earlier verifications, newest first. Tap one to use its ID.',
+      'auth_user_id_latest': 'LATEST',
+      'auth_user_id_hint':
+          'Type or paste the user ID of someone who is already enrolled.',
+      'auth_user_id_or': 'OR',
+      'auth_user_id_run': 'RUN A VERIFICATION',
+      'auth_user_id_run_body': 'A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you a user ID.',
       'user_details_profile_name': 'Profile name (optional)',
       'user_details_profile_name_hint': 'Shown on the consent screen',
       'user_details_from_token': 'Provided by token',
@@ -600,10 +601,8 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid_example':
           'Doesn\'t match the {idType} format, e.g. {example}',
       'kyc_id_number_invalid': 'Doesn\'t match the {idType} format',
-      'catalogue_advice_unauthorised':
-          'The server refused this session\'s token. Link a new session, then try again',
-      'catalogue_advice_forbidden':
-          'Access denied: production may not be enabled for this partner, or this network is not allowed',
+      'catalogue_advice_unauthorised': 'The server refused this session\'s token. Link a new session, then try again',
+      'catalogue_advice_forbidden': 'Access denied: production may not be enabled for this partner, or this network is not allowed',
       'catalogue_advice_offline': 'Check your connection, then try again',
       'picker_country_title': 'Country',
       'picker_country_search': 'Search country',
@@ -769,8 +768,7 @@ final class UseSmileIDSampleStrings {
       'settings_licenses': 'Open-source licenses',
       'settings_sign_out': 'Sign out',
       'settings_sign_out_title': 'Sign out?',
-      'settings_sign_out_body':
-          'This ends the token session and deletes every profile on this device.',
+      'settings_sign_out_body': 'This ends the token session and deletes every profile on this device.',
       'flow_invalid': 'The flow did not validate',
       'capture_mode_title': 'Capture mode',
       'capture_mode_auto': 'Automatic',
@@ -852,11 +850,10 @@ final class UseSmileIDSampleStrings {
       'scan_flash_on': 'Activer le flash',
       'scan_flash_off': 'Désactiver le flash',
       'scan_point': 'Visez un QR de jeton Smile',
-      'scan_line_up':
-          'Placez le code dans le cadre pour relier cet appareil à une session de vérification.',
+      'scan_line_up': 'Placez le code dans le cadre pour relier cet appareil à une session de vérification.',
       'scan_portal_prefix': 'Obtenez un jeton v3 depuis le ',
       'scan_portal_link': 'portail Smile ID',
-      'scan_portal_suffix': ', dans les paramètres de sécurité.',
+      'scan_portal_suffix': ', dans Développeurs › Paramètres de sécurité.',
       'scan_manual_entry': 'Ou saisissez le jeton manuellement',
       'scan_paste': 'Coller',
       'scan_link_token': 'Relier le jeton',
@@ -871,15 +868,13 @@ final class UseSmileIDSampleStrings {
       'scan_remaining': '{handle} · {remaining} restantes',
       'scan_clipboard_empty':
           'Le presse-papiers ne contient aucun texte à coller.',
-      'scan_reason_session_ended':
-          'La session de jeton est terminée. Scannez pour reprendre là où vous vous étiez arrêté.',
+      'scan_reason_session_ended': 'La session de jeton est terminée. Scannez pour reprendre là où vous vous étiez arrêté.',
       'scan_reason_needed':
           'Scannez un jeton pour commencer cette vérification.',
       'scan_span_expired': 'Expiré',
       'scan_environment_sandbox': 'Sandbox',
       'scan_environment_production': 'Production',
-      'token_error_segments':
-          'Un jeton comporte trois segments base64url séparés par des points ; ce n’est pas le cas ici.',
+      'token_error_segments': 'Un jeton comporte trois segments base64url séparés par des points ; ce n’est pas le cas ici.',
       'token_error_payload_encoding':
           'Le segment de charge utile du jeton n’est pas en base64url.',
       'token_error_payload_json':
@@ -888,14 +883,10 @@ final class UseSmileIDSampleStrings {
           'Le jeton ne contient pas de revendication iat numérique.',
       'token_error_exp':
           'Le jeton ne contient pas de revendication exp numérique.',
-      'token_error_exp_order':
-          'La revendication exp du jeton n’est pas postérieure à sa revendication iat.',
-      'token_error_api_url_missing':
-          'Le jeton ne contient pas de revendication api_url : rien n’indique pour quel environnement il a été émis.',
-      'token_error_api_url_unknown':
-          'L’api_url du jeton désigne {host}, qui n’est pas un environnement Smile ID.',
-      'token_error_api_url_invalid':
-          'L’api_url du jeton n’est pas une URL : elle ne désigne aucun environnement.',
+      'token_error_exp_order': 'La revendication exp du jeton n’est pas postérieure à sa revendication iat.',
+      'token_error_api_url_missing': 'Le jeton ne contient pas de revendication api_url : rien n’indique pour quel environnement il a été émis.',
+      'token_error_api_url_unknown': 'L’api_url du jeton désigne {host}, qui n’est pas un environnement Smile ID.',
+      'token_error_api_url_invalid': 'L’api_url du jeton n’est pas une URL : elle ne désigne aucun environnement.',
       'token_callback_set': 'Défini par le jeton scanné',
       'token_callback_default':
           'La valeur par défaut du partenaire du jeton s’applique',
@@ -904,14 +895,16 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'Vos informations ci-dessous en créeront un',
       'user_details_switch_profile': 'Touchez pour changer de profil',
       'user_details_section': 'VOS INFORMATIONS',
-      'auth_user_id_enter': 'Saisir un ID utilisateur',
+      'auth_user_id_section': 'ID UTILISATEUR',
       'auth_user_id_placeholder': 'user_…',
-      'auth_user_id_or': 'ou',
-      'auth_user_id_previous': 'Choisir un ID utilisateur précédent',
-      'auth_user_id_previous_body':
-          'L\'ID d\'un utilisateur déjà vérifié. Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous en donne un.',
-      'auth_user_id_empty_title': 'Authentifier un utilisateur enregistré',
-      'auth_user_id_run': 'Lancer une vérification',
+      'auth_user_id_previous': 'ID UTILISATEUR PRÉCÉDENTS',
+      'auth_user_id_previous_hint': 'Utilisateurs enregistrés lors de vos vérifications précédentes, du plus récent au plus ancien. Touchez-en un pour utiliser son ID.',
+      'auth_user_id_latest': 'DERNIER',
+      'auth_user_id_hint':
+          'Saisissez ou collez l\'ID d\'un utilisateur déjà enregistré.',
+      'auth_user_id_or': 'OU',
+      'auth_user_id_run': 'LANCER UNE VÉRIFICATION',
+      'auth_user_id_run_body': 'Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous donne un ID utilisateur.',
       'user_details_profile_name': 'Nom du profil (facultatif)',
       'user_details_profile_name_hint': 'Affiché sur l’écran de consentement',
       'user_details_from_token': 'Fourni par le jeton',
@@ -928,8 +921,7 @@ final class UseSmileIDSampleStrings {
       'user_field_phone_placeholder': '+254 700 000 000',
       'user_field_email_error':
           'Saisissez un e-mail du type nom@entreprise.com.',
-      'user_field_phone_error':
-          'Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.',
+      'user_field_phone_error': 'Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.',
       'user_requirement_first_name': 'le prénom',
       'user_requirement_last_name': 'le nom',
       'user_requirement_contact': 'un e-mail ou un numéro de téléphone',
@@ -953,10 +945,8 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid_example':
           'Ne correspond pas au format {idType}, p. ex. {example}',
       'kyc_id_number_invalid': 'Ne correspond pas au format {idType}',
-      'catalogue_advice_unauthorised':
-          'Le serveur a refusé le jeton de cette session. Associez une nouvelle session, puis réessayez',
-      'catalogue_advice_forbidden':
-          'Accès refusé : la production n\'est peut-être pas activée pour ce partenaire, ou ce réseau n\'est pas autorisé',
+      'catalogue_advice_unauthorised': 'Le serveur a refusé le jeton de cette session. Associez une nouvelle session, puis réessayez',
+      'catalogue_advice_forbidden': 'Accès refusé : la production n\'est peut-être pas activée pour ce partenaire, ou ce réseau n\'est pas autorisé',
       'catalogue_advice_offline': 'Vérifiez votre connexion, puis réessayez',
       'picker_country_title': 'Pays',
       'picker_country_search': 'Rechercher un pays',
@@ -1078,8 +1068,7 @@ final class UseSmileIDSampleStrings {
       'profile_config_save': 'Enregistrer',
       'profile_config_use': 'Utiliser ce profil',
       'profile_config_delete_title': 'Supprimer {profile} ?',
-      'profile_config_delete_body':
-          'Ses informations et son URL de rappel seront supprimées de cet appareil.',
+      'profile_config_delete_body': 'Ses informations et son URL de rappel seront supprimées de cet appareil.',
       'profile_switch_title': 'Changer de profil',
       'profile_switch_new': 'Nouveau profil',
       'profile_switch_new_hint':
@@ -1135,8 +1124,7 @@ final class UseSmileIDSampleStrings {
       'settings_licenses': 'Licences open source',
       'settings_sign_out': 'Se déconnecter',
       'settings_sign_out_title': 'Se déconnecter ?',
-      'settings_sign_out_body':
-          'La session de jeton prend fin et tous les profils de cet appareil sont supprimés.',
+      'settings_sign_out_body': 'La session de jeton prend fin et tous les profils de cet appareil sont supprimés.',
       'flow_invalid': 'Le parcours n\'a pas été validé',
       'capture_mode_title': 'Mode de capture',
       'capture_mode_auto': 'Automatique',
@@ -1221,7 +1209,7 @@ final class UseSmileIDSampleStrings {
       'scan_line_up': 'ضع الرمز داخل الإطار لربط هذا الجهاز بجلسة تحقق.',
       'scan_portal_prefix': 'احصل على رمز v3 من ',
       'scan_portal_link': 'بوابة Smile ID',
-      'scan_portal_suffix': '، ضمن إعدادات الأمان.',
+      'scan_portal_suffix': '، ضمن المطوّرون › إعدادات الأمان.',
       'scan_manual_entry': 'أو أدخل الرمز يدويًا',
       'scan_paste': 'لصق',
       'scan_link_token': 'ربط الرمز',
@@ -1241,16 +1229,14 @@ final class UseSmileIDSampleStrings {
       'scan_span_expired': 'منتهي الصلاحية',
       'scan_environment_sandbox': 'بيئة الاختبار',
       'scan_environment_production': 'بيئة الإنتاج',
-      'token_error_segments':
-          'يتكوّن الرمز من ثلاثة مقاطع base64url تفصل بينها نقاط، وهذا ليس كذلك.',
+      'token_error_segments': 'يتكوّن الرمز من ثلاثة مقاطع base64url تفصل بينها نقاط، وهذا ليس كذلك.',
       'token_error_payload_encoding':
           'مقطع الحمولة في الرمز ليس بترميز base64url.',
       'token_error_payload_json': 'مقطع الحمولة في الرمز ليس كائن JSON.',
       'token_error_iat': 'لا يحتوي الرمز على مطالبة iat رقمية.',
       'token_error_exp': 'لا يحتوي الرمز على مطالبة exp رقمية.',
       'token_error_exp_order': 'مطالبة exp في الرمز ليست بعد مطالبة iat.',
-      'token_error_api_url_missing':
-          'لا يحتوي الرمز على مطالبة api_url، لذا لا شيء يحدد البيئة التي صدر لها.',
+      'token_error_api_url_missing': 'لا يحتوي الرمز على مطالبة api_url، لذا لا شيء يحدد البيئة التي صدر لها.',
       'token_error_api_url_unknown':
           'يشير api_url في الرمز إلى {host}، وهي ليست بيئة من بيئات Smile ID.',
       'token_error_api_url_invalid':
@@ -1263,14 +1249,15 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'ستُنشئ بياناتك أدناه ملفًا شخصيًا',
       'user_details_switch_profile': 'انقر لتبديل الملف الشخصي',
       'user_details_section': 'بياناتك',
-      'auth_user_id_enter': 'أدخل معرّف مستخدم',
+      'auth_user_id_section': 'معرّف المستخدم',
       'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_previous': 'معرّفات المستخدمين السابقة',
+      'auth_user_id_previous_hint': 'مستخدمون سُجّلوا في عمليات تحقق سابقة، الأحدث أولًا. انقر على أحدهم لاستخدام معرّفه.',
+      'auth_user_id_latest': 'الأحدث',
+      'auth_user_id_hint': 'اكتب أو الصق معرّف مستخدم مسجّل مسبقًا.',
       'auth_user_id_or': 'أو',
-      'auth_user_id_previous': 'اختر معرّف مستخدم سابقًا',
-      'auth_user_id_previous_body':
-          'معرّف مستخدم تم التحقق منه من قبل. تحصل عليه من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
-      'auth_user_id_empty_title': 'مصادقة مستخدم مسجّل',
       'auth_user_id_run': 'إجراء تحقق',
+      'auth_user_id_run_body': 'تحصل على معرّف مستخدم من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
       'user_details_profile_name': 'اسم الملف الشخصي (اختياري)',
       'user_details_profile_name_hint': 'يظهر في شاشة الموافقة',
       'user_details_from_token': 'مقدَّم من الرمز',
@@ -1313,8 +1300,7 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid': 'لا يطابق تنسيق {idType}',
       'catalogue_advice_unauthorised':
           'رفض الخادم رمز هذه الجلسة. اربط جلسة جديدة، ثم حاول مرة أخرى',
-      'catalogue_advice_forbidden':
-          'تم رفض الوصول: قد لا تكون بيئة الإنتاج مفعّلة لهذا الشريك، أو أن هذه الشبكة غير مسموح بها',
+      'catalogue_advice_forbidden': 'تم رفض الوصول: قد لا تكون بيئة الإنتاج مفعّلة لهذا الشريك، أو أن هذه الشبكة غير مسموح بها',
       'catalogue_advice_offline': 'تحقق من اتصالك، ثم حاول مرة أخرى',
       'picker_country_title': 'البلد',
       'picker_country_search': 'ابحث عن بلد',
@@ -1480,8 +1466,7 @@ final class UseSmileIDSampleStrings {
       'settings_licenses': 'تراخيص المصادر المفتوحة',
       'settings_sign_out': 'تسجيل الخروج',
       'settings_sign_out_title': 'تسجيل الخروج؟',
-      'settings_sign_out_body':
-          'سيؤدي هذا إلى إنهاء جلسة الرمز وحذف كل الملفات الشخصية على هذا الجهاز.',
+      'settings_sign_out_body': 'سيؤدي هذا إلى إنهاء جلسة الرمز وحذف كل الملفات الشخصية على هذا الجهاز.',
       'flow_invalid': 'لم يجتز مسار التحقق التحقق من الصحة',
       'capture_mode_title': 'وضع الالتقاط',
       'capture_mode_auto': 'تلقائي',
@@ -1563,7 +1548,7 @@ final class UseSmileIDSampleStrings {
       'scan_line_up': 'מקמו את הקוד בתוך המסגרת כדי לקשר את המכשיר לסשן אימות.',
       'scan_portal_prefix': 'קבלו טוקן v3 מ',
       'scan_portal_link': 'פורטל Smile ID',
-      'scan_portal_suffix': ', תחת הגדרות האבטחה.',
+      'scan_portal_suffix': ', תחת מפתחים › הגדרות האבטחה.',
       'scan_manual_entry': 'או הזינו את הטוקן ידנית',
       'scan_paste': 'הדבקה',
       'scan_link_token': 'קישור הטוקן',
@@ -1592,8 +1577,7 @@ final class UseSmileIDSampleStrings {
       'token_error_exp': 'בטוקן אין טענת exp מספרית.',
       'token_error_exp_order':
           'טענת ה-exp של הטוקן אינה מאוחרת מטענת ה-iat שלו.',
-      'token_error_api_url_missing':
-          'בטוקן אין טענת api_url, ולכן שום דבר לא מציין לאיזו סביבה הוא הונפק.',
+      'token_error_api_url_missing': 'בטוקן אין טענת api_url, ולכן שום דבר לא מציין לאיזו סביבה הוא הונפק.',
       'token_error_api_url_unknown':
           'ה-api_url של הטוקן מציין את {host}, שאינו סביבה של Smile ID.',
       'token_error_api_url_invalid':
@@ -1605,14 +1589,15 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'הפרטים שלכם למטה ייצרו פרופיל',
       'user_details_switch_profile': 'הקישו כדי להחליף פרופיל',
       'user_details_section': 'הפרטים שלכם',
-      'auth_user_id_enter': 'הזן מזהה משתמש',
+      'auth_user_id_section': 'מזהה משתמש',
       'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_previous': 'מזהי משתמש קודמים',
+      'auth_user_id_previous_hint': 'משתמשים שנרשמו באימותים קודמים, מהחדש לישן. הקישו על אחד כדי להשתמש במזהה שלו.',
+      'auth_user_id_latest': 'האחרון',
+      'auth_user_id_hint': 'הקלידו או הדביקו מזהה של משתמש שכבר נרשם.',
       'auth_user_id_or': 'או',
-      'auth_user_id_previous': 'בחר מזהה משתמש קודם',
-      'auth_user_id_previous_body':
-          'מזהה של משתמש שכבר אומת. תקבל אותו מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
-      'auth_user_id_empty_title': 'אימות משתמש רשום',
       'auth_user_id_run': 'הפעל אימות',
+      'auth_user_id_run_body': 'תקבלו מזהה משתמש מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
       'user_details_profile_name': 'שם הפרופיל (אופציונלי)',
       'user_details_profile_name_hint': 'מוצג במסך ההסכמה',
       'user_details_from_token': 'סופק על ידי הטוקן',
@@ -1655,8 +1640,7 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid': 'לא תואם לפורמט {idType}',
       'catalogue_advice_unauthorised':
           'השרת דחה את הטוקן של הסשן הזה. קשרו סשן חדש ונסו שוב',
-      'catalogue_advice_forbidden':
-          'הגישה נדחתה: ייתכן שסביבת הייצור לא הופעלה עבור השותף הזה, או שהרשת הזו אינה מורשית',
+      'catalogue_advice_forbidden': 'הגישה נדחתה: ייתכן שסביבת הייצור לא הופעלה עבור השותף הזה, או שהרשת הזו אינה מורשית',
       'catalogue_advice_offline': 'בדקו את החיבור ונסו שוב',
       'picker_country_title': 'מדינה',
       'picker_country_search': 'חיפוש מדינה',

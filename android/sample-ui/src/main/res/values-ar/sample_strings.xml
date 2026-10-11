@@ -52,7 +52,7 @@
     <string name="sample_scan_line_up">ضع الرمز داخل الإطار لربط هذا الجهاز بجلسة تحقق.</string>
     <string name="sample_scan_portal_prefix">"احصل على رمز v3 من "</string>
     <string name="sample_scan_portal_link">بوابة Smile ID</string>
-    <string name="sample_scan_portal_suffix">، ضمن إعدادات الأمان.</string>
+    <string name="sample_scan_portal_suffix">، ضمن المطوّرون › إعدادات الأمان.</string>
     <string name="sample_scan_manual_entry">أو أدخل الرمز يدويًا</string>
     <string name="sample_scan_paste">لصق</string>
     <string name="sample_scan_link_token">ربط الرمز</string>

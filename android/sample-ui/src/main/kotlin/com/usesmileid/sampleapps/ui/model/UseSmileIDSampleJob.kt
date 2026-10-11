@@ -25,7 +25,7 @@ data class UseSmileIDSampleJob(
 
     val shortUserId: String get() = if (userId.length <= SHORT_ID_LENGTH) userId else userId.take(SHORT_ID_LENGTH) + "…"
 
-    /** Head and tail with an ellipsis between, for a picker where IDs from one session share a long head. */
+    /** Head and tail of the ID, since IDs from one session share a head. */
     val middleUserId: String get() =
         if (userId.length <= MIDDLE_HEAD + MIDDLE_TAIL + 1) userId else userId.take(MIDDLE_HEAD) + "…" + userId.takeLast(MIDDLE_TAIL)
 

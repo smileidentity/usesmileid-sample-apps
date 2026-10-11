@@ -54,7 +54,7 @@
   "scan_line_up": "Placez le code dans le cadre pour relier cet appareil à une session de vérification.",
   "scan_portal_prefix": "Obtenez un jeton v3 depuis le ",
   "scan_portal_link": "portail Smile ID",
-  "scan_portal_suffix": ", dans les paramètres de sécurité.",
+  "scan_portal_suffix": ", dans Développeurs › Paramètres de sécurité.",
   "scan_manual_entry": "Ou saisissez le jeton manuellement",
   "scan_paste": "Coller",
   "scan_link_token": "Relier le jeton",

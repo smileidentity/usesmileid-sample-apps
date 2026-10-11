@@ -101,6 +101,11 @@ class UseSmileIDSampleJob {
   /// The user id as the detail page shows it.
   String get shortUserId => _elide(userId);
 
+  /// Head and tail of the ID, since IDs from one session share a head.
+  String get middleUserId => userId.length <= _middleHead + _middleTail + 1
+      ? userId
+      : '${userId.substring(0, _middleHead)}…${userId.substring(userId.length - _middleTail)}';
+
   /// The submission instant, as the detail page shows it: ISO 8601 in UTC, to the millisecond.
   String get createdAtLabel {
     final DateTime at = DateTime.fromMillisecondsSinceEpoch(
@@ -291,6 +296,9 @@ String useSmileIDSampleTimeLabel(int millis) {
 }
 
 /// The first eight characters, elided, which is how every id in this app is shown.
+const int _middleHead = 9;
+const int _middleTail = 7;
+
 String _elide(String value) =>
     value.length > 8 ? '${value.substring(0, 8)}…' : value;
 

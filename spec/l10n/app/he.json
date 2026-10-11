@@ -54,7 +54,7 @@
   "scan_line_up": "מקמו את הקוד בתוך המסגרת כדי לקשר את המכשיר לסשן אימות.",
   "scan_portal_prefix": "קבלו טוקן v3 מ",
   "scan_portal_link": "פורטל Smile ID",
-  "scan_portal_suffix": ", תחת הגדרות האבטחה.",
+  "scan_portal_suffix": ", תחת מפתחים › הגדרות האבטחה.",
   "scan_manual_entry": "או הזינו את הטוקן ידנית",
   "scan_paste": "הדבקה",
   "scan_link_token": "קישור הטוקן",

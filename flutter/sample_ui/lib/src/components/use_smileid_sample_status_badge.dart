@@ -53,25 +53,52 @@ class UseSmileIDSampleStatusBadge extends StatelessWidget {
     };
     return Semantics(
       identifier: testId,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: background,
-          // radius.control, not radius.chip — the one metric a port reliably gets wrong here.
-          borderRadius: UseSmileIDSampleShapes.pill,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: SmileDimens.spacingXs,
-            vertical: SmileDimens.space4,
-          ),
-          child: Text(
-            status.label(context.strings),
-            style: useSmileIDSampleLabelStyle(
-              UseSmileIDSampleType.textStyleOverline,
-            ).copyWith(color: foreground),
-          ),
-        ),
+      child: UseSmileIDSamplePill(
+        label: status.label(context.strings),
+        background: background,
+        foreground: foreground,
       ),
     );
   }
+}
+
+/// The soft pill every badge draws.
+class UseSmileIDSamplePill extends StatelessWidget {
+  /// Draws [label] on [background] in [foreground].
+  const UseSmileIDSamplePill({
+    required this.label,
+    required this.background,
+    required this.foreground,
+    super.key,
+  });
+
+  /// The already-cased text.
+  final String label;
+
+  /// The soft fill.
+  final Color background;
+
+  /// The text colour.
+  final Color foreground;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: background,
+      // radius.control, not radius.chip — the one metric a port reliably gets wrong here.
+      borderRadius: UseSmileIDSampleShapes.pill,
+    ),
+    child: Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: SmileDimens.spacingXs,
+        vertical: SmileDimens.space4,
+      ),
+      child: Text(
+        label,
+        style: useSmileIDSampleLabelStyle(
+          UseSmileIDSampleType.textStyleOverline,
+        ).copyWith(color: foreground),
+      ),
+    ),
+  );
 }

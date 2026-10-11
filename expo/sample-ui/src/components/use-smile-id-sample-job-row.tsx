@@ -82,26 +82,20 @@ export const UseSmileIDSampleJobRow = ({
   );
 };
 
-/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
-export const UseSmileIDSampleProductTile = ({
-  product,
-  side = TILE_SIZE,
-}: {
-  product: UseSmileIDSampleProduct;
-  side?: number;
-}) => {
+/// A product's hue tile with its icon.
+export const UseSmileIDSampleProductTile = ({ product }: { product: UseSmileIDSampleProduct }) => {
   const hue = smileIDSampleProductHue(product);
   return (
     <View
       style={[
         styles.tile,
-        { width: side, height: side, borderRadius: TILE_RADIUS, backgroundColor: hue.tile },
+        { width: TILE_SIZE, height: TILE_SIZE, borderRadius: TILE_RADIUS, backgroundColor: hue.tile },
       ]}
     >
       <UseSmileIDSampleIcon
         name={smileIDSampleProductIcon(product)}
         tint={hue.icon}
-        size={(side * TILE_ICON_SIZE) / TILE_SIZE}
+        size={TILE_ICON_SIZE}
       />
     </View>
   );

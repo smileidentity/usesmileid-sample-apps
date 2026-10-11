@@ -95,7 +95,7 @@ fun UseSmileIDSampleJobRow(
     }
 }
 
-/** A product's hue tile with its icon: the job row's leading tile, and the enrolment row's on the authentication user ID screen. */
+/** A product's hue tile with its icon. */
 @Composable
 internal fun UseSmileIDSampleProductTile(product: UseSmileIDSampleProduct, modifier: Modifier = Modifier) {
     val hue = product.hue

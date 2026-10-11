@@ -122,27 +122,20 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
   }
 }
 
-/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
+/// A product's hue tile with its icon.
 class UseSmileIDSampleProductTile extends StatelessWidget {
-  /// [side] defaults to the board's 36, whose glyph is 18; a larger tile scales the glyph with it.
-  const UseSmileIDSampleProductTile({
-    required this.product,
-    this.side = _tileSize,
-    super.key,
-  });
+  /// The board's 36 tile with its 18 glyph.
+  const UseSmileIDSampleProductTile({required this.product, super.key});
 
   /// Whose hue and icon the tile draws.
   final UseSmileIDSampleProduct product;
-
-  /// The tile's width and height.
-  final double side;
 
   @override
   Widget build(BuildContext context) {
     final SmileProductHue hue = productHue(product);
     return Container(
-      width: side,
-      height: side,
+      width: _tileSize,
+      height: _tileSize,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: hue.tile,
@@ -151,7 +144,7 @@ class UseSmileIDSampleProductTile extends StatelessWidget {
       child: UseSmileIDSampleIcon(
         asset: productIcon(product),
         tint: hue.icon,
-        size: side * _tileIconSize / _tileSize,
+        size: _tileIconSize,
       ),
     );
   }

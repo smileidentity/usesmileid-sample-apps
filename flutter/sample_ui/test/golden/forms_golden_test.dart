@@ -48,7 +48,7 @@ void main() {
     await _screenGoldens(
       tester,
       'screen_auth_user_id_no_jobs',
-      () => _authUserId(userId: '', previous: const <String>[]),
+      () => _authUserId(userId: '', previous: const <UseSmileIDSampleJob>[]),
     );
   });
 
@@ -56,7 +56,7 @@ void main() {
     await _screenGoldens(
       tester,
       'screen_auth_user_id_previous',
-      () => _authUserId(userId: '', previous: _previousUserIds),
+      () => _authUserId(userId: '', previous: _previousUsers),
     );
   });
 
@@ -65,8 +65,8 @@ void main() {
       tester,
       'screen_auth_user_id_selected',
       () => _authUserId(
-        userId: _previousUserIds.first,
-        previous: _previousUserIds,
+        userId: _previousUsers.first.userId,
+        previous: _previousUsers,
       ),
     );
   });
@@ -77,7 +77,7 @@ void main() {
       'screen_auth_user_id_typed',
       () => _authUserId(
         userId: 'user_01typedbyhand0000000000',
-        previous: _previousUserIds,
+        previous: _previousUsers,
       ),
     );
   });
@@ -451,18 +451,51 @@ final UseSmileIDSampleIdDetails _documentSelected = UseSmileIDSampleIdDetails(
   ).firstWhere((UseSmileIDSampleDocument it) => it.subType == 'green_book'),
 );
 
-const List<String> _previousUserIds = <String>[
-  'user_01m4gahg4ceceatsw25mc5dd1h',
-  'user_01r4l94gahg4ceceatsw25mc5d',
-  'user_01r4l94gahg4ceceatsw25mc51',
+// Local-midnight offsets keep the time labels zone-independent.
+final int _midnight = DateUtils.dateOnly(DateTime.now()).millisecondsSinceEpoch;
+
+UseSmileIDSampleJob _enrolled(
+  String userId,
+  UseSmileIDSampleProduct product,
+  int hour,
+  int minute,
+) => UseSmileIDSampleJob(
+  id: 'job_$userId',
+  userId: userId,
+  product: product,
+  status: UseSmileIDSampleStatus.clear,
+  createdAtMillis: _midnight + (hour * 60 + minute) * 60000,
+);
+
+final List<UseSmileIDSampleJob> _previousUsers = <UseSmileIDSampleJob>[
+  _enrolled(
+    'user_01m4gahg4ceceatsw25mc5dd1h',
+    UseSmileIDSampleProduct.smartSelfieEnrollment,
+    23,
+    10,
+  ),
+  _enrolled(
+    'user_01r4l94gahg4ceceatsw25mc5d',
+    UseSmileIDSampleProduct.biometricKyc,
+    18,
+    42,
+  ),
+  _enrolled(
+    'user_01r4l94gahg4ceceatsw25mc51',
+    UseSmileIDSampleProduct.documentVerification,
+    9,
+    5,
+  ),
 ];
 
-Widget _authUserId({required String userId, required List<String> previous}) =>
-    UseSmileIDSampleAuthUserIdScreen(
-      userId: userId,
-      previousUserIds: previous,
-      onUserIdChanged: (_) {},
-      onRegister: () {},
-      onBack: () {},
-      onContinue: () {},
-    );
+Widget _authUserId({
+  required String userId,
+  required List<UseSmileIDSampleJob> previous,
+}) => UseSmileIDSampleAuthUserIdScreen(
+  userId: userId,
+  previousUsers: previous,
+  onUserIdChanged: (_) {},
+  onRegister: () {},
+  onBack: () {},
+  onContinue: () {},
+);

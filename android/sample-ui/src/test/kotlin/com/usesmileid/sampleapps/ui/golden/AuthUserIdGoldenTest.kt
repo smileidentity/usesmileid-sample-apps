@@ -40,7 +40,7 @@ class AuthUserIdGoldenTest : GoldenTest() {
     )
 
     private companion object {
-        // Offsets from local midnight, so the time labels read the same in every time zone.
+        // Local-midnight offsets keep the time labels zone-independent.
         val MIDNIGHT = startOfDayMillis(System.currentTimeMillis())
         val PREVIOUS = listOf(
             job("user_01m4gahg4ceceatsw25mc5dd1h", UseSmileIDSampleProduct.SmartSelfieEnrollment, hour = 23, minute = 10),

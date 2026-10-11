@@ -52,7 +52,7 @@
     <string name="sample_scan_line_up">מקמו את הקוד בתוך המסגרת כדי לקשר את המכשיר לסשן אימות.</string>
     <string name="sample_scan_portal_prefix">קבלו טוקן v3 מ</string>
     <string name="sample_scan_portal_link">פורטל Smile ID</string>
-    <string name="sample_scan_portal_suffix">, תחת הגדרות האבטחה.</string>
+    <string name="sample_scan_portal_suffix">, תחת מפתחים › הגדרות האבטחה.</string>
     <string name="sample_scan_manual_entry">או הזינו את הטוקן ידנית</string>
     <string name="sample_scan_paste">הדבקה</string>
     <string name="sample_scan_link_token">קישור הטוקן</string>
