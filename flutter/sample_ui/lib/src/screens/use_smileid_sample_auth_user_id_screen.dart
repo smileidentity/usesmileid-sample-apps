@@ -107,13 +107,18 @@ class UseSmileIDSampleAuthUserIdScreen extends StatelessWidget {
                   const SizedBox(height: SmileDimens.spacingSm),
                   for (int i = 0; i < previousUsers.length; i++) ...<Widget>[
                     if (i > 0) const SizedBox(height: SmileDimens.spacingXs),
-                    _PreviousUserCard(
-                      job: previousUsers[i],
-                      latest: i == 0,
+                    UseSmileIDSampleJobRow(
+                      product: previousUsers[i].product,
+                      jobId: previousUsers[i].middleUserId,
+                      time: useSmileIDSampleTimeLabel(
+                        previousUsers[i].createdAtMillis,
+                      ),
+                      status: null,
+                      statusTestId: null,
                       selected: previousUsers[i].userId == chosen,
+                      trailing: i == 0 ? _LatestPill(colors) : null,
                       onTap: () => onUserIdChanged(previousUsers[i].userId),
                       testId: UseSmileIDSampleTestIds.authUserIdOption(i),
-                      colors: colors,
                     ),
                   ],
                 ],
@@ -135,88 +140,18 @@ class UseSmileIDSampleAuthUserIdScreen extends StatelessWidget {
   }
 }
 
-/// An earlier user, laid out like a verifications row.
-class _PreviousUserCard extends StatelessWidget {
-  const _PreviousUserCard({
-    required this.job,
-    required this.latest,
-    required this.selected,
-    required this.onTap,
-    required this.testId,
-    required this.colors,
-  });
+/// The newest user's pill.
+class _LatestPill extends StatelessWidget {
+  const _LatestPill(this.colors);
 
-  final UseSmileIDSampleJob job;
-  final bool latest;
-  final bool selected;
-  final VoidCallback onTap;
-  final String testId;
   final UseSmileIDSampleColors colors;
 
   @override
-  Widget build(BuildContext context) {
-    final bool stacks = MediaQuery.textScalerOf(context).scale(1) > 1;
-    final int? lines = stacks ? null : 1;
-    final TextOverflow? overflow = stacks ? null : TextOverflow.ellipsis;
-    final Widget pill = UseSmileIDSamplePill(
-      label: context.strings.authUserIdLatest,
-      background: colors.badge.infoBackground,
-      foreground: colors.badge.infoText,
-    );
-    return Semantics(
-      identifier: testId,
-      selected: selected,
-      inMutuallyExclusiveGroup: true,
-      child: _Card(
-        onTap: onTap,
-        colors: colors,
-        border: selected
-            ? BorderSide(
-                color: colors.primary,
-                width: SmileDimens.borderWidthThin,
-              )
-            : null,
-        child: Row(
-          children: <Widget>[
-            UseSmileIDSampleProductTile(product: job.product),
-            const SizedBox(width: SmileDimens.spacingSm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    job.product.title(context.strings),
-                    maxLines: lines,
-                    overflow: overflow,
-                    style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
-                      color: colors.card.title,
-                    ),
-                  ),
-                  const SizedBox(height: SmileDimens.spacingXxs),
-                  Text(
-                    '${job.middleUserId} · ${useSmileIDSampleTimeLabel(job.createdAtMillis)}',
-                    maxLines: lines,
-                    overflow: overflow,
-                    style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                      color: colors.textMuted,
-                    ),
-                  ),
-                  if (latest && stacks) ...<Widget>[
-                    const SizedBox(height: SmileDimens.spacingXs),
-                    pill,
-                  ],
-                ],
-              ),
-            ),
-            if (latest && !stacks) ...<Widget>[
-              const SizedBox(width: SmileDimens.spacingSm),
-              pill,
-            ],
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => UseSmileIDSamplePill(
+    label: context.strings.authUserIdLatest,
+    background: colors.badge.infoBackground,
+    foreground: colors.badge.infoText,
+  );
 }
 
 /// Starts SmartSelfie Enrollment.
@@ -258,26 +193,18 @@ class _EnrollmentCard extends StatelessWidget {
 
 /// The verifications row's card.
 class _Card extends StatelessWidget {
-  const _Card({
-    required this.onTap,
-    required this.colors,
-    required this.child,
-    this.border,
-  });
+  const _Card({required this.onTap, required this.colors, required this.child});
 
   final VoidCallback onTap;
   final UseSmileIDSampleColors colors;
   final Widget child;
-  final BorderSide? border;
 
   @override
   Widget build(BuildContext context) => Material(
     color: colors.card.background,
     shape: RoundedRectangleBorder(
       borderRadius: UseSmileIDSampleShapes.card,
-      side:
-          border ??
-          BorderSide(color: colors.cardStroke, width: smileCardStrokeWidth),
+      side: BorderSide(color: colors.cardStroke, width: smileCardStrokeWidth),
     ),
     child: InkWell(
       onTap: onTap,

@@ -56,12 +56,14 @@ public struct AuthUserIdScreen: View {
             let times = previousUsers.timeLabels()
             VStack(spacing: SmileSpacing.spacingXs) {
               ForEach(Array(previousUsers.enumerated()), id: \.element.userId) { index, job in
-                AuthUserIdPreviousCard(
-                  job: job,
+                UseSmileIDSampleJobRow(
+                  product: job.product,
+                  jobId: job.middleUserId,
                   time: times[job.id] ?? "",
-                  latest: index == 0,
-                  selected: job.userId == chosen,
+                  status: nil,
                   testId: UseSmileIDSampleTestIds.authUserIdOption(index),
+                  selected: job.userId == chosen,
+                  trailing: index == 0 ? AnyView(latestPill) : nil,
                   onTap: { onUserIdChange(job.userId) }
                 )
               }
@@ -81,6 +83,14 @@ public struct AuthUserIdScreen: View {
     }
     .background(colors.background)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.authUserIdScreen)
+  }
+
+  private var latestPill: some View {
+    UseSmileIDSamplePill(
+      label: UseSmileIDSampleStrings.authUserIdLatest,
+      background: colors.badge.infoBackground,
+      foreground: colors.badge.infoText
+    )
   }
 
   private var orDivider: some View {
@@ -111,73 +121,6 @@ public struct AuthUserIdScreen: View {
     UseSmileIDSampleText(text, style: UseSmileIDSampleTheme.type.textStyleCaption)
       .foregroundColor(colors.textMuted)
       .fixedSize(horizontal: false, vertical: true)
-  }
-}
-
-/// An earlier user, laid out like a verifications row.
-private struct AuthUserIdPreviousCard: View {
-  let job: UseSmileIDSampleJob
-  let time: String
-  let latest: Bool
-  let selected: Bool
-  let testId: String
-  let onTap: () -> Void
-
-  @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.space64
-  @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = 36
-  @Environment(\.useSmileIDSampleColors) private var colors
-  @Environment(\.sizeCategory) private var sizeCategory
-
-  var body: some View {
-    Button(action: onTap) {
-      HStack(spacing: SmileSpacing.spacingSm) {
-        UseSmileIDSampleProductTile(job.product, side: tileSize, iconSize: 18)
-        VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
-          UseSmileIDSampleText(job.product.label, style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
-            .foregroundColor(colors.card.title)
-          UseSmileIDSampleText("\(job.middleUserId) · \(time)", style: UseSmileIDSampleTheme.type.textStyleCaption)
-            .foregroundColor(colors.textMuted)
-          if latest, stacks {
-            latestPill
-          }
-        }
-        .lineLimit(stacks ? nil : 1)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        if latest, !stacks {
-          latestPill
-        }
-      }
-      .padding(SmileSpacing.spacingSm)
-      .frame(minHeight: minHeight)
-      .frame(maxWidth: .infinity, alignment: .leading)
-      .background(
-        RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
-          .fill(colors.card.background)
-      )
-      .overlay(
-        RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
-          .strokeBorder(
-            selected ? colors.primary : colors.cardStroke,
-            lineWidth: selected ? SmileSpacing.borderWidthThin : smileCardStrokeWidth
-          )
-      )
-      .contentShape(Rectangle())
-    }
-    .buttonStyle(.plain)
-    .accessibilityAddTraits(selected ? .isSelected : [])
-    .useSmileIDSampleTestId(testId)
-  }
-
-  private var stacks: Bool {
-    sizeCategory.isAccessibilityCategory
-  }
-
-  private var latestPill: some View {
-    UseSmileIDSamplePill(
-      label: UseSmileIDSampleStrings.authUserIdLatest,
-      background: colors.badge.infoBackground,
-      foreground: colors.badge.infoText
-    )
   }
 }
 

@@ -1,8 +1,9 @@
-import { PixelRatio, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useMemo } from 'react';
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleButton } from '../components/use-smile-id-sample-button';
-import { UseSmileIDSampleProductTile } from '../components/use-smile-id-sample-job-row';
+import { UseSmileIDSampleJobRow, UseSmileIDSampleProductTile } from '../components/use-smile-id-sample-job-row';
 import { UseSmileIDSampleSectionLabel } from '../components/use-smile-id-sample-section-label';
 import { UseSmileIDSampleSettingRowChevron } from '../components/use-smile-id-sample-setting-row';
 import { UseSmileIDSamplePill } from '../components/use-smile-id-sample-status-badge';
@@ -15,7 +16,7 @@ import { smileCardStrokeWidth, smileLabelSize, smileLabelTracking } from '../smi
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
-import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
+import { useSmileIDSampleLanguageShown, useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// What the authentication user ID screen renders; callbacks stay parameters, like every screen.
 export type UseSmileIDSampleAuthUserIdState = {
@@ -41,7 +42,8 @@ export const AuthUserIdScreen = ({ state, onUserIdChange, onRegister, onBack, on
   const strings = useSmileIDSampleStrings();
   const insets = useSafeAreaInsets();
   const chosen = state.userId.trim();
-  const times = smileIDSampleTimeLabels(state.previousUsers);
+  const language = useSmileIDSampleLanguageShown();
+  const times = useMemo(() => smileIDSampleTimeLabels(state.previousUsers, language), [state.previousUsers, language]);
   return (
     <View
       testID={UseSmileIDSampleTestIds.AUTH_USER_ID_SCREEN}
@@ -71,25 +73,21 @@ export const AuthUserIdScreen = ({ state, onUserIdChange, onRegister, onBack, on
         {state.previousUsers.length === 0 ? (
           <>
             <ListSection label={strings.authUserIdRun} hint={strings.authUserIdRunBody} />
-            <Card onPress={onRegister} testID={UseSmileIDSampleTestIds.AUTH_USER_ID_REGISTER} role="button">
-              <UseSmileIDSampleProductTile product={ENROLLMENT} />
-              <Text style={[theme.type.textStyleBodyStrong, styles.grow, { color: theme.colors.card.title }]}>
-                {smileIDSampleProductTitle(ENROLLMENT, strings)}
-              </Text>
-              <UseSmileIDSampleSettingRowChevron />
-            </Card>
+            <EnrollmentCard onPress={onRegister} />
           </>
         ) : (
           <>
             <ListSection label={strings.authUserIdPrevious} hint={strings.authUserIdPreviousHint} />
             <View style={{ rowGap: theme.dimens.spacing.xs }}>
               {state.previousUsers.map((job, index) => (
-                <PreviousUserCard
+                <UseSmileIDSampleJobRow
                   key={job.userId}
-                  job={job}
+                  product={job.product}
+                  jobId={smileIDSampleJobMiddleUserId(job)}
                   time={times[job.id] ?? ''}
-                  latest={index === 0}
+                  status={null}
                   selected={job.userId === chosen}
+                  trailing={index === 0 ? <LatestPill /> : null}
                   onPress={() => onUserIdChange(job.userId)}
                   testID={UseSmileIDSampleSuffixedTestIds.authUserIdOption(index)}
                 />
@@ -113,87 +111,46 @@ export const AuthUserIdScreen = ({ state, onUserIdChange, onRegister, onBack, on
   );
 };
 
-/// An earlier user, laid out like a verifications row.
-const PreviousUserCard = ({
-  job,
-  time,
-  latest,
-  selected,
-  onPress,
-  testID,
-}: {
-  job: UseSmileIDSampleJob;
-  time: string;
-  latest: boolean;
-  selected: boolean;
-  onPress: () => void;
-  testID: string;
-}) => {
+/// The newest user's pill.
+const LatestPill = () => {
   const theme = useSmileIDSampleTheme();
   const strings = useSmileIDSampleStrings();
-  const stacks = PixelRatio.getFontScale() > 1;
-  const lines = stacks ? undefined : 1;
-  const pill = (
+  return (
     <UseSmileIDSamplePill
       label={strings.authUserIdLatest}
       background={theme.colors.badge.infoBackground}
       foreground={theme.colors.badge.infoText}
-      style={stacks ? styles.start : null}
     />
-  );
-  return (
-    <Card onPress={onPress} testID={testID} role="radio" selected={selected}>
-      <UseSmileIDSampleProductTile product={job.product} />
-      <View style={[styles.grow, { rowGap: theme.dimens.spacing.xxs }]}>
-        <Text numberOfLines={lines} style={[theme.type.textStyleBodyStrong, { color: theme.colors.card.title }]}>
-          {smileIDSampleProductTitle(job.product, strings)}
-        </Text>
-        <Text numberOfLines={lines} style={[theme.type.textStyleCaption, { color: theme.colors.textMuted }]}>
-          {`${smileIDSampleJobMiddleUserId(job)} · ${time}`}
-        </Text>
-        {latest && stacks ? pill : null}
-      </View>
-      {latest && !stacks ? pill : null}
-    </Card>
   );
 };
 
-/// The verifications row's card; padding absorbs the thicker selected border.
-const Card = ({
-  onPress,
-  testID,
-  role,
-  selected = false,
-  children,
-}: {
-  onPress: () => void;
-  testID: string;
-  role: 'button' | 'radio';
-  selected?: boolean;
-  children: React.ReactNode;
-}) => {
+/// Starts SmartSelfie Enrollment, on the verifications row's card.
+const EnrollmentCard = ({ onPress }: { onPress: () => void }) => {
   const theme = useSmileIDSampleTheme();
-  const border = selected ? theme.dimens.borderWidth.thin : smileCardStrokeWidth;
+  const strings = useSmileIDSampleStrings();
   return (
     <Pressable
-      accessibilityRole={role}
-      accessibilityState={role === 'radio' ? { selected } : undefined}
+      accessibilityRole="button"
       onPress={onPress}
-      testID={testID}
+      testID={UseSmileIDSampleTestIds.AUTH_USER_ID_REGISTER}
       style={[
         styles.card,
         {
           borderRadius: theme.shapes.card,
           backgroundColor: theme.colors.card.background,
-          borderWidth: border,
-          borderColor: selected ? theme.colors.primary : theme.colors.cardStroke,
+          borderWidth: smileCardStrokeWidth,
+          borderColor: theme.colors.cardStroke,
           minHeight: theme.dimens.space[64],
-          padding: theme.dimens.spacing.sm - (border - smileCardStrokeWidth),
+          padding: theme.dimens.spacing.sm,
           columnGap: theme.dimens.spacing.sm,
         },
       ]}
     >
-      {children}
+      <UseSmileIDSampleProductTile product={ENROLLMENT} />
+      <Text style={[theme.type.textStyleBodyStrong, styles.grow, { color: theme.colors.card.title }]}>
+        {smileIDSampleProductTitle(ENROLLMENT, strings)}
+      </Text>
+      <UseSmileIDSampleSettingRowChevron />
     </Pressable>
   );
 };
@@ -242,5 +199,4 @@ const styles = StyleSheet.create({
   card: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   row: { alignItems: 'center', flexDirection: 'row' },
   grow: { flex: 1 },
-  start: { alignSelf: 'flex-start' },
 });
