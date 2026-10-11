@@ -451,8 +451,17 @@ final UseSmileIDSampleIdDetails _documentSelected = UseSmileIDSampleIdDetails(
   ).firstWhere((UseSmileIDSampleDocument it) => it.subType == 'green_book'),
 );
 
-// Local-midnight offsets keep the time labels zone-independent.
-final int _midnight = DateUtils.dateOnly(DateTime.now()).millisecondsSinceEpoch;
+// Set from the local wall clock, not added to midnight, so a clock-change day reads the same.
+int _todayAt(int hour, int minute) {
+  final DateTime now = DateTime.now();
+  return DateTime(
+    now.year,
+    now.month,
+    now.day,
+    hour,
+    minute,
+  ).millisecondsSinceEpoch;
+}
 
 UseSmileIDSampleJob _enrolled(
   String userId,
@@ -464,7 +473,7 @@ UseSmileIDSampleJob _enrolled(
   userId: userId,
   product: product,
   status: UseSmileIDSampleStatus.clear,
-  createdAtMillis: _midnight + (hour * 60 + minute) * 60000,
+  createdAtMillis: _todayAt(hour, minute),
 );
 
 final List<UseSmileIDSampleJob> _previousUsers = <UseSmileIDSampleJob>[

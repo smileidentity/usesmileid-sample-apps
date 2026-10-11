@@ -149,16 +149,15 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     )
   }
 
-  /// Local-midnight offsets keep the time labels zone-independent.
+  /// Set from the local wall clock, not added to midnight, so a clock-change day reads the same.
   private static let previousUsers: [UseSmileIDSampleJob] = {
-    let midnight = Calendar.current.startOfDay(for: Date())
     func job(_ userId: String, _ product: UseSmileIDSampleProduct, hour: Int, minute: Int) -> UseSmileIDSampleJob {
       UseSmileIDSampleJob(
         id: "job_\(userId)",
         userId: userId,
         product: product,
         status: .clear,
-        createdAt: midnight.addingTimeInterval(TimeInterval((hour * 60 + minute) * 60)),
+        createdAt: Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!,
         message: "",
         httpStatus: 200
       )

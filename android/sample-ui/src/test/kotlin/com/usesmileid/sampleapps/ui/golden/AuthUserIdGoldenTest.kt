@@ -5,7 +5,7 @@ import com.usesmileid.sampleapps.ui.screens.AuthUserIdScreen
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
-import com.usesmileid.sampleapps.ui.model.startOfDayMillis
+import java.util.Calendar
 import org.junit.Test
 
 /** The authentication user ID screen in each state `spec/screens.json` names. */
@@ -40,8 +40,6 @@ class AuthUserIdGoldenTest : GoldenTest() {
     )
 
     private companion object {
-        // Local-midnight offsets keep the time labels zone-independent.
-        val MIDNIGHT = startOfDayMillis(System.currentTimeMillis())
         val PREVIOUS = listOf(
             job("user_01m4gahg4ceceatsw25mc5dd1h", UseSmileIDSampleProduct.SmartSelfieEnrollment, hour = 23, minute = 10),
             job("user_01r4l94gahg4ceceatsw25mc5d", UseSmileIDSampleProduct.BiometricKyc, hour = 18, minute = 42),
@@ -53,9 +51,17 @@ class AuthUserIdGoldenTest : GoldenTest() {
             userId = userId,
             product = product,
             status = UseSmileIDSampleStatus.Clear,
-            createdAtMillis = MIDNIGHT + (hour * 60L + minute) * 60_000L,
+            createdAtMillis = todayAt(hour, minute),
             message = "",
             httpStatus = 200,
         )
+
+        // Set from the local wall clock, not added to midnight, so a clock-change day reads the same.
+        fun todayAt(hour: Int, minute: Int): Long = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }.timeInMillis
     }
 }

@@ -219,15 +219,15 @@ const AppearanceOnDevice = () => (
   />
 );
 
-// Local-midnight offsets keep the time labels zone-independent.
-const MIDNIGHT = new Date(new Date().setHours(0, 0, 0, 0)).getTime();
+// Set from the local wall clock, not added to midnight, so a clock-change day reads the same.
+const todayAt = (hour: number, minute: number) => new Date().setHours(hour, minute, 0, 0);
 
 const enrolled = (userId: string, productId: string, hour: number, minute: number): UseSmileIDSampleJob => ({
   id: `job_${userId}`,
   userId,
   product: smileIDSampleProductFrom(productId)!,
   status: UseSmileIDSampleStatus.Clear,
-  createdAtMillis: MIDNIGHT + (hour * 60 + minute) * 60_000,
+  createdAtMillis: todayAt(hour, minute),
   message: '',
   httpStatus: 200,
   sandbox: true,
