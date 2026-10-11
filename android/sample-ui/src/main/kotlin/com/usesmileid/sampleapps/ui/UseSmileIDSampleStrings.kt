@@ -95,6 +95,7 @@ object UseSmileIDSampleStrings {
     val authUserIdSection: String @Composable get() = stringResource(R.string.sample_auth_user_id_section)
     val authUserIdPlaceholder: String @Composable get() = stringResource(R.string.sample_auth_user_id_placeholder)
     val authUserIdPrevious: String @Composable get() = stringResource(R.string.sample_auth_user_id_previous)
+    val authUserIdPreviousHint: String @Composable get() = stringResource(R.string.sample_auth_user_id_previous_hint)
     val authUserIdLatest: String @Composable get() = stringResource(R.string.sample_auth_user_id_latest)
     val authUserIdHint: String @Composable get() = stringResource(R.string.sample_auth_user_id_hint)
     val authUserIdOr: String @Composable get() = stringResource(R.string.sample_auth_user_id_or)

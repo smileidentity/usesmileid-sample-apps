@@ -94,6 +94,7 @@
   "auth_user_id_section": "USER ID",
   "auth_user_id_placeholder": "user_…",
   "auth_user_id_previous": "PREVIOUS USER IDS",
+  "auth_user_id_previous_hint": "Users enrolled by your earlier verifications, newest first. Tap one to use its ID.",
   "auth_user_id_latest": "LATEST",
   "auth_user_id_hint": "Type or paste the user ID of someone who is already enrolled.",
   "auth_user_id_or": "OR",

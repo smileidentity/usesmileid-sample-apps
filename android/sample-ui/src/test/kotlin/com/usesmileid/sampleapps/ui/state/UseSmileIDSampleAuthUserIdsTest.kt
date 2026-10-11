@@ -74,6 +74,13 @@ class UseSmileIDSampleAuthUserIdsTest {
         assertEquals(emptyList<String>(), previousAuthUsers(jobs, partnerId = null, sandbox = true).map { it.userId })
     }
 
+    @Test
+    fun `a long user ID keeps its head and tail, because IDs from one session share the head`() {
+        val enrolled = job("user_01m4gahg4ceceatsw25mc5dd1h", UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleStatus.Clear, 1)
+        assertEquals("user_01m4…mc5dd1h", enrolled.middleUserId)
+        assertEquals("user_short", job("user_short", UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleStatus.Clear, 1).middleUserId)
+    }
+
     private companion object {
         const val PARTNER = "partner-a"
     }

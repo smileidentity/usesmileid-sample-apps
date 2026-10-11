@@ -94,6 +94,7 @@
   "auth_user_id_section": "معرّف المستخدم",
   "auth_user_id_placeholder": "user_…",
   "auth_user_id_previous": "معرّفات المستخدمين السابقة",
+  "auth_user_id_previous_hint": "مستخدمون سُجّلوا في عمليات تحقق سابقة، الأحدث أولًا. انقر على أحدهم لاستخدام معرّفه.",
   "auth_user_id_latest": "الأحدث",
   "auth_user_id_hint": "اكتب أو الصق معرّف مستخدم مسجّل مسبقًا.",
   "auth_user_id_or": "أو",

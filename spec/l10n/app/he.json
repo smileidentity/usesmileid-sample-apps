@@ -94,6 +94,7 @@
   "auth_user_id_section": "מזהה משתמש",
   "auth_user_id_placeholder": "user_…",
   "auth_user_id_previous": "מזהי משתמש קודמים",
+  "auth_user_id_previous_hint": "משתמשים שנרשמו באימותים קודמים, מהחדש לישן. הקישו על אחד כדי להשתמש במזהה שלו.",
   "auth_user_id_latest": "האחרון",
   "auth_user_id_hint": "הקלידו או הדביקו מזהה של משתמש שכבר נרשם.",
   "auth_user_id_or": "או",

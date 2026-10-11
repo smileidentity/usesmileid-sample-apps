@@ -90,6 +90,7 @@
     <string name="sample_auth_user_id_section">USER ID</string>
     <string name="sample_auth_user_id_placeholder">user_…</string>
     <string name="sample_auth_user_id_previous">PREVIOUS USER IDS</string>
+    <string name="sample_auth_user_id_previous_hint">Users enrolled by your earlier verifications, newest first. Tap one to use its ID.</string>
     <string name="sample_auth_user_id_latest">LATEST</string>
     <string name="sample_auth_user_id_hint">Type or paste the user ID of someone who is already enrolled.</string>
     <string name="sample_auth_user_id_or">OR</string>
