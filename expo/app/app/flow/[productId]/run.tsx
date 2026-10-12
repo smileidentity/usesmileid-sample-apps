@@ -195,6 +195,12 @@ const recordResult = (
       return;
     case 'cancelled':
       recorder.deliver('cancelled');
+      return;
+    default: {
+      // A status the SDK adds stops the build here, as it stops a partner's exhaustive switch.
+      const unhandled: never = result;
+      return unhandled;
+    }
   }
 };
 
