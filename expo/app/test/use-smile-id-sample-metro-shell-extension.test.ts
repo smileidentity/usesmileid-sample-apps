@@ -34,6 +34,11 @@ describe('withShellExtension', () => {
     expect(resolve(context(stub), '../src/extension', 'android')).toEqual({ type: 'sourceFile', filePath: addOn });
   });
 
+  it('resolves a relative module name against the app, not the working directory', () => {
+    const resolve = withShellExtension(undefined, projectRoot, '../../../sample-app-dev/extension.ts')!;
+    expect(resolve(context(stub), '../src/extension', 'android')).toEqual({ type: 'sourceFile', filePath: addOn });
+  });
+
   it('passes every other module through unchanged', () => {
     const other = path.join(projectRoot, 'src', 'other.ts');
     const resolve = withShellExtension(undefined, projectRoot, addOn)!;

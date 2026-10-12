@@ -4,10 +4,11 @@ const path = require('node:path');
 const withShellExtension = (resolveRequest, projectRoot, extension) => {
   if (!extension) return resolveRequest;
   const stub = path.join(projectRoot, 'src', 'extension.ts');
+  const addOn = path.resolve(projectRoot, extension);
   return (context, moduleName, platform) => {
     const resolution = (resolveRequest ?? context.resolveRequest)(context, moduleName, platform);
     return resolution.type === 'sourceFile' && resolution.filePath === stub
-      ? { type: 'sourceFile', filePath: path.resolve(extension) }
+      ? { type: 'sourceFile', filePath: addOn }
       : resolution;
   };
 };
