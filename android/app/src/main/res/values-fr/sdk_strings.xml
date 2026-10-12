@@ -111,6 +111,9 @@
     <string name="si_document_capture_back">Capturer le verso de la pièce d’identité</string>
     <string name="si_capture_button_document">Capturer le document</string>
     <string name="si_document_flip_title">Retournez votre {id_type}</string>
+    <string name="si_document_type_passport">passeport</string>
+    <string name="si_document_type_green_book">Green Book</string>
+    <string name="si_document_type_generic">document</string>
     <string name="si_document_skip_back">Passer</string>
     <string name="si_instructions_emphasis_visa">visa</string>
     <string name="si_document_preview_title">Confirmer la qualité de l’image</string>

@@ -111,6 +111,9 @@
     <string name="si_document_capture_back">التقاط الوجه الخلفي للهوية</string>
     <string name="si_capture_button_document">التقاط المستند</string>
     <string name="si_document_flip_title">اقلب {id_type} الخاص بك</string>
+    <string name="si_document_type_passport">جواز السفر</string>
+    <string name="si_document_type_green_book">الكتاب الأخضر</string>
+    <string name="si_document_type_generic">المستند</string>
     <string name="si_document_skip_back">تخطي</string>
     <string name="si_instructions_emphasis_visa">التأشيرة</string>
     <string name="si_document_preview_title">تأكيد جودة الصورة</string>
