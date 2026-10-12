@@ -168,7 +168,7 @@ fun SdkFlowScreen(
                                     launchSingleTop = true
                                 }
                             }
-                            is UseSmileIDResult.Failure ->
+                            is UseSmileIDResult.Failure, is UseSmileIDResult.Captured ->
                                 navigator.navigate(VerificationDetailsScreenDestination(jobId = UNSUBMITTED_JOB_ID)) {
                                     popUpTo(FlowNavGraph) { inclusive = true }
                                     launchSingleTop = true
@@ -195,6 +195,11 @@ private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmil
             error = result.error.message ?: result.error::class.java.simpleName,
         )
         UseSmileIDResult.Cancelled -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Cancelled)
+        // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+        is UseSmileIDResult.Captured -> flowResult.recordResultCallback(
+            status = UseSmileIDSampleFlowStatus.Failed,
+            error = CAPTURED_NOT_SUBMITTED,
+        )
     }
 }
 
@@ -214,3 +219,6 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
 
 /** A failed run has no server-issued job id, so the landing route carries a stable non-id. */
 private const val UNSUBMITTED_JOB_ID = "unsubmitted"
+
+/** Recorded when the SDK hands back a captured job instead of submitting it. */
+private const val CAPTURED_NOT_SUBMITTED = "Captured, not submitted"

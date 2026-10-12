@@ -173,6 +173,9 @@ export default function SdkFlowRun() {
 
 const acceptedCode = 202;
 
+/// Recorded when the SDK hands back a captured job instead of submitting it.
+const capturedNotSubmitted = 'Captured, not submitted';
+
 const runOf = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): UseSmileIDSampleRunContext => ({
   scenario: snapshot.scenario,
   theme: snapshot.theme,
@@ -195,6 +198,16 @@ const recordResult = (
       return;
     case 'cancelled':
       recorder.deliver('cancelled');
+      return;
+    // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+    case 'captured':
+      recorder.deliver('failed', { error: capturedNotSubmitted });
+      return;
+    default: {
+      // A status the SDK adds stops the build here, as it stops a partner's exhaustive switch.
+      const unhandled: never = result;
+      return unhandled;
+    }
   }
 };
 

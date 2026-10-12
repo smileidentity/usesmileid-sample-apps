@@ -104,7 +104,7 @@ struct SdkFlowResultHandler {
       app.addJob(processingJob(response), bindings: snapshot.liveSession?.bindings)
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .verificationDetails(jobId: response.jobId))
     // Same destination: a failed run has no server-issued job id, so the route carries a non-id.
-    case .failure:
+    case .failure, .captured:
       useSmileIDSampleLeaveFlow(router, run, flow, landing: .verificationDetails(jobId: unsubmittedJobId))
     // Popping the flow *is* the cancel, so the host fires none of its own.
     case .cancelled:
@@ -120,6 +120,9 @@ struct SdkFlowResultHandler {
       app.flowResult.recordResultCallback(status: .failed, error: error.useSmileIDSampleMessage)
     case .cancelled:
       app.flowResult.recordResultCallback(status: .cancelled)
+    // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+    case .captured:
+      app.flowResult.recordResultCallback(status: .failed, error: capturedNotSubmitted)
     }
   }
 
@@ -164,3 +167,6 @@ extension Error {
 
 /// The landing route for a run with no server-issued job id.
 private let unsubmittedJobId = "unsubmitted"
+
+/// Recorded when the SDK hands back a captured job instead of submitting it.
+private let capturedNotSubmitted = "Captured, not submitted"
