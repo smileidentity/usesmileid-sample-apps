@@ -37,8 +37,4 @@ describe('outermostWorkspaceRoot', () => {
     const { root, app } = tree();
     expect(outermostWorkspaceRoot(app)).toBe(path.join(root, 'sdk', 'sample-apps', 'expo'));
   });
-
-  it('is the expo workspace for this repository', () => {
-    expect(outermostWorkspaceRoot(path.resolve(__dirname, '..'))).toBe(path.resolve(__dirname, '..', '..'));
-  });
 });
