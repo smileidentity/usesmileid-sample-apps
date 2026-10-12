@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -13,9 +15,14 @@ type Resolution = { type: string; filePath?: string };
 type Context = { resolveRequest: Resolve };
 type Resolve = (context: Context, moduleName: string, platform: string | null) => Resolution;
 
-const projectRoot = path.join(path.sep, 'repo', 'sample-apps', 'expo', 'app');
+const repo = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'metro-extension-')));
+const projectRoot = path.join(repo, 'sample-apps', 'expo', 'app');
 const stub = path.join(projectRoot, 'src', 'extension.ts');
-const addOn = path.join(path.sep, 'repo', 'sample-app-dev', 'extension.ts');
+const addOn = path.join(repo, 'sample-app-dev', 'extension.ts');
+fs.mkdirSync(path.dirname(addOn), { recursive: true });
+fs.writeFileSync(addOn, 'export const useSmileIDSampleShellExtension = null;\n');
+
+afterAll(() => fs.rmSync(repo, { recursive: true, force: true }));
 
 const resolvingTo =
   (filePath: string): Resolve =>
@@ -37,6 +44,11 @@ describe('withShellExtension', () => {
   it('resolves a relative module name against the app, not the working directory', () => {
     const resolve = withShellExtension(undefined, projectRoot, '../../../sample-app-dev/extension.ts')!;
     expect(resolve(context(stub), '../src/extension', 'android')).toEqual({ type: 'sourceFile', filePath: addOn });
+  });
+
+  it('refuses a module that does not exist, naming it', () => {
+    const missing = path.join(repo, 'sample-app-dev', 'missing.ts');
+    expect(() => withShellExtension(undefined, projectRoot, missing)).toThrow(missing);
   });
 
   it('passes every other module through unchanged', () => {
