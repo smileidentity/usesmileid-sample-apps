@@ -35,13 +35,11 @@ Future<void> useSmileIDSampleBootstrap({
       await UseSmileIDSamplePreferencesJobsRepository.open();
   final UseSmileIDSampleSecureProfilesRepository profiles =
       await UseSmileIDSampleSecureProfilesRepository.open();
-  // Read BEFORE the first frame and exactly once, which is the whole of the cold-start rule: a
-  // link delivered to a live app must never re-seed the arguments.
+  // Once, before the first frame: a link delivered to a live app must never re-seed the arguments.
   final UseSmileIDSampleLaunch launch = UseSmileIDSampleLaunch(
     PlatformDispatcher.instance.defaultRouteName,
   );
-  // Once, before the first frame: a seed inside the provider re-ran on every invalidation and put
-  // a just-removed row back. Idempotent by id, so a second seeded launch adds nothing.
+  // Here, not in the provider, which re-seeded a just-removed row on every invalidation.
   await useSmileIDSampleApplyLaunch(launch.args, jobs);
   await extension?.onLaunch(PlatformDispatcher.instance.defaultRouteName);
   final ProviderContainer container = ProviderContainer(
