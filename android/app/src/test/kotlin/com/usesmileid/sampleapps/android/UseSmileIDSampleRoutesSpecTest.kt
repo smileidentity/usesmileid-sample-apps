@@ -146,6 +146,13 @@ class UseSmileIDSampleRoutesSpecTest {
         assertEquals(BuildConfig.URL_SCHEME, UseSmileIDSampleDeepLinks.SCHEME)
     }
 
+    @Test
+    fun the_application_id_is_the_android_entry_in_app_identity() {
+        val entry = androidIdentity(if (BuildConfig.SOURCE_MODE) "sourceMode" else "apps")
+        val suffix = if (BuildConfig.DEBUG) entry.optional("debugSuffix").orEmpty() else ""
+        assertEquals(entry.required("applicationId") + suffix, BuildConfig.APPLICATION_ID)
+    }
+
     /** A source build installs beside the store app, so it claims none of the registry schemes. */
     @Test
     fun source_mode_schemes_are_distinct_from_every_registry_scheme() {
