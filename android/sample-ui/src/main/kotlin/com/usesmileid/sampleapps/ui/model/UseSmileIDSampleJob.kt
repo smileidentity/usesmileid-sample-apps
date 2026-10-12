@@ -25,8 +25,14 @@ data class UseSmileIDSampleJob(
 
     val shortUserId: String get() = if (userId.length <= SHORT_ID_LENGTH) userId else userId.take(SHORT_ID_LENGTH) + "…"
 
+    /** Head and tail of the ID, since IDs from one session share a head. */
+    val middleUserId: String get() =
+        if (userId.length <= MIDDLE_HEAD + MIDDLE_TAIL + 1) userId else userId.take(MIDDLE_HEAD) + "…" + userId.takeLast(MIDDLE_TAIL)
+
     private companion object {
         const val SHORT_ID_LENGTH = 8
+        const val MIDDLE_HEAD = 9
+        const val MIDDLE_TAIL = 7
     }
 }
 

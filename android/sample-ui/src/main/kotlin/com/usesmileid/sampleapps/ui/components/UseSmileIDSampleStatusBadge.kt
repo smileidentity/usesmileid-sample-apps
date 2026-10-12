@@ -33,13 +33,14 @@ fun UseSmileIDSampleStatusBadge(
     StatusPill(label = status.label(), background = background, foreground = foreground, modifier = modifier, testId = testId)
 }
 
+/** The soft pill every badge draws. */
 @Composable
-private fun StatusPill(
+internal fun StatusPill(
     label: String,
     background: Color,
     foreground: Color,
-    modifier: Modifier,
-    testId: String?,
+    modifier: Modifier = Modifier,
+    testId: String? = null,
 ) {
     Text(
         text = label,

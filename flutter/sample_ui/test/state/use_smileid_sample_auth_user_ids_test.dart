@@ -20,9 +20,70 @@ void main() {
     partnerId: partnerId,
   );
 
+  List<String> previousIds(
+    List<UseSmileIDSampleJob> jobs, {
+    required String? partnerId,
+    required bool sandbox,
+  }) => useSmileIDSamplePreviousAuthUsers(
+    jobs,
+    partnerId: partnerId,
+    sandbox: sandbox,
+  ).map((UseSmileIDSampleJob found) => found.userId).toList();
+
+  test('each user is offered with the newest run that enrolled it', () {
+    expect(
+      useSmileIDSamplePreviousAuthUsers(
+        <UseSmileIDSampleJob>[
+          job(
+            'user_a',
+            UseSmileIDSampleProduct.smartSelfieEnrollment,
+            UseSmileIDSampleStatus.clear,
+            1,
+          ),
+          job(
+            'user_b',
+            UseSmileIDSampleProduct.biometricKyc,
+            UseSmileIDSampleStatus.clear,
+            2,
+          ),
+          job(
+            'user_a',
+            UseSmileIDSampleProduct.documentVerification,
+            UseSmileIDSampleStatus.clear,
+            3,
+          ),
+        ],
+        partnerId: _partner,
+        sandbox: true,
+      ).map((UseSmileIDSampleJob found) => found.id),
+      <String>['job_3', 'job_2'],
+    );
+  });
+
+  test('a long user ID keeps its head and tail', () {
+    expect(
+      job(
+        'user_01m4gahg4ceceatsw25mc5dd1h',
+        UseSmileIDSampleProduct.smartSelfieEnrollment,
+        UseSmileIDSampleStatus.clear,
+        1,
+      ).middleUserId,
+      'user_01m4…mc5dd1h',
+    );
+    expect(
+      job(
+        'user_short',
+        UseSmileIDSampleProduct.smartSelfieEnrollment,
+        UseSmileIDSampleStatus.clear,
+        1,
+      ).middleUserId,
+      'user_short',
+    );
+  });
+
   test('newest first and once each, from every product that enrols a user', () {
     expect(
-      useSmileIDSamplePreviousAuthUserIds(
+      previousIds(
         <UseSmileIDSampleJob>[
           job(
             'user_a',
@@ -58,7 +119,7 @@ void main() {
 
   test('refused, failed, authentication and Enhanced KYC runs offer none', () {
     expect(
-      useSmileIDSamplePreviousAuthUserIds(
+      previousIds(
         <UseSmileIDSampleJob>[
           job(
             'user_blocked',
@@ -130,22 +191,10 @@ void main() {
           partnerId: null,
         ),
       ];
-      expect(
-        useSmileIDSamplePreviousAuthUserIds(
-          jobs,
-          partnerId: _partner,
-          sandbox: true,
-        ),
-        <String>['user_mine'],
-      );
-      expect(
-        useSmileIDSamplePreviousAuthUserIds(
-          jobs,
-          partnerId: null,
-          sandbox: true,
-        ),
-        isEmpty,
-      );
+      expect(previousIds(jobs, partnerId: _partner, sandbox: true), <String>[
+        'user_mine',
+      ]);
+      expect(previousIds(jobs, partnerId: null, sandbox: true), isEmpty);
     },
   );
 }

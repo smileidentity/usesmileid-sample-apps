@@ -5,9 +5,11 @@ public struct UseSmileIDSampleJobRow: View {
   private let product: UseSmileIDSampleProduct
   private let jobId: String
   private let time: String
-  private let status: UseSmileIDSampleStatus
+  private let status: UseSmileIDSampleStatus?
   private let testId: String?
   private let statusTestId: String?
+  private let selected: Bool?
+  private let trailing: AnyView?
   private let onTap: (() -> Void)?
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.space64
@@ -15,13 +17,16 @@ public struct UseSmileIDSampleJobRow: View {
   @Environment(\.useSmileIDSampleColors) private var colors
   @Environment(\.sizeCategory) private var sizeCategory
 
+  /// `selected` non-nil makes it an option with the primary border when true; `trailing` replaces a missing status.
   public init(
     product: UseSmileIDSampleProduct,
     jobId: String,
     time: String,
-    status: UseSmileIDSampleStatus,
+    status: UseSmileIDSampleStatus?,
     testId: String? = nil,
     statusTestId: String? = nil,
+    selected: Bool? = nil,
+    trailing: AnyView? = nil,
     onTap: (() -> Void)? = nil
   ) {
     self.product = product
@@ -31,12 +36,17 @@ public struct UseSmileIDSampleJobRow: View {
     self.testId = testId
     // Derived from the row's own id, because one shared id would repeat on every row in the list.
     self.statusTestId = statusTestId ?? testId.map { "\($0)_status" }
+    self.selected = selected
+    self.trailing = trailing
     self.onTap = onTap
   }
 
   public var body: some View {
     if let onTap {
-      Button(action: onTap) { card }.buttonStyle(.plain).useSmileIDSampleTestId(testId)
+      Button(action: onTap) { card }
+        .buttonStyle(.plain)
+        .accessibilityAddTraits(selected == true ? .isSelected : [])
+        .useSmileIDSampleTestId(testId)
     } else {
       card.useSmileIDSampleTestId(testId)
     }
@@ -51,13 +61,13 @@ public struct UseSmileIDSampleJobRow: View {
             tile
             text
           }
-          UseSmileIDSampleStatusBadge(status: status, testId: statusTestId)
+          badge
         }
       } else {
         HStack(spacing: SmileSpacing.spacingSm) {
           tile
           text
-          UseSmileIDSampleStatusBadge(status: status, testId: statusTestId)
+          badge
         }
       }
     }
@@ -70,8 +80,19 @@ public struct UseSmileIDSampleJobRow: View {
     )
     .overlay(
       RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
-        .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
+        .strokeBorder(
+          selected == true ? colors.primary : colors.cardStroke,
+          lineWidth: selected == true ? SmileSpacing.borderWidthThin : smileCardStrokeWidth
+        )
     )
+  }
+
+  @ViewBuilder private var badge: some View {
+    if let status {
+      UseSmileIDSampleStatusBadge(status: status, testId: statusTestId)
+    } else if let trailing {
+      trailing
+    }
   }
 
   private var tile: some View {

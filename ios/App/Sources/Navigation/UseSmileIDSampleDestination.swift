@@ -68,7 +68,7 @@ struct UseSmileIDSampleDestination: View {
       AuthUserIdScreen(
         userId: app.authUserId,
         // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
-        previousUserIds: useSmileIDSamplePreviousAuthUserIds(
+        previousUsers: useSmileIDSamplePreviousAuthUsers(
           app.jobs ?? [],
           partnerId: app.session?.partnerId,
           sandbox: app.useSandbox

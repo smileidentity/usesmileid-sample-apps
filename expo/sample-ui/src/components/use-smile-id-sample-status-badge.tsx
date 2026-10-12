@@ -37,15 +37,39 @@ export const UseSmileIDSampleStatusBadge = ({ status, testID, style }: Props) =>
   const theme = useSmileIDSampleTheme();
   const strings = useSmileIDSampleStrings();
   const { background, foreground } = pairFor(theme.colors.badge, smileIDSampleStatusRole(status));
+  return (
+    <UseSmileIDSamplePill
+      label={smileIDSampleStatusLabel(status, strings)}
+      background={background}
+      foreground={foreground}
+      testID={testID}
+      style={style}
+    />
+  );
+};
 
-  const label = atSize(theme.type.textStyleOverline, smileLabelSize);
-
+/// The soft pill every badge draws.
+export const UseSmileIDSamplePill = ({
+  label,
+  background,
+  foreground,
+  testID,
+  style,
+}: {
+  label: string;
+  background: string;
+  foreground: string;
+  testID?: string;
+  style?: StyleProp<TextStyle>;
+}) => {
+  const theme = useSmileIDSampleTheme();
+  const type = atSize(theme.type.textStyleOverline, smileLabelSize);
   return (
     <Text
       testID={testID}
       style={[
         // The pill is this Text's own box, so its trim comes off the padding rather than the margins.
-        untrimmed(label),
+        untrimmed(type),
         {
           letterSpacing: smileLabelTracking,
           color: foreground,
@@ -53,12 +77,12 @@ export const UseSmileIDSampleStatusBadge = ({ status, testID, style }: Props) =>
           borderRadius: theme.dimens.radius.control,
           overflow: 'hidden',
           paddingHorizontal: theme.dimens.spacing.xs,
-          paddingVertical: theme.dimens.space[4] + label.marginTop,
+          paddingVertical: theme.dimens.space[4] + type.marginTop,
         },
         style,
       ]}
     >
-      {smileIDSampleStatusLabel(status, strings)}
+      {label}
     </Text>
   );
 };

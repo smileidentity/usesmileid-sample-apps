@@ -125,13 +125,15 @@ final class UseSmileIDSampleStrings {
   String get userDetailsSwitchProfile =>
       _values['user_details_switch_profile']!;
   String get userDetailsSection => _values['user_details_section']!;
-  String get authUserIdEnter => _values['auth_user_id_enter']!;
+  String get authUserIdSection => _values['auth_user_id_section']!;
   String get authUserIdPlaceholder => _values['auth_user_id_placeholder']!;
-  String get authUserIdOr => _values['auth_user_id_or']!;
   String get authUserIdPrevious => _values['auth_user_id_previous']!;
-  String get authUserIdPreviousBody => _values['auth_user_id_previous_body']!;
-  String get authUserIdEmptyTitle => _values['auth_user_id_empty_title']!;
+  String get authUserIdPreviousHint => _values['auth_user_id_previous_hint']!;
+  String get authUserIdLatest => _values['auth_user_id_latest']!;
+  String get authUserIdHint => _values['auth_user_id_hint']!;
+  String get authUserIdOr => _values['auth_user_id_or']!;
   String get authUserIdRun => _values['auth_user_id_run']!;
+  String get authUserIdRunBody => _values['auth_user_id_run_body']!;
   String get userDetailsProfileName => _values['user_details_profile_name']!;
   String get userDetailsProfileNameHint =>
       _values['user_details_profile_name_hint']!;
@@ -509,7 +511,7 @@ final class UseSmileIDSampleStrings {
           'Line up the code inside the frame to link this device to a verification session.',
       'scan_portal_prefix': 'Get a v3 token from the ',
       'scan_portal_link': 'Smile ID Portal',
-      'scan_portal_suffix': ', under Security settings.',
+      'scan_portal_suffix': ', under Developers › Security settings.',
       'scan_manual_entry': 'Or enter token manually',
       'scan_paste': 'Paste',
       'scan_link_token': 'Link token',
@@ -552,14 +554,18 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'Your details below will create one',
       'user_details_switch_profile': 'Tap to switch profile',
       'user_details_section': 'YOUR DETAILS',
-      'auth_user_id_enter': 'Enter a user ID',
+      'auth_user_id_section': 'USER ID',
       'auth_user_id_placeholder': 'user_…',
-      'auth_user_id_or': 'or',
-      'auth_user_id_previous': 'Select a previous user ID',
-      'auth_user_id_previous_body':
-          'The ID of a user who has already been verified. A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you one.',
-      'auth_user_id_empty_title': 'Authenticate a registered user',
-      'auth_user_id_run': 'Run a verification',
+      'auth_user_id_previous': 'PREVIOUS USER IDS',
+      'auth_user_id_previous_hint':
+          'Users enrolled by your earlier verifications, newest first. Tap one to use its ID.',
+      'auth_user_id_latest': 'LATEST',
+      'auth_user_id_hint':
+          'Type or paste the user ID of someone who is already enrolled.',
+      'auth_user_id_or': 'OR',
+      'auth_user_id_run': 'RUN A VERIFICATION',
+      'auth_user_id_run_body':
+          'A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you a user ID.',
       'user_details_profile_name': 'Profile name (optional)',
       'user_details_profile_name_hint': 'Shown on the consent screen',
       'user_details_from_token': 'Provided by token',
@@ -856,7 +862,7 @@ final class UseSmileIDSampleStrings {
           'Placez le code dans le cadre pour relier cet appareil à une session de vérification.',
       'scan_portal_prefix': 'Obtenez un jeton v3 depuis le ',
       'scan_portal_link': 'portail Smile ID',
-      'scan_portal_suffix': ', dans les paramètres de sécurité.',
+      'scan_portal_suffix': ', dans Développeurs › Paramètres de sécurité.',
       'scan_manual_entry': 'Ou saisissez le jeton manuellement',
       'scan_paste': 'Coller',
       'scan_link_token': 'Relier le jeton',
@@ -904,14 +910,18 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'Vos informations ci-dessous en créeront un',
       'user_details_switch_profile': 'Touchez pour changer de profil',
       'user_details_section': 'VOS INFORMATIONS',
-      'auth_user_id_enter': 'Saisir un ID utilisateur',
+      'auth_user_id_section': 'ID UTILISATEUR',
       'auth_user_id_placeholder': 'user_…',
-      'auth_user_id_or': 'ou',
-      'auth_user_id_previous': 'Choisir un ID utilisateur précédent',
-      'auth_user_id_previous_body':
-          'L\'ID d\'un utilisateur déjà vérifié. Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous en donne un.',
-      'auth_user_id_empty_title': 'Authentifier un utilisateur enregistré',
-      'auth_user_id_run': 'Lancer une vérification',
+      'auth_user_id_previous': 'ID UTILISATEUR PRÉCÉDENTS',
+      'auth_user_id_previous_hint':
+          'Utilisateurs enregistrés lors de vos vérifications précédentes, du plus récent au plus ancien. Touchez-en un pour utiliser son ID.',
+      'auth_user_id_latest': 'DERNIER',
+      'auth_user_id_hint':
+          'Saisissez ou collez l\'ID d\'un utilisateur déjà enregistré.',
+      'auth_user_id_or': 'OU',
+      'auth_user_id_run': 'LANCER UNE VÉRIFICATION',
+      'auth_user_id_run_body':
+          'Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous donne un ID utilisateur.',
       'user_details_profile_name': 'Nom du profil (facultatif)',
       'user_details_profile_name_hint': 'Affiché sur l’écran de consentement',
       'user_details_from_token': 'Fourni par le jeton',
@@ -1221,7 +1231,7 @@ final class UseSmileIDSampleStrings {
       'scan_line_up': 'ضع الرمز داخل الإطار لربط هذا الجهاز بجلسة تحقق.',
       'scan_portal_prefix': 'احصل على رمز v3 من ',
       'scan_portal_link': 'بوابة Smile ID',
-      'scan_portal_suffix': '، ضمن إعدادات الأمان.',
+      'scan_portal_suffix': '، ضمن المطوّرون › إعدادات الأمان.',
       'scan_manual_entry': 'أو أدخل الرمز يدويًا',
       'scan_paste': 'لصق',
       'scan_link_token': 'ربط الرمز',
@@ -1263,14 +1273,17 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'ستُنشئ بياناتك أدناه ملفًا شخصيًا',
       'user_details_switch_profile': 'انقر لتبديل الملف الشخصي',
       'user_details_section': 'بياناتك',
-      'auth_user_id_enter': 'أدخل معرّف مستخدم',
+      'auth_user_id_section': 'معرّف المستخدم',
       'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_previous': 'معرّفات المستخدمين السابقة',
+      'auth_user_id_previous_hint':
+          'مستخدمون سُجّلوا في عمليات تحقق سابقة، الأحدث أولًا. انقر على أحدهم لاستخدام معرّفه.',
+      'auth_user_id_latest': 'الأحدث',
+      'auth_user_id_hint': 'اكتب أو الصق معرّف مستخدم مسجّل مسبقًا.',
       'auth_user_id_or': 'أو',
-      'auth_user_id_previous': 'اختر معرّف مستخدم سابقًا',
-      'auth_user_id_previous_body':
-          'معرّف مستخدم تم التحقق منه من قبل. تحصل عليه من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
-      'auth_user_id_empty_title': 'مصادقة مستخدم مسجّل',
       'auth_user_id_run': 'إجراء تحقق',
+      'auth_user_id_run_body':
+          'تحصل على معرّف مستخدم من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
       'user_details_profile_name': 'اسم الملف الشخصي (اختياري)',
       'user_details_profile_name_hint': 'يظهر في شاشة الموافقة',
       'user_details_from_token': 'مقدَّم من الرمز',
@@ -1563,7 +1576,7 @@ final class UseSmileIDSampleStrings {
       'scan_line_up': 'מקמו את הקוד בתוך המסגרת כדי לקשר את המכשיר לסשן אימות.',
       'scan_portal_prefix': 'קבלו טוקן v3 מ',
       'scan_portal_link': 'פורטל Smile ID',
-      'scan_portal_suffix': ', תחת הגדרות האבטחה.',
+      'scan_portal_suffix': ', תחת מפתחים › הגדרות האבטחה.',
       'scan_manual_entry': 'או הזינו את הטוקן ידנית',
       'scan_paste': 'הדבקה',
       'scan_link_token': 'קישור הטוקן',
@@ -1605,14 +1618,17 @@ final class UseSmileIDSampleStrings {
       'user_details_no_profile': 'הפרטים שלכם למטה ייצרו פרופיל',
       'user_details_switch_profile': 'הקישו כדי להחליף פרופיל',
       'user_details_section': 'הפרטים שלכם',
-      'auth_user_id_enter': 'הזן מזהה משתמש',
+      'auth_user_id_section': 'מזהה משתמש',
       'auth_user_id_placeholder': 'user_…',
+      'auth_user_id_previous': 'מזהי משתמש קודמים',
+      'auth_user_id_previous_hint':
+          'משתמשים שנרשמו באימותים קודמים, מהחדש לישן. הקישו על אחד כדי להשתמש במזהה שלו.',
+      'auth_user_id_latest': 'האחרון',
+      'auth_user_id_hint': 'הקלידו או הדביקו מזהה של משתמש שכבר נרשם.',
       'auth_user_id_or': 'או',
-      'auth_user_id_previous': 'בחר מזהה משתמש קודם',
-      'auth_user_id_previous_body':
-          'מזהה של משתמש שכבר אומת. תקבל אותו מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
-      'auth_user_id_empty_title': 'אימות משתמש רשום',
       'auth_user_id_run': 'הפעל אימות',
+      'auth_user_id_run_body':
+          'תקבלו מזהה משתמש מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
       'user_details_profile_name': 'שם הפרופיל (אופציונלי)',
       'user_details_profile_name_hint': 'מוצג במסך ההסכמה',
       'user_details_from_token': 'סופק על ידי הטוקן',

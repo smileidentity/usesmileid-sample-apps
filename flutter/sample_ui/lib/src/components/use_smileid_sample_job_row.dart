@@ -23,6 +23,8 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
     this.onTap,
     this.testId,
     this.statusTestId = UseSmileIDSampleTestIds.jobRowStatus,
+    this.selected,
+    this.trailing,
     super.key,
   });
 
@@ -35,8 +37,8 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
   /// The submission time, already formatted.
   final String time;
 
-  /// The job's status.
-  final UseSmileIDSampleStatus status;
+  /// The job's status; null draws [trailing] in the badge's place.
+  final UseSmileIDSampleStatus? status;
 
   /// What a tap does.
   final VoidCallback? onTap;
@@ -47,6 +49,12 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
   /// The `sample_*` id for the badge, asserted on separately.
   final String? statusTestId;
 
+  /// Non-null makes the row an option, with the primary border when true.
+  final bool? selected;
+
+  /// What sits where the badge would when there is no status.
+  final Widget? trailing;
+
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
@@ -56,22 +64,29 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
     // One layout cannot do both: a flexible child inside a Wrap claims the whole line.
     final bool stacks = MediaQuery.textScalerOf(context).scale(1) > 1;
     final Widget tile = UseSmileIDSampleProductTile(product: product);
-    final Widget badge = UseSmileIDSampleStatusBadge(
-      status: status,
-      testId: statusTestId,
-    );
+    final UseSmileIDSampleStatus? shown = status;
+    final Widget badge = shown != null
+        ? UseSmileIDSampleStatusBadge(status: shown, testId: statusTestId)
+        : trailing ?? const SizedBox.shrink();
 
     return Semantics(
       identifier: testId,
-      button: onTap != null,
+      button: onTap != null && selected == null,
+      selected: selected,
+      inMutuallyExclusiveGroup: selected != null,
       child: Material(
         color: colors.card.background,
         shape: RoundedRectangleBorder(
           borderRadius: UseSmileIDSampleShapes.card,
-          side: BorderSide(
-            color: colors.cardStroke,
-            width: smileCardStrokeWidth,
-          ),
+          side: selected == true
+              ? BorderSide(
+                  color: colors.primary,
+                  width: SmileDimens.borderWidthThin,
+                )
+              : BorderSide(
+                  color: colors.cardStroke,
+                  width: smileCardStrokeWidth,
+                ),
         ),
         child: InkWell(
           onTap: onTap,
@@ -122,27 +137,20 @@ class UseSmileIDSampleJobRow extends StatelessWidget {
   }
 }
 
-/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
+/// A product's hue tile with its icon.
 class UseSmileIDSampleProductTile extends StatelessWidget {
-  /// [side] defaults to the board's 36, whose glyph is 18; a larger tile scales the glyph with it.
-  const UseSmileIDSampleProductTile({
-    required this.product,
-    this.side = _tileSize,
-    super.key,
-  });
+  /// The board's 36 tile with its 18 glyph.
+  const UseSmileIDSampleProductTile({required this.product, super.key});
 
   /// Whose hue and icon the tile draws.
   final UseSmileIDSampleProduct product;
-
-  /// The tile's width and height.
-  final double side;
 
   @override
   Widget build(BuildContext context) {
     final SmileProductHue hue = productHue(product);
     return Container(
-      width: side,
-      height: side,
+      width: _tileSize,
+      height: _tileSize,
       alignment: Alignment.center,
       decoration: BoxDecoration(
         color: hue.tile,
@@ -151,7 +159,7 @@ class UseSmileIDSampleProductTile extends StatelessWidget {
       child: UseSmileIDSampleIcon(
         asset: productIcon(product),
         tint: hue.icon,
-        size: side * _tileIconSize / _tileSize,
+        size: _tileIconSize,
       ),
     );
   }

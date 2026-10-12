@@ -121,27 +121,27 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   }
 
   func testAuthUserIdPrevious() {
-    goldens("auth_user_id_previous") { authUserId("", previous: Self.previousUserIds) }
+    goldens("auth_user_id_previous") { authUserId("", previous: Self.previousUsers) }
   }
 
   func testAuthUserIdSelected() {
-    goldens("auth_user_id_selected") { authUserId(Self.previousUserIds[0], previous: Self.previousUserIds) }
+    goldens("auth_user_id_selected") { authUserId(Self.previousUsers[0].userId, previous: Self.previousUsers) }
   }
 
   func testAuthUserIdTyped() {
-    goldens("auth_user_id_typed") { authUserId("user_01typedbyhand0000000000", previous: Self.previousUserIds) }
+    goldens("auth_user_id_typed") { authUserId("user_01typedbyhand0000000000", previous: Self.previousUsers) }
   }
 
   func testAuthUserIdSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType {
-      authUserId(Self.previousUserIds[0], previous: Self.previousUserIds)
+      authUserId(Self.previousUsers[0].userId, previous: Self.previousUsers)
     }
   }
 
-  private func authUserId(_ userId: String, previous: [String]) -> some View {
+  private func authUserId(_ userId: String, previous: [UseSmileIDSampleJob]) -> some View {
     AuthUserIdScreen(
       userId: userId,
-      previousUserIds: previous,
+      previousUsers: previous,
       onUserIdChange: { _ in },
       onRegister: {},
       onBack: {},
@@ -149,11 +149,25 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     )
   }
 
-  private static let previousUserIds = [
-    "user_01m4gahg4ceceatsw25mc5dd1h",
-    "user_01r4l94gahg4ceceatsw25mc5d",
-    "user_01r4l94gahg4ceceatsw25mc51"
-  ]
+  /// Set from the local wall clock, not added to midnight, so a clock-change day reads the same.
+  private static let previousUsers: [UseSmileIDSampleJob] = {
+    func job(_ userId: String, _ product: UseSmileIDSampleProduct, hour: Int, minute: Int) -> UseSmileIDSampleJob {
+      UseSmileIDSampleJob(
+        id: "job_\(userId)",
+        userId: userId,
+        product: product,
+        status: .clear,
+        createdAt: Calendar.current.date(bySettingHour: hour, minute: minute, second: 0, of: Date())!,
+        message: "",
+        httpStatus: 200
+      )
+    }
+    return [
+      job("user_01m4gahg4ceceatsw25mc5dd1h", .smartSelfieEnrollment, hour: 23, minute: 10),
+      job("user_01r4l94gahg4ceceatsw25mc5d", .biometricKyc, hour: 18, minute: 42),
+      job("user_01r4l94gahg4ceceatsw25mc51", .documentVerification, hour: 9, minute: 5)
+    ]
+  }()
 
   func testUserDetailsEmpty() {
     goldens("user_details_empty") { userDetails(UseSmileIDSampleUserDetails(), profile: nil) }

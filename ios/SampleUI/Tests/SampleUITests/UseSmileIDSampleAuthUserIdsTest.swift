@@ -11,7 +11,7 @@ final class UseSmileIDSampleAuthUserIdsTest: XCTestCase {
       Self.job("user_c", .documentVerification, .processing, at: 2),
       Self.job("user_a", .enhancedDocumentVerification, .clear, at: 4)
     ]
-    XCTAssertEqual(useSmileIDSamplePreviousAuthUserIds(jobs, partnerId: Self.partner, sandbox: true), ["user_a", "user_b", "user_c"])
+    XCTAssertEqual(useSmileIDSamplePreviousAuthUsers(jobs, partnerId: Self.partner, sandbox: true).map(\.userId), ["user_a", "user_b", "user_c"])
   }
 
   func testRefusedFailedAuthenticationAndEnhancedKycRunsOfferNone() {
@@ -22,7 +22,7 @@ final class UseSmileIDSampleAuthUserIdsTest: XCTestCase {
       Self.job("user_ekyc", .enhancedKyc, .clear, at: 4),
       Self.job(" ", .smartSelfieEnrollment, .clear, at: 5)
     ]
-    XCTAssertEqual(useSmileIDSamplePreviousAuthUserIds(jobs, partnerId: Self.partner, sandbox: true), [])
+    XCTAssertEqual(useSmileIDSamplePreviousAuthUsers(jobs, partnerId: Self.partner, sandbox: true).map(\.userId), [])
   }
 
   func testAnotherPartnersUsersOrThisPartnersInTheOtherEnvironmentAreNotOffered() {
@@ -32,8 +32,22 @@ final class UseSmileIDSampleAuthUserIdsTest: XCTestCase {
       Self.job("user_production", .smartSelfieEnrollment, .clear, at: 3, sandbox: false),
       Self.job("user_fixture", .smartSelfieEnrollment, .clear, at: 4, partnerId: nil)
     ]
-    XCTAssertEqual(useSmileIDSamplePreviousAuthUserIds(jobs, partnerId: Self.partner, sandbox: true), ["user_mine"])
-    XCTAssertEqual(useSmileIDSamplePreviousAuthUserIds(jobs, partnerId: nil, sandbox: true), [])
+    XCTAssertEqual(useSmileIDSamplePreviousAuthUsers(jobs, partnerId: Self.partner, sandbox: true).map(\.userId), ["user_mine"])
+    XCTAssertEqual(useSmileIDSamplePreviousAuthUsers(jobs, partnerId: nil, sandbox: true).map(\.userId), [])
+  }
+
+  func testEachUserIsOfferedWithTheNewestRunThatEnrolledIt() {
+    let jobs = [
+      Self.job("user_a", .smartSelfieEnrollment, .clear, at: 1),
+      Self.job("user_b", .biometricKyc, .clear, at: 2),
+      Self.job("user_a", .documentVerification, .clear, at: 3)
+    ]
+    XCTAssertEqual(useSmileIDSamplePreviousAuthUsers(jobs, partnerId: Self.partner, sandbox: true).map(\.id), ["job_3.0", "job_2.0"])
+  }
+
+  func testALongUserIdKeepsItsHeadAndTail() {
+    XCTAssertEqual(Self.job("user_01m4gahg4ceceatsw25mc5dd1h", .smartSelfieEnrollment, .clear, at: 1).middleUserId, "user_01m4\u{2026}mc5dd1h")
+    XCTAssertEqual(Self.job("user_short", .smartSelfieEnrollment, .clear, at: 1).middleUserId, "user_short")
   }
 
   private static let partner = "partner-a"

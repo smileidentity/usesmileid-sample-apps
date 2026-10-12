@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
@@ -36,6 +36,8 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
  * Select mode's checkbox is not a slot — the design puts it beside the card, and inside it cost the title width.
  *
  * @param statusTestId defaulted rather than attached by the caller; a list screen overrides it with the row's suffix.
+ * @param selected non-null makes the row a radio option, with the primary border when true.
+ * @param trailing replaces the status badge when there is no status.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -43,25 +45,40 @@ fun UseSmileIDSampleJobRow(
     product: UseSmileIDSampleProduct,
     jobId: String,
     time: String,
-    status: UseSmileIDSampleStatus,
+    status: UseSmileIDSampleStatus?,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     testId: String? = null,
     statusTestId: String? = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
+    selected: Boolean? = null,
+    trailing: @Composable (() -> Unit)? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .then(
+                when {
+                    onClick == null -> Modifier
+                    selected != null -> Modifier.selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+                    else -> Modifier.clickable(role = Role.Button, onClick = onClick)
+                },
+            )
             .tagged(testId),
         shape = UseSmileIDSampleTheme.shapes.card,
         color = colors.card.background,
-        border = BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
+        border = if (selected == true) {
+            BorderStroke(SmileDimens.borderWidthThin, colors.primary)
+        } else {
+            BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke)
+        },
     ) {
         // A Row at the design's scale keeps the badge inline; a FlowRow above it lets the badge drop.
         // One layout cannot do both: weight() inside a FlowRow claims the whole line.
         val stacks = LocalDensity.current.fontScale > 1f
+        val badge: @Composable () -> Unit = {
+            if (status != null) UseSmileIDSampleStatusBadge(status = status, testId = statusTestId) else trailing?.invoke()
+        }
         val padding = Modifier
             .defaultMinSize(minHeight = SmileDimens.space64)
             .padding(SmileDimens.spacingSm)
@@ -74,7 +91,7 @@ fun UseSmileIDSampleJobRow(
             ) {
                 UseSmileIDSampleProductTile(product = product)
                 JobRowText(product = product, jobId = jobId, time = time, stacks = true)
-                UseSmileIDSampleStatusBadge(status = status, testId = statusTestId)
+                badge()
             }
         } else {
             Row(
@@ -90,27 +107,27 @@ fun UseSmileIDSampleJobRow(
                     stacks = false,
                     modifier = Modifier.weight(1f),
                 )
-                UseSmileIDSampleStatusBadge(status = status, testId = statusTestId)
+                badge()
             }
         }
     }
 }
 
-/** A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen. */
+/** A product's hue tile with its icon. */
 @Composable
-internal fun UseSmileIDSampleProductTile(product: UseSmileIDSampleProduct, modifier: Modifier = Modifier, size: Dp = TILE_SIZE) {
+internal fun UseSmileIDSampleProductTile(product: UseSmileIDSampleProduct, modifier: Modifier = Modifier) {
     val hue = product.hue
     Surface(
-        modifier = modifier.size(size),
+        modifier = modifier.size(TILE_SIZE),
         shape = UseSmileIDSampleTheme.shapes.rowTile,
         color = hue.tile,
     ) {
         Box(contentAlignment = Alignment.Center) {
             val icon = product.iconRes
             if (icon != null) {
-                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE * (size / TILE_SIZE))
+                UseSmileIDSampleIcon(id = icon, tint = hue.icon, size = TILE_ICON_SIZE)
             } else {
-                ProductMarkGlyph(tint = hue.icon, size = SmileDimens.sizeIconMd * (size / TILE_SIZE))
+                ProductMarkGlyph(tint = hue.icon)
             }
         }
     }

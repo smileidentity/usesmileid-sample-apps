@@ -13,19 +13,8 @@ public struct UseSmileIDSampleStatusBadge: View {
   }
 
   public var body: some View {
-    UseSmileIDSampleText(
-      status.label,
-      style: UseSmileIDSampleTheme.type.textStyleOverline
-        .with(size: smileLabelSize, tracking: smileLabelTracking)
-    )
-    .foregroundColor(fill.foreground)
-    .padding(.horizontal, SmileSpacing.spacingXs)
-    .padding(.vertical, SmileSpacing.space4)
-    .background(
-      RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.pill, style: .continuous)
-        .fill(fill.background)
-    )
-    .useSmileIDSampleTestId(testId)
+    UseSmileIDSamplePill(label: status.label, background: fill.background, foreground: fill.foreground)
+      .useSmileIDSampleTestId(testId)
   }
 
   private var fill: (background: Color, foreground: Color) {
@@ -37,5 +26,27 @@ public struct UseSmileIDSampleStatusBadge: View {
     case .error: return (badge.neutralBackground, badge.neutralText)
     case .processing: return (badge.infoBackground, badge.infoText)
     }
+  }
+}
+
+/// The soft pill every badge draws.
+struct UseSmileIDSamplePill: View {
+  let label: String
+  let background: Color
+  let foreground: Color
+
+  var body: some View {
+    UseSmileIDSampleText(
+      label,
+      style: UseSmileIDSampleTheme.type.textStyleOverline
+        .with(size: smileLabelSize, tracking: smileLabelTracking)
+    )
+    .foregroundColor(foreground)
+    .padding(.horizontal, SmileSpacing.spacingXs)
+    .padding(.vertical, SmileSpacing.space4)
+    .background(
+      RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.pill, style: .continuous)
+        .fill(background)
+    )
   }
 }

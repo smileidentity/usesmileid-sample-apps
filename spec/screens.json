@@ -316,30 +316,31 @@
       "states": [
         {
           "state": "noJobs",
-          "node": "6014-1663",
-          "note": "No stored verification carries an enrolled user. Explains where an ID comes from, offers SmartSelfie Enrollment ('Run a verification'), and an empty 'Enter a user ID' field. Continue stays disabled until one is typed."
+          "note": "USER ID label, the field and its hint, an OR divider, then RUN A VERIFICATION with its hint and a SmartSelfie Enrollment card (hue tile, chevron). Continue stays disabled until an ID is typed.",
+          "design": "in-repo"
         },
         {
           "state": "previousIds",
-          "node": "6014-1663",
-          "note": "'Enter a user ID' above 'or' and 'Select previous user ID': the distinct user IDs of stored jobs from products that enrol a user (every capture product but SmartSelfie Authentication), newest first, leaving out Blocked and Error. Nothing picked: Continue disabled."
+          "note": "The same field and OR, then PREVIOUS USER IDS with its hint and one card per enrolled user, laid out like a verifications row: product tile and name, the ID shortened in the middle with its time, and LATEST on the newest. Users come from stored jobs of products that enrol one, newest first, leaving out Blocked and Error. Nothing picked: Continue disabled.",
+          "design": "in-repo"
         },
         {
           "state": "selected",
-          "node": "6014-1663",
-          "note": "A previous ID picked: its row takes the pale fill and check, the field shows it, Continue enables."
+          "note": "A previous user picked: its card takes the primary border a chosen select trigger has, the field shows the full ID, Continue enables.",
+          "design": "in-repo"
         },
         {
           "state": "typed",
           "design": "in-repo",
-          "note": "An ID typed that is none of the previous ones: no row is checked, Continue enables. Surrounding whitespace is trimmed."
+          "note": "An ID typed that is none of the previous ones: no card is selected, Continue enables. Surrounding whitespace is trimmed."
         }
       ],
       "components": [
         "TopAppBar",
+        "SectionLabel",
         "TextInput",
-        "OptionRow",
-        "JobRow",
+        "StatusBadge",
+        "SettingRow",
         "Button"
       ],
       "testIds": [
@@ -349,7 +350,8 @@
         "sample_auth_user_id_register",
         "sample_auth_user_id_continue"
       ],
-      "note": "DECIDED 2026-10-09: the sample never makes up a user ID. SmartSelfie Authentication needs the ID of a user already enrolled, and every SDK rejects the run without one, so the app asks for it here. Every other product sends none, and the server issues the ID."
+      "note": "DECIDED 2026-10-09: the sample never makes up a user ID. SmartSelfie Authentication needs the ID of a user already enrolled, and every SDK rejects the run without one, so the app asks for it here. Every other product sends none, and the server issues the ID.",
+      "divergesFromTheFrameByRuling": "Built from frame 6014-1663, then reworked 2026-10-12 to the app's form idiom: all-caps section labels instead of title headings, no hero tile, the field fixed at the top with an OR divider below it, and previous users as verification-style cards with a LATEST pill instead of picker rows. The frame no longer describes this screen."
     },
     {
       "id": "consent",

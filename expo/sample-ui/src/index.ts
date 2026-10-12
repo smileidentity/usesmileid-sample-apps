@@ -338,7 +338,7 @@ export {
   smileIDSampleCatalogueIdTypesOf,
   type UseSmileIDSampleCatalogueStore,
 } from './data/use-smile-id-sample-catalogue-store';
-export { smileIDSamplePreviousAuthUserIds } from './state/use-smile-id-sample-auth-user-ids';
+export { smileIDSamplePreviousAuthUsers } from './state/use-smile-id-sample-auth-user-ids';
 export { useSmileIDSampleFormsStore } from './state/use-smile-id-sample-forms-store';
 
 export { UseSmileIDSamplePickerList } from './components/use-smile-id-sample-picker-list';

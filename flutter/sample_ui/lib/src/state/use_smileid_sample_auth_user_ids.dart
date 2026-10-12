@@ -1,14 +1,14 @@
 import '../model/use_smileid_sample_job.dart';
 import '../model/use_smileid_sample_status.dart';
 
-/// The user IDs SmartSelfie Authentication can run as: this partner's jobs in this environment that enrol a user and were not refused or failed, newest first, once each.
-List<String> useSmileIDSamplePreviousAuthUserIds(
+/// This partner's enrolling runs in this environment, not refused or failed, newest first, one per user.
+List<UseSmileIDSampleJob> useSmileIDSamplePreviousAuthUsers(
   List<UseSmileIDSampleJob> jobs, {
   required String? partnerId,
   required bool sandbox,
 }) {
   if (partnerId == null) {
-    return const <String>[];
+    return const <UseSmileIDSampleJob>[];
   }
   final List<UseSmileIDSampleJob> enrolled =
       jobs
@@ -27,8 +27,8 @@ List<String> useSmileIDSamplePreviousAuthUserIds(
               b.createdAtMillis.compareTo(a.createdAtMillis),
         );
   final Set<String> seen = <String>{};
-  return <String>[
+  return <UseSmileIDSampleJob>[
     for (final UseSmileIDSampleJob job in enrolled)
-      if (seen.add(job.userId)) job.userId,
+      if (seen.add(job.userId)) job,
   ];
 }

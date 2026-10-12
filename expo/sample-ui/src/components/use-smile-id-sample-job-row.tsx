@@ -24,10 +24,14 @@ type Props = {
   product: UseSmileIDSampleProduct;
   jobId: string;
   time: string;
-  status: UseSmileIDSampleStatus;
+  /// Null draws `trailing` in the badge's place.
+  status: UseSmileIDSampleStatus | null;
   onPress?: () => void;
   testID?: string;
   statusTestID?: string;
+  /// Defined makes the row an option, with the primary border when true.
+  selected?: boolean;
+  trailing?: React.ReactNode;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -40,24 +44,31 @@ export const UseSmileIDSampleJobRow = ({
   onPress,
   testID,
   statusTestID = UseSmileIDSampleTestIds.JOB_ROW_STATUS,
+  selected,
+  trailing,
   style,
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   // Inline at the design's scale; enlarged type lets the badge drop rather than squeezing the title.
   const stacks = PixelRatio.getFontScale() > 1;
   const Container = onPress ? Pressable : View;
+  const border = selected ? theme.dimens.borderWidth.thin : smileCardStrokeWidth;
 
   return (
     <Container
       testID={testID}
-      {...(onPress ? { accessibilityRole: 'button' as const, onPress } : {})}
+      {...(onPress
+        ? selected === undefined
+          ? { accessibilityRole: 'button' as const, onPress }
+          : { accessibilityRole: 'radio' as const, accessibilityState: { selected }, onPress }
+        : {})}
       style={[
         styles.card,
         {
           borderRadius: theme.shapes.card,
           backgroundColor: theme.colors.card.background,
-          borderWidth: smileCardStrokeWidth,
-          borderColor: theme.colors.cardStroke,
+          borderWidth: border,
+          borderColor: selected ? theme.colors.primary : theme.colors.cardStroke,
         },
         style,
       ]}
@@ -68,7 +79,8 @@ export const UseSmileIDSampleJobRow = ({
           smileStrokeOverlap,
           {
             minHeight: theme.dimens.space[64],
-            padding: theme.dimens.spacing.sm,
+            // The thicker selected border comes off the padding, so the content does not move.
+            padding: theme.dimens.spacing.sm - (border - smileCardStrokeWidth),
             columnGap: theme.dimens.spacing.sm,
             rowGap: theme.dimens.spacing.xs,
           },
@@ -76,32 +88,26 @@ export const UseSmileIDSampleJobRow = ({
       >
         <UseSmileIDSampleProductTile product={product} />
         <JobRowText product={product} jobId={jobId} time={time} stacks={stacks} />
-        <UseSmileIDSampleStatusBadge status={status} testID={statusTestID} />
+        {status !== null ? <UseSmileIDSampleStatusBadge status={status} testID={statusTestID} /> : trailing}
       </View>
     </Container>
   );
 };
 
-/// A product's hue tile with its icon: the job row's leading tile, and larger above the authentication user ID screen.
-export const UseSmileIDSampleProductTile = ({
-  product,
-  side = TILE_SIZE,
-}: {
-  product: UseSmileIDSampleProduct;
-  side?: number;
-}) => {
+/// A product's hue tile with its icon.
+export const UseSmileIDSampleProductTile = ({ product }: { product: UseSmileIDSampleProduct }) => {
   const hue = smileIDSampleProductHue(product);
   return (
     <View
       style={[
         styles.tile,
-        { width: side, height: side, borderRadius: TILE_RADIUS, backgroundColor: hue.tile },
+        { width: TILE_SIZE, height: TILE_SIZE, borderRadius: TILE_RADIUS, backgroundColor: hue.tile },
       ]}
     >
       <UseSmileIDSampleIcon
         name={smileIDSampleProductIcon(product)}
         tint={hue.icon}
-        size={(side * TILE_ICON_SIZE) / TILE_SIZE}
+        size={TILE_ICON_SIZE}
       />
     </View>
   );
