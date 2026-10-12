@@ -9,6 +9,9 @@ const { outermostWorkspaceRoot } = require('../metro-workspace-root') as {
 
 const made: string[] = [];
 
+const repo = (dir: string): void => fs.mkdirSync(path.join(dir, '.git'));
+const submodule = (dir: string): void => fs.writeFileSync(path.join(dir, '.git'), 'gitdir: ../.git/modules/x\n');
+
 const tree = (...markers: string[]): { root: string; app: string } => {
   const root = fs.realpathSync(fs.mkdtempSync(path.join(os.tmpdir(), 'metro-root-')));
   made.push(root);
@@ -30,6 +33,19 @@ describe('outermostWorkspaceRoot', () => {
 
   it('is the enclosing repo when checked out as a submodule of a pnpm workspace', () => {
     const { root, app } = tree('sdk/sample-apps/expo', 'sdk');
+    expect(outermostWorkspaceRoot(app)).toBe(path.join(root, 'sdk'));
+  });
+
+  it('stops at the repository, ignoring a workspace marker above a standalone clone', () => {
+    const { root, app } = tree('sdk/sample-apps/expo', '');
+    repo(path.join(root, 'sdk', 'sample-apps'));
+    expect(outermostWorkspaceRoot(app)).toBe(path.join(root, 'sdk', 'sample-apps', 'expo'));
+  });
+
+  it('walks through a submodule to its superproject, and no further', () => {
+    const { root, app } = tree('sdk/sample-apps/expo', 'sdk', '');
+    submodule(path.join(root, 'sdk', 'sample-apps'));
+    repo(path.join(root, 'sdk'));
     expect(outermostWorkspaceRoot(app)).toBe(path.join(root, 'sdk'));
   });
 
