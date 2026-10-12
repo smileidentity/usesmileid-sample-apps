@@ -238,6 +238,7 @@ class _UseSmileIDSampleSdkFlowTabState
         }
       case UseSmileIDFailure<JobSubmissionResponse>():
       case UseSmileIDCancelled<JobSubmissionResponse>():
+      case UseSmileIDCaptured<JobSubmissionResponse>():
         _leave();
     }
   }
@@ -260,6 +261,12 @@ class _UseSmileIDSampleSdkFlowTabState
         );
       case UseSmileIDCancelled<JobSubmissionResponse>():
         run.deliver(UseSmileIDSampleFlowStatus.cancelled);
+      // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+      case UseSmileIDCaptured<JobSubmissionResponse>():
+        run.deliver(
+          UseSmileIDSampleFlowStatus.failed,
+          error: _capturedNotSubmitted,
+        );
     }
   }
 
@@ -290,6 +297,9 @@ class _UseSmileIDSampleSdkFlowTabState
   );
 
   static const int _acceptedCode = 202;
+
+  /// Recorded when the SDK hands back a captured job instead of submitting it.
+  static const String _capturedNotSubmitted = 'Captured, not submitted';
 }
 
 /// The SDK themes itself from the platform brightness, so this hands it the host theme's instead.
