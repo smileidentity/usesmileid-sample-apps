@@ -111,9 +111,9 @@
     <string name="si_document_capture_back">צלם את גב התעודה</string>
     <string name="si_capture_button_document">צלם מסמך</string>
     <string name="si_document_flip_title">הפוך את {id_type} שלך</string>
-    <string name="si_document_type_passport">דרכון</string>
-    <string name="si_document_type_green_book">ספר ירוק</string>
-    <string name="si_document_type_generic">מסמך</string>
+    <string name="si_document_type_passport">הדרכון</string>
+    <string name="si_document_type_green_book">הספר הירוק</string>
+    <string name="si_document_type_generic">המסמך</string>
     <string name="si_document_skip_back">דלג</string>
     <string name="si_instructions_emphasis_visa">אשרה</string>
     <string name="si_document_preview_title">אישור איכות התמונה</string>
