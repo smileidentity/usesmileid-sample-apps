@@ -67,8 +67,12 @@ export default function RootLayout() {
   }, [loadSettings]);
 
   useEffect(() => {
-    const extension = useSmileIDSampleShellExtension;
-    if (extension?.onLaunch) void Linking.getInitialURL().then(extension.onLaunch);
+    const onLaunch = useSmileIDSampleShellExtension?.onLaunch;
+    if (onLaunch) {
+      Linking.getInitialURL()
+        .then(onLaunch)
+        .catch(() => undefined);
+    }
   }, []);
 
   const sessionLoaded = useSmileIDSampleSessionStore((state) => state.loaded);

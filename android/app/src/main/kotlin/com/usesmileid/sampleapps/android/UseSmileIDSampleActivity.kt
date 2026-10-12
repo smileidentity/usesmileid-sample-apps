@@ -19,7 +19,8 @@ class UseSmileIDSampleActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         intent.foldUseSmileIDSampleSheetLink()
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
-        useSmileIDSampleShellExtension?.onLaunch(intent)
+        // A recreation redelivers the launch intent, and the hook runs once per launch.
+        if (savedInstanceState == null) useSmileIDSampleShellExtension?.onLaunch(intent)
         setContent {
             // Read above every override, so these are the device's values, not the app's.
             val deviceLocales = LocalConfiguration.current.locales
