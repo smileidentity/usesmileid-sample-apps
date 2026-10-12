@@ -35,7 +35,6 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.usesmileid.sample.android"
         minSdk = 24
         targetSdk = 37
         versionCode = versionCodeProperty?.let { raw ->
@@ -55,6 +54,11 @@ android {
         }
         if (sourceMode && urlScheme == registryScheme) {
             throw GradleException("a source build must pass its own usesmileid.sample.scheme (spec/app-identity.json)")
+        }
+        val registryApplicationId = "com.usesmileid.sample.android"
+        applicationId = providers.gradleProperty("usesmileid.sample.applicationId").getOrElse(registryApplicationId)
+        if (sourceMode && applicationId == registryApplicationId) {
+            throw GradleException("a source build must pass its own usesmileid.sample.applicationId (spec/app-identity.json)")
         }
         manifestPlaceholders["usesmileidSampleScheme"] = urlScheme
         manifestPlaceholders["usesmileidSampleLabel"] =
