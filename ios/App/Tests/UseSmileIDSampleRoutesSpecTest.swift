@@ -75,10 +75,20 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
   }
 
   func testTheSchemeIsTheIosEntryInAppIdentity() throws {
-    let identity = try UseSmileIDSampleSpec.object("app-identity.json")
-    let apps = try XCTUnwrap(identity["apps"] as? [[String: Any]])
-    let ios = try XCTUnwrap(apps.first { $0["platform"] as? String == "ios" })
+    let sourceMode = Bundle.main.object(forInfoDictionaryKey: "UseSmileIDSampleSourceMode") as? String == "YES"
+    let ios = try iosIdentity(sourceMode ? "sourceMode" : "apps")
     XCTAssertEqual(UseSmileIDSampleDeepLinks.scheme, ios["urlScheme"] as? String)
+  }
+
+  /// A source build installs beside the store app, so it claims none of the registry schemes.
+  func testSourceModeSchemesAreDistinctFromEveryRegistryScheme() throws {
+    let identity = try UseSmileIDSampleSpec.object("app-identity.json")
+    let registry = try Set(XCTUnwrap(identity["apps"] as? [[String: Any]]).compactMap { $0["urlScheme"] as? String })
+    let source = try XCTUnwrap(identity["sourceMode"] as? [[String: Any]]).compactMap { $0["urlScheme"] as? String }
+    XCTAssertFalse(source.isEmpty)
+    for scheme in source {
+      XCTAssertFalse(registry.contains(scheme), "\(scheme) is also a registry scheme")
+    }
   }
 
   func testTheShellManifestClaimsTheSameSchemeAndBundleId() throws {
@@ -87,18 +97,28 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
       .deletingLastPathComponent()
       .appendingPathComponent("project.yml")
     let yaml = try String(contentsOf: manifest, encoding: .utf8)
-    let identity = try UseSmileIDSampleSpec.object("app-identity.json")
-    let apps = try XCTUnwrap(identity["apps"] as? [[String: Any]])
-    let ios = try XCTUnwrap(apps.first { $0["platform"] as? String == "ios" })
+    let ios = try iosIdentity("apps")
     let bundleId = try XCTUnwrap(ios["bundleIdentifier"] as? String)
     XCTAssertTrue(
       yaml.contains("PRODUCT_BUNDLE_IDENTIFIER: \(bundleId)"),
       "project.yml does not declare \(bundleId)"
     )
-    XCTAssertTrue(
-      yaml.contains("CFBundleURLSchemes: [\(UseSmileIDSampleDeepLinks.scheme)]"),
-      "project.yml does not claim \(UseSmileIDSampleDeepLinks.scheme)"
-    )
+    let scheme = try XCTUnwrap(ios["urlScheme"] as? String)
+    let displayName = try XCTUnwrap(ios["displayName"] as? String)
+    for line in [
+      "USESMILEID_SAMPLE_URL_SCHEME: \(scheme)",
+      "USESMILEID_SAMPLE_DISPLAY_NAME: \(displayName)",
+      "CFBundleURLSchemes: [$(USESMILEID_SAMPLE_URL_SCHEME)]",
+      "CFBundleDisplayName: $(USESMILEID_SAMPLE_DISPLAY_NAME)"
+    ] {
+      XCTAssertTrue(yaml.contains(line), "project.yml does not declare \(line)")
+    }
+  }
+
+  private func iosIdentity(_ block: String) throws -> [String: Any] {
+    let identity = try UseSmileIDSampleSpec.object("app-identity.json")
+    let entries = try XCTUnwrap(identity[block] as? [[String: Any]], "no \(block) in spec/app-identity.json")
+    return try XCTUnwrap(entries.first { $0["platform"] as? String == "ios" }, "no ios entry under \(block)")
   }
 
   private let expectedOwners: [Sheet: Route] = [

@@ -36,6 +36,22 @@
       "blockedOn": "NOTHING — the rename is SKIPPED (Decision 2026-09-17) and this app takes the id as it stands, colliding with the react-native-expo SDK repo's own Expo development sample. The side-by-side cost is accepted: a device holds one of the two at a time, so a device flow installs one at a time. Do not treat this as a blocker and do not open a rename against the SDK repo."
     }
   ],
+  "sourceMode": [
+    {
+      "platform": "android",
+      "applicationId": "com.usesmileid.sample",
+      "debugSuffix": ".debug",
+      "displayName": "UseSmileID",
+      "urlScheme": "usesmileid-sample-android-dev"
+    },
+    {
+      "platform": "ios",
+      "bundleIdentifier": "com.usesmileid.sample",
+      "displayName": "UseSmileID",
+      "urlScheme": "usesmileid-sample-ios-dev"
+    }
+  ],
+  "sourceModeNote": "The same Android and iOS apps built by an SDK repo from this repository as a submodule, with the SDK from source. The build injects this identity (a Gradle property on Android, a build setting on iOS), so the store app and a source build can sit on one device. Flutter and Expo source builds share the registry identity, by the 2026-09-17 ruling.",
   "sharedLibraryIdentity": {
     "comment": "sample-ui is a library, so it never carries an application identity. It must also never READ one: the same library runs under eight different identities (these four, plus the four development samples in the SDK repos).",
     "androidNamespace": "com.usesmileid.sampleapps.ui",
@@ -49,9 +65,12 @@
     "com.usesmileid.sample.expo": "SHARED, rename SKIPPED — react-native-expo SDK repo Expo sample, both platforms. Per the 2026-09-17 ruling it keeps this id and so does this repository's Expo app, so the two cannot be installed side by side and a device run installs one at a time",
     "com.usesmileid.sample": "android SDK repo sample (+.debug) and iOS SDK repo sample; referenced by both repos' E2E workflows. Not contested — this repository's apps sit one level below it",
     "com.usesmileid.sample.react": "react-native-expo SDK repo bare-RN sample (iOS side reads com.usesmileid.sample.rn). Not contested",
-    "usesmileid-sample": "URL scheme claimed by the Expo development sample"
+    "usesmileid-sample": "URL scheme claimed by the Expo development sample",
+    "usesmileid-sample-android-dev": "URL scheme of the Android source build (see sourceModeNote)",
+    "usesmileid-sample-ios-dev": "URL scheme of the iOS source build (see sourceModeNote)"
   },
   "rationale": [
+    "DECIDED 2026-10-12: a source build carries its own scheme and label, injected by the build, because developers hold the store app and a source build on one phone and a shared scheme fails silently (a chooser on Android, last-installed-wins on iOS). The application id stays the SDK repo's own. Until an SDK repo passes the source-mode identity, its source build and the store app are never installed together.",
     "DECIDED 2026-08-28: one id family, com.usesmileid.sample.*, for all four apps. This SUPERSEDES the original com.usesmileid.sampleapps root, which was chosen to avoid the development samples entirely. Android moved first because it is the app reaching a store; iOS follows in its port. The cost is recorded rather than hidden: com.usesmileid.sample.flutter and com.usesmileid.sample.expo are held today by SDK-repo development samples, so those two SDK repos owe a rename before this repository's Flutter and Expo apps can be built. Both are unbuilt, so the debt is payable before it is due. Android and iOS collide with nothing.",
     "What the superseded reasoning got right, and still applies to iOS: on iOS a bundle id nested under another app's id is the convention for app extensions, so com.usesmileid.sample.ios can read as an extension of the development sample com.usesmileid.sample. It is not a technical block — provisioning profiles are explicit — but expect it to look odd in the portal, and do not let anyone 'fix' it by nesting deeper.",
     "Every id is distinct per platform because a single device can host three of these four apps at once, plus their development counterparts. Ids that collide cannot be installed side by side, which is exactly the comparison these apps exist to enable.",

@@ -48,6 +48,10 @@ targets:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios
         INFOPLIST_FILE: Info.plist
+        # The registry identity; an SDK repo's source build overrides these (spec/app-identity.json).
+        USESMILEID_SAMPLE_URL_SCHEME: usesmileid-sample-ios
+        USESMILEID_SAMPLE_DISPLAY_NAME: Smile ID
+        USESMILEID_SAMPLE_SOURCE_MODE: "NO"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         # Declared, not left to XcodeGen's "1,2", which owes the App Store iPad art and an iPad review.
         TARGETED_DEVICE_FAMILY: "1"
@@ -62,7 +66,8 @@ targets:
       path: Info.plist
       properties:
         # The product's name, as on the store listing.
-        CFBundleDisplayName: Smile ID
+        CFBundleDisplayName: $(USESMILEID_SAMPLE_DISPLAY_NAME)
+        UseSmileIDSampleSourceMode: $(USESMILEID_SAMPLE_SOURCE_MODE)
         # Placeholders, or XcodeGen bakes the numbers in and every upload carries build 1.
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
@@ -82,7 +87,7 @@ targets:
         NSPhotoLibraryUsageDescription: Smile ID uses your photo library to import a document image.
         CFBundleURLTypes:
           - CFBundleURLName: com.usesmileid.sample.ios
-            CFBundleURLSchemes: [usesmileid-sample-ios]
+            CFBundleURLSchemes: [$(USESMILEID_SAMPLE_URL_SCHEME)]
 
   UseSmileIDSampleUITests:
     type: bundle.ui-testing

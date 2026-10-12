@@ -43,6 +43,14 @@ android {
                 ?: throw GradleException("VERSION_CODE must be a positive integer, got '$raw'")
         } ?: 1
         versionName = "1.0.3"
+
+        // The registry identity; an SDK repo's source build passes its own (spec/app-identity.json).
+        val urlScheme = providers.gradleProperty("usesmileid.sample.scheme").getOrElse("usesmileid-sample-android")
+        manifestPlaceholders["usesmileidSampleScheme"] = urlScheme
+        manifestPlaceholders["usesmileidSampleLabel"] =
+            providers.gradleProperty("usesmileid.sample.label").getOrElse("@string/app_name")
+        buildConfigField("String", "URL_SCHEME", "\"$urlScheme\"")
+        buildConfigField("boolean", "SOURCE_MODE", providers.gradleProperty("usesmileid.sample.sourceMode").getOrElse("false"))
     }
 
     signingConfigs {
