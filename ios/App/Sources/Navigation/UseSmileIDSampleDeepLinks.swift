@@ -1,6 +1,15 @@
-/// The deep-link URI per route: paths are shared across the four apps, the scheme is per app, so these live in the shell.
+import Foundation
+
+/// Deep-link URIs: the paths are shared by the four apps and the scheme is per app, so they live in the shell.
 enum UseSmileIDSampleDeepLinks {
-  static let scheme = "usesmileid-sample-ios"
+  /// The build's scheme, from the plist: a source build injects its own.
+  static let scheme: String = {
+    let types = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]]
+    guard let scheme = (types?.first?["CFBundleURLSchemes"] as? [String])?.first else {
+      preconditionFailure("Info.plist declares no URL scheme")
+    }
+    return scheme
+  }()
 
   static let products = "\(scheme)://products"
   static let verifications = "\(scheme)://verifications"

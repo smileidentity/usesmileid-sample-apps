@@ -141,18 +141,25 @@ class UseSmileIDSampleRoutesSpecTest {
 
     @Test
     fun the_scheme_is_the_android_entry_in_app_identity() {
-        val entry = requireNotNull(ANDROID_APP_ENTRY.find(spec("app-identity.json"))) {
-            "no flat android app entry in spec/app-identity.json"
-        }.value
-        assertEquals(UseSmileIDSampleDeepLinks.SCHEME, entry.required("urlScheme"))
+        val entry = androidIdentity(if (BuildConfig.SOURCE_MODE) "sourceMode" else "apps")
+        assertEquals(entry.required("urlScheme"), BuildConfig.URL_SCHEME)
+        assertEquals(BuildConfig.URL_SCHEME, UseSmileIDSampleDeepLinks.SCHEME)
+    }
+
+    /** A source build installs beside the store app, so it claims none of the registry schemes. */
+    @Test
+    fun source_mode_schemes_are_distinct_from_every_registry_scheme() {
+        val identity = spec("app-identity.json")
+        val registry = identity.jsonArrayObjects("apps").map { it.required("urlScheme") }.toSet()
+        val source = identity.jsonArrayObjects("sourceMode").mapNotNull { it.optional("urlScheme") }
+        assertTrue("no source-mode schemes in spec/app-identity.json", source.isNotEmpty())
+        source.forEach { assertTrue("$it is also a registry scheme", it !in registry) }
     }
 
     /** The launcher label is a second copy of the spec's display name, and both stores list under it. */
     @Test
     fun the_launcher_label_is_the_android_entry_in_app_identity() {
-        val entry = requireNotNull(ANDROID_APP_ENTRY.find(spec("app-identity.json"))) {
-            "no flat android app entry in spec/app-identity.json"
-        }.value
+        val entry = androidIdentity("apps")
         val strings = File(specDir(), "../android/app/src/main/res/values/strings.xml").readText()
         val label = requireNotNull(Regex("<string name=\"app_name\"[^>]*>([^<]+)</string>").find(strings)) {
             "no app_name in strings.xml"
@@ -160,14 +167,12 @@ class UseSmileIDSampleRoutesSpecTest {
         assertEquals(label, entry.required("displayName"))
     }
 
-    /** The intent filter is a third copy of the scheme; drift there kills every deep link at the OS. */
+    /** The intent filter and label take the build's identity, the same value BuildConfig carries. */
     @Test
-    fun the_manifest_intent_filter_claims_the_same_scheme() {
+    fun the_manifest_takes_its_scheme_and_label_from_the_build() {
         val manifest = File(specDir(), "../android/app/src/main/AndroidManifest.xml").readText()
-        val scheme = requireNotNull(Regex("android:scheme=\"([^\"]+)\"").find(manifest)) {
-            "no android:scheme in AndroidManifest.xml"
-        }.groupValues[1]
-        assertEquals(UseSmileIDSampleDeepLinks.SCHEME, scheme)
+        assertTrue("the intent filter hard-codes its scheme", "android:scheme=\"\${usesmileidSampleScheme}\"" in manifest)
+        assertTrue("the launcher label is hard-coded", "android:label=\"\${usesmileidSampleLabel}\"" in manifest)
     }
 
     private fun SpecRoute.expectedUriPattern(): String {
@@ -230,6 +235,10 @@ class UseSmileIDSampleRoutesSpecTest {
         return match.groupValues[1].ifEmpty { match.groupValues[2] }.ifEmpty { null }
     }
 
+    private fun androidIdentity(block: String): String =
+        spec("app-identity.json").jsonArrayObjects(block).firstOrNull { it.optional("platform") == "android" }
+            ?: error("no android entry under \"$block\" in spec/app-identity.json")
+
     private fun NavGraphSpec.allDestinations(): List<DestinationSpec> =
         destinations + nestedNavGraphs.flatMap { it.allDestinations() }
 
@@ -250,7 +259,5 @@ class UseSmileIDSampleRoutesSpecTest {
         const val SHEET_SEPARATOR = " + "
         val PATH_PARAM = Regex(":([A-Za-z][A-Za-z0-9]*)")
         val ENUM_VALUES = Regex("enum\\(([^)]*)\\)")
-        /** Bounded to one flat object so the match cannot walk into a neighbouring entry's scheme. */
-        val ANDROID_APP_ENTRY = Regex("\\{[^{}]*\"platform\"\\s*:\\s*\"android\"[^{}]*\\}")
     }
 }

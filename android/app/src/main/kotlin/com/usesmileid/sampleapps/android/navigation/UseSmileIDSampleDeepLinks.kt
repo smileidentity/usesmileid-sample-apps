@@ -1,11 +1,13 @@
 package com.usesmileid.sampleapps.android.navigation
 
+import com.usesmileid.sampleapps.android.BuildConfig
+
 /**
  * The deep-link URI for every route. Paths are shared across the four sample apps; the scheme is
  * per app, which is why these live in the shell and never in the shared UI module.
  */
 internal object UseSmileIDSampleDeepLinks {
-    const val SCHEME = "usesmileid-sample-android"
+    const val SCHEME = BuildConfig.URL_SCHEME
 
     const val PRODUCTS = "$SCHEME://products"
     const val VERIFICATIONS = "$SCHEME://verifications"
