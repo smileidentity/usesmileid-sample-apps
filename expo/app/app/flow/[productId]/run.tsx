@@ -24,6 +24,7 @@ import {
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
+import { useSmileIDSampleShellExtension } from '../../../src/extension';
 import { smileIDSampleApplying } from '../../../src/flow/use-smile-id-sample-flow-builder-config';
 import {
   smileIDSampleSnapshotSession,
@@ -135,6 +136,7 @@ export default function SdkFlowRun() {
     <UseSmileIDBuilder
       builder={(builder: UseSmileIDFlowBuilder) => {
         smileIDSampleApplying(builder, snapshot, useSmileIDSampleResultStore.getState().refreshed);
+        useSmileIDSampleShellExtension?.customiseFlow?.(builder, snapshot.product);
         if (snapshot.scenario === 'noCallback') return;
         builder.onResult = (result: UseSmileIDResult<JobSubmissionResponse>) => {
           // Before the throw: the throwing scenario still delivered, and the count must say so.

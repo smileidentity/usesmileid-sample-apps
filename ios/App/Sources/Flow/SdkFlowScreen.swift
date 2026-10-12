@@ -81,6 +81,7 @@ struct SdkFlowScreen: View {
   ) -> UseSmileIDBuilder {
     UseSmileIDBuilder { builder in
       useSmileIDSampleApply(builder, snapshot, onTokenRefreshed: { app.flowResult.recordRefreshCallback() })
+      useSmileIDSampleShellExtension?.customiseFlow(builder, product: snapshot.product)
       // `noCallback` leaves the SDK's own default, which does nothing.
       guard snapshot.scenario != .noCallback else { return }
       builder.onResult = handler.deliver

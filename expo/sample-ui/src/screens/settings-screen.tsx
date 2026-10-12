@@ -144,6 +144,8 @@ type Props = {
   onLanguagePress: () => void;
   /// Absent hides the DEBUG section: this package may not read a host's build type.
   onOpenScenarioDrawer?: (() => void) | undefined;
+  /// More DEBUG rows, from the shell; these alone also show the section.
+  debugRows?: ReactNode;
   onSignOut: () => void;
   /// Whatever draws over the list, which the floating nav bar does.
   bottomInset?: number;
@@ -160,6 +162,7 @@ export const SettingsScreen = ({
   onAppearancePress,
   onLanguagePress,
   onOpenScenarioDrawer,
+  debugRows,
   onSignOut,
   bottomInset = 0,
   style,
@@ -335,16 +338,19 @@ export const SettingsScreen = ({
       </Section>
 
       {/* The design draws no control for the drawer, so this placement is ours, and debug-only. */}
-      {onOpenScenarioDrawer ? (
+      {onOpenScenarioDrawer || debugRows ? (
         <Section label="DEBUG">
-          <UseSmileIDSampleSettingRow
-            title="Scenarios"
-            supportingText="Choose how the environment misbehaves"
-            onPress={onOpenScenarioDrawer}
-            leading={(tint) => <UseSmileIDSampleIcon name="settingScenarios" tint={tint} />}
-            trailing={<UseSmileIDSampleSettingRowChevron />}
-            testID={UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON}
-          />
+          {onOpenScenarioDrawer ? (
+            <UseSmileIDSampleSettingRow
+              title="Scenarios"
+              supportingText="Choose how the environment misbehaves"
+              onPress={onOpenScenarioDrawer}
+              leading={(tint) => <UseSmileIDSampleIcon name="settingScenarios" tint={tint} />}
+              trailing={<UseSmileIDSampleSettingRowChevron />}
+              testID={UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON}
+            />
+          ) : null}
+          {debugRows}
         </Section>
       ) : null}
 

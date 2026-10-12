@@ -3,6 +3,7 @@ package com.usesmileid.sampleapps.android.flow
 import com.usesmileid.core.exception.UseSmileIDValidationException
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 
@@ -12,7 +13,10 @@ fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
     if (snapshot.sessionExpired || snapshot.session == null) return FlowPreflight.NeedsSession
     // Ahead of the SDK's own check, which would end the run: the user ID screen resolves it.
     if (snapshot.product == UseSmileIDSampleProduct.SmartSelfieAuth && snapshot.userId.isBlank()) return FlowPreflight.NeedsUserId
-    val builder = UseSmileIDFlowBuilder().apply { applying(snapshot) }
+    val builder = UseSmileIDFlowBuilder().apply {
+        applying(snapshot)
+        useSmileIDSampleShellExtension?.customiseFlow(this, snapshot.product)
+    }
     // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
     val requirement = snapshot.liveSession?.bindings.userDetailsRequirement()
     val payloadChecks = buildList {

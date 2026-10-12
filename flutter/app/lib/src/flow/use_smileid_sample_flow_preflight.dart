@@ -1,6 +1,7 @@
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
 
+import '../use_smileid_sample_shell_extension.dart';
 import 'use_smileid_sample_flow_builder_config.dart';
 import 'use_smileid_sample_flow_launch_snapshot.dart';
 import 'use_smileid_sample_token_binding_rules.dart';
@@ -48,8 +49,9 @@ class UseSmileIDSampleFlowMisconfigured extends UseSmileIDSampleFlowPreflight {
 
 /// The entry gate: the SDK's non-throwing pre-flight plus its per-payload validators.
 UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
-  UseSmileIDSampleFlowLaunchSnapshot snapshot,
-) {
+  UseSmileIDSampleFlowLaunchSnapshot snapshot, {
+  UseSmileIDSampleShellExtension? extension,
+}) {
   // Ahead of the payloads: no form fixes a missing or ended session.
   if (snapshot.sessionExpired || snapshot.session == null) {
     return const UseSmileIDSampleFlowNeedsSession();
@@ -61,6 +63,7 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   }
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
   useSmileIDSampleApplying(builder, snapshot);
+  extension?.customiseFlow(builder, snapshot.product);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
   // The SDK's token-aware overload is not public, so the bindings are subtracted.
