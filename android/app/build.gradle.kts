@@ -45,12 +45,22 @@ android {
         versionName = "1.0.3"
 
         // The registry identity; an SDK repo's source build passes its own (spec/app-identity.json).
-        val urlScheme = providers.gradleProperty("usesmileid.sample.scheme").getOrElse("usesmileid-sample-android")
+        val registryScheme = "usesmileid-sample-android"
+        val sourceModeProperty = providers.gradleProperty("usesmileid.sample.sourceMode").getOrElse("false")
+        val sourceMode = sourceModeProperty.toBooleanStrictOrNull()
+            ?: throw GradleException("usesmileid.sample.sourceMode must be true or false, got '$sourceModeProperty'")
+        val urlScheme = providers.gradleProperty("usesmileid.sample.scheme").getOrElse(registryScheme)
+        if (!Regex("[a-z][a-z0-9+.-]*").matches(urlScheme)) {
+            throw GradleException("usesmileid.sample.scheme is not a URI scheme: '$urlScheme'")
+        }
+        if (sourceMode && urlScheme == registryScheme) {
+            throw GradleException("a source build must pass its own usesmileid.sample.scheme (spec/app-identity.json)")
+        }
         manifestPlaceholders["usesmileidSampleScheme"] = urlScheme
         manifestPlaceholders["usesmileidSampleLabel"] =
             providers.gradleProperty("usesmileid.sample.label").getOrElse("@string/app_name")
         buildConfigField("String", "URL_SCHEME", "\"$urlScheme\"")
-        buildConfigField("boolean", "SOURCE_MODE", providers.gradleProperty("usesmileid.sample.sourceMode").getOrElse("false"))
+        buildConfigField("boolean", "SOURCE_MODE", sourceMode.toString())
     }
 
     signingConfigs {
