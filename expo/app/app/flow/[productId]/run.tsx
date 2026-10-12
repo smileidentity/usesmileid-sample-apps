@@ -198,6 +198,10 @@ const recordResult = (
     case 'cancelled':
       recorder.deliver('cancelled');
       return;
+    // Only a flow that skips API submission hands its capture back, and the sample never asks for one.
+    case 'captured':
+      recorder.deliver('succeeded');
+      return;
     default: {
       // A status the SDK adds fails the build here, as in a partner's app.
       const unhandled: never = result;
