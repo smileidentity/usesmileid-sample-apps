@@ -13,6 +13,7 @@ import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
+import '../use_smileid_sample_shell_extension.dart';
 
 /// The single route hosting the SDK flow. The SDK owns everything inside it: no host chrome, no host back.
 class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
@@ -67,6 +68,8 @@ class _UseSmileIDSampleSdkFlowTabState
   /// Held from entry for the same reason as [_jobs]: a teardown-delivered result still counts.
   late final UseSmileIDSampleFlowResultNotifier _result;
 
+  late final UseSmileIDSampleShellExtension? _extension;
+
   /// Null until the snapshot exists; a run with none never reaches the SDK.
   UseSmileIDSampleRunRecorder? _run;
 
@@ -75,13 +78,16 @@ class _UseSmileIDSampleSdkFlowTabState
     super.initState();
     _jobs = ref.read(useSmileIDSampleJobsProvider.notifier);
     _result = ref.read(useSmileIDSampleFlowResultProvider.notifier);
+    _extension = ref.read(useSmileIDSampleShellExtensionProvider);
     // Once at entry: the SDK answers a rebuilt configuration by tearing the run down.
     final UseSmileIDSampleFlowLaunchSnapshot? snapshot = _buildSnapshot();
     _snapshot = snapshot;
     _run = snapshot == null
         ? null
         : UseSmileIDSampleRunRecorder(_result, snapshot);
-    _preflight = snapshot == null ? null : useSmileIDSamplePreflight(snapshot);
+    _preflight = snapshot == null
+        ? null
+        : useSmileIDSamplePreflight(snapshot, extension: _extension);
     // Off the frame, not merely after it: re-adding the shell mid-finalise duplicates its key.
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => scheduleMicrotask(_actOnPreflight),
@@ -109,6 +115,7 @@ class _UseSmileIDSampleSdkFlowTabState
           snapshot,
           onTokenRefreshed: _result.refreshed,
         );
+        _extension?.customiseFlow(builder, snapshot.product);
         if (snapshot.scenario == UseSmileIDSampleScenario.noCallback) {
           return;
         }

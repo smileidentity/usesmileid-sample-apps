@@ -21,10 +21,14 @@ class UseSmileIDSampleTestIdUsageTest {
             .joinToString("\n") { it.readText() }
 
         val unattached = declared.filterNot { Regex("""\bUseSmileIDSampleTestIds\.$it\b""").containsMatchIn(callers) }.sorted()
-        assertEquals("declared, specified and attached to nothing", emptyList<String>(), unattached)
+        assertEquals("declared, specified and attached to nothing", emptyList<String>(), unattached - EXCUSED.keys)
+        assertEquals("excused but attached now", emptyList<String>(), EXCUSED.keys.filterNot { it in unattached })
     }
 
     private companion object {
         val DECLARATION = Regex("""const val (\w+)|\bfun (\w+)\(""")
+
+        /** Declared here and attached elsewhere, each with its reason; a stale entry fails. */
+        val EXCUSED = mapOf("SHOW_DIAGNOSTICS" to "attached by an SDK repo's source build, never by this app")
     }
 }

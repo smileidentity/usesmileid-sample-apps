@@ -17,6 +17,7 @@ import Constants from 'expo-constants';
 import { useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import { useSmileIDSampleShellExtension } from '../../src/extension';
 import { smileIDSampleStartsExpired } from '../../src/flow/use-smile-id-sample-token-binding-rules';
 import { useLaunchArgs } from '../../src/use-smile-id-sample-launch';
 import { openNavRow } from '../../src/use-smile-id-sample-links';
@@ -81,6 +82,9 @@ export default function Settings() {
         clearProfiles();
         router.navigate('/products');
       }}
+      debugRows={useSmileIDSampleShellExtension?.debugRows?.({
+        linkTokenSession: (session) => useSmileIDSampleSessionStore.getState().link(session),
+      })}
       bottomInset={bottomInset}
     />
   );

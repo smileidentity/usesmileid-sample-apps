@@ -50,6 +50,9 @@ object UseSmileIDSampleTestIds {
     const val SCENARIO_DRAWER = "sample_scenario_drawer"
     const val SCENARIO_DRAWER_BUTTON = "sample_scenario_drawer_button"
 
+    /** Rendered only by an SDK repo's source build, in the Settings DEBUG section. */
+    const val SHOW_DIAGNOSTICS = "sample_show_diagnostics"
+
     const val PROFILE_SUMMARY = "sample_profile_summary"
     const val SETTING_ENHANCED_SMART_SELFIE = "sample_setting_enhanced_smart_selfie"
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
@@ -188,6 +191,7 @@ object UseSmileIDSampleTestIds {
         TOKEN_SIMULATE,
         TOKEN_PORTAL_LINK,
         SCENARIO_DRAWER_BUTTON,
+        SHOW_DIAGNOSTICS,
         PROFILE_SUMMARY,
         SETTING_ENHANCED_SMART_SELFIE,
         SETTING_AGENT_MODE,

@@ -120,6 +120,8 @@ public struct SettingsScreen: View {
   private let onLanguage: () -> Void
   /// `nil` hides the DEBUG section: `sample-ui` may not read a host's build configuration.
   private let onOpenScenarioDrawer: (() -> Void)?
+  /// More DEBUG rows, from the shell; shown only with the section.
+  private let debugRows: AnyView
   private let onSignOut: () -> Void
 
   @State private var confirmingSignOut = false
@@ -134,6 +136,7 @@ public struct SettingsScreen: View {
     onAppearance: @escaping () -> Void = {},
     onLanguage: @escaping () -> Void = {},
     onOpenScenarioDrawer: (() -> Void)? = nil,
+    debugRows: AnyView = AnyView(EmptyView()),
     onSignOut: @escaping () -> Void
   ) {
     self.state = state
@@ -144,6 +147,7 @@ public struct SettingsScreen: View {
     self.onAppearance = onAppearance
     self.onLanguage = onLanguage
     self.onOpenScenarioDrawer = onOpenScenarioDrawer
+    self.debugRows = debugRows
     self.onSignOut = onSignOut
   }
 
@@ -343,6 +347,7 @@ public struct SettingsScreen: View {
         } trailing: {
           UseSmileIDSampleSettingRowChevron()
         }
+        debugRows
       }
     }
   }

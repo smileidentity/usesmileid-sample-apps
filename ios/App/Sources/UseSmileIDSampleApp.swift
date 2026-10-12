@@ -10,6 +10,7 @@ struct UseSmileIDSampleApp: App {
     #if DEBUG
       Loupe.shared.start()
     #endif
+    useSmileIDSampleShellExtension?.onLaunch()
   }
 
   var body: some Scene {

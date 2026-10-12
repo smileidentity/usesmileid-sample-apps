@@ -159,6 +159,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onAppearanceTap,
     required this.onLanguageTap,
     this.onOpenScenarioDrawer,
+    this.debugRows = const <Widget>[],
     this.bottomInset = 0,
     super.key,
   });
@@ -190,6 +191,9 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
 
   /// Opens the scenario drawer; null hides the DEBUG section entirely.
   final VoidCallback? onOpenScenarioDrawer;
+
+  /// More DEBUG rows, from the shell; shown only with the section.
+  final List<Widget> debugRows;
 
   /// Trailing room so the last row can scroll clear of the floating bar.
   final double bottomInset;
@@ -381,6 +385,7 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                   trailing: const UseSmileIDSampleSettingRowChevron(),
                   testId: UseSmileIDSampleTestIds.scenarioDrawerButton,
                 ),
+                ...debugRows,
               ],
             ),
           _Section(

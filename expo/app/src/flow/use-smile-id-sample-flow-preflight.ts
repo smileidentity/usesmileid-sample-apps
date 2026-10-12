@@ -5,6 +5,7 @@ import {
   type UseSmileIDValidationException,
 } from '@smileid/usesmileid';
 
+import { useSmileIDSampleShellExtension } from '../extension';
 import { smileIDSampleApplying } from './use-smile-id-sample-flow-builder-config';
 import {
   smileIDSampleSnapshotSession,
@@ -34,6 +35,7 @@ export const smileIDSamplePreflight = (
   if (snapshot.product.id === 'smartSelfieAuth' && snapshot.userId.length === 0) return { kind: 'needsUserId' };
   const builder = new UseSmileIDFlowBuilder();
   smileIDSampleApplying(builder, snapshot);
+  useSmileIDSampleShellExtension?.customiseFlow?.(builder, snapshot.product);
   const requirement = smileIDSampleRequirementFrom(smileIDSampleSnapshotSession(snapshot)?.bindings);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.

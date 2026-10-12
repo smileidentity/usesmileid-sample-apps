@@ -2,6 +2,12 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+/// Declared here and attached elsewhere, each with its reason; a stale entry fails.
+const Map<String, String> _excused = <String, String>{
+  'showDiagnostics':
+      "attached by an SDK repo's source build, never by this app",
+};
+
 /// Every id `sample_ui` declares is actually rendered by something.
 void main() {
   test('every declared id is referenced by a screen, component or host', () {
@@ -26,13 +32,19 @@ void main() {
             .map((File it) => it.readAsStringSync())
             .join('\n');
 
+    final Iterable<String> unattached = names.where(
+      (String name) =>
+          name != 'all' && !callers.contains('UseSmileIDSampleTestIds.$name'),
+    );
     expect(
-      names.where(
-        (String name) =>
-            name != 'all' && !callers.contains('UseSmileIDSampleTestIds.$name'),
-      ),
+      unattached.where((String name) => !_excused.containsKey(name)),
       isEmpty,
       reason: 'declared, specified, and attached to nothing',
+    );
+    expect(
+      _excused.keys.where((String name) => !unattached.contains(name)),
+      isEmpty,
+      reason: 'excused but attached now',
     );
   });
 }

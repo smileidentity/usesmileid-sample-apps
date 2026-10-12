@@ -94,6 +94,8 @@ fun SettingsScreen(
     onSignOut: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    /** More DEBUG rows, from the shell; shown only with the section. */
+    debugRows: @Composable () -> Unit = {},
 ) {
     var confirmingSignOut by rememberSaveable { mutableStateOf(false) }
     LazyColumn(
@@ -272,6 +274,7 @@ fun SettingsScreen(
                     trailing = { UseSmileIDSampleSettingRowChevron() },
                     testId = UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON,
                 )
+                debugRows()
             }
         }
 

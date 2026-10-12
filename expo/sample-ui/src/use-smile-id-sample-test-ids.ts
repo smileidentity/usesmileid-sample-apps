@@ -7,6 +7,8 @@ export const UseSmileIDSampleTestIds = {
   NAV_TOKEN: 'sample_nav_token',
   SCENARIO_DRAWER: 'sample_scenario_drawer',
   SCENARIO_DRAWER_BUTTON: 'sample_scenario_drawer_button',
+  /// Rendered only by an SDK repo's source build, in the Settings DEBUG section.
+  SHOW_DIAGNOSTICS: 'sample_show_diagnostics',
   SCENARIO_ITEM: 'sample_scenario_item',
   THEME_ITEM: 'sample_theme_item',
   // products

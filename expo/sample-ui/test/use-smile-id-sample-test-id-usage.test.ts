@@ -14,6 +14,7 @@ const EXCUSED: Record<string, string> = {
   LICENSE_LINK: 'every licence ships its text, so none opens a page',
   SIGN_OUT_CONFIRM: 'a native Alert button takes no test id',
   PROFILE_DELETE_CONFIRM: 'a native Alert button takes no test id',
+  SHOW_DIAGNOSTICS: "attached by an SDK repo's source build, never by this app",
 };
 
 /// Every source file under a directory, recursively.
