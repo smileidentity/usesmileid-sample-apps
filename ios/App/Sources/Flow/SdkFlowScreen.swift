@@ -120,7 +120,7 @@ struct SdkFlowResultHandler {
       app.flowResult.recordResultCallback(status: .failed, error: error.useSmileIDSampleMessage)
     case .cancelled:
       app.flowResult.recordResultCallback(status: .cancelled)
-    // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+    // Never expected: this app does not set skipApiSubmission.
     case .captured:
       app.flowResult.recordResultCallback(status: .failed, error: capturedNotSubmitted)
     }

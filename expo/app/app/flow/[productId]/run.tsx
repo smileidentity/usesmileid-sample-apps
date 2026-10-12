@@ -199,12 +199,12 @@ const recordResult = (
     case 'cancelled':
       recorder.deliver('cancelled');
       return;
-    // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+    // Never expected: this app does not set skipApiSubmission.
     case 'captured':
       recorder.deliver('failed', { error: capturedNotSubmitted });
       return;
     default: {
-      // A status the SDK adds stops the build here, as it stops a partner's exhaustive switch.
+      // A status the SDK adds fails the build here, as in a partner's app.
       const unhandled: never = result;
       return unhandled;
     }

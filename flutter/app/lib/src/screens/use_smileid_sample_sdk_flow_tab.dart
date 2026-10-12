@@ -261,7 +261,7 @@ class _UseSmileIDSampleSdkFlowTabState
         );
       case UseSmileIDCancelled<JobSubmissionResponse>():
         run.deliver(UseSmileIDSampleFlowStatus.cancelled);
-      // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+      // Never expected: this app does not set skipApiSubmission.
       case UseSmileIDCaptured<JobSubmissionResponse>():
         run.deliver(
           UseSmileIDSampleFlowStatus.failed,

@@ -195,7 +195,7 @@ private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmil
             error = result.error.message ?: result.error::class.java.simpleName,
         )
         UseSmileIDResult.Cancelled -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Cancelled)
-        // This app never sets skipApiSubmission, so a captured job is unexpected and reads as a failure.
+        // Never expected: this app does not set skipApiSubmission.
         is UseSmileIDResult.Captured -> flowResult.recordResultCallback(
             status = UseSmileIDSampleFlowStatus.Failed,
             error = CAPTURED_NOT_SUBMITTED,
