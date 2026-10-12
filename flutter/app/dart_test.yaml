@@ -1,0 +1,3 @@
+tags:
+  # Asserts the app consumes the published SDK; an SDK repo's source build of this app excludes it.
+  registry:

@@ -153,5 +153,5 @@ void main() {
       lock.substring(sdkEntry, sdkEntry + 400),
       contains('source: hosted'),
     );
-  });
+  }, tags: 'registry');
 }
