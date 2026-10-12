@@ -421,6 +421,9 @@ abstract final class UseSmileIDSampleTestIds {
   /// The settings row that opens it.
   static const String scenarioDrawerButton = 'sample_scenario_drawer_button';
 
+  /// Rendered only by an SDK repo's source build, in the Settings DEBUG section.
+  static const String showDiagnostics = 'sample_show_diagnostics';
+
   /// One flow-scenario row, suffixed with the scenario id.
   static String scenarioItem(String scenarioId) =>
       'sample_scenario_item_$scenarioId';
@@ -565,6 +568,7 @@ abstract final class UseSmileIDSampleTestIds {
     settingSelfieFirst,
     scenarioDrawer,
     scenarioDrawerButton,
+    showDiagnostics,
     licensesScreen,
     licensesEmpty,
     selectionBar,

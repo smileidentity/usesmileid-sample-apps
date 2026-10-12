@@ -14,6 +14,7 @@ import {
   UseSmileIDSampleAppearance,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
+import * as Linking from 'expo-linking';
 import { NavigationBar } from 'expo-navigation-bar';
 import { Stack } from 'expo-router';
 import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
@@ -21,6 +22,7 @@ import { useEffect } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { useSmileIDSampleShellExtension } from '../src/extension';
 import { useSmileIDSampleAppLanguage } from '../src/use-smile-id-sample-app-language';
 import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
@@ -63,6 +65,11 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
+
+  useEffect(() => {
+    const extension = useSmileIDSampleShellExtension;
+    if (extension?.onLaunch) void Linking.getInitialURL().then(extension.onLaunch);
+  }, []);
 
   const sessionLoaded = useSmileIDSampleSessionStore((state) => state.loaded);
   const loadSession = useSmileIDSampleSessionStore((state) => state.load);

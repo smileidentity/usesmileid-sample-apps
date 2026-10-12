@@ -36,6 +36,10 @@
       {
         "id": "sample_theme_item",
         "description": "One theme row; suffixed with the theme scenario id."
+      },
+      {
+        "id": "sample_show_diagnostics",
+        "description": "The Show diagnostics switch an SDK repo's source build adds to the Settings DEBUG section. Registry builds never render it."
       }
     ],
     "products": [

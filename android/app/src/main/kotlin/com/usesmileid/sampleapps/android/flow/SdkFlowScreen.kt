@@ -27,6 +27,7 @@ import com.usesmileid.data.model.JobSubmissionResponse
 import com.usesmileid.presentation.flow.dsl.UseSmileIDBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.android.navigation.FlowGraph
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFlowTransitions
@@ -147,6 +148,7 @@ fun SdkFlowScreen(
         MaterialTheme(colorScheme = hostScheme) {
             UseSmileIDBuilder(modifier = Modifier.fillMaxSize()) {
                 applying(snapshot, onTokenRefreshed = app.flowResult::recordRefreshCallback)
+                useSmileIDSampleShellExtension?.customiseFlow(this, snapshot.product)
                 if (snapshot.scenario != UseSmileIDSampleScenario.NoCallback) {
                     onResult = { result ->
                         viewModel.markResultDelivered()

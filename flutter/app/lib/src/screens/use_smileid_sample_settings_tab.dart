@@ -12,6 +12,7 @@ import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_routes.dart';
+import '../use_smileid_sample_shell_extension.dart';
 import '../use_smileid_sample_version.dart';
 
 /// The settings tab, whose switches and capture mode survive a restart.
@@ -137,6 +138,18 @@ class _UseSmileIDSampleSettingsTabState
       onLanguageTap: _showLanguage,
       // Debug builds only; every flow reaches the drawer by its deep link instead.
       onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
+      debugRows:
+          ref
+              .watch(useSmileIDSampleShellExtensionProvider)
+              ?.debugRows(
+                UseSmileIDSampleShellHost(
+                  linkTokenSession: ref
+                      .read(useSmileIDSampleSessionProvider.notifier)
+                      .link,
+                  openScenarioDrawer: _openScenarioDrawer,
+                ),
+              ) ??
+          const <Widget>[],
       onSignOut: () {
         unawaited(ref.read(useSmileIDSampleSessionProvider.notifier).clear());
         ref.read(useSmileIDSampleFormsProvider.notifier).clear();
