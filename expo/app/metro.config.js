@@ -3,8 +3,11 @@ const path = require('node:path');
 
 const { getDefaultConfig } = require('expo/metro-config');
 
+const { outermostWorkspaceRoot } = require('./metro-workspace-root');
+
 const projectRoot = __dirname;
-const workspaceRoot = path.resolve(projectRoot, '..');
+// The outermost, not the nearest: as a submodule the hoisted node_modules sits in the enclosing repo.
+const workspaceRoot = outermostWorkspaceRoot(projectRoot);
 
 const config = getDefaultConfig(projectRoot);
 
