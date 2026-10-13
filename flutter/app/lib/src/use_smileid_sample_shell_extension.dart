@@ -16,6 +16,18 @@ abstract class UseSmileIDSampleShellExtension {
 
   /// Runs once before the first frame, with the route the app was launched on.
   Future<void> onLaunch(String defaultRouteName) async {}
+
+  /// A session the shell links once at launch, before autostart, as if its token had been scanned.
+  UseSmileIDSampleTokenSession? launchSession() => null;
+}
+
+/// Links the [extension]'s launch session through [link], if it offers one.
+Future<void> useSmileIDSampleLinkLaunchSession(
+  UseSmileIDSampleShellExtension? extension,
+  Future<void> Function(UseSmileIDSampleTokenSession session) link,
+) async {
+  final UseSmileIDSampleTokenSession? session = extension?.launchSession();
+  if (session != null) await link(session);
 }
 
 /// What the shell lets an extension do.

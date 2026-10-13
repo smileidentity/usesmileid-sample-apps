@@ -11,6 +11,8 @@ protocol UseSmileIDSampleShellExtending {
   static func customiseFlow(_ builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct)
   /// Runs once at launch.
   static func onLaunch()
+  /// A session the shell links once at launch, before autostart, as if its token had been scanned.
+  static func launchSession() -> UseSmileIDSampleTokenSession?
 }
 
 extension UseSmileIDSampleShellExtending {
@@ -20,6 +22,20 @@ extension UseSmileIDSampleShellExtending {
 
   static func customiseFlow(_: UseSmileIDFlowBuilder, product _: UseSmileIDSampleProduct) {}
   static func onLaunch() {}
+  static func launchSession() -> UseSmileIDSampleTokenSession? {
+    nil
+  }
+}
+
+/// Links the extension's launch session, if it offers one.
+@MainActor
+func linkLaunchSession(
+  _ extension: (any UseSmileIDSampleShellExtending.Type)?,
+  link: (UseSmileIDSampleTokenSession) -> Void
+) {
+  if let session = `extension`?.launchSession() {
+    link(session)
+  }
 }
 
 /// What the shell lets an extension do.

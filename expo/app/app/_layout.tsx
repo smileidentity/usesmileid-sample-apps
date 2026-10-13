@@ -23,6 +23,7 @@ import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useSmileIDSampleShellExtension } from '../src/extension';
+import { linkLaunchSession } from '../src/use-smile-id-sample-shell-extension';
 import { useSmileIDSampleAppLanguage } from '../src/use-smile-id-sample-app-language';
 import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
@@ -80,6 +81,13 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSession(smileIDSampleSecureSessionStorage);
   }, [loadSession]);
+  // After the stored session loads, which would otherwise replace it.
+  useEffect(() => {
+    if (!sessionLoaded) return;
+    linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
+      useSmileIDSampleSessionStore.getState().link(session),
+    ).catch(() => undefined);
+  }, [sessionLoaded]);
   useSmileIDSampleSessionClock();
 
   // Only while nothing is pinned: a pin makes useColorScheme report the app's choice, not the device's.

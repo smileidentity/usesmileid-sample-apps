@@ -50,6 +50,8 @@ import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
+import com.usesmileid.sampleapps.android.extension.linkLaunchSession
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
 import androidx.compose.runtime.CompositionLocalProvider
 import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
@@ -169,9 +171,11 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        val product = app.launchArgs.autostart
-        if (started || product == null) return@LaunchedEffect
+        if (started) return@LaunchedEffect
         started = true
+        // Ahead of autostart, which reads the session the moment the flow route opens.
+        linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)
+        val product = app.launchArgs.autostart ?: return@LaunchedEffect
         navigator.navigate(
             SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),
         )

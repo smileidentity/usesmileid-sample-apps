@@ -18,6 +18,17 @@ interface UseSmileIDSampleShellExtension {
 
     /** Runs once at launch, with the intent the app was started by. */
     fun onLaunch(intent: Intent) {}
+
+    /** A session the shell links once at launch, before autostart, as if its token had been scanned. */
+    fun launchSession(): UseSmileIDSampleTokenSession? = null
+}
+
+/** Links the [extension]'s launch session, if it offers one. */
+suspend fun linkLaunchSession(
+    extension: UseSmileIDSampleShellExtension?,
+    link: suspend (UseSmileIDSampleTokenSession) -> Unit,
+) {
+    extension?.launchSession()?.let { link(it) }
 }
 
 /** What the shell lets an extension do. */

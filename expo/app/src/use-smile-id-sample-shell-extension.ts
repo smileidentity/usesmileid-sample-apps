@@ -10,6 +10,17 @@ export type UseSmileIDSampleShellExtension = {
   customiseFlow?: (builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) => void;
   /// Runs once at launch, with the link the app was opened by.
   onLaunch?: (initialUrl: string | null) => void;
+  /// A session the shell links once at launch, as if its token had been scanned.
+  launchSession?: () => UseSmileIDSampleTokenSession | null;
+};
+
+/// Links the extension's launch session through `link`, if it offers one.
+export const linkLaunchSession = async (
+  extension: UseSmileIDSampleShellExtension | null | undefined,
+  link: (session: UseSmileIDSampleTokenSession) => Promise<void>,
+): Promise<void> => {
+  const session = extension?.launchSession?.() ?? null;
+  if (session) await link(session);
 };
 
 /// What the shell lets an extension do; this shell has no scenario drawer to open.
