@@ -5,7 +5,7 @@ Android: bundletool sizes the bundle for one arm64 phone (Android 14, 480 dpi), 
 Play would transfer and the APKs it would install. iOS: the archive's `.app` on disk, and a zip of it
 as an approximation of the App Store's compressed transfer.
 
-    scripts/app_size.py android android/app/build/outputs/bundle/release/app-release.aab
+    scripts/app_size.py android android/app/build/outputs/bundle/playRelease/app-play-release.aab
     scripts/app_size.py ios path/to/UseSmileIDSample.xcarchive
 """
 from __future__ import annotations

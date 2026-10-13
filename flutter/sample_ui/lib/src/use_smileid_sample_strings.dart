@@ -447,6 +447,8 @@ final class UseSmileIDSampleStrings {
       _format('licenses_section', {'count': count});
   String licensesGoogleSection({required int count}) =>
       _format('licenses_google_section', {'count': count});
+  String licensesHuaweiSection({required int count}) =>
+      _format('licenses_huawei_section', {'count': count});
   String get licensesTextShipsWithComponent =>
       _values['licenses_text_ships_with_component']!;
   String licensesTextShipsWithComponentAt({required String url}) =>
@@ -800,6 +802,7 @@ final class UseSmileIDSampleStrings {
           'The generated licenses.json is missing from this build',
       'licenses_section': 'OPEN-SOURCE COMPONENTS — {count}',
       'licenses_google_section': 'UNDER GOOGLE\'S OWN TERMS — {count}',
+      'licenses_huawei_section': 'UNDER HUAWEI\'S OWN TERMS — {count}',
       'licenses_text_ships_with_component':
           'The text ships with the component itself.',
       'licenses_text_ships_with_component_at':
@@ -1172,6 +1175,8 @@ final class UseSmileIDSampleStrings {
       'licenses_section': 'COMPOSANTS OPEN SOURCE — {count}',
       'licenses_google_section':
           'SOUS LES CONDITIONS PROPRES À GOOGLE — {count}',
+      'licenses_huawei_section':
+          'SOUS LES CONDITIONS PROPRES À HUAWEI — {count}',
       'licenses_text_ships_with_component':
           'Le texte est fourni avec le composant.',
       'licenses_text_ships_with_component_at':
@@ -1518,6 +1523,7 @@ final class UseSmileIDSampleStrings {
           'ملف licenses.json المُنشأ غير موجود في هذا الإصدار',
       'licenses_section': 'مكوّنات مفتوحة المصدر — {count}',
       'licenses_google_section': 'بموجب شروط Google الخاصة — {count}',
+      'licenses_huawei_section': 'بموجب شروط Huawei الخاصة — {count}',
       'licenses_text_ships_with_component': 'يُرفق النص مع المكوّن نفسه.',
       'licenses_text_ships_with_component_at':
           'يأتي النص مع المكوّن نفسه، على {url}',
@@ -1859,6 +1865,7 @@ final class UseSmileIDSampleStrings {
       'licenses_empty_body': 'הקובץ licenses.json שנוצר חסר בגרסה זו',
       'licenses_section': 'רכיבי קוד פתוח — {count}',
       'licenses_google_section': 'בכפוף לתנאים של Google — {count}',
+      'licenses_huawei_section': 'בכפוף לתנאים של Huawei — {count}',
       'licenses_text_ships_with_component': 'הטקסט מצורף לרכיב עצמו.',
       'licenses_text_ships_with_component_at':
           'הטקסט מצורף לרכיב עצמו, בכתובת {url}',

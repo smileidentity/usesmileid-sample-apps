@@ -33,6 +33,10 @@ the lane.
 
 ## Google Play
 
+**Flavor.** Play gets the `play` flavor (`bundlePlayRelease`), which links Google's ML Kit only. The
+`appgallery` flavor, built for Huawei AppGallery, also links Huawei's HMS analyzers and picks a backend per
+device with `UseSmileIDMobileServices.preferred`; it is not published from CI yet.
+
 **Signing.** The release is signed with the upload key from `UPLOAD_KEYSTORE`, and Play re-signs it for
 distribution. Both lanes set `REQUIRE_UPLOAD_SIGNING=true`, so a missing keystore or version code fails the build
 instead of producing a debug-signed bundle that only Play would reject.

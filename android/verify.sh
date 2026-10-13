@@ -36,7 +36,7 @@ python3 "$REPO_ROOT/scripts/test_generate_licenses.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_play_publish.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_app_size.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_select_android_flows.py" >/dev/null
-./gradlew :app:checkLicenses
+./gradlew :app:checkLicenses :app:checkAppgalleryLicenses
 
 echo "==> strings are current"
 # Generated from spec/l10n/; a hand edit fails here.

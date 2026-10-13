@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <application>
+        <!-- Both HMS modules declare this key, and two libraries cannot merge one attribute, so the app names both models. -->
+        <meta-data
+            android:name="com.huawei.hms.ml.DEPENDENCY"
+            android:value="face,object"
+            tools:replace="android:value" />
+    </application>
+</manifest>

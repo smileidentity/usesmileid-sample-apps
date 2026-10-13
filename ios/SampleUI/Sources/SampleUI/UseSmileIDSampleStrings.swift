@@ -1271,6 +1271,10 @@ public enum UseSmileIDSampleStrings {
     String(format: text("licenses_google_section"), count)
   }
 
+  public static func licensesHuaweiSection(count: Int) -> String {
+    String(format: text("licenses_huawei_section"), count)
+  }
+
   public static var licensesTextShipsWithComponent: String {
     text("licenses_text_ships_with_component")
   }

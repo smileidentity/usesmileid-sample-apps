@@ -156,6 +156,18 @@ class TestSections(GeneratorCase):
         self.assertEqual([], notices["openSource"])
         self.assertEqual("com.google.mlkit:barcode-scanning", notices["googleServices"][0]["artifact"])
 
+    def test_huaweis_undeclared_artifacts_are_listed_under_its_terms(self):
+        self.write_pom("com.huawei.hms:ml-computer-vision-face:3.18.1.300", pom(""))
+        notices = gen.build(["com.huawei.hms:ml-computer-vision-face:3.18.1.300"], self.texts)
+        self.assertEqual([], notices["openSource"])
+        self.assertEqual("com.huawei.hms:ml-computer-vision-face", notices["huaweiServices"][0]["artifact"])
+        self.assertEqual("HUAWEI Developer Service Agreement", notices["huaweiServices"][0]["terms"][0]["name"])
+
+    def test_a_build_without_hms_has_no_huawei_section(self):
+        terms = "<name>ML Kit Terms of Service</name><url>https://developers.google.com/ml-kit/terms</url>"
+        self.write_pom("com.google.mlkit:barcode-scanning:17.3.0", pom(licences(terms)))
+        self.assertNotIn("huaweiServices", gen.build(["com.google.mlkit:barcode-scanning:17.3.0"], self.texts))
+
     def test_the_sdk_itself_is_not_a_third_party_notice(self):
         own = "<name>Smile ID Terms of Use</name><url>https://smile.id/terms-and-conditions</url>"
         self.write_pom("com.usesmileid:usesmileid:12.0.2", pom(licences(own)))
