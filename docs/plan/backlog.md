@@ -75,6 +75,22 @@ assertions. The camera permission prompt on a fresh install is the one case it d
 
 ## Spec and code health
 
+### Back onto released SDKs with the next SDK release
+
+`main` builds the four apps against SDK snapshots for test builds (#163), which AGENTS.md allows only
+for released SDKs. The Android pins can stop resolving on their own: Central prunes snapshot builds
+after its retention window, and every `main` build then fails until the pins move. Each piece goes
+in the release bump:
+
+- **Android:** `libs.versions.toml` back to one released version, and the snapshot repository in
+  `settings.gradle.kts` and the strict `bridge` constraint in `sample-ui/build.gradle.kts` removed.
+- **Flutter:** `usesmileid` released in `app` and `sample_ui`, the snapshot repository in
+  `app/android/build.gradle.kts` removed, and `the SDK is resolved from the registry` test back to
+  accepting `x.y.z` only.
+- **iOS and Expo:** `ios-spm` and `@smileid/usesmileid*` back to released versions.
+
+Done when `main` pins only released SDKs and no build reads a snapshot repository.
+
 ### Android: a launch screen that matches a pinned appearance
 
 With Light or Dark pinned against the device, the launch window still follows the device, so a cold

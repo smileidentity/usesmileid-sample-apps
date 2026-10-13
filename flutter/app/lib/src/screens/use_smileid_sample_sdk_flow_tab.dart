@@ -245,6 +245,8 @@ class _UseSmileIDSampleSdkFlowTabState
         }
       case UseSmileIDFailure<JobSubmissionResponse>():
       case UseSmileIDCancelled<JobSubmissionResponse>():
+      // Only a flow that skips API submission hands its capture back, and the sample never asks for one.
+      case UseSmileIDCaptured<JobSubmissionResponse>():
         _leave();
     }
   }
@@ -267,6 +269,13 @@ class _UseSmileIDSampleSdkFlowTabState
         );
       case UseSmileIDCancelled<JobSubmissionResponse>():
         run.deliver(UseSmileIDSampleFlowStatus.cancelled);
+      // Unreachable unless the SDK regresses, so a test build reports it rather than passing.
+      case UseSmileIDCaptured<JobSubmissionResponse>():
+        run.deliver(
+          UseSmileIDSampleFlowStatus.failed,
+          error:
+              'The SDK handed back an unsent capture, which only a flow that skips API submission does, and the sample never asks for one',
+        );
     }
   }
 
