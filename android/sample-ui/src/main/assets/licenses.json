@@ -1878,7 +1878,7 @@
     },
     {
       "artifact": "com.google.guava:guava",
-      "version": "33.7.1-android",
+      "version": "33.7.2-android",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -2065,7 +2065,7 @@
     },
     {
       "artifact": "io.sentry:sentry-android-timber",
-      "version": "8.58.0",
+      "version": "8.59.0",
       "licenses": [
         {
           "id": "MIT",
@@ -2076,7 +2076,7 @@
     },
     {
       "artifact": "io.sentry:sentry",
-      "version": "8.58.0",
+      "version": "8.59.0",
       "licenses": [
         {
           "id": "MIT",
