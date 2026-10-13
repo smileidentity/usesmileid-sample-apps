@@ -41,11 +41,16 @@ jobs:
 
       - name: Bundle
         working-directory: android
-        run: ./gradlew bundlePlayRelease
+        run: ./gradlew bundlePlayRelease bundleAppgalleryRelease
 
       - name: Report the delivered size
         shell: bash
         run: python3 scripts/app_size.py android android/app/build/outputs/bundle/playRelease/app-play-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # The AppGallery flavor adds the HMS analyzers; its size is reported beside Play's, never published from here.
+      - name: Report the AppGallery size
+        shell: bash
+        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Store art is present and store-legal
         run: |
