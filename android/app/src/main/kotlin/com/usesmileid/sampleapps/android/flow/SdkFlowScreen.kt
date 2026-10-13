@@ -200,7 +200,11 @@ private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmil
             error = result.error.message ?: result.error::class.java.simpleName,
         )
         UseSmileIDResult.Cancelled -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Cancelled)
-        is UseSmileIDResult.Captured -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Succeeded)
+        // Unreachable unless the SDK regresses, so a test build reports it rather than passing.
+        is UseSmileIDResult.Captured -> flowResult.recordResultCallback(
+            status = UseSmileIDSampleFlowStatus.Failed,
+            error = "The SDK handed back an unsent capture, which only a flow that skips API submission does, and the sample never asks for one",
+        )
     }
 }
 

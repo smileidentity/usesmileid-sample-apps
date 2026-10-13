@@ -126,7 +126,11 @@ struct SdkFlowResultHandler {
     case .cancelled:
       app.flowResult.recordResultCallback(status: .cancelled)
     case .captured:
-      app.flowResult.recordResultCallback(status: .succeeded)
+      // Unreachable unless the SDK regresses, so a test build reports it rather than passing.
+      app.flowResult.recordResultCallback(
+        status: .failed,
+        error: "The SDK handed back an unsent capture, which only a flow that skips API submission does, and the sample never asks for one"
+      )
     }
   }
 
