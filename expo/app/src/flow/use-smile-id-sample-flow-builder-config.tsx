@@ -40,6 +40,7 @@ import {
 } from './use-smile-id-sample-flow-launch-snapshot';
 import { smileIDSampleFlowPlan } from './use-smile-id-sample-flow-plan';
 import { smileIDSampleStartsExpired } from './use-smile-id-sample-token-binding-rules';
+import type { UseSmileIDSampleShellExtension } from '../use-smile-id-sample-shell-extension';
 
 /// One SDK screen the host composes. Named so the journey can be asserted: the builder's list is private.
 export type UseSmileIDSampleFlowJourneyStep =
@@ -55,6 +56,7 @@ export const smileIDSampleApplying = (
   builder: UseSmileIDFlowBuilder,
   snapshot: UseSmileIDSampleFlowLaunchSnapshot,
   onTokenRefreshed?: () => void,
+  extension?: UseSmileIDSampleShellExtension | null,
 ): void => {
   const scanned = smileIDSampleSnapshotSession(snapshot);
   // Omitted, never blanked: a blank silences the SDK's per-field errors.
@@ -86,7 +88,7 @@ export const smileIDSampleApplying = (
       }),
     );
   }
-  builder.network((network: UseSmileIDNetworkBuilder) =>
+  builder.network((network: UseSmileIDNetworkBuilder) => {
     network.config((config: ConfigBuilder) => {
       config.jobType = jobTypeFor(snapshot.product.id);
       config.token =
@@ -116,8 +118,9 @@ export const smileIDSampleApplying = (
         partner.callbackUrl = scanned === null ? snapshot.callbackUrl : '';
         partner.useSandbox = snapshot.sandbox;
       });
-    }),
-  );
+    });
+    extension?.customiseNetwork?.(network, snapshot.product);
+  });
   const palette = smileIDSampleThemeOverride(snapshot.theme);
   if (palette !== null) {
     builder.theme((theme: ThemeConfigBuilder) => {

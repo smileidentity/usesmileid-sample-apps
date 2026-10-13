@@ -29,6 +29,8 @@ Future<void> useSmileIDSampleBootstrap({
   final UseSmileIDSampleSettings stored = await settings.read();
   final UseSmileIDSampleSecureSessionRepository sessions =
       UseSmileIDSampleSecureSessionRepository();
+  // Ahead of the read, so autostart finds the extension's session as if it had been scanned.
+  await useSmileIDSampleLinkLaunchSession(extension, sessions.link);
   // Before the first frame, or the session card flashes in late.
   final UseSmileIDSampleSessionRecord session = await _readSession(sessions);
   final UseSmileIDSamplePreferencesJobsRepository jobs =

@@ -1,5 +1,9 @@
 package com.usesmileid.sampleapps.android
 
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.flow.first
+import androidx.compose.runtime.snapshotFlow
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
@@ -50,6 +54,8 @@ import com.ramcosta.composedestinations.spec.Direction
 import com.ramcosta.composedestinations.utils.currentDestinationAsState
 import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
 import com.ramcosta.composedestinations.utils.startDestination
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
+import com.usesmileid.sampleapps.android.extension.linkLaunchSession
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
 import androidx.compose.runtime.CompositionLocalProvider
 import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
@@ -169,9 +175,16 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
     val app = LocalUseSmileIDSampleAppState.current
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        val product = app.launchArgs.autostart
-        if (started || product == null) return@LaunchedEffect
+        if (started) return@LaunchedEffect
+        // Ahead of autostart, which snapshots the session as the flow opens; marked after, so a recreation mid-link links again.
+        linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)?.let { linked ->
+            // The app reads the session from the store's flow, which can trail the write.
+            withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.session?.id }.first { it == linked.id } }
+        }
         started = true
+        val product = app.launchArgs.autostart ?: return@LaunchedEffect
+        // The run snapshots the session as it opens, and the store's first read can still be in flight.
+        withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.sessionLoaded }.first { it } }
         navigator.navigate(
             SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),
         )
@@ -233,3 +246,5 @@ private val UseSmileIDSampleNavItem.graph: Direction
 
 /** Matches the route transition, so the bar and the screen move together. */
 private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)
+
+private val LAUNCH_SESSION_WAIT = 5.seconds

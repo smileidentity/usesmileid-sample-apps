@@ -114,6 +114,7 @@ class _UseSmileIDSampleSdkFlowTabState
           builder,
           snapshot,
           onTokenRefreshed: _result.refreshed,
+          extension: _extension,
         );
         _extension?.customiseFlow(builder, snapshot.product);
         if (snapshot.scenario == UseSmileIDSampleScenario.noCallback) {
