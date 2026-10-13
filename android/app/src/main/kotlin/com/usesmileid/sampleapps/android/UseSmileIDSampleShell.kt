@@ -183,6 +183,8 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
         }
         started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
+        // The run snapshots the session as it opens, and the store's first read can still be in flight.
+        withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.sessionLoaded }.first { it } }
         navigator.navigate(
             SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),
         )
