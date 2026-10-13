@@ -1,5 +1,9 @@
 package com.usesmileid.sampleapps.android
 
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.withTimeoutOrNull
+import kotlinx.coroutines.flow.first
+import androidx.compose.runtime.snapshotFlow
 import android.content.Intent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.LocalActivity
@@ -172,8 +176,11 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         if (started) return@LaunchedEffect
-        // Ahead of autostart, which reads the session as the flow opens; marked after, so a recreation mid-link links again.
-        linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)
+        // Ahead of autostart, which snapshots the session as the flow opens; marked after, so a recreation mid-link links again.
+        linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)?.let { linked ->
+            // The app reads the session from the store's flow, which can trail the write.
+            withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.session?.id }.first { it == linked.id } }
+        }
         started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
         navigator.navigate(
@@ -237,3 +244,5 @@ private val UseSmileIDSampleNavItem.graph: Direction
 
 /** Matches the route transition, so the bar and the screen move together. */
 private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)
+
+private val LAUNCH_SESSION_WAIT = 5.seconds

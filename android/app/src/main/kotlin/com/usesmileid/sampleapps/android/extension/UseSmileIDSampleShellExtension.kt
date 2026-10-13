@@ -28,19 +28,16 @@ interface UseSmileIDSampleShellExtension {
     fun launchSession(): UseSmileIDSampleTokenSession? = null
 }
 
-/** Links the [extension]'s launch session, if it offers one; a failed link only skips it. */
+/** Links the [extension]'s launch session, if it offers one, and returns it; a failed link only skips it. */
 suspend fun linkLaunchSession(
     extension: UseSmileIDSampleShellExtension?,
     link: suspend (UseSmileIDSampleTokenSession) -> Unit,
-) {
-    try {
-        val session = extension?.launchSession() ?: return
-        link(session)
-    } catch (cancelled: CancellationException) {
-        throw cancelled
-    } catch (_: Exception) {
-        // Nothing to recover: the app runs without it, as it would without the extension.
-    }
+): UseSmileIDSampleTokenSession? = try {
+    extension?.launchSession()?.also { link(it) }
+} catch (cancelled: CancellationException) {
+    throw cancelled
+} catch (_: Exception) {
+    null
 }
 
 /** What the shell lets an extension do. */
