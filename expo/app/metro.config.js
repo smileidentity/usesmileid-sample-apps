@@ -13,6 +13,8 @@ const workspaceRoot = outermostWorkspaceRoot(projectRoot);
 const config = getDefaultConfig(projectRoot);
 
 config.watchFolders = [workspaceRoot];
+// Expo roots the server at the nearest workspace, the submodule's own, where the hoisted entry is unreachable.
+config.server.unstable_serverRoot = workspaceRoot;
 // Hoisted by .npmrc, so the app's own folder comes first and the workspace root is the fallback.
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
