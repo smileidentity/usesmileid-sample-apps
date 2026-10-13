@@ -14,13 +14,13 @@ export type UseSmileIDSampleShellExtension = {
   launchSession?: () => UseSmileIDSampleTokenSession | null;
 };
 
-/// Links the extension's launch session through `link`, if it offers one.
+/// Links the extension's launch session through `link`, if it offers one; a failed link only skips it.
 export const linkLaunchSession = async (
   extension: UseSmileIDSampleShellExtension | null | undefined,
   link: (session: UseSmileIDSampleTokenSession) => Promise<void>,
 ): Promise<void> => {
   const session = extension?.launchSession?.() ?? null;
-  if (session) await link(session);
+  if (session) await link(session).catch(() => undefined);
 };
 
 /// What the shell lets an extension do; this shell has no scenario drawer to open.

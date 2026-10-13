@@ -34,4 +34,12 @@ void main() {
     await useSmileIDSampleLinkLaunchSession(_Silent(), link);
     expect(linked, isEmpty);
   });
+
+  test('a failed link only skips the launch session', () async {
+    await useSmileIDSampleLinkLaunchSession(
+      _Offering(useSmileIDSampleTestSession()),
+      (UseSmileIDSampleTokenSession session) async =>
+          throw StateError('secure storage refused the write'),
+    );
+  });
 }

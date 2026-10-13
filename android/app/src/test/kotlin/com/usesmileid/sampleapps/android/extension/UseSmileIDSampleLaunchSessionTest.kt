@@ -25,4 +25,11 @@ class UseSmileIDSampleLaunchSessionTest {
         linkLaunchSession(object : UseSmileIDSampleShellExtension {}) { linked += it }
         assertTrue(linked.isEmpty())
     }
+
+    @Test
+    fun a_failed_link_only_skips_the_launch_session() = runBlocking {
+        linkLaunchSession(object : UseSmileIDSampleShellExtension {
+            override fun launchSession() = testSession()
+        }) { error("secure storage refused the write") }
+    }
 }

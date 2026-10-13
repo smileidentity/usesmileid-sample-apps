@@ -84,9 +84,9 @@ export default function RootLayout() {
   // After the stored session loads, which would otherwise replace it.
   useEffect(() => {
     if (!sessionLoaded) return;
-    linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
+    void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
       useSmileIDSampleSessionStore.getState().link(session),
-    ).catch(() => undefined);
+    );
   }, [sessionLoaded]);
   useSmileIDSampleSessionClock();
 

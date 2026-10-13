@@ -21,13 +21,18 @@ abstract class UseSmileIDSampleShellExtension {
   UseSmileIDSampleTokenSession? launchSession() => null;
 }
 
-/// Links the [extension]'s launch session through [link], if it offers one.
+/// Links the [extension]'s launch session through [link], if it offers one; a failed link only skips it.
 Future<void> useSmileIDSampleLinkLaunchSession(
   UseSmileIDSampleShellExtension? extension,
   Future<void> Function(UseSmileIDSampleTokenSession session) link,
 ) async {
   final UseSmileIDSampleTokenSession? session = extension?.launchSession();
-  if (session != null) await link(session);
+  if (session == null) return;
+  try {
+    await link(session);
+  } on Object {
+    // Nothing to recover: the app starts without it, as it would without the extension.
+  }
 }
 
 /// What the shell lets an extension do.

@@ -172,9 +172,9 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         if (started) return@LaunchedEffect
-        started = true
-        // Ahead of autostart, which reads the session the moment the flow route opens.
+        // Ahead of autostart, which reads the session as the flow opens; marked after, so a recreation mid-link links again.
         linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)
+        started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
         navigator.navigate(
             SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),

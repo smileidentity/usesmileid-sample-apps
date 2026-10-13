@@ -18,4 +18,9 @@ describe('linkLaunchSession', () => {
     await linkLaunchSession({ launchSession: () => null }, link);
     expect(link).not.toHaveBeenCalled();
   });
+
+  it('a failed link only skips the launch session', async () => {
+    const link = jest.fn(() => Promise.reject(new Error('secure storage refused the write')));
+    await expect(linkLaunchSession({ launchSession: () => session }, link)).resolves.toBeUndefined();
+  });
 });
