@@ -3,6 +3,7 @@ const path = require('node:path');
 
 const { getDefaultConfig } = require('expo/metro-config');
 
+const { withShellExtension } = require('./metro-shell-extension');
 const { outermostWorkspaceRoot } = require('./metro-workspace-root');
 
 const projectRoot = __dirname;
@@ -17,5 +18,11 @@ config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
   path.resolve(workspaceRoot, 'node_modules'),
 ];
+
+config.resolver.resolveRequest = withShellExtension(
+  config.resolver.resolveRequest,
+  projectRoot,
+  process.env.USESMILEID_SAMPLE_EXTENSION,
+);
 
 module.exports = config;
