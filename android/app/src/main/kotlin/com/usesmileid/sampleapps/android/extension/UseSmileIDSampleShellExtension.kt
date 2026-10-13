@@ -33,8 +33,8 @@ suspend fun linkLaunchSession(
     extension: UseSmileIDSampleShellExtension?,
     link: suspend (UseSmileIDSampleTokenSession) -> Unit,
 ) {
-    val session = extension?.launchSession() ?: return
     try {
+        val session = extension?.launchSession() ?: return
         link(session)
     } catch (cancelled: CancellationException) {
         throw cancelled

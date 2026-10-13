@@ -88,7 +88,7 @@ export default function RootLayout() {
     launched.current = true;
     void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
       useSmileIDSampleSessionStore.getState().link(session),
-    ).then(() => {
+    ).finally(() => {
       if (args.autostart !== null) router.push(`/flow/${args.autostart}/run`);
     });
   }, [sessionLoaded, argsLoaded, args.autostart]);

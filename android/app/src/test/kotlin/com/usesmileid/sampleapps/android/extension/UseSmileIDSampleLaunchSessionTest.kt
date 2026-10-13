@@ -32,4 +32,12 @@ class UseSmileIDSampleLaunchSessionTest {
             override fun launchSession() = testSession()
         }) { error("secure storage refused the write") }
     }
+
+    @Test
+    fun an_extension_that_fails_to_offer_a_session_only_skips_it() = runBlocking {
+        linkLaunchSession(object : UseSmileIDSampleShellExtension {
+            override fun launchSession(): UseSmileIDSampleTokenSession = error("no session to offer")
+        }) { linked += it }
+        assertTrue(linked.isEmpty())
+    }
 }

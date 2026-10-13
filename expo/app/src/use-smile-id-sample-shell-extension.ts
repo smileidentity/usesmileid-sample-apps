@@ -21,8 +21,12 @@ export const linkLaunchSession = async (
   extension: UseSmileIDSampleShellExtension | null | undefined,
   link: (session: UseSmileIDSampleTokenSession) => Promise<void>,
 ): Promise<void> => {
-  const session = extension?.launchSession?.() ?? null;
-  if (session) await link(session).catch(() => undefined);
+  try {
+    const session = extension?.launchSession?.() ?? null;
+    if (session) await link(session);
+  } catch {
+    // Nothing to recover: the app runs without it, as it would without the extension.
+  }
 };
 
 /// What the shell lets an extension do; this shell has no scenario drawer to open.

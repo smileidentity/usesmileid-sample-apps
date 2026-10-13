@@ -32,10 +32,9 @@ Future<void> useSmileIDSampleLinkLaunchSession(
   UseSmileIDSampleShellExtension? extension,
   Future<void> Function(UseSmileIDSampleTokenSession session) link,
 ) async {
-  final UseSmileIDSampleTokenSession? session = extension?.launchSession();
-  if (session == null) return;
   try {
-    await link(session);
+    final UseSmileIDSampleTokenSession? session = extension?.launchSession();
+    if (session != null) await link(session);
   } on Object {
     // Nothing to recover: the app starts without it, as it would without the extension.
   }
