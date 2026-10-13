@@ -16,11 +16,15 @@ void main() {
         .toList();
     // Exact, not a caret. A bump arrives as a PR, which is what makes every bump a free
     // consumption test; a caret lets a fresh resolve move to a release no PR ever exercised.
+    // A registry snapshot pinned exactly is just as fixed, so a test build may carry one.
     final Iterable<String> sdk = lines.where(
       (String line) => line.startsWith('usesmileid:'),
     );
     expect(sdk, hasLength(1));
-    expect(sdk.single, matches(RegExp(r'^usesmileid: \d+\.\d+\.\d+$')));
+    expect(
+      sdk.single,
+      matches(RegExp(r'^usesmileid: \d+\.\d+\.\d+(-SNAPSHOT\.\d+)?$')),
+    );
     expect(
       lines.where((String line) => line.startsWith('dependency_overrides:')),
       isEmpty,
