@@ -228,8 +228,11 @@ struct UseSmileIDSampleShell: View {
 
   /// Lands on the flow route after the restore, so the argument wins over what the last scene left.
   private func autostart() {
-    guard !autostarted, let product = app.launchArguments.autostart else { return }
+    guard !autostarted else { return }
     autostarted = true
+    // Ahead of autostart, which reads the session the moment the flow route opens.
+    linkLaunchSession(useSmileIDSampleShellExtension, link: app.linkSession)
+    guard let product = app.launchArguments.autostart else { return }
     router.open(.sdkFlow(productId: product.id, presentation: app.launchArguments.route))
   }
 

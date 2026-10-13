@@ -6,6 +6,7 @@ import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import java.util.ServiceLoader
+import kotlin.coroutines.cancellation.CancellationException
 
 /** Developer tooling an SDK repo's source build adds to this app; a registry build has none. */
 interface UseSmileIDSampleShellExtension {
@@ -18,6 +19,24 @@ interface UseSmileIDSampleShellExtension {
 
     /** Runs once at launch, with the intent the app was started by. */
     fun onLaunch(intent: Intent) {}
+
+    /** A session the shell links once at launch, before autostart, as if its token had been scanned. */
+    fun launchSession(): UseSmileIDSampleTokenSession? = null
+}
+
+/** Links the [extension]'s launch session, if it offers one; a failed link only skips it. */
+suspend fun linkLaunchSession(
+    extension: UseSmileIDSampleShellExtension?,
+    link: suspend (UseSmileIDSampleTokenSession) -> Unit,
+) {
+    val session = extension?.launchSession() ?: return
+    try {
+        link(session)
+    } catch (cancelled: CancellationException) {
+        throw cancelled
+    } catch (_: Exception) {
+        // Nothing to recover: the app runs without it, as it would without the extension.
+    }
 }
 
 /** What the shell lets an extension do. */
