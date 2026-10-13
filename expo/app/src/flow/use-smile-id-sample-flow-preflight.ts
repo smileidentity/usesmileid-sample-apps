@@ -34,7 +34,7 @@ export const smileIDSamplePreflight = (
   // Ahead of the SDK's own check, which would end the run: the user ID screen resolves it.
   if (snapshot.product.id === 'smartSelfieAuth' && snapshot.userId.length === 0) return { kind: 'needsUserId' };
   const builder = new UseSmileIDFlowBuilder();
-  smileIDSampleApplying(builder, snapshot);
+  smileIDSampleApplying(builder, snapshot, undefined, useSmileIDSampleShellExtension);
   useSmileIDSampleShellExtension?.customiseFlow?.(builder, snapshot.product);
   const requirement = smileIDSampleRequirementFrom(smileIDSampleSnapshotSession(snapshot)?.bindings);
 

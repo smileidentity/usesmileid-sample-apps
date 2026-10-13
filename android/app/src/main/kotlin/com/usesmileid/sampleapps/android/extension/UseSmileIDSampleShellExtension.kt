@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.android.extension
 
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import com.usesmileid.data.dsl.UseSmileIDNetworkBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -17,6 +18,9 @@ interface UseSmileIDSampleShellExtension {
     /** Runs after the shell has configured a flow, so it may replace any of that configuration. */
     fun customiseFlow(builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) {}
 
+    /** Runs last inside the shell's network block, so it may add to that configuration without replacing it. */
+    fun customiseNetwork(network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) {}
+
     /** Runs once at launch, with the intent the app was started by. */
     fun onLaunch(intent: Intent) {}
 
@@ -24,19 +28,16 @@ interface UseSmileIDSampleShellExtension {
     fun launchSession(): UseSmileIDSampleTokenSession? = null
 }
 
-/** Links the [extension]'s launch session, if it offers one; a failed link only skips it. */
+/** Links the [extension]'s launch session, if it offers one, and returns it; a failed link only skips it. */
 suspend fun linkLaunchSession(
     extension: UseSmileIDSampleShellExtension?,
     link: suspend (UseSmileIDSampleTokenSession) -> Unit,
-) {
-    val session = extension?.launchSession() ?: return
-    try {
-        link(session)
-    } catch (cancelled: CancellationException) {
-        throw cancelled
-    } catch (_: Exception) {
-        // Nothing to recover: the app runs without it, as it would without the extension.
-    }
+): UseSmileIDSampleTokenSession? = try {
+    extension?.launchSession()?.also { link(it) }
+} catch (cancelled: CancellationException) {
+    throw cancelled
+} catch (_: Exception) {
+    null
 }
 
 /** What the shell lets an extension do. */

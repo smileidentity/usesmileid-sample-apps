@@ -18,6 +18,8 @@ import com.usesmileid.presentation.flow.dsl.DocumentCaptureConfigBuilder
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.BuildConfig
+import com.usesmileid.sampleapps.android.extension.UseSmileIDSampleShellExtension
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.presentation.flow.config.DocumentCaptureMode
@@ -36,7 +38,11 @@ import java.net.URL
 import com.usesmileid.sampleapps.ui.R as SampleUiR
 
 /** The one place that decides what the SDK is handed (§8.1). */
-fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshed: () -> Unit = {}) {
+fun UseSmileIDFlowBuilder.applying(
+    snapshot: FlowLaunchSnapshot,
+    onTokenRefreshed: () -> Unit = {},
+    extension: UseSmileIDSampleShellExtension? = useSmileIDSampleShellExtension,
+) {
     // Omitted when the token binds what the SDK requires: the forms were skipped, so these would be blanks.
     userDetails = if (snapshot.liveSession?.bindings?.bindsRequiredUserDetails == true) {
         null
@@ -104,6 +110,7 @@ fun UseSmileIDFlowBuilder.applying(snapshot: FlowLaunchSnapshot, onTokenRefreshe
                 useSandbox = snapshot.sandbox
             }
         }
+        extension?.customiseNetwork(this, snapshot.product)
     }
     // Both theme scenarios go through the SDK's public override, as spec/scenarios.json asks; only
     // the values differ. sample-ui states them in the SDK's own types, so this is a straight assignment.

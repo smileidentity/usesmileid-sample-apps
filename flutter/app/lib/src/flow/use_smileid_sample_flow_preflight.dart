@@ -62,7 +62,7 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
     return const UseSmileIDSampleFlowNeedsUserId();
   }
   final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
-  useSmileIDSampleApplying(builder, snapshot);
+  useSmileIDSampleApplying(builder, snapshot, extension: extension);
   extension?.customiseFlow(builder, snapshot.product);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.

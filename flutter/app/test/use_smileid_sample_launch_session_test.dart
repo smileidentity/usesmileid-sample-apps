@@ -15,6 +15,12 @@ class _Offering extends UseSmileIDSampleShellExtension {
 
 class _Silent extends UseSmileIDSampleShellExtension {}
 
+class _Failing extends UseSmileIDSampleShellExtension {
+  @override
+  UseSmileIDSampleTokenSession? launchSession() =>
+      throw StateError('no session to offer');
+}
+
 void main() {
   final List<UseSmileIDSampleTokenSession> linked =
       <UseSmileIDSampleTokenSession>[];
@@ -41,5 +47,10 @@ void main() {
       (UseSmileIDSampleTokenSession session) async =>
           throw StateError('secure storage refused the write'),
     );
+  });
+
+  test('an extension that fails to offer a session only skips it', () async {
+    await useSmileIDSampleLinkLaunchSession(_Failing(), link);
+    expect(linked, isEmpty);
   });
 }

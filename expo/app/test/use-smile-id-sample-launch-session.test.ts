@@ -23,4 +23,15 @@ describe('linkLaunchSession', () => {
     const link = jest.fn(() => Promise.reject(new Error('secure storage refused the write')));
     await expect(linkLaunchSession({ launchSession: () => session }, link)).resolves.toBeUndefined();
   });
+
+  it('an extension that fails to offer a session only skips it', async () => {
+    const link = jest.fn(() => Promise.resolve());
+    const failing = {
+      launchSession: () => {
+        throw new Error('no session to offer');
+      },
+    };
+    await expect(linkLaunchSession(failing, link)).resolves.toBeUndefined();
+    expect(link).not.toHaveBeenCalled();
+  });
 });
