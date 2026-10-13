@@ -90,8 +90,8 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_result_card"
 
-# autostart lands on the flow route under the route it was given. With empty stores the pre-flight
-# redirects to that product's form (§7.3), and the card keeps the route it recorded on entry.
+# autostart lands on the flow route under the route it was given. With no session linked the run
+# goes to the scanner first, and the card keeps the route it recorded on entry.
 - stopApp
 - launchApp:
     arguments:
@@ -99,8 +99,7 @@ appId: ${APP_ID}
       autostart: biometricKyc
       route: shell
 - assertVisible:
-    id: "sample_user_details_screen"
-- assertVisible: "Biometric KYC"
+    id: "sample_scan_token_screen"
 - back
 - assertVisible:
     id: "sample_products_screen"
