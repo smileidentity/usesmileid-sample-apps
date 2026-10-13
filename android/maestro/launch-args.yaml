@@ -90,8 +90,7 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_result_card"
 
-# autostart lands on the flow route under the route it was given. With no session linked the run
-# goes to the scanner first, and the card keeps the route it recorded on entry.
+# autostart with no session goes to the scanner first; the card keeps the route it recorded on entry.
 - stopApp
 - launchApp:
     arguments:

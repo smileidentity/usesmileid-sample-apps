@@ -10,7 +10,6 @@ type Context = { originModulePath: string; resolveRequest: Resolve };
 type Resolve = (context: Context, moduleName: string, platform: string | null) => Resolution;
 
 const serverRoot = path.join('/repo', 'sample-apps', 'expo');
-// Metro names the server root itself as the origin of an entry request.
 const entryOrigin = `${serverRoot}${path.sep}.`;
 const echo: Resolve = (_context, moduleName) => ({ type: 'sourceFile', filePath: moduleName });
 const from = (originModulePath: string): Context => ({ originModulePath, resolveRequest: echo });
