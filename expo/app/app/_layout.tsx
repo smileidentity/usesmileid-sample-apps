@@ -16,9 +16,9 @@ import {
 import { useFonts } from 'expo-font';
 import * as Linking from 'expo-linking';
 import { NavigationBar } from 'expo-navigation-bar';
-import { Stack } from 'expo-router';
+import { Stack, router, useRootNavigationState } from 'expo-router';
 import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -81,13 +81,6 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSession(smileIDSampleSecureSessionStorage);
   }, [loadSession]);
-  // After the stored session loads, which would otherwise replace it.
-  useEffect(() => {
-    if (!sessionLoaded) return;
-    void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
-      useSmileIDSampleSessionStore.getState().link(session),
-    );
-  }, [sessionLoaded]);
   useSmileIDSampleSessionClock();
 
   // Only while nothing is pinned: a pin makes useColorScheme report the app's choice, not the device's.
@@ -128,6 +121,19 @@ export default function RootLayout() {
 
   const ready = fontsLoaded && sessionLoaded && argsLoaded && profilesLoaded;
   const { language, deviceLanguages } = useSmileIDSampleAppLanguage(args.appLocale, ready);
+
+  // Once the stack below has mounted, since nothing can navigate before it; the link comes first because the run needs a session.
+  const navigationReady = useRootNavigationState()?.key !== undefined;
+  const launched = useRef(false);
+  useEffect(() => {
+    if (!ready || !navigationReady || launched.current) return;
+    launched.current = true;
+    void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
+      useSmileIDSampleSessionStore.getState().link(session),
+    ).finally(() => {
+      if (args.autostart !== null) router.push(`/flow/${args.autostart}/run`);
+    });
+  }, [ready, navigationReady, args.autostart]);
 
   if (!ready) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;

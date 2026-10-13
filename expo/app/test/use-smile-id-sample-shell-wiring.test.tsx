@@ -72,7 +72,8 @@ jest.mock('expo-router', () => {
   const useFocusEffect = (effect: () => void | (() => void)) =>
     mockReact.useEffect(effect, [effect]);
   const usePathname = () => '/';
-  return { Stack, useRouter, usePathname, useFocusEffect };
+  const useRootNavigationState = () => ({ key: 'root' });
+  return { Stack, router, useRouter, usePathname, useFocusEffect, useRootNavigationState };
 });
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;
@@ -330,5 +331,21 @@ describe('hiding a verification is confirmed and can be undone', () => {
     });
     await waitFor(() => expect(screen.queryByText('1 verification hidden from App list')).not.toBeNull());
     expect(useSmileIDSampleJobStore.getState().removals).toEqual([]);
+  });
+});
+
+describe('autostart', () => {
+  it("opens the product's run once the shell has mounted", async () => {
+    const { router } = jest.requireMock('expo-router') as { router: { push: jest.Mock } };
+    router.push.mockClear();
+    await launch(`${LAUNCH}?autostart=biometricKyc`);
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/flow/biometricKyc/run'));
+  });
+
+  it('opens nothing on a plain launch', async () => {
+    const { router } = jest.requireMock('expo-router') as { router: { push: jest.Mock } };
+    router.push.mockClear();
+    await launch(LAUNCH);
+    expect(router.push).not.toHaveBeenCalled();
   });
 });
