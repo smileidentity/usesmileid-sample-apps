@@ -7,6 +7,7 @@ import 'package:usesmileid/usesmileid.dart';
 import 'package:usesmileid_mlkit_face/usesmileid_mlkit_face.dart';
 import 'package:usesmileid_vision_face/usesmileid_vision_face.dart';
 
+import '../use_smileid_sample_shell_extension.dart';
 import 'use_smileid_sample_flow_launch_snapshot.dart';
 import 'use_smileid_sample_flow_plan.dart';
 import 'use_smileid_sample_flow_tokens.dart';
@@ -17,6 +18,7 @@ void useSmileIDSampleApplying(
   UseSmileIDFlowBuilder builder,
   UseSmileIDSampleFlowLaunchSnapshot snapshot, {
   VoidCallback? onTokenRefreshed,
+  UseSmileIDSampleShellExtension? extension,
 }) {
   final UseSmileIDSampleFlowPlan plan = useSmileIDSampleFlowPlan(
     snapshot.liveSession?.bindings,
@@ -49,10 +51,8 @@ void useSmileIDSampleApplying(
       }),
     );
   }
-  builder.network(
-    (UseSmileIDNetworkBuilder network) => network.config((
-      ConfigBuilder config,
-    ) {
+  builder.network((UseSmileIDNetworkBuilder network) {
+    network.config((ConfigBuilder config) {
       config.jobType = snapshot.product.jobType;
       final UseSmileIDSampleTokenSession? scanned = snapshot.liveSession;
       config.token =
@@ -86,8 +86,9 @@ void useSmileIDSampleApplying(
         partner.callbackUrl = scanned == null ? snapshot.callbackUrl : '';
         partner.useSandbox = snapshot.sandbox;
       });
-    }),
-  );
+    });
+    extension?.customiseNetwork(network, snapshot.product);
+  });
   final UseSmileIDSampleThemeOverride? palette = snapshot.theme.override;
   if (palette != null) {
     builder.theme((ThemeConfigBuilder theme) {

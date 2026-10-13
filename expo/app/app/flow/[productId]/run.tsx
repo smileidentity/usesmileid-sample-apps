@@ -135,7 +135,12 @@ export default function SdkFlowRun() {
   return (
     <UseSmileIDBuilder
       builder={(builder: UseSmileIDFlowBuilder) => {
-        smileIDSampleApplying(builder, snapshot, useSmileIDSampleResultStore.getState().refreshed);
+        smileIDSampleApplying(
+          builder,
+          snapshot,
+          useSmileIDSampleResultStore.getState().refreshed,
+          useSmileIDSampleShellExtension,
+        );
         useSmileIDSampleShellExtension?.customiseFlow?.(builder, snapshot.product);
         if (snapshot.scenario === 'noCallback') return;
         builder.onResult = (result: UseSmileIDResult<JobSubmissionResponse>) => {

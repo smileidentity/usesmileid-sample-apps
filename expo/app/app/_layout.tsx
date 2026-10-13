@@ -16,9 +16,9 @@ import {
 import { useFonts } from 'expo-font';
 import * as Linking from 'expo-linking';
 import { NavigationBar } from 'expo-navigation-bar';
-import { Stack } from 'expo-router';
+import { Stack, router } from 'expo-router';
 import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -81,13 +81,18 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSession(smileIDSampleSecureSessionStorage);
   }, [loadSession]);
-  // After the stored session loads, which would otherwise replace it.
+  // Once per launch, after the stored session loads (it would replace a linked one) and before
+  // autostart, whose run needs a session the moment its route opens.
+  const launched = useRef(false);
   useEffect(() => {
-    if (!sessionLoaded) return;
+    if (!sessionLoaded || !argsLoaded || launched.current) return;
+    launched.current = true;
     void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
       useSmileIDSampleSessionStore.getState().link(session),
-    );
-  }, [sessionLoaded]);
+    ).then(() => {
+      if (args.autostart !== null) router.push(`/flow/${args.autostart}/run`);
+    });
+  }, [sessionLoaded, argsLoaded, args.autostart]);
   useSmileIDSampleSessionClock();
 
   // Only while nothing is pinned: a pin makes useColorScheme report the app's choice, not the device's.

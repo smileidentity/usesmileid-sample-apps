@@ -11,7 +11,8 @@ import UseSmileIDVisionFace
 func useSmileIDSampleApply(
   _ builder: UseSmileIDFlowBuilder,
   _ snapshot: FlowLaunchSnapshot,
-  onTokenRefreshed: @escaping @Sendable @MainActor () -> Void = {}
+  onTokenRefreshed: @escaping @Sendable @MainActor () -> Void = {},
+  extension: (any UseSmileIDSampleShellExtending.Type)? = useSmileIDSampleShellExtension
 ) {
   builder.userDetails = useSmileIDSampleUserDetails(snapshot)
   if snapshot.product == .smartSelfieAuth {
@@ -29,38 +30,7 @@ func useSmileIDSampleApply(
   if snapshot.product.capture {
     builder.ml { useSmileIDSampleAnalyzers($0, snapshot.product) }
   }
-  builder.network { network in
-    network.config { config in
-      config.jobType = snapshot.product.jobType
-      let scanned = snapshot.liveSession
-      config.token = scanned?.token ?? UseSmileIDSampleFlowTokens.token(
-        expired: snapshot.scenario.startsExpired,
-        now: Date()
-      )
-      config.onTokenExpired = { previous in
-        await onTokenRefreshed()
-        // No endpoint this sample may call, so the auth failure surfaces rather than being invented away.
-        if scanned != nil {
-          return previous
-        }
-        if snapshot.scenario == .badRefresh {
-          return UseSmileIDSampleFlowTokens.malformed()
-        }
-        return UseSmileIDSampleFlowTokens.token(expired: false, now: Date())
-      }
-      config.logging { logging in
-        logging.enabled = UseSmileIDSampleAppState.isDebugBuild
-        // Not BODY: a logged body carries the user details this repo forbids in logs.
-        logging.level = .headers
-      }
-      config.partnerConfig { partner in
-        // The token wins over the local profile: a signed token under another id comes back 401.
-        partner.partnerId = scanned?.partnerId ?? snapshot.partnerId
-        partner.callbackUrl = snapshot.resolvedCallbackUrl
-        partner.useSandbox = snapshot.sandbox
-      }
-    }
-  }
+  builder.network { useSmileIDSampleNetwork($0, snapshot, onTokenRefreshed: onTokenRefreshed, extension: `extension`) }
   // Both theme scenarios go through the SDK's public override, as `spec/scenarios.json` asks; only
   // the values differ. SampleUI states them in the SDK's own types, so this is a straight assignment.
   if let palette = snapshot.theme.override {
@@ -278,6 +248,47 @@ func useSmileIDSampleJourneySteps(_ snapshot: FlowLaunchSnapshot) -> [FlowJourne
 /// A preview follows its capture; the document products' two go together or not at all.
 private func capture(_ step: FlowJourneyStep, _ preview: Bool) -> [FlowJourneyStep] {
   preview ? [step, .preview] : [step]
+}
+
+/// The shell's network configuration, then the extension's additions to it.
+@MainActor
+func useSmileIDSampleNetwork(
+  _ network: UseSmileIDNetworkBuilder,
+  _ snapshot: FlowLaunchSnapshot,
+  onTokenRefreshed: @escaping @Sendable @MainActor () -> Void,
+  extension: (any UseSmileIDSampleShellExtending.Type)?
+) {
+  network.config { config in
+    config.jobType = snapshot.product.jobType
+    let scanned = snapshot.liveSession
+    config.token = scanned?.token ?? UseSmileIDSampleFlowTokens.token(
+      expired: snapshot.scenario.startsExpired,
+      now: Date()
+    )
+    config.onTokenExpired = { previous in
+      await onTokenRefreshed()
+      // No endpoint this sample may call, so the auth failure surfaces rather than being invented away.
+      if scanned != nil {
+        return previous
+      }
+      if snapshot.scenario == .badRefresh {
+        return UseSmileIDSampleFlowTokens.malformed()
+      }
+      return UseSmileIDSampleFlowTokens.token(expired: false, now: Date())
+    }
+    config.logging { logging in
+      logging.enabled = UseSmileIDSampleAppState.isDebugBuild
+      // Not BODY: a logged body carries the user details this repo forbids in logs.
+      logging.level = .headers
+    }
+    config.partnerConfig { partner in
+      // The token wins over the local profile: a signed token under another id comes back 401.
+      partner.partnerId = scanned?.partnerId ?? snapshot.partnerId
+      partner.callbackUrl = snapshot.resolvedCallbackUrl
+      partner.useSandbox = snapshot.sandbox
+    }
+  }
+  `extension`?.customiseNetwork(network, product: snapshot.product)
 }
 
 /// Hands the step to the SDK's builder, leaving captureBothSides to its per-type default; the struct's own default is true.

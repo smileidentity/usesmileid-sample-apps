@@ -14,6 +14,12 @@ abstract class UseSmileIDSampleShellExtension {
     UseSmileIDSampleProduct product,
   ) {}
 
+  /// Runs last inside the shell's network block, so it may add to that configuration without replacing it.
+  void customiseNetwork(
+    UseSmileIDNetworkBuilder network,
+    UseSmileIDSampleProduct product,
+  ) {}
+
   /// Runs once before the first frame, with the route the app was launched on.
   Future<void> onLaunch(String defaultRouteName) async {}
 

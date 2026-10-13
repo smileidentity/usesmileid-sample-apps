@@ -118,3 +118,12 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_language_option_system"
 - assertVisible: "Settings"
+
+# autostart opens the product's run at launch; with no session linked, the run goes to the scanner.
+- stopApp
+- clearState
+- openLink: "usesmileid-sample-expo://?autostart=biometricKyc"
+- extendedWaitUntil:
+    visible:
+      id: "sample_scan_token_screen"
+    timeout: 60000

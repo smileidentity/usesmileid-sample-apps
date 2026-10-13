@@ -2,6 +2,7 @@ package com.usesmileid.sampleapps.android.extension
 
 import android.content.Intent
 import androidx.compose.runtime.Composable
+import com.usesmileid.data.dsl.UseSmileIDNetworkBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -16,6 +17,9 @@ interface UseSmileIDSampleShellExtension {
 
     /** Runs after the shell has configured a flow, so it may replace any of that configuration. */
     fun customiseFlow(builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) {}
+
+    /** Runs last inside the shell's network block, so it may add to that configuration without replacing it. */
+    fun customiseNetwork(network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) {}
 
     /** Runs once at launch, with the intent the app was started by. */
     fun onLaunch(intent: Intent) {}

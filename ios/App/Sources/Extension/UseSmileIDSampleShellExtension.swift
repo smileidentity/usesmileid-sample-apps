@@ -9,6 +9,8 @@ protocol UseSmileIDSampleShellExtending {
   static func debugRows(host: UseSmileIDSampleShellHost) -> AnyView
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   static func customiseFlow(_ builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct)
+  /// Runs last inside the shell's network block, so it may add to that configuration without replacing it.
+  static func customiseNetwork(_ network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct)
   /// Runs once at launch.
   static func onLaunch()
   /// A session the shell links once at launch, before autostart, as if its token had been scanned.
@@ -21,6 +23,7 @@ extension UseSmileIDSampleShellExtending {
   }
 
   static func customiseFlow(_: UseSmileIDFlowBuilder, product _: UseSmileIDSampleProduct) {}
+  static func customiseNetwork(_: UseSmileIDNetworkBuilder, product _: UseSmileIDSampleProduct) {}
   static func onLaunch() {}
   static func launchSession() -> UseSmileIDSampleTokenSession? {
     nil

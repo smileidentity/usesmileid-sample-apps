@@ -332,3 +332,13 @@ describe('Match document', () => {
     expect(checked).toBeGreaterThan(0);
   });
 });
+
+describe('customiseNetwork', () => {
+  it('lets the extension customise the network the shell configured for the product', () => {
+    const customised: string[] = [];
+    smileIDSampleApplying(new UseSmileIDFlowBuilder(), snapshot(), undefined, {
+      customiseNetwork: (_network, product) => customised.push(product.id),
+    });
+    expect(customised).toEqual(['smartSelfieEnrollment']);
+  });
+});

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import type { UseSmileIDSampleProduct, UseSmileIDSampleTokenSession } from '@smileid/sample-ui';
-import type { UseSmileIDFlowBuilder } from '@smileid/usesmileid';
+import type { UseSmileIDFlowBuilder, UseSmileIDNetworkBuilder } from '@smileid/usesmileid';
 
 /// Developer tooling an SDK repo's source build adds to this app; a registry build has none.
 export type UseSmileIDSampleShellExtension = {
@@ -8,6 +8,8 @@ export type UseSmileIDSampleShellExtension = {
   debugRows?: (host: UseSmileIDSampleShellHost) => ReactNode;
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   customiseFlow?: (builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) => void;
+  /// Runs last inside the shell's network block, so it may add to that configuration without replacing it.
+  customiseNetwork?: (network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) => void;
   /// Runs once at launch, with the link the app was opened by.
   onLaunch?: (initialUrl: string | null) => void;
   /// A session the shell links once at launch, as if its token had been scanned.
