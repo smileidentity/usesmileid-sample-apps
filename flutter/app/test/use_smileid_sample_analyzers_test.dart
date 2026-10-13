@@ -11,25 +11,46 @@ import 'package:usesmileid_vision_face/usesmileid_vision_face.dart';
 void main() {
   group('the analyzers follow the phone', () {
     test('a Huawei without Google Play services runs HMS', () {
-      const UseSmileIDMobileServicesProvider huawei = UseSmileIDMobileServicesProvider.huawei;
-      expect(useSmileIDSampleFaceAnalyzerFactory(huawei, isAndroid: true), isA<HuaweiFaceAnalyzerFactory>());
-      expect(useSmileIDSampleDocumentAnalyzerFactory(huawei, isAndroid: true), isA<HuaweiDocumentAnalyzerFactory>());
+      const UseSmileIDMobileServicesProvider huawei =
+          UseSmileIDMobileServicesProvider.huawei;
+      expect(
+        useSmileIDSampleFaceAnalyzerFactory(huawei, isAndroid: true),
+        isA<HuaweiFaceAnalyzerFactory>(),
+      );
+      expect(
+        useSmileIDSampleDocumentAnalyzerFactory(huawei, isAndroid: true),
+        isA<HuaweiDocumentAnalyzerFactory>(),
+      );
     });
 
     test('Google Play services, and a phone reporting neither, run ML Kit', () {
-      for (final UseSmileIDMobileServicesProvider services in <UseSmileIDMobileServicesProvider>[
-        UseSmileIDMobileServicesProvider.google,
-        UseSmileIDMobileServicesProvider.none,
-      ]) {
-        expect(useSmileIDSampleFaceAnalyzerFactory(services, isAndroid: true), isA<MlKitFaceAnalyzerFactory>());
-        expect(useSmileIDSampleDocumentAnalyzerFactory(services, isAndroid: true), isA<MlKitDocumentAnalyzerFactory>());
+      for (final UseSmileIDMobileServicesProvider services
+          in <UseSmileIDMobileServicesProvider>[
+            UseSmileIDMobileServicesProvider.google,
+            UseSmileIDMobileServicesProvider.none,
+          ]) {
+        expect(
+          useSmileIDSampleFaceAnalyzerFactory(services, isAndroid: true),
+          isA<MlKitFaceAnalyzerFactory>(),
+        );
+        expect(
+          useSmileIDSampleDocumentAnalyzerFactory(services, isAndroid: true),
+          isA<MlKitDocumentAnalyzerFactory>(),
+        );
       }
     });
 
     test('iOS runs Vision whatever the probe says', () {
-      for (final UseSmileIDMobileServicesProvider services in UseSmileIDMobileServicesProvider.values) {
-        expect(useSmileIDSampleFaceAnalyzerFactory(services, isAndroid: false), isA<VisionFaceAnalyzerFactory>());
-        expect(useSmileIDSampleDocumentAnalyzerFactory(services, isAndroid: false), isA<VisionDocumentAnalyzerFactory>());
+      for (final UseSmileIDMobileServicesProvider services
+          in UseSmileIDMobileServicesProvider.values) {
+        expect(
+          useSmileIDSampleFaceAnalyzerFactory(services, isAndroid: false),
+          isA<VisionFaceAnalyzerFactory>(),
+        );
+        expect(
+          useSmileIDSampleDocumentAnalyzerFactory(services, isAndroid: false),
+          isA<VisionDocumentAnalyzerFactory>(),
+        );
       }
     });
   });

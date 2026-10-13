@@ -49,7 +49,9 @@ void useSmileIDSampleApplying(
           c.detectorMode = FaceDetectorMode.standard;
         });
         if (snapshot.product.needsDocumentCapture) {
-          a.forCaptureType(CaptureType.document, (CaptureTypeAnalyzerBuilder c) {
+          a.forCaptureType(CaptureType.document, (
+            CaptureTypeAnalyzerBuilder c,
+          ) {
             c.add(_documentAnalyzerFactory());
           });
         }
@@ -113,15 +115,17 @@ void useSmileIDSampleApplying(
 UseSmileIDMobileServicesProvider useSmileIDSampleMobileServices =
     UseSmileIDMobileServicesProvider.none;
 
-FaceAnalyzerFactory _selfieAnalyzerFactory() => useSmileIDSampleFaceAnalyzerFactory(
-  useSmileIDSampleMobileServices,
-  isAndroid: Platform.isAndroid,
-);
+FaceAnalyzerFactory _selfieAnalyzerFactory() =>
+    useSmileIDSampleFaceAnalyzerFactory(
+      useSmileIDSampleMobileServices,
+      isAndroid: Platform.isAndroid,
+    );
 
-DocumentAnalyzerFactory _documentAnalyzerFactory() => useSmileIDSampleDocumentAnalyzerFactory(
-  useSmileIDSampleMobileServices,
-  isAndroid: Platform.isAndroid,
-);
+DocumentAnalyzerFactory _documentAnalyzerFactory() =>
+    useSmileIDSampleDocumentAnalyzerFactory(
+      useSmileIDSampleMobileServices,
+      isAndroid: Platform.isAndroid,
+    );
 
 /// Vision on iOS; on Android HMS where only Huawei's services run, ML Kit everywhere else.
 FaceAnalyzerFactory useSmileIDSampleFaceAnalyzerFactory(
