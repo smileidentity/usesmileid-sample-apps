@@ -12,4 +12,16 @@ const outermostWorkspaceRoot = (start) => {
   }
 };
 
-module.exports = { outermostWorkspaceRoot };
+const HOISTED = './node_modules/';
+
+/** Resolves the dev server's `./node_modules/<pkg>` entry by package name, since a submodule's packages are hoisted above its server root. */
+const withHoistedEntry = (resolveRequest, serverRoot) => {
+  if (!serverRoot) throw new Error('withHoistedEntry needs the server root Expo sets on server.unstable_serverRoot');
+  return (context, moduleName, platform) => {
+    const resolve = resolveRequest ?? context.resolveRequest;
+    const entry = path.dirname(context.originModulePath) === serverRoot && moduleName.startsWith(HOISTED);
+    return resolve(context, entry ? moduleName.slice(HOISTED.length) : moduleName, platform);
+  };
+};
+
+module.exports = { outermostWorkspaceRoot, withHoistedEntry };

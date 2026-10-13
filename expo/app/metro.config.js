@@ -4,7 +4,7 @@ const path = require('node:path');
 const { getDefaultConfig } = require('expo/metro-config');
 
 const { withShellExtension } = require('./metro-shell-extension');
-const { outermostWorkspaceRoot } = require('./metro-workspace-root');
+const { outermostWorkspaceRoot, withHoistedEntry } = require('./metro-workspace-root');
 
 const projectRoot = __dirname;
 // Outermost: in a submodule, node_modules is hoisted to the enclosing repo.
@@ -13,8 +13,6 @@ const workspaceRoot = outermostWorkspaceRoot(projectRoot);
 const config = getDefaultConfig(projectRoot);
 
 config.watchFolders = [workspaceRoot];
-// Expo roots the server at the nearest workspace, the submodule's own, where the hoisted entry is unreachable.
-config.server.unstable_serverRoot = workspaceRoot;
 // Hoisted by .npmrc, so the app's own folder comes first and the workspace root is the fallback.
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
@@ -22,7 +20,7 @@ config.resolver.nodeModulesPaths = [
 ];
 
 config.resolver.resolveRequest = withShellExtension(
-  config.resolver.resolveRequest,
+  withHoistedEntry(config.resolver.resolveRequest, config.server.unstable_serverRoot),
   projectRoot,
   process.env.USESMILEID_SAMPLE_EXTENSION,
 );
