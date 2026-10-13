@@ -130,9 +130,11 @@ export default function RootLayout() {
     launched.current = true;
     void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
       useSmileIDSampleSessionStore.getState().link(session),
-    ).finally(() => {
-      if (args.autostart !== null) router.push(`/flow/${args.autostart}/run`);
-    });
+    )
+      .catch(() => undefined)
+      .then(() => {
+        if (args.autostart !== null) router.push(`/flow/${args.autostart}/run`);
+      });
   }, [ready, navigationReady, args.autostart]);
 
   if (!ready) {

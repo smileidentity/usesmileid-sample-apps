@@ -346,6 +346,9 @@ describe('autostart', () => {
     const { router } = jest.requireMock('expo-router') as { router: { push: jest.Mock } };
     router.push.mockClear();
     await launch(LAUNCH);
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
     expect(router.push).not.toHaveBeenCalled();
   });
 });
