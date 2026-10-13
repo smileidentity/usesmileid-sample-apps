@@ -27,6 +27,8 @@ dependencies:
   # dies on the device; the four are what the Expo app and the SDK's own sample both carry.
   usesmileid_mlkit_face: 12.2.1-SNAPSHOT.9
   usesmileid_mlkit_document: 12.2.1-SNAPSHOT.9
+  usesmileid_huawei_face: 12.2.1-SNAPSHOT.9
+  usesmileid_huawei_document: 12.2.1-SNAPSHOT.9
   usesmileid_vision_face: 12.2.1-SNAPSHOT.9
   usesmileid_vision_document: 12.2.1-SNAPSHOT.9
 

@@ -1089,6 +1089,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "12.2.1-SNAPSHOT.9"
+  usesmileid_huawei_document:
+    dependency: "direct main"
+    description:
+      name: usesmileid_huawei_document
+      sha256: "54026e5d2d5e8b696fdc88af711b1a4e30309d948d2cbe2a612738ea79c57d65"
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.2.1-SNAPSHOT.9"
+  usesmileid_huawei_face:
+    dependency: "direct main"
+    description:
+      name: usesmileid_huawei_face
+      sha256: bfdbafecb7d1a73601b9c9260ec908280a5b8b29f79a88a47574972e62c9e1cc
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.2.1-SNAPSHOT.9"
   usesmileid_kamera:
     dependency: transitive
     description:
