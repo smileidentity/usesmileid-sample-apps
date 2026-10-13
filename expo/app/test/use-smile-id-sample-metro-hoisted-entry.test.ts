@@ -36,6 +36,10 @@ describe('withHoistedEntry', () => {
     );
   });
 
+  it('refuses a missing server root rather than silently rewriting nothing', () => {
+    expect(() => withHoistedEntry(undefined, undefined as unknown as string)).toThrow(/server root/);
+  });
+
   it('chains to an existing resolver', () => {
     const chained = withHoistedEntry((_context, moduleName) => ({ type: 'sourceFile', filePath: `chained:${moduleName}` }), serverRoot);
     expect(chained(from(entryOrigin), './node_modules/x', null).filePath).toBe('chained:x');
