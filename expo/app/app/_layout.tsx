@@ -81,8 +81,7 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSession(smileIDSampleSecureSessionStorage);
   }, [loadSession]);
-  // Once per launch, after the stored session loads (it would replace a linked one) and before
-  // autostart, whose run needs a session the moment its route opens.
+  // After the stored session loads, which would replace a linked one, and ahead of autostart, which needs it.
   const launched = useRef(false);
   useEffect(() => {
     if (!sessionLoaded || !argsLoaded || launched.current) return;
