@@ -1,5 +1,9 @@
 [versions]
-usesmileid = "12.2.0"
+# The SDK snapshot main published at 779dc8bd, each module by its own build, since 12.2.0-SNAPSHOT moves.
+usesmileid = "12.2.0-20261012.030136-208"
+usesmileid-bom = "12.2.0-20261012.030136-209"
+usesmileid-mlkit-face = "12.2.0-20261012.030136-205"
+usesmileid-mlkit-document = "12.2.0-20261012.030136-206"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.20"
@@ -28,10 +32,10 @@ robolectric = "4.17"
 roborazzi = "1.76.0"
 
 [libraries]
-usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid" }
-usesmileid = { module = "com.usesmileid:usesmileid" }
-usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face" }
-usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document" }
+usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid-bom" }
+usesmileid = { module = "com.usesmileid:usesmileid", version.ref = "usesmileid" }
+usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face", version.ref = "usesmileid-mlkit-face" }
+usesmileid-mlkit-document = { module = "com.usesmileid:mlkit-document", version.ref = "usesmileid-mlkit-document" }
 
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activity" }
 androidx-browser = { module = "androidx.browser:browser", version.ref = "androidx-browser" }

@@ -4,6 +4,8 @@ import XCTest
 
 @MainActor
 final class UseSmileIDSampleRouterTest: XCTestCase {
+  private let scheme = UseSmileIDSampleDeepLinks.scheme
+
   private func open(_ link: String) -> UseSmileIDSampleRouter {
     let router = UseSmileIDSampleRouter()
     switch UseSmileIDSampleLinks.resolve(URL(string: link)!) {
@@ -17,25 +19,25 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testATabLinkLandsOnTheTabRootWithAnEmptyStack() {
-    let router = open("usesmileid-sample-ios://verifications")
+    let router = open("\(scheme)://verifications")
     XCTAssertEqual(router.selectedTab, .verifications)
     XCTAssertEqual(router.path(.verifications), [])
   }
 
   func testADetailLinkPushesOntoItsTabRoot() {
-    let router = open("usesmileid-sample-ios://verifications/job-123")
+    let router = open("\(scheme)://verifications/job-123")
     XCTAssertEqual(router.selectedTab, .verifications)
     XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-123")])
   }
 
   func testANestedDetailLinkBuildsEveryParent() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     XCTAssertEqual(router.selectedTab, .settings)
     XCTAssertEqual(router.path(.settings), [.profiles, .profileConfig(profileId: "profile-7")])
   }
 
   func testTearingDownTheTabBeingLeftKeepsItsPath() {
-    let router = open("usesmileid-sample-ios://settings/licenses")
+    let router = open("\(scheme)://settings/licenses")
     XCTAssertEqual(router.path(.settings), [.licenses])
     router.selectedTab = .products
     // What the outgoing stack's teardown does; it must not read as a pop.
@@ -44,7 +46,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testBackOnTheShowingTabStillPops() {
-    let router = open("usesmileid-sample-ios://settings/licenses")
+    let router = open("\(scheme)://settings/licenses")
     router.isActive(.settings, depth: 0).wrappedValue = false
     XCTAssertEqual(router.path(.settings), [])
   }
@@ -59,7 +61,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
 
   /// A drawer left over the details screen would be a layer over the wrong owner.
   func testOpeningARouteDismissesAPresentedSheet() {
-    let router = open("usesmileid-sample-ios://debug/scenarios")
+    let router = open("\(scheme)://debug/scenarios")
     XCTAssertEqual(router.sheet, .scenarioDrawer)
     router.open(.verificationDetails(jobId: "job-1"))
     XCTAssertNil(router.sheet)
@@ -67,21 +69,21 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testASheetLinkOpensItsOwnerAndThenTheSheet() {
-    let router = open("usesmileid-sample-ios://profiles/switch")
+    let router = open("\(scheme)://profiles/switch")
     XCTAssertEqual(router.sheet, .profileSwitch)
     XCTAssertEqual(router.selectedTab, .products)
     XCTAssertEqual(router.path(.products), [])
   }
 
   func testAPickerSheetLinkOpensTheFormThatOwnsIt() {
-    let router = open("usesmileid-sample-ios://flow/biometricKyc/id-details/country")
+    let router = open("\(scheme)://flow/biometricKyc/id-details/country")
     XCTAssertEqual(router.sheet, .countryPicker)
     XCTAssertEqual(router.path(.products), [.idDetailsForm(productId: "biometricKyc")])
   }
 
   /// The iOS 15 idiom drops a push made during another's transition, so a link stages its levels.
   func testADeepLinkLandsItsLevelsOnePerAppearance() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     XCTAssertTrue(router.isActive(.settings, depth: 0).wrappedValue)
     XCTAssertFalse(router.isActive(.settings, depth: 1).wrappedValue, "the second level waits for the first to appear")
     router.levelDidAppear(.settings, depth: 1)
@@ -92,14 +94,14 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testATapPushLandsAtOnce() {
-    let router = open("usesmileid-sample-ios://profiles")
+    let router = open("\(scheme)://profiles")
     router.push(.profileConfig(profileId: "p-2"))
     XCTAssertTrue(router.isActive(.settings, depth: 1).wrappedValue)
   }
 
   /// A push while a linked path is still landing must not land two levels in one update either.
   func testATapPushNeverLandsMoreThanOneLevelAtATime() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     router.push(.licenses)
     XCTAssertTrue(router.isActive(.settings, depth: 1).wrappedValue)
     XCTAssertFalse(router.isActive(.settings, depth: 2).wrappedValue, "the config level had not landed yet")
@@ -109,7 +111,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
 
   /// A link into a level already showing lands from there, not from the root.
   func testADeepLinkReusesTheLevelsAlreadyShowing() {
-    let router = open("usesmileid-sample-ios://profiles")
+    let router = open("\(scheme)://profiles")
     router.levelDidAppear(.settings, depth: 1)
     router.open(.profileConfig(profileId: "p-2"))
     XCTAssertTrue(router.isActive(.settings, depth: 1).wrappedValue, "profiles was showing, so the config lands at once")
@@ -118,7 +120,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
 
   /// A level that changes route under a link is not "showing" the new path, so it lands from the root.
   func testADeepLinkOverADifferentLevelStartsAgainFromTheRoot() {
-    let router = open("usesmileid-sample-ios://settings/licenses")
+    let router = open("\(scheme)://settings/licenses")
     router.levelDidAppear(.settings, depth: 1)
     router.open(.profileConfig(profileId: "p-2"))
     XCTAssertTrue(router.isActive(.settings, depth: 0).wrappedValue)
@@ -127,7 +129,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
 
   /// A tab coming back on screen mounts a fresh stack, so its levels have to land again one by one.
   func testSelectingATabLandsItsStackFromTheRootAgain() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     router.levelDidAppear(.settings, depth: 1)
     XCTAssertTrue(router.isActive(.settings, depth: 1).wrappedValue)
     router.selectedTab = .products
@@ -139,7 +141,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
 
   /// Nothing of an unmounted tab is showing, however much of its path a link shares.
   func testALinkIntoAnotherTabLandsFromTheRootEvenOverAMatchingPath() {
-    let router = open("usesmileid-sample-ios://profiles")
+    let router = open("\(scheme)://profiles")
     router.levelDidAppear(.settings, depth: 1)
     router.selectedTab = .products
     router.open(.profileConfig(profileId: "p-2"))
@@ -149,7 +151,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testPoppingLowersTheLandedLevelWithThePath() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     router.levelDidAppear(.settings, depth: 1)
     router.pop()
     XCTAssertFalse(router.isActive(.settings, depth: 1).wrappedValue)
@@ -158,7 +160,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testRestorationLandsOneLevelFirst() {
-    let stored = open("usesmileid-sample-ios://profiles/profile-7")
+    let stored = open("\(scheme)://profiles/profile-7")
     let router = UseSmileIDSampleRouter()
     router.restore(from: stored.encodedState())
     XCTAssertEqual(router.paths, stored.paths)
@@ -167,7 +169,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testDeactivatingALevelPopsToExactlyThatDepth() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     router.isActive(.settings, depth: 1).wrappedValue = false
     XCTAssertEqual(router.path(.settings), [.profiles])
   }
@@ -186,14 +188,14 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
     stored.open(.licenses)
     let encoded = stored.encodedState()
 
-    let router = open("usesmileid-sample-ios://verifications/job-123")
+    let router = open("\(scheme)://verifications/job-123")
     router.restore(from: encoded)
     XCTAssertEqual(router.selectedTab, .verifications)
     XCTAssertEqual(router.path(.verifications), [.verificationDetails(jobId: "job-123")])
   }
 
   func testRestorationIsADecodeOfTheWholeNavigationState() {
-    let router = open("usesmileid-sample-ios://profiles/profile-7")
+    let router = open("\(scheme)://profiles/profile-7")
     let restored = UseSmileIDSampleRouter()
     restored.restore(from: router.encodedState())
     XCTAssertEqual(restored.selectedTab, router.selectedTab)
@@ -208,8 +210,8 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testAPercentEncodedArgumentIsDecodedExactlyOnce() throws {
-    XCTAssertEqual(try jobId(fromLink: "usesmileid-sample-ios://verifications/job%20123"), "job 123")
-    XCTAssertEqual(try jobId(fromLink: "usesmileid-sample-ios://verifications/job%2520123"), "job%20123")
+    XCTAssertEqual(try jobId(fromLink: "\(scheme)://verifications/job%20123"), "job 123")
+    XCTAssertEqual(try jobId(fromLink: "\(scheme)://verifications/job%2520123"), "job%20123")
   }
 
   private func jobId(fromLink link: String) throws -> String {
@@ -275,7 +277,7 @@ final class UseSmileIDSampleRouterTest: XCTestCase {
   }
 
   func testAnUnknownLinkResolvesToNothingRatherThanADefaultScreen() throws {
-    XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "usesmileid-sample-ios://nope"))))
+    XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "\(scheme)://nope"))))
     XCTAssertNil(try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: "usesmileid-sample-android://products"))))
   }
 }
