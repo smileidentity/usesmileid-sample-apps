@@ -1,0 +1,135 @@
+{
+  "description": "Which rows the user-details form shows, read from `fields_to_collect` in `GET /v3/services/config`. The form asks only for what the API says a product needs: a name the partner may leave out is not shown at all, and a field the token binds shows as provided. The configuration is read without `product`, so one response carries every product's fields; Enhanced Document Verification still reads its lists from the same response's `products` entry. All four platforms assert every case.",
+  "productKeys": {
+    "smartSelfieEnrollment": null,
+    "smartSelfieAuth": null,
+    "biometricKyc": "biometric_kyc",
+    "enhancedKyc": "enhanced_kyc",
+    "documentVerification": "doc_verification",
+    "enhancedDocumentVerification": "enhanced_document_verification",
+    "residencyDocumentVerification": "residency_document_verification"
+  },
+  "rules": {
+    "names": "`given_names` and `last_name` each, in the product's list: `required: true` asks for it. Listed without `required: true` is not shown: that is how the API marks a name the partner may leave out, with no `required` key, and `false` from servers that predate that. Not listed means the token binds it, so the row shows as provided.",
+    "contact": "`email` and `phone_number` share `one_of_group: contact`. Either listed asks for one of the two; neither listed means the token binds a contact, so it shows as provided.",
+    "fallback": "A product with no key, a key the response does not carry, or no configuration at all keeps the token rule: each name, and one contact, is asked for unless the token binds it.",
+    "submission": "A row that is not shown submits nothing. The API judges what is missing and its message reaches the result card."
+  },
+  "outcomes": {
+    "ask": "The row is shown and the form needs it before Continue.",
+    "hidden": "The row is not shown.",
+    "provided": "The token binds it, so the row shows as provided."
+  },
+  "cases": [
+    {
+      "name": "names the partner may leave out",
+      "product": "enhancedKyc",
+      "fieldsToCollect": {
+        "enhanced_kyc": [
+          { "label": "ID number", "name": "id_number", "required": true, "type": "text" },
+          { "label": "Given names", "name": "given_names", "type": "text" },
+          { "label": "Last name", "name": "last_name", "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" },
+          { "label": "Phone number", "name": "phone_number", "one_of_group": "contact", "regex": "^\\+[1-9]\\d{6,14}$", "required": false, "type": "phone" }
+        ]
+      },
+      "bindings": {},
+      "expect": { "firstName": "hidden", "lastName": "hidden", "contact": "ask" }
+    },
+    {
+      "name": "names the partner may leave out, as an older server marks them",
+      "product": "enhancedKyc",
+      "fieldsToCollect": {
+        "enhanced_kyc": [
+          { "label": "Given names", "name": "given_names", "required": false, "type": "text" },
+          { "label": "Last name", "name": "last_name", "required": false, "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" },
+          { "label": "Phone number", "name": "phone_number", "one_of_group": "contact", "required": false, "type": "phone" }
+        ]
+      },
+      "bindings": {},
+      "expect": { "firstName": "hidden", "lastName": "hidden", "contact": "ask" }
+    },
+    {
+      "name": "a product that needs the names, beside one that does not",
+      "product": "biometricKyc",
+      "fieldsToCollect": {
+        "enhanced_kyc": [
+          { "label": "Given names", "name": "given_names", "type": "text" },
+          { "label": "Last name", "name": "last_name", "type": "text" }
+        ],
+        "biometric_kyc": [
+          { "label": "Given names", "name": "given_names", "required": true, "type": "text" },
+          { "label": "Last name", "name": "last_name", "required": true, "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" },
+          { "label": "Phone number", "name": "phone_number", "one_of_group": "contact", "required": false, "type": "phone" }
+        ]
+      },
+      "bindings": {},
+      "expect": { "firstName": "ask", "lastName": "ask", "contact": "ask" }
+    },
+    {
+      "name": "the token binds the names",
+      "product": "documentVerification",
+      "fieldsToCollect": {
+        "doc_verification": [
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" },
+          { "label": "Phone number", "name": "phone_number", "one_of_group": "contact", "required": false, "type": "phone" }
+        ]
+      },
+      "bindings": { "givenNames": true, "lastName": true },
+      "expect": { "firstName": "provided", "lastName": "provided", "contact": "ask" }
+    },
+    {
+      "name": "the token binds a contact",
+      "product": "enhancedDocumentVerification",
+      "fieldsToCollect": {
+        "enhanced_document_verification": [
+          { "label": "Given names", "name": "given_names", "required": true, "type": "text" },
+          { "label": "Last name", "name": "last_name", "required": true, "type": "text" }
+        ]
+      },
+      "bindings": { "email": true },
+      "expect": { "firstName": "ask", "lastName": "ask", "contact": "provided" }
+    },
+    {
+      "name": "one name the partner may leave out, the other the token binds",
+      "product": "residencyDocumentVerification",
+      "fieldsToCollect": {
+        "residency_document_verification": [
+          { "label": "Given names", "name": "given_names", "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" },
+          { "label": "Phone number", "name": "phone_number", "one_of_group": "contact", "required": false, "type": "phone" }
+        ]
+      },
+      "bindings": { "lastName": true },
+      "expect": { "firstName": "hidden", "lastName": "provided", "contact": "ask" }
+    },
+    {
+      "name": "a product with no key keeps the token rule",
+      "product": "smartSelfieEnrollment",
+      "fieldsToCollect": {
+        "enhanced_kyc": [
+          { "label": "Given names", "name": "given_names", "type": "text" },
+          { "label": "Last name", "name": "last_name", "type": "text" }
+        ]
+      },
+      "bindings": { "givenNames": true },
+      "expect": { "firstName": "provided", "lastName": "ask", "contact": "ask" }
+    },
+    {
+      "name": "a key the response does not carry keeps the token rule",
+      "product": "enhancedKyc",
+      "fieldsToCollect": {},
+      "bindings": { "phoneNumber": true },
+      "expect": { "firstName": "ask", "lastName": "ask", "contact": "provided" }
+    },
+    {
+      "name": "no configuration keeps the token rule",
+      "product": "biometricKyc",
+      "fieldsToCollect": null,
+      "bindings": {},
+      "expect": { "firstName": "ask", "lastName": "ask", "contact": "ask" }
+    }
+  ]
+}
