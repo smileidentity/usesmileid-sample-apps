@@ -258,10 +258,17 @@ let analyzersSettled = Platform.OS !== 'android';
 /// Resolves once the analyzers below are final; a run waits on it so an autostart on a Huawei never gets ML Kit.
 export const smileIDSampleAnalyzersReady: Promise<void> = analyzersSettled
   ? Promise.resolve()
-  : UseSmileIDMobileServices.preferred().then((services) => {
-      mobileServices = services;
-      analyzersSettled = true;
-    });
+  : UseSmileIDMobileServices.preferred()
+      .then((services) => {
+        mobileServices = services;
+      })
+      // A probe that fails keeps the ML Kit default; the run screen must never wait on a rejection.
+      .catch(() => {
+        mobileServices = UseSmileIDMobileServicesProvider.None;
+      })
+      .finally(() => {
+        analyzersSettled = true;
+      });
 
 /// True once the probe has answered, so a screen that mounts after it never re-renders for it.
 export const smileIDSampleAnalyzersSettled = (): boolean => analyzersSettled;
