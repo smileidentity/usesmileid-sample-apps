@@ -1,10 +1,10 @@
 ---
-description: How the sample apps reach Google Play and the App Store — the publish workflows, signing, version numbers, store art, and the privacy answers each store holds for this app.
+description: How the sample apps reach Google Play, Huawei AppGallery and the App Store — the publish workflows, signing, version numbers, store art, and the privacy answers each store holds for this app.
 ---
 
 # Releasing the apps
 
-The Android and iOS apps are published to Google Play and the App Store from CI, by workflow dispatch.
+The Android app is published to Google Play and Huawei AppGallery, and the iOS app to the App Store, from CI, by workflow dispatch.
 Nothing publishes on a merge, so a docs-only change never ships a build. This page is the runbook for
 maintainers, and a worked example for partners: [`store-submission.md`](store-submission.md) is the
 general guide to what the SDK means for your own submission.
@@ -17,14 +17,16 @@ general guide to what the SDK means for your own submission.
 | Store | Secrets |
 |---|---|
 | Google Play | `UPLOAD_KEYSTORE` (base64 keystore), `UPLOAD_KEYSTORE_PASSWORD`, `PLAY_STORE_SERVICE_ACCOUNT_JSON` |
+| Huawei AppGallery | `AGC_CLIENT_ID`, `AGC_CLIENT_SECRET`, plus Play's three: the upload key signs both stores' builds, and the version code reads both stores |
 | App Store | `APP_STORE_CONNECT_KEY_ID`, `APP_STORE_CONNECT_ISSUER_ID`, `APP_STORE_CONNECT_PRIVATE_KEY` (the whole `.p8`), `APPLE_DEVELOPMENT_TEAM`, `ASC_REVIEW_NAME`, `ASC_REVIEW_PHONE`, `ASC_REVIEW_EMAIL` |
 
-## The four workflows
+## The five workflows
 
 | Workflow | Does | Inputs |
 |---|---|---|
 | **Publish to Play (internal)** | Builds the signed release bundle and uploads it to the internal testing track | none |
 | **Publish to Play (production)** | The same, to production | none |
+| **Publish to AppGallery** | Builds the signed AppGallery APK, uploads it with the release notes, and submits it for review | `lookup_only` |
 | **Publish to TestFlight** | Archives, signs and uploads a build that TestFlight distributes to the internal group | `build_number` (empty: one above the highest App Store Connect holds) |
 | **Publish to the App Store** | Checks the listing, uploads, waits for processing, attaches the build to a new version with the copy in `ios/store/`, and submits it for review | `dry_run`, `build_number`, `marketing_version`, `release` (`manual` or on approval) |
 
@@ -35,7 +37,7 @@ the lane.
 
 **Flavor.** Play gets the `play` flavor (`bundlePlayRelease`), which links Google's ML Kit only. The
 `appgallery` flavor, built for Huawei AppGallery, also links Huawei's HMS analyzers and picks a backend per
-device with `UseSmileIDMobileServices.preferred`; it is not published from CI yet.
+device with `UseSmileIDMobileServices.preferred`. It ships to AppGallery, below.
 
 **Signing.** The release is signed with the upload key from `UPLOAD_KEYSTORE`, and Play re-signs it for
 distribution. Both lanes set `REQUIRE_UPLOAD_SIGNING=true`, so a missing keystore or version code fails the build
@@ -58,6 +60,46 @@ label, because that is in the binary.
 
 **Review.** Internal testing is not fully reviewed, so a release there goes live within minutes. The full
 review starts on the first promotion to closed testing or production.
+
+## Huawei AppGallery
+
+**Flavor.** AppGallery gets the `appgallery` flavor (`assembleAppgalleryRelease`): ML Kit and Huawei's HMS
+analyzers, chosen per phone. A Huawei phone without Google services runs HMS, and any other phone runs ML
+Kit. The app needs no `agconnect-services.json`: HMS's on-device analyzers run without AppGallery Connect
+services.
+
+**Signing.** The APK is signed with the Play upload key, and AppGallery distributes it as signed. AGC App
+Signing stays off, so no key is held by Huawei and the APK on the shelf has the same certificate as the one
+CI built. The application id is Play's too, so either store's build installs over the other's as an
+update.
+
+**Version code.** One above the higher of Play's next code and the highest AppGallery holds
+(`scripts/appgallery_publish.py highest-version-code` reads the draft's and the live version's). One commit
+therefore carries one code on both stores. Dispatch with `lookup_only` to see it without building.
+
+**Release notes.** `android/appgallery/whatsnew-en-US`, at most 500 characters. `verify.sh` checks the
+length, and the workflow refuses an empty file.
+
+**Listing.** The title, short and full description, icon, feature graphic and screenshots are Play's, in
+`android/play/`, entered by hand in AppGallery Connect. One set of copy means one place to change it.
+
+**Review.** The workflow ends at submitted. Huawei's review is manual and usually takes one to three
+working days. Read its state in AppGallery Connect.
+
+**First release, once, in AppGallery Connect.** The API publishes an app that exists. Before the first
+dispatch:
+
+1. Sign in with the Smile ID company developer account, and accept the HUAWEI ML Kit service agreement
+   (HMS API Services). An app that calls ML Kit without it is refused.
+2. Create the app: package `com.usesmileid.sample.android`, category Tools, the privacy policy URL, the
+   content rating, and the distribution countries.
+3. Declare that the app does not need Google Mobile Services (App information, GMS dependency: No). The
+   APK links ML Kit, and runs without it.
+4. Leave App Signing off.
+5. Enter the listing from `android/play/` and the privacy answers below.
+6. Create a Connect API client (Users and permissions → API key, role App administrator) and store its id
+   and secret as `AGC_CLIENT_ID` and `AGC_CLIENT_SECRET` in the `release` environment.
+7. Dispatch with `lookup_only`, then without it.
 
 ## App Store
 
@@ -156,6 +198,9 @@ location, so the value is always absent here. The app's own `PrivacyInfo.xcpriva
 
 Data is encrypted in transit, and users can request deletion.
 
+**Huawei AppGallery: privacy statement and data collection.** The same answers as Play's Data safety,
+row for row. HMS's analyzers run on the device and send no frame to Huawei.
+
 **Two published answers differ from the partner guide**, and are being reconciled: Device ID on the App
 Store (not linked, where the guide says linked), and the crash and diagnostics rows on Play (shared, not
 collected, where the guide says collected). The guide follows each store's own definitions.
@@ -175,6 +220,7 @@ Simulate disappears from a release build.
 | Check | When |
 |---|---|
 | `targetSdk` still meets Play's floor | Every August, when Google raises it |
+| The HMS ML Kit service agreement is still accepted | Every AppGallery release |
 | Privacy answers still match what the app sends | Every release that changes submission, analytics or storage |
 | The SDK's privacy manifests, and its binary's privacy-sensitive references (`nm -u`), still match the usage strings | Every SDK version bump |
 
@@ -186,6 +232,9 @@ Simulate disappears from a release build.
 | `exportArchive` fails with *Cloud signing permission error* | The API key is not Admin | Generate an Admin key |
 | The archive fails in CI with *No Accounts* | The archive step had no key to authenticate with | Pass the key to the archive as well as the export |
 | The first dispatch fails with *maximum number of certificates generated* | The team already has three distribution certificates | Revoke an unused one first |
+| AppGallery submit fails with *the package is being parsed* | The submit ran before AppGallery finished reading the APK | Run the submit again; the script already waits 150 seconds |
+| AppGallery reports *app not found* for the package | The app does not exist in AppGallery Connect yet | Do the first-release steps above |
+| AppGallery upload refused: the version code is not higher | A code was uploaded by hand above what Play holds | Dispatch with `lookup_only`; it reads both stores |
 | A workflow on a branch cannot be dispatched | GitHub lists a dispatchable workflow only once its file is on `main` | Merge the workflow first, or run the same step locally |
 | The built app reports the wrong build number | A version was passed as a build setting, not written into `Info.plist` | Assert the number in the built artefact |
 
