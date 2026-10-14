@@ -20,7 +20,6 @@ internal fun mlBackendFor(context: Context): UseSmileIDMobileServicesProvider =
 internal fun UseSmileIDMobileServicesProvider.orStoreBackend(): UseSmileIDMobileServicesProvider =
     if (this == UseSmileIDMobileServicesProvider.NONE) STORE_ML_BACKEND else this
 
-/** Face detection on [backend]: ML Kit for Google, HMS otherwise. */
 internal fun CaptureTypeAnalyzerBuilder.addFaceAnalyzer(backend: UseSmileIDMobileServicesProvider) = addAnalyzer(
     factory = if (backend == UseSmileIDMobileServicesProvider.GOOGLE) {
         FaceDetectorAnalyzer.Factory()
@@ -29,7 +28,6 @@ internal fun CaptureTypeAnalyzerBuilder.addFaceAnalyzer(backend: UseSmileIDMobil
     },
 )
 
-/** Document detection on [backend]: ML Kit for Google, HMS otherwise. */
 internal fun CaptureTypeAnalyzerBuilder.addDocumentAnalyzer(backend: UseSmileIDMobileServicesProvider) = addAnalyzer(
     factory = if (backend == UseSmileIDMobileServicesProvider.GOOGLE) {
         DocumentDetectorAnalyzer.Factory()
