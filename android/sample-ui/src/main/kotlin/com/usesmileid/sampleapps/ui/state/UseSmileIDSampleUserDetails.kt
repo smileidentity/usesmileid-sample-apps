@@ -118,22 +118,22 @@ fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUs
     contact = !(this?.email == true || this?.phoneNumber == true),
 )
 
-/** [product]'s requirement from the API's `fields_to_collect`, or the token rule when it has no entry (spec/user-details-fields.json). */
+/** The token rule, less any name [product]'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json). */
 fun UseSmileIDSampleTokenBindings?.userDetailsRequirement(
     product: UseSmileIDSampleProduct?,
     fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>?,
 ): UseSmileIDSampleUserDetailsRequirement {
-    val fields = product?.fieldsToCollectKey?.let { fieldsToCollect?.get(it) } ?: return userDetailsRequirement()
-    val firstName = fields.firstOrNull { it.name == "given_names" }
-    val lastName = fields.firstOrNull { it.name == "last_name" }
-    return UseSmileIDSampleUserDetailsRequirement(
-        firstName = firstName?.required == true,
-        lastName = lastName?.required == true,
-        contact = fields.any { it.name == "email" || it.name == "phone_number" },
-        hidden = buildSet {
-            if (firstName != null && firstName.required != true) add(UseSmileIDSampleUserField.FirstName)
-            if (lastName != null && lastName.required != true) add(UseSmileIDSampleUserField.LastName)
-        },
+    val token = userDetailsRequirement()
+    val fields = product?.fieldsToCollectKey?.let { fieldsToCollect?.get(it) } ?: return token
+    fun leftOut(name: String, asked: Boolean) = asked && fields.any { it.name == name && it.required != true }
+    val hidden = buildSet {
+        if (leftOut("given_names", token.firstName)) add(UseSmileIDSampleUserField.FirstName)
+        if (leftOut("last_name", token.lastName)) add(UseSmileIDSampleUserField.LastName)
+    }
+    return token.copy(
+        firstName = token.firstName && UseSmileIDSampleUserField.FirstName !in hidden,
+        lastName = token.lastName && UseSmileIDSampleUserField.LastName !in hidden,
+        hidden = hidden,
     )
 }
 

@@ -63,6 +63,13 @@ class UseSmileIDSampleCatalogueStore(
     var fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>? by mutableStateOf(null)
         private set
 
+    /** The session whose token read [fieldsToCollect], since the API leaves out what that token binds. */
+    private var fieldsSessionId: String? = null
+
+    /** The fields [sessionId]'s own token read, or null for any other session or none. */
+    fun fieldsToCollectFor(sessionId: String?): Map<String, List<UseSmileIDSampleApiField>>? =
+        fieldsToCollect.takeIf { sessionId != null && sessionId == fieldsSessionId }
+
     /** A product tap: a new run always asks the server again, so a list changed on the server shows up. */
     fun begin(environment: UseSmileIDSampleEnvironment, locale: String) {
         stop()
@@ -106,6 +113,7 @@ class UseSmileIDSampleCatalogueStore(
             enabledToken = ""
             enabled = UseSmileIDSampleCatalogue.Loading
             fieldsToCollect = null
+            fieldsSessionId = null
         }
     }
 
@@ -168,6 +176,7 @@ class UseSmileIDSampleCatalogueStore(
         enabledJob?.cancel()
         enabled = UseSmileIDSampleCatalogue.Loading
         fieldsToCollect = null
+        fieldsSessionId = null
         enabledJob = scope.launch {
             var fields: Map<String, List<UseSmileIDSampleApiField>>? = null
             enabled = load {
@@ -175,6 +184,7 @@ class UseSmileIDSampleCatalogueStore(
                 fields = UseSmileIDSampleCatalogueJson.fieldsToCollect(body)
                 UseSmileIDSampleCatalogueJson.enabledCountries(body)
             }
+            fieldsSessionId = key.sessionId.takeIf { fields != null }
             fieldsToCollect = fields
         }
     }
