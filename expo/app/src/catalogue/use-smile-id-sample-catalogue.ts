@@ -1,6 +1,5 @@
 import {
   createSmileIDSampleCatalogueStore,
-  smileIDSampleEnhancedDocumentVerificationKey,
   smileIDSampleEnvironmentBaseUrl,
   smileIDSampleFixtureCatalogueSource,
   smileIDSampleSessionAwareCatalogueSource,
@@ -47,7 +46,8 @@ const smileIDSampleHttpCatalogueSource: UseSmileIDSampleCatalogueSource = {
     ),
   servicesConfig: (environment, token, locale) =>
     bodyOf(
-      `${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/config?product=${smileIDSampleEnhancedDocumentVerificationKey}&locale=${encodeURIComponent(locale)}`,
+      // No `product`, so one response carries every product's `fields_to_collect`.
+      `${smileIDSampleEnvironmentBaseUrl(environment)}v3/services/config?locale=${encodeURIComponent(locale)}`,
       token,
     ),
 };
@@ -87,12 +87,12 @@ export const smileIDSampleCatalogueEnvironment = (
 export const smileIDSampleCatalogueLocale = (): string =>
   smileIDSamplePinnedLanguage() ?? getLocales()[0]?.languageTag ?? 'en';
 
-/// Enhanced Document Verification's own list, which `live`'s token decides; any other product has none.
+/// `live`'s configuration: Enhanced Document Verification's own list, and every product's user-details fields.
 export const smileIDSampleEnsureEnabled = (
   store: UseSmileIDSampleCatalogueStore,
   productId: string | undefined,
   live: UseSmileIDSampleTokenSession | null,
 ): void => {
-  if (productId !== 'enhancedDocumentVerification') return;
+  if (productId !== 'enhancedDocumentVerification' && live === null) return;
   store.getState().ensureEnabled(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale(), live);
 };

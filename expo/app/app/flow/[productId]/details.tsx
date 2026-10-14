@@ -1,17 +1,23 @@
 import {
   UserDetailsScreen,
+  smileIDSampleLiveSession,
   smileIDSampleProductFrom,
-  smileIDSampleRequirementFrom,
+  smileIDSampleRequirementFor,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleFormsStore,
   useSmileIDSampleProfileStore,
+  useSmileIDSampleSessionStore,
   smileIDSampleProductTitle,
   useSmileIDSampleStrings,
 } from '@smileid/sample-ui';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect } from 'react';
 
+import {
+  smileIDSampleCatalogueStore,
+  smileIDSampleEnsureEnabled,
+} from '../../../src/catalogue/use-smile-id-sample-catalogue';
 import { smileIDSampleStepAfterUserDetails } from '../../../src/flow/use-smile-id-sample-flow-journey';
 import {
   smileIDSampleLiveBindingsNow,
@@ -36,8 +42,19 @@ export default function ConsentDetailsForm() {
   const setOrganisation = useSmileIDSampleFormsStore((state) => state.setOrganisation);
   const keep = useSmileIDSampleProfileStore((state) => state.keep);
   const bindings = useSmileIDSampleLiveBindings();
-  const { scenario } = useLaunchArgs();
-  const requirement = smileIDSampleRequirementFrom(bindings);
+  const { scenario, catalogue } = useLaunchArgs();
+  const store = smileIDSampleCatalogueStore(catalogue);
+  const fieldsToCollect = store((state) => state.fieldsToCollect);
+  const requirement = smileIDSampleRequirementFor(bindings, product, fieldsToCollect);
+
+  // A link lands here without the product tap that asks ahead, and the configuration decides which rows show.
+  const liveSessionId = useSmileIDSampleSessionStore(
+    (state) => smileIDSampleLiveSession(state, state.nowMillis)?.id ?? null,
+  );
+  useEffect(() => {
+    const sessions = useSmileIDSampleSessionStore.getState();
+    smileIDSampleEnsureEnabled(store, productId, smileIDSampleLiveSession(sessions, sessions.nowMillis));
+  }, [store, productId, liveSessionId]);
 
   const fillFrom = useSmileIDSampleFormsStore((state) => state.fillFrom);
   useEffect(() => {

@@ -24,6 +24,7 @@ import {
   smileIDSampleRequirementDefaults,
   smileIDSampleRequirementLabel,
   smileIDSampleRequirementPrompt,
+  smileIDSampleRequirementShows,
   smileIDSampleRequirementSupplies,
   type UseSmileIDSampleUserDetailsRequirement,
 } from '../state/use-smile-id-sample-user-details-requirement';
@@ -96,6 +97,7 @@ export const UserDetailsScreen = ({
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
   const requirement = state.requirement ?? smileIDSampleRequirementDefaults;
+  const rows = smileIDSampleUserFields.filter((field) => smileIDSampleRequirementShows(requirement, field.id));
   const satisfied = smileIDSampleDetailsSatisfy(state.details, requirement);
   const contactProblem = smileIDSampleDetailsContactProblem(state.details);
   const { profile } = state;
@@ -144,7 +146,7 @@ export const UserDetailsScreen = ({
               <UseSmileIDSampleRowDivider />
             </View>
           ) : null}
-          {smileIDSampleUserFields.map((field, index) => {
+          {rows.map((field, index) => {
             // Shown as provided, not asked again — the value is vaulted, so it cannot be prefilled either.
             const supplied = smileIDSampleRequirementSupplies(requirement, field.id);
             return (

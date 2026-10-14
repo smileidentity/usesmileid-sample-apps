@@ -291,6 +291,24 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
+      // The product's `fields_to_collect` lets the partner leave the names out, so only the contact rows show.
+      namesNotAsked: {
+        element: () =>
+          userDetails({
+            state: {
+              productLabel: 'Enhanced KYC',
+              details: EMPTY_DETAILS,
+              profile: null,
+              saveToProfile: true,
+              requirement: {
+                firstName: false,
+                lastName: false,
+                contact: true,
+                hidden: [UseSmileIDSampleUserField.FirstName, UseSmileIDSampleUserField.LastName],
+              },
+            },
+          }),
+      },
     },
   },
   {
@@ -454,7 +472,7 @@ describe('id details in Arabic', () => {
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(76);
+    expect(total * schemes.length).toBe(78);
   });
 });
 
