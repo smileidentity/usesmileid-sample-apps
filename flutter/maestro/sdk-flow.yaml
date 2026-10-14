@@ -33,8 +33,7 @@ appId: ${APP_ID}
 - assertNotVisible:
     id: "sample_user_details_screen"
 
-# Continue on an empty form cannot reach the SDK: the gate reads the SDK's own validators and sends
-# the journey back to the form that can still fix it.
+# The form, filled and continued, reaches the SDK.
 - tapOn:
     id: "sample_product_card_smartSelfieEnrollment"
 - extendedWaitUntil:
@@ -49,7 +48,6 @@ appId: ${APP_ID}
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
-# The SDK requires a contact field even though the form labels both optional.
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
