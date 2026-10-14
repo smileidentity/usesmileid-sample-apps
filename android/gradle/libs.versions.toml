@@ -1,11 +1,11 @@
 [versions]
-# The SDK snapshot main published at 7119f841 (2026-10-13 20:30 UTC), each module by its own build, since 12.2.0-SNAPSHOT moves.
-usesmileid = "12.2.0-20261013.203002-234"
-usesmileid-bom = "12.2.0-20261013.203002-235"
-usesmileid-mlkit-face = "12.2.0-20261013.203002-231"
-usesmileid-mlkit-document = "12.2.0-20261013.203002-232"
-usesmileid-huawei-face = "12.2.0-20261013.203002-234"
-usesmileid-huawei-document = "12.2.0-20261013.203002-234"
+# The SDK snapshot main published at 16603f70 (2026-10-13 21:54 UTC), each module by its own build, since 12.2.0-SNAPSHOT moves.
+usesmileid = "12.2.0-20261013.215422-237"
+usesmileid-bom = "12.2.0-20261013.215422-238"
+usesmileid-mlkit-face = "12.2.0-20261013.215422-234"
+usesmileid-mlkit-document = "12.2.0-20261013.215422-235"
+usesmileid-huawei-face = "12.2.0-20261013.215422-237"
+usesmileid-huawei-document = "12.2.0-20261013.215422-237"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.20"
