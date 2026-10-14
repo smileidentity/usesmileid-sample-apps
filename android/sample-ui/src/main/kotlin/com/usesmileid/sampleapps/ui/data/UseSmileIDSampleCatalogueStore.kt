@@ -7,6 +7,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiCountryDocuments
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiEnabledCountry
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiField
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueData
@@ -58,6 +59,10 @@ class UseSmileIDSampleCatalogueStore(
     var enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> by mutableStateOf(UseSmileIDSampleCatalogue.Loading)
         private set
 
+    /** Each product's `fields_to_collect` from the same response, or null until it arrives or when it fails. */
+    var fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>? by mutableStateOf(null)
+        private set
+
     /** A product tap: a new run always asks the server again, so a list changed on the server shows up. */
     fun begin(environment: UseSmileIDSampleEnvironment, locale: String) {
         stop()
@@ -71,7 +76,7 @@ class UseSmileIDSampleCatalogueStore(
         if (run != Run(environment, locale)) begin(environment, locale)
     }
 
-    /** Enhanced Document Verification: fetches [session]'s list unless it is already here or on its way. */
+    /** The session's configuration, for Enhanced Document Verification's list and every product's fields, unless already here or on its way. */
     fun ensureEnabled(environment: UseSmileIDSampleEnvironment, locale: String, session: UseSmileIDSampleTokenSession?) {
         val key = EnabledKey(session?.id, environment, locale)
         if (key == enabledKey && (enabled is UseSmileIDSampleCatalogue.Ready || enabledJob?.isActive == true)) return
@@ -100,6 +105,7 @@ class UseSmileIDSampleCatalogueStore(
             enabledKey = null
             enabledToken = ""
             enabled = UseSmileIDSampleCatalogue.Loading
+            fieldsToCollect = null
         }
     }
 
@@ -161,10 +167,15 @@ class UseSmileIDSampleCatalogueStore(
         val token = enabledToken
         enabledJob?.cancel()
         enabled = UseSmileIDSampleCatalogue.Loading
+        fieldsToCollect = null
         enabledJob = scope.launch {
+            var fields: Map<String, List<UseSmileIDSampleApiField>>? = null
             enabled = load {
-                UseSmileIDSampleCatalogueJson.enabledCountries(source.servicesConfig(key.environment, token, key.locale))
+                val body = source.servicesConfig(key.environment, token, key.locale)
+                fields = UseSmileIDSampleCatalogueJson.fieldsToCollect(body)
+                UseSmileIDSampleCatalogueJson.enabledCountries(body)
             }
+            fieldsToCollect = fields
         }
     }
 

@@ -285,6 +285,11 @@
           "state": "complete",
           "node": "5206-3777",
           "note": "Values filled; 'Tap any field to edit.' + the save switch, 'Save to <profile>' or, with no profile, 'Save as a new profile'. The switch shows only while the typed details differ from the profile's."
+        },
+        {
+          "state": "namesNotAsked",
+          "design": "in-repo",
+          "note": "The product's `fields_to_collect` lets the partner leave the names out, so the first and last name rows are not shown and the prompt asks only for an email or a phone. Per `user-details-fields.json`."
         }
       ],
       "components": [

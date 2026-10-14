@@ -114,11 +114,11 @@ class UseSmileIDSampleAppState(
     /** The API translates document and country names; an unsupported locale comes back in en-GB. */
     val catalogueLocale: String get() = localeTag ?: Locale.getDefault().toLanguageTag()
 
-    /** Starts [product]'s lists if nothing has; Enhanced Document Verification's also needs the session's own list. */
+    /** Starts [product]'s lists if nothing has, and the session's configuration: Enhanced Document Verification's list and every product's fields. */
     fun ensureCatalogue(product: UseSmileIDSampleProduct?) {
         if (product?.catalogueFamily == null) return
         catalogue.ensure(environment, catalogueLocale)
-        if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification) {
+        if (product == UseSmileIDSampleProduct.EnhancedDocumentVerification || session != null) {
             catalogue.ensureEnabled(environment, catalogueLocale, session)
         }
     }

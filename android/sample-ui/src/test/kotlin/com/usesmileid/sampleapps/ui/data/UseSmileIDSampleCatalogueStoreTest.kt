@@ -4,6 +4,7 @@ import com.usesmileid.sampleapps.ui.CatalogueFixtures
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSkeletonGate
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiField
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueFamily
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueRules
@@ -18,6 +19,7 @@ import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -36,6 +38,7 @@ class UseSmileIDSampleCatalogueStoreTest {
         var configCalls = 0
         var lastToken: String? = null
         var refusing: Int? = null
+        var config: String? = null
 
         override suspend fun supportedIdTypes(environment: UseSmileIDSampleEnvironment): String = answer(environment) {
             fixture.supportedIdTypes(environment)
@@ -48,7 +51,7 @@ class UseSmileIDSampleCatalogueStoreTest {
             configCalls++
             lastToken = token
             refusing?.let { throw UseSmileIDSampleCatalogueHttpException(it) }
-            return answer(environment) { fixture.servicesConfig(environment, token, locale) }
+            return answer(environment) { config ?: fixture.servicesConfig(environment, token, locale) }
         }
 
         private suspend fun answer(environment: UseSmileIDSampleEnvironment, body: suspend () -> String): String {
@@ -89,6 +92,33 @@ class UseSmileIDSampleCatalogueStoreTest {
         assertEquals(listOf("GH", "KE", "NG", "ZA"), all.items.map { it.code })
         val kenya = store.documents("KE", edv) as UseSmileIDSampleCatalogue.Ready
         assertEquals(listOf("IDENTITY_CARD", "PASSPORT"), kenya.items.map { it.id })
+    }
+
+    @Test
+    fun the_same_answer_carries_every_products_fields() = runTest {
+        val source = FakeSource().apply {
+            config = """{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}, {"name": "email", "required": false}]}, "products": {}}"""
+        }
+        val store = store(source)
+        assertNull(store.fieldsToCollect)
+        store.ensureEnabled(UseSmileIDSampleEnvironment.Sandbox, "en-GB", session("a"))
+        advanceUntilIdle()
+        assertEquals(
+            mapOf("enhanced_kyc" to listOf(UseSmileIDSampleApiField("given_names", null), UseSmileIDSampleApiField("email", false))),
+            store.fieldsToCollect,
+        )
+        assertEquals(1, source.configCalls)
+    }
+
+    @Test
+    fun a_failed_configuration_leaves_no_fields_so_the_form_keeps_the_token_rule() = runTest {
+        val source = FakeSource().apply { failing = true }
+        val store = store(source)
+        store.ensureEnabled(UseSmileIDSampleEnvironment.Sandbox, "en-GB", session("a"))
+        advanceUntilIdle()
+        assertNull(store.fieldsToCollect)
+        store.stop()
+        assertNull(store.fieldsToCollect)
     }
 
     @Test
