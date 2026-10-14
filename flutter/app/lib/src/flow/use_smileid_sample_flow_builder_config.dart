@@ -4,7 +4,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
+import 'package:usesmileid_huawei_document/usesmileid_huawei_document.dart';
+import 'package:usesmileid_huawei_face/usesmileid_huawei_face.dart';
+import 'package:usesmileid_mlkit_document/usesmileid_mlkit_document.dart';
 import 'package:usesmileid_mlkit_face/usesmileid_mlkit_face.dart';
+import 'package:usesmileid_vision_document/usesmileid_vision_document.dart';
 import 'package:usesmileid_vision_face/usesmileid_vision_face.dart';
 
 import '../use_smileid_sample_shell_extension.dart';
@@ -45,8 +49,11 @@ void useSmileIDSampleApplying(
           c.detectorMode = FaceDetectorMode.standard;
         });
         if (snapshot.product.needsDocumentCapture) {
-          // No factory: this SDK's `add` takes a face one and no-ops for documents.
-          a.forCaptureType(CaptureType.document);
+          a.forCaptureType(CaptureType.document, (
+            CaptureTypeAnalyzerBuilder c,
+          ) {
+            c.add(_documentAnalyzerFactory());
+          });
         }
       }),
     );
@@ -104,10 +111,56 @@ void useSmileIDSampleApplying(
   }
 }
 
-/// The platform's own face backend, as the SDK's sample picks it.
-FaceAnalyzerFactory _selfieAnalyzerFactory() => Platform.isAndroid
-    ? const MlKitFaceAnalyzerFactory()
-    : const VisionFaceAnalyzerFactory();
+/// The phone's mobile services, probed once at launch: HMS on a Huawei without Google Play services.
+UseSmileIDMobileServicesProvider useSmileIDSampleMobileServices =
+    UseSmileIDMobileServicesProvider.none;
+
+/// The probe's answer, or none (ML Kit) when it throws or takes longer than [timeout], so launch never waits on it.
+Future<UseSmileIDMobileServicesProvider>
+useSmileIDSamplePreferredMobileServices(
+  Future<UseSmileIDMobileServicesProvider> Function() probe, {
+  Duration timeout = const Duration(seconds: 3),
+}) async {
+  try {
+    return await probe().timeout(timeout);
+  } catch (_) {
+    return UseSmileIDMobileServicesProvider.none;
+  }
+}
+
+FaceAnalyzerFactory _selfieAnalyzerFactory() =>
+    useSmileIDSampleFaceAnalyzerFactory(
+      useSmileIDSampleMobileServices,
+      isAndroid: Platform.isAndroid,
+    );
+
+DocumentAnalyzerFactory _documentAnalyzerFactory() =>
+    useSmileIDSampleDocumentAnalyzerFactory(
+      useSmileIDSampleMobileServices,
+      isAndroid: Platform.isAndroid,
+    );
+
+/// Vision on iOS; on Android HMS where only Huawei's services run, ML Kit everywhere else.
+FaceAnalyzerFactory useSmileIDSampleFaceAnalyzerFactory(
+  UseSmileIDMobileServicesProvider services, {
+  required bool isAndroid,
+}) {
+  if (!isAndroid) return const VisionFaceAnalyzerFactory();
+  return services == UseSmileIDMobileServicesProvider.huawei
+      ? const HuaweiFaceAnalyzerFactory()
+      : const MlKitFaceAnalyzerFactory();
+}
+
+/// The document twin of [useSmileIDSampleFaceAnalyzerFactory].
+DocumentAnalyzerFactory useSmileIDSampleDocumentAnalyzerFactory(
+  UseSmileIDMobileServicesProvider services, {
+  required bool isAndroid,
+}) {
+  if (!isAndroid) return const VisionDocumentAnalyzerFactory();
+  return services == UseSmileIDMobileServicesProvider.huawei
+      ? const HuaweiDocumentAnalyzerFactory()
+      : const MlKitDocumentAnalyzerFactory();
+}
 
 void _applyIdParams(
   UseSmileIDFlowBuilder builder,
