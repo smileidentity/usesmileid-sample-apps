@@ -166,7 +166,7 @@ public extension UseSmileIDSampleUserDetailsRequirement {
     )
   }
 
-  /// The token rule, less any name `product`'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json).
+  /// The token rule, less any name `product`'s `fields_to_collect` does not require (spec/user-details-fields.json).
   init(bindings: UseSmileIDSampleTokenBindings?, product: UseSmileIDSampleProduct?, fieldsToCollect: [String: [UseSmileIDSampleApiField]]?) {
     let token = Self(bindings: bindings)
     guard let key = product?.fieldsToCollectKey, let fields = fieldsToCollect?[key] else {
@@ -174,7 +174,7 @@ public extension UseSmileIDSampleUserDetailsRequirement {
       return
     }
     func leftOut(_ name: String, asked: Bool) -> Bool {
-      asked && fields.contains { $0.name == name && $0.required != true }
+      asked && !fields.contains { $0.name == name && $0.required == true }
     }
     var hidden: Set<UseSmileIDSampleUserField> = []
     if leftOut("given_names", asked: token.firstName) {
