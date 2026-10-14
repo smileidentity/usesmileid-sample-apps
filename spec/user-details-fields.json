@@ -10,7 +10,7 @@
     "residencyDocumentVerification": "residency_document_verification"
   },
   "rules": {
-    "names": "`given_names` and `last_name` each: a name the token binds shows as provided, whatever the list says. Otherwise a name the product's list carries without `required: true` is not shown: that is how the API marks a name the partner may leave out, with no `required` key, and `false` from servers that predate that. Any other name keeps the token rule, so it is asked for. The API leaves out of the list whatever the token binds, so for a list read with the session's own token the two always agree.",
+    "names": "`given_names` and `last_name` each: a name the token binds shows as provided, whatever the list says. Otherwise the product's list decides: listed with `required: true` asks for it, and a name the list leaves out is not shown. The API leaves the names out when the partner may skip them; servers that predate that list them with `required: false`, which is not shown either. The API also leaves out whatever the token binds, which is why a binding is read first.",
     "contact": "`email` and `phone_number` share `one_of_group: contact`, and the list never hides them: one of the two is asked for unless the token binds either.",
     "fallback": "A product with no key, a key the response does not carry, or no configuration at all keeps the token rule: each name, and one contact, is asked for unless the token binds it. A configuration read for another session, or with no live session, counts as none.",
     "submission": "A row that is not shown submits nothing. The API judges what is missing and its message reaches the result card."
@@ -27,8 +27,6 @@
       "fieldsToCollect": {
         "enhanced_kyc": [
           { "label": "ID number", "name": "id_number", "required": true, "type": "text" },
-          { "label": "Given names", "name": "given_names", "type": "text" },
-          { "label": "Last name", "name": "last_name", "type": "text" },
           { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" },
           { "label": "Phone number", "name": "phone_number", "one_of_group": "contact", "regex": "^\\+[1-9]\\d{6,14}$", "required": false, "type": "phone" }
         ]
@@ -125,11 +123,11 @@
       "expect": { "firstName": "ask", "lastName": "ask", "contact": "provided" }
     },
     {
-      "name": "an empty list with nothing bound keeps the token rule",
+      "name": "an empty list with nothing bound hides the names but still asks for a contact",
       "product": "documentVerification",
       "fieldsToCollect": { "doc_verification": [] },
       "bindings": {},
-      "expect": { "firstName": "ask", "lastName": "ask", "contact": "ask" }
+      "expect": { "firstName": "hidden", "lastName": "hidden", "contact": "ask" }
     },
     {
       "name": "a required name the token binds shows as provided",
