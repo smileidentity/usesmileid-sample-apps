@@ -1,8 +1,5 @@
 package com.usesmileid.sampleapps.android.flow
 
-import com.usesmileid.core.exception.InvalidFieldValueException
-import com.usesmileid.core.exception.UseSmileIDValidationException
-import com.usesmileid.presentation.flow.validation.ValidationState
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
@@ -45,25 +42,6 @@ private val UseSmileIDSampleAppState.liveSession: UseSmileIDSampleTokenSession?
  */
 val UseSmileIDSampleAppState.tokenBindsUserDetails: Boolean
     get() = liveBindings?.bindsRequiredUserDetails == true
-
-/** Drops the issues the token already answers; every other rule the SDK applies still stands. */
-internal fun ValidationState.minus(requirement: UseSmileIDSampleUserDetailsRequirement): ValidationState {
-    if (this !is ValidationState.Invalid) return this
-    val outstanding = issues.filterNot(requirement::covers)
-    return if (outstanding.isEmpty()) ValidationState.Valid else ValidationState.Invalid(outstanding)
-}
-
-private fun UseSmileIDSampleUserDetailsRequirement.covers(issue: UseSmileIDValidationException): Boolean {
-    val field = (issue as? InvalidFieldValueException) ?: return false
-    return when (field.fieldName) {
-        "userDetails.givenNames" -> !firstName
-        "userDetails.lastName" -> !lastName
-        // The contact rule is reported against the object rather than a field, so the reason is what
-        // identifies it — anything else raised at that level is not ours to drop.
-        "userDetails" -> !contact && field.reason.contains("email", ignoreCase = true)
-        else -> false
-    }
-}
 
 /** What the form must still collect, read through the same live-session rule as the gate. */
 val UseSmileIDSampleAppState.tokenUserDetailsRequirement: UseSmileIDSampleUserDetailsRequirement

@@ -26,13 +26,9 @@ func useSmileIDSamplePreflight(_ snapshot: FlowLaunchSnapshot) -> FlowPreflight 
     return .needsUserId
   }
   let validator = FlowValidator.shared
-  let requirement = UseSmileIDSampleUserDetailsRequirement(bindings: snapshot.liveSession?.bindings)
   let params = useSmileIDSampleIdParams(snapshot)
+  // User details are not checked here: the API reports any a job needs, on the result card.
   var payloadChecks: [ValidationState] = []
-  // The token-payload overload is not public, so the bindings are subtracted from what the SDK reports.
-  if let userDetails = useSmileIDSampleUserDetails(snapshot) {
-    payloadChecks.append(useSmileIDSampleOutstanding(validator.validateUserDetails(userDetails), requirement))
-  }
   if let biometricKyc = params.biometricKyc {
     payloadChecks.append(validator.validateBiometricKYCParams(biometricKyc))
   }

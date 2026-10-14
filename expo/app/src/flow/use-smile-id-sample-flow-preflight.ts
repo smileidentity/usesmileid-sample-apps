@@ -1,4 +1,3 @@
-import { smileIDSampleRequirementFrom } from '@smileid/sample-ui';
 import {
   UseSmileIDFlowBuilder,
   type ValidationState,
@@ -7,11 +6,7 @@ import {
 
 import { useSmileIDSampleShellExtension } from '../extension';
 import { smileIDSampleApplying } from './use-smile-id-sample-flow-builder-config';
-import {
-  smileIDSampleSnapshotSession,
-  type UseSmileIDSampleFlowLaunchSnapshot,
-} from './use-smile-id-sample-flow-launch-snapshot';
-import { smileIDSampleMinusRequirement } from './use-smile-id-sample-token-binding-rules';
+import { type UseSmileIDSampleFlowLaunchSnapshot } from './use-smile-id-sample-flow-launch-snapshot';
 
 /// What the gate decided, and so where the journey goes instead of the SDK.
 export type UseSmileIDSampleFlowPreflight =
@@ -36,14 +31,10 @@ export const smileIDSamplePreflight = (
   const builder = new UseSmileIDFlowBuilder();
   smileIDSampleApplying(builder, snapshot, undefined, useSmileIDSampleShellExtension);
   useSmileIDSampleShellExtension?.customiseFlow?.(builder, snapshot.product);
-  const requirement = smileIDSampleRequirementFrom(smileIDSampleSnapshotSession(snapshot)?.bindings);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
+  // User details are not checked here: the API reports any a job needs, on the result card.
   const checks: ValidationState[] = [];
-  if (builder.userDetails !== undefined) {
-    // The public validator takes no token, so the bindings are subtracted.
-    checks.push(smileIDSampleMinusRequirement(builder.validateUserDetails(builder.userDetails), requirement));
-  }
   if (builder.biometricKYCParams !== undefined)
     checks.push(builder.validateBiometricKYCParams(builder.biometricKYCParams));
   if (builder.enhancedKYCParams !== undefined)

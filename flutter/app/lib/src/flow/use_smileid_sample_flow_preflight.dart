@@ -4,7 +4,6 @@ import 'package:usesmileid/usesmileid.dart';
 import '../use_smileid_sample_shell_extension.dart';
 import 'use_smileid_sample_flow_builder_config.dart';
 import 'use_smileid_sample_flow_launch_snapshot.dart';
-import 'use_smileid_sample_token_binding_rules.dart';
 
 /// What the gate decided, and so where the journey goes instead of the SDK.
 sealed class UseSmileIDSampleFlowPreflight {
@@ -66,15 +65,8 @@ UseSmileIDSampleFlowPreflight useSmileIDSamplePreflight(
   extension?.customiseFlow(builder, snapshot.product);
 
   // Payloads before the builder's verdict: a form can fix what was typed, not how this built it.
-  // The SDK's token-aware overload is not public, so the bindings are subtracted.
-  final UseSmileIDSampleUserDetailsRequirement requirement =
-      useSmileIDSampleUserDetailsRequirement(snapshot.liveSession?.bindings);
+  // User details are not checked here: the API reports any a job needs, on the result card.
   final List<ValidationState> payloadChecks = <ValidationState>[
-    if (builder.userDetails case final UserDetails details)
-      useSmileIDSampleMinusRequirement(
-        builder.validateUserDetails(details),
-        requirement,
-      ),
     if (builder.biometricKYCParams case final BiometricKYCParams params)
       builder.validateBiometricKYCParams(params),
     if (builder.enhancedKYCParams case final EnhancedKYCParams params)
