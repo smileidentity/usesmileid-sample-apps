@@ -21,18 +21,11 @@ data class UseSmileIDSampleUserDetails(
     /** The design's own rule: "First and last name are required." */
     val isComplete: Boolean get() = firstName.isNotBlank() && lastName.isNotBlank()
 
-    /** Whether the form has collected what [requirement] still asks of it, in a form the server accepts. */
+    /** Whether the form has collected what [requirement] still asks of it; the API judges each value's format. */
     fun satisfies(requirement: UseSmileIDSampleUserDetailsRequirement): Boolean =
         (!requirement.firstName || firstName.isNotBlank()) &&
             (!requirement.lastName || lastName.isNotBlank()) &&
-            (!requirement.contact || email.isNotBlank() || phone.isNotBlank()) &&
-            contactProblem == null
-
-    /** Why the email or phone would fail the job, email first; null when both would pass. */
-    @get:StringRes
-    val contactProblem: Int?
-        get() = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
-            ?: UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
+            (!requirement.contact || email.isNotBlank() || phone.isNotBlank())
 
     /** The email as the server wants it, or null when blank. */
     val submittedEmail: String?
@@ -138,31 +131,13 @@ enum class UseSmileIDSampleUserField(
     }
 }
 
-/** The email and phone checks from `spec/contact-rules.json`, which mirror the v3 API's own request schema. */
+/** How `spec/contact-rules.json` submits an email or a phone number; no form checks either. */
 object UseSmileIDSampleContactRules {
-    @StringRes val EMAIL_ERROR = R.string.sample_user_field_email_error
-
-    @StringRes val PHONE_ERROR = R.string.sample_user_field_phone_error
-
-    private val email = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$")
     private val phoneSeparators = Regex("[\\s().-]")
-    private val phone = Regex("^\\+[1-9][0-9]{6,14}$")
 
     /** [value] as it is submitted: trimmed, and a phone number without its separators. */
     fun submitted(field: UseSmileIDSampleUserField, value: String): String = when (field) {
         UseSmileIDSampleUserField.Phone -> value.trim().replace(phoneSeparators, "")
         else -> value.trim()
-    }
-
-    /** Why [value] would fail the job as [field], or null when it would pass; blank always passes. */
-    @StringRes
-    fun problem(field: UseSmileIDSampleUserField, value: String): Int? {
-        val submitted = submitted(field, value)
-        if (submitted.isEmpty()) return null
-        return when (field) {
-            UseSmileIDSampleUserField.Email -> EMAIL_ERROR.takeUnless { email.matches(submitted) }
-            UseSmileIDSampleUserField.Phone -> PHONE_ERROR.takeUnless { phone.matches(submitted) }
-            else -> null
-        }
     }
 }

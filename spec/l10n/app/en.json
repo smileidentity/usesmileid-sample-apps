@@ -114,8 +114,6 @@
   "user_field_last_name_placeholder": "Add last name",
   "user_field_email_placeholder": "name@company.com",
   "user_field_phone_placeholder": "+254 700 000 000",
-  "user_field_email_error": "Enter an email like name@company.com.",
-  "user_field_phone_error": "Enter the number with its country code, like +254 700 000 000.",
   "user_requirement_first_name": "first name",
   "user_requirement_last_name": "last name",
   "user_requirement_contact": "an email or phone number",

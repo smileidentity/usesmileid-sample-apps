@@ -1,4 +1,3 @@
-import { smileIDSampleDetailsContactProblem } from './use-smile-id-sample-contact-rules';
 import type { UseSmileIDSampleTokenBindings } from './use-smile-id-sample-token-decoder';
 import type { UseSmileIDSampleUserDetails } from './use-smile-id-sample-profiles';
 import { UseSmileIDSampleUserField, type UseSmileIDSampleUserFieldSpec } from '../model/use-smile-id-sample-user-fields';
@@ -40,15 +39,14 @@ export const smileIDSampleRequirementBindsNothing = (
   requirement: UseSmileIDSampleUserDetailsRequirement,
 ): boolean => requirement.firstName && requirement.lastName && requirement.contact;
 
-/// Whether the form has collected what the requirement still asks of it, in a form the server accepts.
+/// Whether the form has collected what the requirement still asks of it; the API judges each value's format.
 export const smileIDSampleDetailsSatisfy = (
   details: UseSmileIDSampleUserDetails,
   requirement: UseSmileIDSampleUserDetailsRequirement,
 ): boolean =>
   (!requirement.firstName || details.firstName.trim().length > 0) &&
   (!requirement.lastName || details.lastName.trim().length > 0) &&
-  (!requirement.contact || details.email.trim().length > 0 || details.phone.trim().length > 0) &&
-  smileIDSampleDetailsContactProblem(details) === null;
+  (!requirement.contact || details.email.trim().length > 0 || details.phone.trim().length > 0);
 
 /// Whether the token already supplied this row, which is why it renders as provided.
 export const smileIDSampleRequirementSupplies = (

@@ -19,17 +19,11 @@ public struct UseSmileIDSampleUserDetails: Equatable, Sendable {
     !firstName.isBlank && !lastName.isBlank
   }
 
-  /// Whether the form has collected what `requirement` still asks of it, in a form the server accepts.
+  /// Whether the form has collected what `requirement` still asks of it; the API judges each value's format.
   public func satisfies(_ requirement: UseSmileIDSampleUserDetailsRequirement) -> Bool {
     (!requirement.firstName || !firstName.isBlank)
       && (!requirement.lastName || !lastName.isBlank)
       && (!requirement.contact || !email.isBlank || !phone.isBlank)
-      && contactProblem == nil
-  }
-
-  /// Why the email or phone would fail the job, email first; nil when both would pass.
-  public var contactProblem: String? {
-    UseSmileIDSampleContactRules.problem(.email, email) ?? UseSmileIDSampleContactRules.problem(.phone, phone)
   }
 
   /// The email as the server wants it, or nil when blank.
@@ -43,36 +37,13 @@ public struct UseSmileIDSampleUserDetails: Equatable, Sendable {
   }
 }
 
-/// The email and phone checks from `spec/contact-rules.json`, which mirror the v3 API's own request schema.
+/// How `spec/contact-rules.json` submits an email or a phone number; no form checks either.
 public enum UseSmileIDSampleContactRules {
-  public static var emailError: String {
-    UseSmileIDSampleStrings.userFieldEmailError
-  }
-
-  public static var phoneError: String {
-    UseSmileIDSampleStrings.userFieldPhoneError
-  }
-
   /// `value` as it is submitted: trimmed, and a phone number without its separators.
   public static func submitted(_ field: UseSmileIDSampleUserField, _ value: String) -> String {
     let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
     guard field == .phone else { return trimmed }
     return trimmed.replacingOccurrences(of: "[\\s().-]", with: "", options: .regularExpression)
-  }
-
-  /// Why `value` would fail the job as `field`, or nil when it would pass; blank always passes.
-  public static func problem(_ field: UseSmileIDSampleUserField, _ value: String) -> String? {
-    let submitted = submitted(field, value)
-    guard !submitted.isEmpty else { return nil }
-    switch field {
-    case .email: return matches(submitted, "^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$") ? nil : emailError
-    case .phone: return matches(submitted, "^\\+[1-9][0-9]{6,14}$") ? nil : phoneError
-    default: return nil
-    }
-  }
-
-  private static func matches(_ value: String, _ pattern: String) -> Bool {
-    value.range(of: pattern, options: .regularExpression) != nil
   }
 }
 

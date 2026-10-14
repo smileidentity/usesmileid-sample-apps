@@ -24,7 +24,6 @@ public struct NewProfileSheet: View {
         placeholder: UseSmileIDSampleStrings.userFieldEmailOptional,
         icon: SmileIcons.fieldEmail,
         keyboardType: .emailAddress,
-        problem: UseSmileIDSampleContactRules.problem(.email, draft.email),
         testId: UseSmileIDSampleTestIds.newProfileEmail
       )
       field(
@@ -32,7 +31,6 @@ public struct NewProfileSheet: View {
         placeholder: UseSmileIDSampleStrings.userFieldPhoneOptional,
         icon: SmileIcons.fieldPhone,
         keyboardType: .phonePad,
-        problem: UseSmileIDSampleContactRules.problem(.phone, draft.phone),
         testId: UseSmileIDSampleTestIds.newProfilePhone
       )
       UseSmileIDSampleButton(
@@ -50,14 +48,11 @@ public struct NewProfileSheet: View {
     placeholder: String,
     icon: SmileIcon,
     keyboardType: UIKeyboardType = .default,
-    problem: String? = nil,
     testId: String
   ) -> some View {
     UseSmileIDSampleTextInput(
       value: value,
       placeholder: placeholder,
-      isError: problem != nil,
-      errorMessage: problem,
       keyboardType: keyboardType,
       testId: testId
     ) {

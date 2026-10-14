@@ -11,7 +11,6 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionLabel
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTextInput
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserField
 import androidx.compose.ui.platform.LocalAutofillManager
 
@@ -33,8 +32,6 @@ fun NewProfileSheet(
     modifier: Modifier = Modifier,
 ) {
     val autofill = LocalAutofillManager.current
-    val emailProblem = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
-    val phoneProblem = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
     UseSmileIDSampleBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier,
@@ -70,8 +67,6 @@ fun NewProfileSheet(
             onValueChange = onEmailChange,
             placeholder = UseSmileIDSampleStrings.userFieldEmailOptional,
             keyboardOptions = UseSmileIDSampleUserField.Email.keyboardOptions,
-            isError = emailProblem != null,
-            errorMessage = emailProblem?.let { stringResource(it) },
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_EMAIL,
             leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_field_email, tint = tint) },
         )
@@ -80,8 +75,6 @@ fun NewProfileSheet(
             onValueChange = onPhoneChange,
             placeholder = UseSmileIDSampleStrings.userFieldPhoneOptional,
             keyboardOptions = UseSmileIDSampleUserField.Phone.keyboardOptions,
-            isError = phoneProblem != null,
-            errorMessage = phoneProblem?.let { stringResource(it) },
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_PHONE,
             leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_field_phone, tint = tint) },
         )
@@ -92,8 +85,7 @@ fun NewProfileSheet(
                 autofill?.cancel()
                 onSave()
             },
-            enabled = name.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank() &&
-                emailProblem == null && phoneProblem == null,
+            enabled = name.isNotBlank() && firstName.isNotBlank() && lastName.isNotBlank(),
             testId = UseSmileIDSampleTestIds.NEW_PROFILE_SAVE,
         )
     }

@@ -9,7 +9,6 @@ import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_switch.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
-import '../state/use_smileid_sample_contact_rules.dart';
 import '../state/use_smileid_sample_profiles.dart';
 import '../state/use_smileid_sample_user_details_requirement.dart';
 import '../theme/use_smileid_sample_colors.dart';
@@ -182,14 +181,6 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                             keyboardType: UseSmileIDSampleUserField
                                 .values[i]
                                 .keyboardType,
-                            isError:
-                                UseSmileIDSampleContactRules.problem(
-                                  UseSmileIDSampleUserField.values[i],
-                                  UseSmileIDSampleUserField.values[i].valueOf(
-                                    details,
-                                  ),
-                                ) !=
-                                null,
                             testId: UseSmileIDSampleTestIds.userDetailsField(
                               UseSmileIDSampleUserField.values[i].id,
                             ),
@@ -205,14 +196,11 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                   child: Text(
                     // What is OUTSTANDING, which depends on what has been typed and not only on
                     // what the requirement asks: a satisfied form has nothing left to name.
-                    details.contactProblem?.message(context.strings) ??
-                        (satisfied
-                            ? context.strings.userDetailsEditHint
-                            : requirement.prompt(context.strings)),
+                    satisfied
+                        ? context.strings.userDetailsEditHint
+                        : requirement.prompt(context.strings),
                     style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                      color: details.contactProblem == null
-                          ? colors.textMuted
-                          : colors.input.borderError,
+                      color: colors.textMuted,
                     ),
                   ),
                 ),

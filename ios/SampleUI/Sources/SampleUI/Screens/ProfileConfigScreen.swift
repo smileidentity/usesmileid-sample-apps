@@ -88,11 +88,6 @@ public struct ProfileConfigScreen: View {
               row(field)
             }
           }
-          if let problem = state.defaults.contactProblem {
-            UseSmileIDSampleText(problem, style: UseSmileIDSampleTheme.type.textStyleCaption)
-              .foregroundColor(colors.input.borderError)
-              .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileConfigContactError)
-          }
           // Its own section, not a row in the card above: a webhook URL is not a user detail.
           UseSmileIDSampleSectionLabel(UseSmileIDSampleStrings.profileConfigSectionCallback)
           UseSmileIDSampleSectionSurface {
@@ -112,7 +107,7 @@ public struct ProfileConfigScreen: View {
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.profileConfigScreen)
       UseSmileIDSampleButton(
         text: state.isActive ? UseSmileIDSampleStrings.profileConfigSave : UseSmileIDSampleStrings.profileConfigUse,
-        enabled: (state.changed || !state.isActive) && state.defaults.contactProblem == nil,
+        enabled: state.changed || !state.isActive,
         testId: UseSmileIDSampleTestIds.profileConfigSave,
         action: onSave
       )
@@ -151,7 +146,6 @@ public struct ProfileConfigScreen: View {
       placeholder: field.placeholder,
       required: field.required,
       keyboardType: field.keyboardType,
-      isError: UseSmileIDSampleContactRules.problem(field, field.read(state.defaults)) != nil,
       testId: UseSmileIDSampleTestIds.profileConfigField(field.id)
     )
   }

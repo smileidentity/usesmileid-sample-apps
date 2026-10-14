@@ -10,10 +10,6 @@ import {
 } from '../model/use-smile-id-sample-user-fields';
 import type { SmileIconName } from '../smile-icons';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
-import {
-  smileIDSampleContactProblem,
-  smileIDSampleDetailsContactProblem,
-} from '../state/use-smile-id-sample-contact-rules';
 import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
@@ -38,8 +34,7 @@ export const smileIDSampleNewProfileDraftEmpty: UseSmileIDSampleNewProfileDraft 
 export const smileIDSampleNewProfileComplete = (draft: UseSmileIDSampleNewProfileDraft): boolean =>
   draft.name.trim().length > 0 &&
   draft.firstName.trim().length > 0 &&
-  draft.lastName.trim().length > 0 &&
-  smileIDSampleDetailsContactProblem(draft) === null;
+  draft.lastName.trim().length > 0;
 
 type Field = {
   readonly key: keyof UseSmileIDSampleNewProfileDraft;
@@ -93,8 +88,6 @@ type Props = {
 /// A profile name, then the four user details that will live under it.
 export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Props) => {
   const strings = useSmileIDSampleStrings();
-  const problemOf = (spec: Field): string | null =>
-    spec.key === 'email' || spec.key === 'phone' ? smileIDSampleContactProblem(spec.key, draft[spec.key]) : null;
   const field = (spec: Field) => (
     <UseSmileIDSampleTextInput
       key={spec.key}
@@ -102,8 +95,6 @@ export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Pro
       onValueChange={(value) => onDraftChange({ ...draft, [spec.key]: value })}
       placeholder={spec.placeholder(strings)}
       {...(spec.key === 'name' ? {} : smileIDSampleUserFieldKeyboard(spec.key))}
-      isError={problemOf(spec) !== null}
-      errorMessage={problemOf(spec)}
       testID={spec.testID}
       leading={(tint) => <UseSmileIDSampleIcon name={spec.icon} tint={tint} />}
     />
