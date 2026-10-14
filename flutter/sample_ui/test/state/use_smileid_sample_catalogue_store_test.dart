@@ -149,6 +149,30 @@ void main() {
     expect(source.configCalls, 1);
   });
 
+  testWidgets('the fields go only to the live session that read them', (
+    WidgetTester tester,
+  ) async {
+    final _CountingSource source = _CountingSource()
+      ..config =
+          '{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}]}, '
+          '"products": {}}';
+    final UseSmileIDSampleCatalogueStore store = storeOver(source);
+    addTearDown(store.dispose);
+    store.ensureEnabled(sandbox, 'en-GB', session('a'));
+    await tester.pump();
+
+    expect(
+      store.fieldsToCollectFor('a'),
+      <String, List<UseSmileIDSampleApiField>>{
+        'enhanced_kyc': <UseSmileIDSampleApiField>[
+          const UseSmileIDSampleApiField('given_names'),
+        ],
+      },
+    );
+    expect(store.fieldsToCollectFor('b'), isNull);
+    expect(store.fieldsToCollectFor(null), isNull);
+  });
+
   testWidgets(
     'a failed configuration leaves no fields, so the form keeps the token rule',
     (WidgetTester tester) async {

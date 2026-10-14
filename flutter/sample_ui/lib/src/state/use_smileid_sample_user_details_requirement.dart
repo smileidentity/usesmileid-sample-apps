@@ -104,38 +104,41 @@ UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
   contact: !(bindings?.email == true || bindings?.phoneNumber == true),
 );
 
-/// [product]'s requirement from the API's `fields_to_collect`, or the token rule when it has no entry (spec/user-details-fields.json).
+/// The token rule, less any name [product]'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json).
 UseSmileIDSampleUserDetailsRequirement
 useSmileIDSampleUserDetailsRequirementFor(
   UseSmileIDSampleTokenBindings? bindings,
   UseSmileIDSampleProduct? product,
   Map<String, List<UseSmileIDSampleApiField>>? fieldsToCollect,
 ) {
+  final UseSmileIDSampleUserDetailsRequirement token =
+      useSmileIDSampleUserDetailsRequirement(bindings);
   final String? key = product?.fieldsToCollectKey;
   final List<UseSmileIDSampleApiField>? fields = key == null
       ? null
       : fieldsToCollect?[key];
   if (fields == null) {
-    return useSmileIDSampleUserDetailsRequirement(bindings);
+    return token;
   }
-  UseSmileIDSampleApiField? named(String name) => fields
-      .where((UseSmileIDSampleApiField it) => it.name == name)
-      .firstOrNull;
-  final UseSmileIDSampleApiField? firstName = named('given_names');
-  final UseSmileIDSampleApiField? lastName = named('last_name');
+  bool leftOut(String name, {required bool asked}) =>
+      asked &&
+      fields.any(
+        (UseSmileIDSampleApiField it) => it.name == name && it.required != true,
+      );
+  final Set<UseSmileIDSampleUserField> hidden = <UseSmileIDSampleUserField>{
+    if (leftOut('given_names', asked: token.firstName))
+      UseSmileIDSampleUserField.firstName,
+    if (leftOut('last_name', asked: token.lastName))
+      UseSmileIDSampleUserField.lastName,
+  };
   return UseSmileIDSampleUserDetailsRequirement(
-    firstName: firstName?.required == true,
-    lastName: lastName?.required == true,
-    contact: fields.any(
-      (UseSmileIDSampleApiField it) =>
-          it.name == 'email' || it.name == 'phone_number',
-    ),
-    hidden: <UseSmileIDSampleUserField>{
-      if (firstName != null && firstName.required != true)
-        UseSmileIDSampleUserField.firstName,
-      if (lastName != null && lastName.required != true)
-        UseSmileIDSampleUserField.lastName,
-    },
+    firstName:
+        token.firstName &&
+        !hidden.contains(UseSmileIDSampleUserField.firstName),
+    lastName:
+        token.lastName && !hidden.contains(UseSmileIDSampleUserField.lastName),
+    contact: token.contact,
+    hidden: hidden,
   );
 }
 

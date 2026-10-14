@@ -169,7 +169,9 @@ class _UseSmileIDSampleSdkFlowTabState
         useSmileIDSampleUserDetailsRequirementFor(
           session?.bindings,
           product,
-          ref.read(useSmileIDSampleCatalogueStoreProvider).fieldsToCollect,
+          ref
+              .read(useSmileIDSampleCatalogueStoreProvider)
+              .fieldsToCollectFor(session?.id),
         ),
       ),
       idDetails: forms.idDetails,

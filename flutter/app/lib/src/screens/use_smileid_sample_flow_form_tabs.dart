@@ -72,13 +72,15 @@ class _UseSmileIDSampleUserDetailsTabState
     final UseSmileIDSampleProfiles profiles = ref.watch(
       useSmileIDSampleProfilesProvider,
     );
+    final UseSmileIDSampleTokenSession? live =
+        ref.watch(useSmileIDSampleSessionProvider).live == null
+        ? null
+        : useSmileIDSampleLiveTokenSession(ref);
     final UseSmileIDSampleUserDetailsRequirement requirement =
         useSmileIDSampleUserDetailsRequirementFor(
-          ref.watch(useSmileIDSampleSessionProvider).live == null
-              ? null
-              : useSmileIDSampleLiveBindings(ref),
+          live?.bindings,
           product,
-          _catalogue.fieldsToCollect,
+          _catalogue.fieldsToCollectFor(live?.id),
         );
     final UseSmileIDSampleFormsNotifier edits = ref.read(
       useSmileIDSampleFormsProvider.notifier,

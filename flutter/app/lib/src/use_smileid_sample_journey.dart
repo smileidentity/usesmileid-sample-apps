@@ -59,10 +59,14 @@ String useSmileIDSampleEntryFor(
   );
 }
 
-/// The live token's bindings, read once at the tap.
-UseSmileIDSampleTokenBindings? useSmileIDSampleLiveBindings(WidgetRef ref) =>
+/// The live token session, read once at the tap.
+UseSmileIDSampleTokenSession? useSmileIDSampleLiveTokenSession(WidgetRef ref) =>
     useSmileIDSampleLiveSession(
       ref.read(useSmileIDSampleSessionProvider).live,
       DateTime.now().millisecondsSinceEpoch,
       scenario: ref.read(useSmileIDSampleScenarioProvider).scenario,
-    )?.bindings;
+    );
+
+/// The live token's bindings, read once at the tap.
+UseSmileIDSampleTokenBindings? useSmileIDSampleLiveBindings(WidgetRef ref) =>
+    useSmileIDSampleLiveTokenSession(ref)?.bindings;
