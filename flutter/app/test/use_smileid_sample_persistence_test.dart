@@ -253,8 +253,9 @@ void main() {
       isEmpty,
     );
     expect(
-      (await profilesFor(const UseSmileIDSampleLaunchArgs(seedProfiles: true)))
-          .all,
+      (await profilesFor(
+        const UseSmileIDSampleLaunchArgs(seedProfiles: true),
+      )).all,
       hasLength(3),
     );
   });

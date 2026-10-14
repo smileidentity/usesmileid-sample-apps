@@ -6,32 +6,38 @@ import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_session_p
 
 /// The session notifier's writes.
 void main() {
-  test('a link made while a cold-start retirement is pending keeps the fresh session', () async {
-    final UseSmileIDSampleTokenSession stale = _mint(
-      UseSmileIDSampleSimulatedSpan.ended,
-    );
-    final UseSmileIDSampleTokenSession fresh = _mint(
-      UseSmileIDSampleSimulatedSpan.fifteenMinutes,
-    );
-    final UseSmileIDSampleSessionRecord stored = UseSmileIDSampleSessionRecord(
-      live: stale,
-    );
-    final _SlowRepository repository = _SlowRepository(stored);
-    final ProviderContainer container = ProviderContainer(
-      overrides: [
-        useSmileIDSampleSessionRepositoryProvider.overrideWithValue(repository),
-        useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
-      ],
-    );
-    addTearDown(container.dispose);
+  test(
+    'a link made while a cold-start retirement is pending keeps the fresh session',
+    () async {
+      final UseSmileIDSampleTokenSession stale = _mint(
+        UseSmileIDSampleSimulatedSpan.ended,
+      );
+      final UseSmileIDSampleTokenSession fresh = _mint(
+        UseSmileIDSampleSimulatedSpan.fifteenMinutes,
+      );
+      final UseSmileIDSampleSessionRecord stored =
+          UseSmileIDSampleSessionRecord(live: stale);
+      final _SlowRepository repository = _SlowRepository(stored);
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            repository,
+          ),
+          useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+        ],
+      );
+      addTearDown(container.dispose);
 
-    await container.read(useSmileIDSampleSessionProvider.notifier).link(fresh);
-    await Future<void>.delayed(_settle);
+      await container
+          .read(useSmileIDSampleSessionProvider.notifier)
+          .link(fresh);
+      await Future<void>.delayed(_settle);
 
-    expect(container.read(useSmileIDSampleSessionProvider).live, fresh);
-    expect(container.read(useSmileIDSampleSessionProvider).ended, isNull);
-    expect((await repository.read()).live, fresh);
-  });
+      expect(container.read(useSmileIDSampleSessionProvider).live, fresh);
+      expect(container.read(useSmileIDSampleSessionProvider).ended, isNull);
+      expect((await repository.read()).live, fresh);
+    },
+  );
 
   test('a stale session still retires when nothing links over it', () async {
     final UseSmileIDSampleTokenSession stale = _mint(
@@ -56,34 +62,39 @@ void main() {
     expect(container.read(useSmileIDSampleSessionProvider).ended?.id, stale.id);
     expect((await repository.read()).ended?.id, stale.id);
   });
-  test('a wall clock past the deadline retires the token, though the timer has not fired', () async {
-    int now = DateTime.now().millisecondsSinceEpoch;
-    final UseSmileIDSampleTokenSession live = _mint(
-      UseSmileIDSampleSimulatedSpan.fifteenMinutes,
-    );
-    final UseSmileIDSampleSessionRecord stored = UseSmileIDSampleSessionRecord(
-      live: live,
-    );
-    final ProviderContainer container = ProviderContainer(
-      overrides: [
-        useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
-          UseSmileIDSampleMemorySessionRepository(stored),
-        ),
-        useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
-        useSmileIDSampleWallClockProvider.overrideWithValue(() => now),
-      ],
-    );
-    addTearDown(container.dispose);
-    container.read(useSmileIDSampleSessionProvider);
+  test(
+    'a wall clock past the deadline retires the token, though the timer has not fired',
+    () async {
+      int now = DateTime.now().millisecondsSinceEpoch;
+      final UseSmileIDSampleTokenSession live = _mint(
+        UseSmileIDSampleSimulatedSpan.fifteenMinutes,
+      );
+      final UseSmileIDSampleSessionRecord stored =
+          UseSmileIDSampleSessionRecord(live: live);
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            UseSmileIDSampleMemorySessionRepository(stored),
+          ),
+          useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+          useSmileIDSampleWallClockProvider.overrideWithValue(() => now),
+        ],
+      );
+      addTearDown(container.dispose);
+      container.read(useSmileIDSampleSessionProvider);
 
-    now = live.expiresAtMillis + 1;
-    await container
-        .read(useSmileIDSampleSessionProvider.notifier)
-        .checkDeadline();
+      now = live.expiresAtMillis + 1;
+      await container
+          .read(useSmileIDSampleSessionProvider.notifier)
+          .checkDeadline();
 
-    expect(container.read(useSmileIDSampleSessionProvider).live, isNull);
-    expect(container.read(useSmileIDSampleSessionProvider).ended?.id, live.id);
-  });
+      expect(container.read(useSmileIDSampleSessionProvider).live, isNull);
+      expect(
+        container.read(useSmileIDSampleSessionProvider).ended?.id,
+        live.id,
+      );
+    },
+  );
 
   test(
     'a retirement the store refused is tried again on the next check',
@@ -117,25 +128,32 @@ void main() {
     },
   );
 
-  test('a link the store refuses still links for this run, rather than failing silently', () async {
-    final _RefusingOnce repository = _RefusingOnce(
-      const UseSmileIDSampleSessionRecord(),
-    );
-    final ProviderContainer container = ProviderContainer(
-      overrides: [
-        useSmileIDSampleSessionRepositoryProvider.overrideWithValue(repository),
-      ],
-    );
-    addTearDown(container.dispose);
-    final UseSmileIDSampleTokenSession fresh = _mint(
-      UseSmileIDSampleSimulatedSpan.fifteenMinutes,
-    );
+  test(
+    'a link the store refuses still links for this run, rather than failing silently',
+    () async {
+      final _RefusingOnce repository = _RefusingOnce(
+        const UseSmileIDSampleSessionRecord(),
+      );
+      final ProviderContainer container = ProviderContainer(
+        overrides: [
+          useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
+            repository,
+          ),
+        ],
+      );
+      addTearDown(container.dispose);
+      final UseSmileIDSampleTokenSession fresh = _mint(
+        UseSmileIDSampleSimulatedSpan.fifteenMinutes,
+      );
 
-    await container.read(useSmileIDSampleSessionProvider.notifier).link(fresh);
+      await container
+          .read(useSmileIDSampleSessionProvider.notifier)
+          .link(fresh);
 
-    expect(repository.refusals, 1);
-    expect(container.read(useSmileIDSampleSessionProvider).live, fresh);
-  });
+      expect(repository.refusals, 1);
+      expect(container.read(useSmileIDSampleSessionProvider).live, fresh);
+    },
+  );
 
   test(
     'a sign out the store refuses still drops the token from this run',

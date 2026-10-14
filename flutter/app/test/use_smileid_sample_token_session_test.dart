@@ -169,10 +169,9 @@ void main() {
 
     test('bound consent is complete, so the SDK drops its screen', () {
       expect(
-        _mint(bindings: const UseSmileIDSampleSimulatedBindings(consent: true))
-            .bindings
-            .consent
-            ?.isComplete,
+        _mint(
+          bindings: const UseSmileIDSampleSimulatedBindings(consent: true),
+        ).bindings.consent?.isComplete,
         isTrue,
       );
     });
@@ -205,60 +204,66 @@ void main() {
       );
     });
 
-    test('a fully bound token reaches the SDK with empty forms, and passes null details', () {
-      for (final UseSmileIDSampleProduct product
-          in UseSmileIDSampleProduct.values) {
-        final UseSmileIDSampleFlowLaunchSnapshot snapshot = _snapshot(
-          product,
-          userDetails: const UseSmileIDSampleUserDetails(),
-          session: _mint(
-            bindings: const UseSmileIDSampleSimulatedBindings(
-              consent: true,
-              userDetails: true,
+    test(
+      'a fully bound token reaches the SDK with empty forms, and passes null details',
+      () {
+        for (final UseSmileIDSampleProduct product
+            in UseSmileIDSampleProduct.values) {
+          final UseSmileIDSampleFlowLaunchSnapshot snapshot = _snapshot(
+            product,
+            userDetails: const UseSmileIDSampleUserDetails(),
+            session: _mint(
+              bindings: const UseSmileIDSampleSimulatedBindings(
+                consent: true,
+                userDetails: true,
+              ),
             ),
-          ),
-        );
-        expect(
-          useSmileIDSamplePreflight(snapshot),
-          isA<UseSmileIDSampleFlowReady>(),
-          reason: product.id,
-        );
-        final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
-        useSmileIDSampleApplying(builder, snapshot);
-        expect(builder.userDetails, isNull, reason: product.id);
-        expect(
-          builder.validate(),
-          isA<ValidationStateValid>(),
-          reason: product.id,
-        );
-        // `build()`'s result type is unexported, so only its name is readable.
-        // ignore: invalid_use_of_internal_member
-        final Object result = builder.build();
-        expect(
-          result.runtimeType.toString(),
-          contains('Success'),
-          reason: product.id,
-        );
-      }
-    });
+          );
+          expect(
+            useSmileIDSamplePreflight(snapshot),
+            isA<UseSmileIDSampleFlowReady>(),
+            reason: product.id,
+          );
+          final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+          useSmileIDSampleApplying(builder, snapshot);
+          expect(builder.userDetails, isNull, reason: product.id);
+          expect(
+            builder.validate(),
+            isA<ValidationStateValid>(),
+            reason: product.id,
+          );
+          // `build()`'s result type is unexported, so only its name is readable.
+          // ignore: invalid_use_of_internal_member
+          final Object result = builder.build();
+          expect(
+            result.runtimeType.toString(),
+            contains('Success'),
+            reason: product.id,
+          );
+        }
+      },
+    );
 
-    test('the ID parameters come from the token, the number as its vault reference', () {
-      final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
-      useSmileIDSampleApplying(
-        builder,
-        _snapshot(
-          UseSmileIDSampleProduct.biometricKyc,
-          session: _mint(
-            bindings: const UseSmileIDSampleSimulatedBindings(
-              userDetails: true,
+    test(
+      'the ID parameters come from the token, the number as its vault reference',
+      () {
+        final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+        useSmileIDSampleApplying(
+          builder,
+          _snapshot(
+            UseSmileIDSampleProduct.biometricKyc,
+            session: _mint(
+              bindings: const UseSmileIDSampleSimulatedBindings(
+                userDetails: true,
+              ),
             ),
           ),
-        ),
-      );
-      expect(builder.biometricKYCParams?.country, 'KE');
-      expect(builder.biometricKYCParams?.idType, 'NATIONAL_ID');
-      expect(builder.biometricKYCParams?.idNumber, 'vault_id_number');
-    });
+        );
+        expect(builder.biometricKYCParams?.country, 'KE');
+        expect(builder.biometricKYCParams?.idType, 'NATIONAL_ID');
+        expect(builder.biometricKYCParams?.idNumber, 'vault_id_number');
+      },
+    );
 
     test(
       'a bound consent takes the consent step out, even with the switch on',
@@ -280,20 +285,23 @@ void main() {
       },
     );
 
-    test('the refresh scenarios keep the fixture path, so they still mean something', () {
-      final UseSmileIDSampleFlowLaunchSnapshot snapshot = _snapshot(
-        UseSmileIDSampleProduct.smartSelfieEnrollment,
-        scenario: UseSmileIDSampleScenario.expiredToken,
-        session: _mint(
-          bindings: const UseSmileIDSampleSimulatedBindings(consent: true),
-        ),
-      );
-      expect(snapshot.liveSession, isNull);
-      expect(
-        useSmileIDSampleJourneyStepsFor(snapshot).first,
-        UseSmileIDSampleFlowJourneyStep.consent,
-      );
-    });
+    test(
+      'the refresh scenarios keep the fixture path, so they still mean something',
+      () {
+        final UseSmileIDSampleFlowLaunchSnapshot snapshot = _snapshot(
+          UseSmileIDSampleProduct.smartSelfieEnrollment,
+          scenario: UseSmileIDSampleScenario.expiredToken,
+          session: _mint(
+            bindings: const UseSmileIDSampleSimulatedBindings(consent: true),
+          ),
+        );
+        expect(snapshot.liveSession, isNull);
+        expect(
+          useSmileIDSampleJourneyStepsFor(snapshot).first,
+          UseSmileIDSampleFlowJourneyStep.consent,
+        );
+      },
+    );
 
     test('the environment is the token\'s, and no session is sandbox', () {
       expect(useSmileIDSampleUseSandbox(null), isTrue);
@@ -411,29 +419,32 @@ void main() {
   });
 
   group('a status refresh reads the server', () {
-    test('each API state lands on its badge, and processing stays processing', () {
-      String body(String status) =>
-          '{"status":"$status","message":"m","job_id":"j","user_id":"u","created_at":"t","extra":1}';
-      expect(
-        useSmileIDSampleStatusOutcome(200, body('processing')),
-        isA<UseSmileIDSampleStatusStillProcessing>(),
-      );
-      for (final (String api, UseSmileIDSampleStatus badge)
-          in <(String, UseSmileIDSampleStatus)>[
-            ('clear', UseSmileIDSampleStatus.clear),
-            ('attention', UseSmileIDSampleStatus.attention),
-            ('block', UseSmileIDSampleStatus.blocked),
-            ('error', UseSmileIDSampleStatus.error),
-          ]) {
-        final UseSmileIDSampleStatusRefresh outcome =
-            useSmileIDSampleStatusOutcome(200, body(api));
+    test(
+      'each API state lands on its badge, and processing stays processing',
+      () {
+        String body(String status) =>
+            '{"status":"$status","message":"m","job_id":"j","user_id":"u","created_at":"t","extra":1}';
         expect(
-          (outcome as UseSmileIDSampleStatusUpdated).status,
-          badge,
-          reason: api,
+          useSmileIDSampleStatusOutcome(200, body('processing')),
+          isA<UseSmileIDSampleStatusStillProcessing>(),
         );
-      }
-    });
+        for (final (String api, UseSmileIDSampleStatus badge)
+            in <(String, UseSmileIDSampleStatus)>[
+              ('clear', UseSmileIDSampleStatus.clear),
+              ('attention', UseSmileIDSampleStatus.attention),
+              ('block', UseSmileIDSampleStatus.blocked),
+              ('error', UseSmileIDSampleStatus.error),
+            ]) {
+          final UseSmileIDSampleStatusRefresh outcome =
+              useSmileIDSampleStatusOutcome(200, body(api));
+          expect(
+            (outcome as UseSmileIDSampleStatusUpdated).status,
+            badge,
+            reason: api,
+          );
+        }
+      },
+    );
 
     // The server answers 404 until an accepted job has a state; the store decides how long that reads as processing.
     test('a 404 is a job the server has not recorded, not a failure', () {
@@ -451,24 +462,21 @@ void main() {
       'a failed exchange or an unknown state says so rather than guessing',
       () {
         expect(
-          (useSmileIDSampleStatusOutcome(
-            401,
-            '{}',
-          ) as UseSmileIDSampleStatusFailed).reason,
+          (useSmileIDSampleStatusOutcome(401, '{}')
+                  as UseSmileIDSampleStatusFailed)
+              .reason,
           'HTTP 401',
         );
         expect(
-          (useSmileIDSampleStatusOutcome(
-            200,
-            'not json',
-          ) as UseSmileIDSampleStatusFailed).reason,
+          (useSmileIDSampleStatusOutcome(200, 'not json')
+                  as UseSmileIDSampleStatusFailed)
+              .reason,
           'HTTP 200',
         );
         expect(
-          (useSmileIDSampleStatusOutcome(
-            200,
-            '{"status":"odd","message":"m"}',
-          ) as UseSmileIDSampleStatusFailed).reason,
+          (useSmileIDSampleStatusOutcome(200, '{"status":"odd","message":"m"}')
+                  as UseSmileIDSampleStatusFailed)
+              .reason,
           "Unrecognised status 'odd'",
         );
       },

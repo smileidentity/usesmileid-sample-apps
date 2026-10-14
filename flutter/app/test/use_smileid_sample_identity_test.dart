@@ -8,9 +8,9 @@ void main() {
   late Map<String, Object?> flutterApp;
 
   setUpAll(() {
-    final Map<String, Object?> identity = jsonDecode(
-      File('../../spec/app-identity.json').readAsStringSync(),
-    ) as Map<String, Object?>;
+    final Map<String, Object?> identity =
+        jsonDecode(File('../../spec/app-identity.json').readAsStringSync())
+            as Map<String, Object?>;
     flutterApp = (identity['apps']! as List<Object?>)
         .cast<Map<String, Object?>>()
         .firstWhere((Map<String, Object?> app) => app['platform'] == 'flutter');
@@ -69,10 +69,9 @@ void main() {
       );
       expect(plist(), contains('<string>${flutterApp['urlScheme']}</string>'));
       expect(
-        RegExp(r'android:scheme="([^"]+)"')
-            .allMatches(manifest())
-            .map((Match m) => m[1])
-            .toSet(),
+        RegExp(
+          r'android:scheme="([^"]+)"',
+        ).allMatches(manifest()).map((Match m) => m[1]).toSet(),
         <String?>{flutterApp['urlScheme'] as String?},
       );
       final RegExp schemes = RegExp(
@@ -82,10 +81,9 @@ void main() {
         schemes
             .allMatches(plist())
             .expand(
-              (Match m) =>
-                  RegExp(r'<string>([^<]+)</string>')
-                      .allMatches(m[1]!)
-                      .map((Match s) => s[1]),
+              (Match m) => RegExp(
+                r'<string>([^<]+)</string>',
+              ).allMatches(m[1]!).map((Match s) => s[1]),
             )
             .toList(),
         <String?>[flutterApp['urlScheme'] as String?],
@@ -95,9 +93,9 @@ void main() {
 
   test('no id reserved by an SDK repo sample is claimed', () {
     // The flutter entry is the contested one the ruling releases, so it is excluded by name.
-    final Map<String, Object?> identity = jsonDecode(
-      File('../../spec/app-identity.json').readAsStringSync(),
-    ) as Map<String, Object?>;
+    final Map<String, Object?> identity =
+        jsonDecode(File('../../spec/app-identity.json').readAsStringSync())
+            as Map<String, Object?>;
     final Map<String, Object?> reserved =
         identity['reserved']! as Map<String, Object?>;
     final Iterable<String> others = reserved.keys.where(
@@ -113,11 +111,14 @@ void main() {
     }
   });
 
-  test('the release lane is minified and resource-shrunk with no app-side keep rules', () {
-    final String build = gradle();
-    expect(build, contains('isMinifyEnabled = true'));
-    expect(build, contains('isShrinkResources = true'));
-    expect(build, isNot(contains('proguard-rules.pro')));
-    expect(File('android/app/proguard-rules.pro').existsSync(), isFalse);
-  });
+  test(
+    'the release lane is minified and resource-shrunk with no app-side keep rules',
+    () {
+      final String build = gradle();
+      expect(build, contains('isMinifyEnabled = true'));
+      expect(build, contains('isShrinkResources = true'));
+      expect(build, isNot(contains('proguard-rules.pro')));
+      expect(File('android/app/proguard-rules.pro').existsSync(), isFalse);
+    },
+  );
 }

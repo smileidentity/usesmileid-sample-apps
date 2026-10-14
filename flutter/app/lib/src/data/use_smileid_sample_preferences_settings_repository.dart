@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

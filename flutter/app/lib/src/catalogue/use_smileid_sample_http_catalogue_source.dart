@@ -28,8 +28,9 @@ class UseSmileIDSampleHttpCatalogueSource
     UseSmileIDSampleEnvironment environment,
     String locale,
   ) => _get(
-    Uri.parse('${environment.baseUrl}v3/services/supported_documents')
-        .replace(queryParameters: <String, String>{'locale': locale}),
+    Uri.parse(
+      '${environment.baseUrl}v3/services/supported_documents',
+    ).replace(queryParameters: <String, String>{'locale': locale}),
   );
 
   @override

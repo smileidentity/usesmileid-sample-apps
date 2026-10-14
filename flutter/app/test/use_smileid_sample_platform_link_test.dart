@@ -63,8 +63,9 @@ void main() {
     await deliver(tester, 'usesmileid-sample-flutter://debug/scenarios');
     expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsOne);
 
-    Navigator.of(tester.element(byId(UseSmileIDSampleTestIds.scenarioDrawer)))
-        .pop();
+    Navigator.of(
+      tester.element(byId(UseSmileIDSampleTestIds.scenarioDrawer)),
+    ).pop();
     await tester.pumpAndSettle();
     expect(landedOn().path, UseSmileIDSampleRoutes.settings);
 

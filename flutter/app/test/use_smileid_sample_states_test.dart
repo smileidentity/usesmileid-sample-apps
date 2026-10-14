@@ -123,8 +123,9 @@ void main() {
       await pumpAt(tester, UseSmileIDSampleRoutes.scenarioDrawer);
       expect(find.byType(UseSmileIDSampleNavBar), findsOneWidget);
 
-      Navigator.of(tester.element(byId(UseSmileIDSampleTestIds.scenarioDrawer)))
-          .pop();
+      Navigator.of(
+        tester.element(byId(UseSmileIDSampleTestIds.scenarioDrawer)),
+      ).pop();
       await tester.pumpAndSettle();
 
       expect(byId(UseSmileIDSampleTestIds.scenarioDrawer), findsNothing);
@@ -219,8 +220,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await pumpAt(tester, UseSmileIDSampleRoutes.products);
-      GoRouter.of(tester.element(find.byType(UseSmileIDSampleProductsTab)))
-          .go(UseSmileIDSampleRoutes.profileSwitch);
+      GoRouter.of(
+        tester.element(find.byType(UseSmileIDSampleProductsTab)),
+      ).go(UseSmileIDSampleRoutes.profileSwitch);
       await tester.pumpAndSettle();
 
       expect(byId(UseSmileIDSampleTestIds.profileSwitchSheet), findsOneWidget);

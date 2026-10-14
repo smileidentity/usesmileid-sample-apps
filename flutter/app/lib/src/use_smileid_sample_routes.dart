@@ -148,11 +148,12 @@ GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
   redirect: useSmileIDSampleFoldPlatformLink,
   routes: <RouteBase>[
     StatefulShellRoute.indexedStack(
-      builder: (
-        BuildContext context,
-        GoRouterState state,
-        StatefulNavigationShell shell,
-      ) => UseSmileIDSampleShell(shell: shell, location: state.uri.path),
+      builder:
+          (
+            BuildContext context,
+            GoRouterState state,
+            StatefulNavigationShell shell,
+          ) => UseSmileIDSampleShell(shell: shell, location: state.uri.path),
       branches: <StatefulShellBranch>[
         StatefulShellBranch(
           routes: <RouteBase>[
