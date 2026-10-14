@@ -28,7 +28,6 @@ class ScreenStateGoldenTest {
         "userDetails.empty" to "screen_user_details_empty",
         "userDetails.editing" to "screen_user_details_editing",
         "userDetails.complete" to "screen_user_details_complete",
-        "userDetails.namesNotAsked" to "screen_user_details_names_not_asked",
         "authUserId.noJobs" to "screen_auth_user_id_no_jobs",
         "authUserId.previousIds" to "screen_auth_user_id_previous",
         "authUserId.selected" to "screen_auth_user_id_selected",
