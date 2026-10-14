@@ -166,9 +166,7 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                                 ? context.strings.userDetailsFromToken
                                 : _rows[i].placeholder(context.strings),
                             enabled: !requirement.supplies(_rows[i]),
-                            keyboardType: UseSmileIDSampleUserField
-                                .values[i]
-                                .keyboardType,
+                            keyboardType: _rows[i].keyboardType,
                             isError:
                                 UseSmileIDSampleContactRules.problem(
                                   _rows[i],
