@@ -355,11 +355,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     return fixture.map { $0 as UseSmileIDSampleCatalogueSource } ?? UseSmileIDSampleUnreachableCatalogueSource()
   }
 
-  /// Starts `product`'s lists if nothing has; Enhanced Document Verification's also needs the session's own list.
+  /// Starts `product`'s lists if nothing has, and the session's configuration: Enhanced Document Verification's list and every product's fields.
   func ensureCatalogue(_ product: UseSmileIDSampleProduct?) {
     guard let product, product.catalogueFamily != nil else { return }
     catalogue.ensure(environment: environment, locale: catalogueLocale)
-    if product == .enhancedDocumentVerification {
+    if product == .enhancedDocumentVerification || session != nil {
       catalogue.ensureEnabled(environment: environment, locale: catalogueLocale, session: session)
     }
   }
@@ -484,9 +484,9 @@ final class UseSmileIDSampleAppState: ObservableObject {
   }
 
   /// Continue's write-back, skipped when the switch is off.
-  func keepUserDetails() {
+  func keepUserDetails(for product: UseSmileIDSampleProduct? = nil) {
     guard saveToProfile else { return }
-    profiles.keep(userDetails, organisation: organisationDraft, requirement: userDetailsRequirement)
+    profiles.keep(userDetails, organisation: organisationDraft, requirement: userDetailsRequirement(for: product))
   }
 
   /// A country change drops the ID type and document, which may not apply to it, and keeps the typed number.
@@ -494,9 +494,13 @@ final class UseSmileIDSampleAppState: ObservableObject {
     idDetails.choose(country: country)
   }
 
-  /// What the token leaves the form to collect, read through the gate's own rule so a skipped form cannot redirect back.
-  var userDetailsRequirement: UseSmileIDSampleUserDetailsRequirement {
-    UseSmileIDSampleUserDetailsRequirement(bindings: sessionActive ? session?.bindings : nil)
+  /// What the form asks for `product`, from its `fields_to_collect` or the token rule, read through the gate's own session rule.
+  func userDetailsRequirement(for product: UseSmileIDSampleProduct?) -> UseSmileIDSampleUserDetailsRequirement {
+    UseSmileIDSampleUserDetailsRequirement(
+      bindings: sessionActive ? session?.bindings : nil,
+      product: product,
+      fieldsToCollect: catalogue.fieldsToCollect
+    )
   }
 
   var versionLabel: String {

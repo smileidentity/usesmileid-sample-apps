@@ -96,7 +96,7 @@ func buildSnapshot(
   return FlowLaunchSnapshot(
     product: product,
     route: route,
-    userDetails: app.userDetails,
+    userDetails: app.userDetails.withoutHiddenNames(app.userDetailsRequirement(for: product)),
     idDetails: app.idDetails,
     scenario: app.flowResult.scenario,
     theme: app.flowResult.theme,
