@@ -50,7 +50,7 @@ export const smileIDSampleFieldsToCollectKey = (product: UseSmileIDSampleProduct
     residencyDocumentVerification: 'residency_document_verification',
   })[product.id] ?? null;
 
-/// The token rule, less any name `product`'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json).
+/// The token rule, less any name `product`'s `fields_to_collect` does not require (spec/user-details-fields.json).
 export const smileIDSampleRequirementFor = (
   bindings: UseSmileIDSampleTokenBindings | null | undefined,
   product: UseSmileIDSampleProduct | null | undefined,
@@ -61,7 +61,7 @@ export const smileIDSampleRequirementFor = (
   const fields = key === null ? undefined : fieldsToCollect?.[key];
   if (fields === undefined) return token;
   const leftOut = (name: string, asked: boolean): boolean =>
-    asked && fields.some((field) => field.name === name && field.required !== true);
+    asked && !fields.some((field) => field.name === name && field.required === true);
   const hidden = [
     ...(leftOut('given_names', token.firstName) ? [UseSmileIDSampleUserField.FirstName] : []),
     ...(leftOut('last_name', token.lastName) ? [UseSmileIDSampleUserField.LastName] : []),
