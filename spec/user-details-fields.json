@@ -10,9 +10,9 @@
     "residencyDocumentVerification": "residency_document_verification"
   },
   "rules": {
-    "names": "`given_names` and `last_name` each, in the product's list: `required: true` asks for it. Listed without `required: true` is not shown: that is how the API marks a name the partner may leave out, with no `required` key, and `false` from servers that predate that. Not listed means the token binds it, so the row shows as provided.",
-    "contact": "`email` and `phone_number` share `one_of_group: contact`. Either listed asks for one of the two; neither listed means the token binds a contact, so it shows as provided.",
-    "fallback": "A product with no key, a key the response does not carry, or no configuration at all keeps the token rule: each name, and one contact, is asked for unless the token binds it.",
+    "names": "`given_names` and `last_name` each: a name the token binds shows as provided, whatever the list says. Otherwise a name the product's list carries without `required: true` is not shown: that is how the API marks a name the partner may leave out, with no `required` key, and `false` from servers that predate that. Any other name keeps the token rule, so it is asked for. The API leaves out of the list whatever the token binds, so for a list read with the session's own token the two always agree.",
+    "contact": "`email` and `phone_number` share `one_of_group: contact`, and the list never hides them: one of the two is asked for unless the token binds either.",
+    "fallback": "A product with no key, a key the response does not carry, or no configuration at all keeps the token rule: each name, and one contact, is asked for unless the token binds it. A configuration read for another session, or with no live session, counts as none.",
     "submission": "A row that is not shown submits nothing. The API judges what is missing and its message reaches the result card."
   },
   "outcomes": {
@@ -123,6 +123,37 @@
       "fieldsToCollect": {},
       "bindings": { "phoneNumber": true },
       "expect": { "firstName": "ask", "lastName": "ask", "contact": "provided" }
+    },
+    {
+      "name": "an empty list with nothing bound keeps the token rule",
+      "product": "documentVerification",
+      "fieldsToCollect": { "doc_verification": [] },
+      "bindings": {},
+      "expect": { "firstName": "ask", "lastName": "ask", "contact": "ask" }
+    },
+    {
+      "name": "a required name the token binds shows as provided",
+      "product": "biometricKyc",
+      "fieldsToCollect": {
+        "biometric_kyc": [
+          { "label": "Given names", "name": "given_names", "required": true, "type": "text" },
+          { "label": "Last name", "name": "last_name", "required": true, "type": "text" }
+        ]
+      },
+      "bindings": { "givenNames": true },
+      "expect": { "firstName": "provided", "lastName": "ask", "contact": "ask" }
+    },
+    {
+      "name": "a name the partner may leave out that the token binds shows as provided",
+      "product": "enhancedKyc",
+      "fieldsToCollect": {
+        "enhanced_kyc": [
+          { "label": "Given names", "name": "given_names", "type": "text" },
+          { "label": "Last name", "name": "last_name", "type": "text" }
+        ]
+      },
+      "bindings": { "lastName": true, "email": true },
+      "expect": { "firstName": "hidden", "lastName": "provided", "contact": "provided" }
     },
     {
       "name": "no configuration keeps the token rule",
