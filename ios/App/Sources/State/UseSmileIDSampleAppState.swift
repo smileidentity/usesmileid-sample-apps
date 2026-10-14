@@ -494,12 +494,13 @@ final class UseSmileIDSampleAppState: ObservableObject {
     idDetails.choose(country: country)
   }
 
-  /// What the form asks for `product`, from its `fields_to_collect` or the token rule, read through the gate's own session rule.
+  /// What the form asks for `product`, read through the gate's own session rule and only that session's `fields_to_collect`.
   func userDetailsRequirement(for product: UseSmileIDSampleProduct?) -> UseSmileIDSampleUserDetailsRequirement {
-    UseSmileIDSampleUserDetailsRequirement(
-      bindings: sessionActive ? session?.bindings : nil,
+    let live = sessionActive ? session : nil
+    return UseSmileIDSampleUserDetailsRequirement(
+      bindings: live?.bindings,
       product: product,
-      fieldsToCollect: catalogue.fieldsToCollect
+      fieldsToCollect: catalogue.fieldsToCollect(for: live?.id)
     )
   }
 

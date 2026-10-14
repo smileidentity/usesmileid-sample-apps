@@ -30,6 +30,8 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
   @Published public private(set) var enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> = .loading
   /// Each product's `fields_to_collect` from the same response, or nil until it arrives or when it fails.
   @Published public private(set) var fieldsToCollect: [String: [UseSmileIDSampleApiField]]?
+  /// The session whose token read `fieldsToCollect`, since the API leaves out what that token binds.
+  private var fieldsSessionId: String?
 
   public init(source: UseSmileIDSampleCatalogueSource, timeoutNanoseconds: UInt64 = 10000000000) {
     self.source = source
@@ -90,7 +92,14 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
       enabledToken = ""
       enabled = .loading
       fieldsToCollect = nil
+      fieldsSessionId = nil
     }
+  }
+
+  /// The fields `sessionId`'s own token read, or nil for any other session or none.
+  public func fieldsToCollect(for sessionId: String?) -> [String: [UseSmileIDSampleApiField]]? {
+    guard let sessionId, sessionId == fieldsSessionId else { return nil }
+    return fieldsToCollect
   }
 
   /// `product` Enhanced Document Verification offers only the countries its partner enabled.
@@ -154,6 +163,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     enabledTask?.cancel()
     enabled = .loading
     fieldsToCollect = nil
+    fieldsSessionId = nil
     let source = source
     let token = enabledToken
     let fields = FieldsBox()
@@ -165,6 +175,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
       }
       if !Task.isCancelled {
         enabled = result
+        fieldsSessionId = fields.value == nil ? nil : key.sessionId
         fieldsToCollect = fields.value
         enabledTask = nil
       }

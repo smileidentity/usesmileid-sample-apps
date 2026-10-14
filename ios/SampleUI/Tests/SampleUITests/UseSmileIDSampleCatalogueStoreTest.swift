@@ -157,6 +157,17 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
     XCTAssertEqual(calls, 1)
   }
 
+  func testTheFieldsGoOnlyToTheLiveSessionThatReadThem() async throws {
+    let source = try FakeSource()
+    await source.set(config: Data(#"{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}]}, "products": {}}"#.utf8))
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(store.fieldsToCollect != nil)
+    XCTAssertEqual(store.fieldsToCollect(for: "a"), ["enhanced_kyc": [UseSmileIDSampleApiField(name: "given_names", required: nil)]])
+    XCTAssertNil(store.fieldsToCollect(for: "b"))
+    XCTAssertNil(store.fieldsToCollect(for: nil))
+  }
+
   func testAFailedConfigurationLeavesNoFieldsSoTheFormKeepsTheTokenRule() async throws {
     let source = try FakeSource()
     await source.set(failing: true)

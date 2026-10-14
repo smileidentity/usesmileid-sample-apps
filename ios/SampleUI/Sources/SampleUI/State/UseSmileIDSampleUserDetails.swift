@@ -166,25 +166,27 @@ public extension UseSmileIDSampleUserDetailsRequirement {
     )
   }
 
-  /// `product`'s requirement from the API's `fields_to_collect`, or the token rule when it has no entry (spec/user-details-fields.json).
+  /// The token rule, less any name `product`'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json).
   init(bindings: UseSmileIDSampleTokenBindings?, product: UseSmileIDSampleProduct?, fieldsToCollect: [String: [UseSmileIDSampleApiField]]?) {
+    let token = Self(bindings: bindings)
     guard let key = product?.fieldsToCollectKey, let fields = fieldsToCollect?[key] else {
-      self.init(bindings: bindings)
+      self = token
       return
     }
-    let firstName = fields.first { $0.name == "given_names" }
-    let lastName = fields.first { $0.name == "last_name" }
+    func leftOut(_ name: String, asked: Bool) -> Bool {
+      asked && fields.contains { $0.name == name && $0.required != true }
+    }
     var hidden: Set<UseSmileIDSampleUserField> = []
-    if let firstName, firstName.required != true {
+    if leftOut("given_names", asked: token.firstName) {
       hidden.insert(.firstName)
     }
-    if let lastName, lastName.required != true {
+    if leftOut("last_name", asked: token.lastName) {
       hidden.insert(.lastName)
     }
     self.init(
-      firstName: firstName?.required == true,
-      lastName: lastName?.required == true,
-      contact: fields.contains { $0.name == "email" || $0.name == "phone_number" },
+      firstName: token.firstName && !hidden.contains(.firstName),
+      lastName: token.lastName && !hidden.contains(.lastName),
+      contact: token.contact,
       hidden: hidden
     )
   }
