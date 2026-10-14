@@ -104,7 +104,7 @@ UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
   contact: !(bindings?.email == true || bindings?.phoneNumber == true),
 );
 
-/// The token rule, less any name [product]'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json).
+/// The token rule, less any name [product]'s `fields_to_collect` does not require (spec/user-details-fields.json).
 UseSmileIDSampleUserDetailsRequirement
 useSmileIDSampleUserDetailsRequirementFor(
   UseSmileIDSampleTokenBindings? bindings,
@@ -122,8 +122,8 @@ useSmileIDSampleUserDetailsRequirementFor(
   }
   bool leftOut(String name, {required bool asked}) =>
       asked &&
-      fields.any(
-        (UseSmileIDSampleApiField it) => it.name == name && it.required != true,
+      !fields.any(
+        (UseSmileIDSampleApiField it) => it.name == name && it.required == true,
       );
   final Set<UseSmileIDSampleUserField> hidden = <UseSmileIDSampleUserField>{
     if (leftOut('given_names', asked: token.firstName))
