@@ -28,8 +28,10 @@ Future<void> useSmileIDSampleBootstrap({
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   // Once: the analyzers a flow registers follow the phone's mobile services.
   if (defaultTargetPlatform == TargetPlatform.android) {
-    useSmileIDSampleMobileServices = await UseSmileIDMobileServices()
-        .preferred();
+    useSmileIDSampleMobileServices =
+        await useSmileIDSamplePreferredMobileServices(
+          UseSmileIDMobileServices().preferred,
+        );
   }
   final UseSmileIDSamplePreferencesSettingsRepository settings =
       await UseSmileIDSamplePreferencesSettingsRepository.open();

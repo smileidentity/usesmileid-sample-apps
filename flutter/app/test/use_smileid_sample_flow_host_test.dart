@@ -53,23 +53,20 @@ void main() {
   );
 
   group('the journey the switches compose', () {
-    test(
-      'a selfie enrollment is consent, instructions, capture, preview, processing',
-      () {
-        expect(
-          useSmileIDSampleJourneyStepsFor(
-            snapshotFor(UseSmileIDSampleProduct.smartSelfieEnrollment),
-          ),
-          <UseSmileIDSampleFlowJourneyStep>[
-            UseSmileIDSampleFlowJourneyStep.consent,
-            UseSmileIDSampleFlowJourneyStep.instructions,
-            UseSmileIDSampleFlowJourneyStep.selfieCapture,
-            UseSmileIDSampleFlowJourneyStep.preview,
-            UseSmileIDSampleFlowJourneyStep.processing,
-          ],
-        );
-      },
-    );
+    test('a selfie enrollment is consent, instructions, capture, preview, processing', () {
+      expect(
+        useSmileIDSampleJourneyStepsFor(
+          snapshotFor(UseSmileIDSampleProduct.smartSelfieEnrollment),
+        ),
+        <UseSmileIDSampleFlowJourneyStep>[
+          UseSmileIDSampleFlowJourneyStep.consent,
+          UseSmileIDSampleFlowJourneyStep.instructions,
+          UseSmileIDSampleFlowJourneyStep.selfieCapture,
+          UseSmileIDSampleFlowJourneyStep.preview,
+          UseSmileIDSampleFlowJourneyStep.processing,
+        ],
+      );
+    });
 
     test('each switch takes its own step out', () {
       expect(
@@ -101,38 +98,35 @@ void main() {
       );
     });
 
-    test(
-      'every document product captures the document first unless selfie first is on',
-      () {
-        for (final UseSmileIDSampleProduct product in <UseSmileIDSampleProduct>[
-          UseSmileIDSampleProduct.documentVerification,
-          UseSmileIDSampleProduct.enhancedDocumentVerification,
-          UseSmileIDSampleProduct.residencyDocumentVerification,
-        ]) {
-          List<UseSmileIDSampleFlowJourneyStep> steps({
-            required bool selfieFirst,
-          }) => useSmileIDSampleJourneyStepsFor(
-            snapshotFor(
-              product,
-              previewStep: false,
-              instructionsStep: false,
-              consentStep: false,
-              selfieFirst: selfieFirst,
-            ),
-          );
-          expect(steps(selfieFirst: false), <UseSmileIDSampleFlowJourneyStep>[
-            UseSmileIDSampleFlowJourneyStep.documentCapture,
-            UseSmileIDSampleFlowJourneyStep.selfieCapture,
-            UseSmileIDSampleFlowJourneyStep.processing,
-          ], reason: product.id);
-          expect(steps(selfieFirst: true), <UseSmileIDSampleFlowJourneyStep>[
-            UseSmileIDSampleFlowJourneyStep.selfieCapture,
-            UseSmileIDSampleFlowJourneyStep.documentCapture,
-            UseSmileIDSampleFlowJourneyStep.processing,
-          ], reason: product.id);
-        }
-      },
-    );
+    test('every document product captures the document first unless selfie first is on', () {
+      for (final UseSmileIDSampleProduct product in <UseSmileIDSampleProduct>[
+        UseSmileIDSampleProduct.documentVerification,
+        UseSmileIDSampleProduct.enhancedDocumentVerification,
+        UseSmileIDSampleProduct.residencyDocumentVerification,
+      ]) {
+        List<UseSmileIDSampleFlowJourneyStep> steps({
+          required bool selfieFirst,
+        }) => useSmileIDSampleJourneyStepsFor(
+          snapshotFor(
+            product,
+            previewStep: false,
+            instructionsStep: false,
+            consentStep: false,
+            selfieFirst: selfieFirst,
+          ),
+        );
+        expect(steps(selfieFirst: false), <UseSmileIDSampleFlowJourneyStep>[
+          UseSmileIDSampleFlowJourneyStep.documentCapture,
+          UseSmileIDSampleFlowJourneyStep.selfieCapture,
+          UseSmileIDSampleFlowJourneyStep.processing,
+        ], reason: product.id);
+        expect(steps(selfieFirst: true), <UseSmileIDSampleFlowJourneyStep>[
+          UseSmileIDSampleFlowJourneyStep.selfieCapture,
+          UseSmileIDSampleFlowJourneyStep.documentCapture,
+          UseSmileIDSampleFlowJourneyStep.processing,
+        ], reason: product.id);
+      }
+    });
   });
 
   group('the gate', () {
@@ -208,27 +202,24 @@ void main() {
       return builder;
     }
 
-    test(
-      'a document job sends the document, even with an ID type left in the form',
-      () {
-        final UseSmileIDFlowBuilder builder = builderFor(
-          snapshotFor(
-            UseSmileIDSampleProduct.documentVerification,
-            idDetails: const UseSmileIDSampleIdDetails(
-              country: kenya,
-              idType: kenyaNationalId,
-              document: UseSmileIDSampleDocument(
-                code: 'PASSPORT',
-                name: 'Passport',
-                hasBack: false,
-                format: 3,
-              ),
+    test('a document job sends the document, even with an ID type left in the form', () {
+      final UseSmileIDFlowBuilder builder = builderFor(
+        snapshotFor(
+          UseSmileIDSampleProduct.documentVerification,
+          idDetails: const UseSmileIDSampleIdDetails(
+            country: kenya,
+            idType: kenyaNationalId,
+            document: UseSmileIDSampleDocument(
+              code: 'PASSPORT',
+              name: 'Passport',
+              hasBack: false,
+              format: 3,
             ),
           ),
-        );
-        expect(builder.documentVerificationParams?.idType, 'PASSPORT');
-      },
-    );
+        ),
+      );
+      expect(builder.documentVerificationParams?.idType, 'PASSPORT');
+    });
 
     test('a KYC job sends the number trimmed, as the form checked it', () {
       final UseSmileIDFlowBuilder builder = builderFor(
@@ -265,9 +256,8 @@ void main() {
         'user_1',
       );
       expect(
-        builderFor(
-          snapshotFor(UseSmileIDSampleProduct.smartSelfieEnrollment),
-        ).userId,
+        builderFor(snapshotFor(UseSmileIDSampleProduct.smartSelfieEnrollment))
+            .userId,
         isNull,
       );
     });
@@ -306,17 +296,14 @@ void main() {
       }
     });
 
-    test(
-      'an unselected document type stays absent rather than becoming a rejected empty string',
-      () {
-        expect(
-          builderFor(
-            snapshotFor(UseSmileIDSampleProduct.documentVerification),
-          ).documentVerificationParams!.idType,
-          isNull,
-        );
-      },
-    );
+    test('an unselected document type stays absent rather than becoming a rejected empty string', () {
+      expect(
+        builderFor(snapshotFor(UseSmileIDSampleProduct.documentVerification))
+            .documentVerificationParams!
+            .idType,
+        isNull,
+      );
+    });
   });
 
   group('the wizard above the shell', () {

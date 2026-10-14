@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usesmileid/usesmileid.dart';
 import 'package:usesmileid_huawei_document/usesmileid_huawei_document.dart';
@@ -52,6 +54,38 @@ void main() {
           isA<VisionDocumentAnalyzerFactory>(),
         );
       }
+    });
+  });
+
+  group('the mobile-services probe never blocks launch', () {
+    test('its answer is used', () async {
+      expect(
+        await useSmileIDSamplePreferredMobileServices(
+          () async => UseSmileIDMobileServicesProvider.huawei,
+        ),
+        UseSmileIDMobileServicesProvider.huawei,
+      );
+    });
+
+    test('a failing probe falls back to ML Kit', () async {
+      expect(
+        await useSmileIDSamplePreferredMobileServices(
+          () => Future<UseSmileIDMobileServicesProvider>.error(
+            StateError('no channel'),
+          ),
+        ),
+        UseSmileIDMobileServicesProvider.none,
+      );
+    });
+
+    test('a silent probe falls back to ML Kit', () async {
+      expect(
+        await useSmileIDSamplePreferredMobileServices(
+          () => Completer<UseSmileIDMobileServicesProvider>().future,
+          timeout: const Duration(milliseconds: 10),
+        ),
+        UseSmileIDMobileServicesProvider.none,
+      );
     });
   });
 }

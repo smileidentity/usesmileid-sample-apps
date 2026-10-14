@@ -32,9 +32,8 @@ class UseSmileIDSamplePreferencesJobsRepository
     // every row, and a device suite seeds on every arm.
     await _write(<UseSmileIDSampleJob>[
       ...stored,
-      ...useSmileIDSampleJobFixtures(
-        nowMillis,
-      ).where((UseSmileIDSampleJob job) => !ids.contains(job.id)),
+      ...useSmileIDSampleJobFixtures(nowMillis)
+          .where((UseSmileIDSampleJob job) => !ids.contains(job.id)),
     ]);
   }
 

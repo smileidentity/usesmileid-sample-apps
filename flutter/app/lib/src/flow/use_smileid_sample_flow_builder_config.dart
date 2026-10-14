@@ -115,6 +115,19 @@ void useSmileIDSampleApplying(
 UseSmileIDMobileServicesProvider useSmileIDSampleMobileServices =
     UseSmileIDMobileServicesProvider.none;
 
+/// The probe's answer, or none (ML Kit) when it throws or takes longer than [timeout], so launch never waits on it.
+Future<UseSmileIDMobileServicesProvider>
+useSmileIDSamplePreferredMobileServices(
+  Future<UseSmileIDMobileServicesProvider> Function() probe, {
+  Duration timeout = const Duration(seconds: 3),
+}) async {
+  try {
+    return await probe().timeout(timeout);
+  } catch (_) {
+    return UseSmileIDMobileServicesProvider.none;
+  }
+}
+
 FaceAnalyzerFactory _selfieAnalyzerFactory() =>
     useSmileIDSampleFaceAnalyzerFactory(
       useSmileIDSampleMobileServices,

@@ -132,29 +132,26 @@ void main() {
     }
   });
 
-  test(
-    'residency captures a passport with no skip, whatever the form or settings hold',
-    () {
-      for (final UseSmileIDSampleCaptureAs? captureAs
-          in <UseSmileIDSampleCaptureAs?>[
-            null,
-            ...UseSmileIDSampleCaptureAs.values,
-          ]) {
-        final String reason =
-            captureAs?.id ?? UseSmileIDSampleCaptureAs.matchDocumentId;
-        final DocumentCaptureConfiguration document = _documentConfig(
-          UseSmileIDSampleIdDetails(
-            country: const UseSmileIDSampleCountry('NG', 'Nigeria'),
-            captureAsOverride: captureAs,
-          ),
-          product: UseSmileIDSampleProduct.residencyDocumentVerification,
-          allowSkipBack: true,
-        );
-        expect(document.documentType, DocumentType.passport, reason: reason);
-        expect(document.allowSkipBack, isFalse, reason: reason);
-      }
-    },
-  );
+  test('residency captures a passport with no skip, whatever the form or settings hold', () {
+    for (final UseSmileIDSampleCaptureAs? captureAs
+        in <UseSmileIDSampleCaptureAs?>[
+          null,
+          ...UseSmileIDSampleCaptureAs.values,
+        ]) {
+      final String reason =
+          captureAs?.id ?? UseSmileIDSampleCaptureAs.matchDocumentId;
+      final DocumentCaptureConfiguration document = _documentConfig(
+        UseSmileIDSampleIdDetails(
+          country: const UseSmileIDSampleCountry('NG', 'Nigeria'),
+          captureAsOverride: captureAs,
+        ),
+        product: UseSmileIDSampleProduct.residencyDocumentVerification,
+        allowSkipBack: true,
+      );
+      expect(document.documentType, DocumentType.passport, reason: reason);
+      expect(document.allowSkipBack, isFalse, reason: reason);
+    }
+  });
 
   test(
     'residency sends the passport, whatever document is left in the form',

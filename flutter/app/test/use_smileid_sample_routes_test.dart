@@ -11,9 +11,9 @@ void main() {
   late List<Map<String, Object?>> routes;
 
   setUpAll(() {
-    final Map<String, Object?> table =
-        jsonDecode(File('../../spec/routes.json').readAsStringSync())
-            as Map<String, Object?>;
+    final Map<String, Object?> table = jsonDecode(
+      File('../../spec/routes.json').readAsStringSync(),
+    ) as Map<String, Object?>;
     routes = (table['routes']! as List<Object?>).cast<Map<String, Object?>>();
   });
 

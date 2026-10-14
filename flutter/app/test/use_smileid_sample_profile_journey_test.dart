@@ -9,6 +9,7 @@ import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_secure_pro
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+
 import 'support/use_smileid_sample_test_session.dart';
 
 void main() {

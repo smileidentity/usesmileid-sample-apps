@@ -90,17 +90,20 @@ class _Answering implements UseSmileIDSampleJobStatusSource {
 }
 
 /// A live fixture session minted for the row's partner.
-final UseSmileIDSampleTokenSession
-_session = UseSmileIDSampleTokenDecoder.session(
-  <String>[
-        '{"alg":"none","typ":"JWT"}',
-        '{"iat":${_nowSeconds - 60},"exp":${_nowSeconds + 3600},'
-            '"api_url":"https://testapi.smileidentity.com/v3","partner_id":"partner-1"}',
-        'sample-signature',
-      ]
-      .map((String it) => base64Url.encode(utf8.encode(it)).replaceAll('=', ''))
-      .join('.'),
-)!;
+final UseSmileIDSampleTokenSession _session =
+    UseSmileIDSampleTokenDecoder.session(
+      <String>[
+            '{"alg":"none","typ":"JWT"}',
+            '{"iat":${_nowSeconds - 60},"exp":${_nowSeconds + 3600},'
+                '"api_url":"https://testapi.smileidentity.com/v3","partner_id":"partner-1"}',
+            'sample-signature',
+          ]
+          .map(
+            (String it) =>
+                base64Url.encode(utf8.encode(it)).replaceAll('=', ''),
+          )
+          .join('.'),
+    )!;
 
 final UseSmileIDSampleJob _row = UseSmileIDSampleJob(
   id: 'job_00ky31za77',

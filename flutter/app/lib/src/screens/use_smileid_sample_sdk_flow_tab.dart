@@ -274,8 +274,7 @@ class _UseSmileIDSampleSdkFlowTabState
       case UseSmileIDCaptured<JobSubmissionResponse>():
         run.deliver(
           UseSmileIDSampleFlowStatus.failed,
-          error:
-              'The SDK handed back an unsent capture, which only a flow that skips API submission does, and the sample never asks for one',
+          error: 'The SDK handed back an unsent capture, which only a flow that skips API submission does, and the sample never asks for one',
         );
     }
   }
@@ -317,9 +316,8 @@ class _SdkBrightness extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MediaQuery(
-    data: MediaQuery.of(
-      context,
-    ).copyWith(platformBrightness: Theme.of(context).brightness),
+    data: MediaQuery.of(context)
+        .copyWith(platformBrightness: Theme.of(context).brightness),
     child: child,
   );
 }

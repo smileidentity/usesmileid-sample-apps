@@ -6,9 +6,8 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/catalogue/use_smileid_sample_catalogue_providers.dart';
 
 /// The app's copy of spec/catalogue-fixture.json, which verify.sh keeps identical to it.
-final String _fixture = File(
-  'assets/catalogue-fixture.json',
-).readAsStringSync();
+final String _fixture = File('assets/catalogue-fixture.json')
+    .readAsStringSync();
 
 /// A store over the fixture that decodes inline, so a fake-clock test settles.
 UseSmileIDSampleCatalogueStore useSmileIDSampleFixtureStore() =>

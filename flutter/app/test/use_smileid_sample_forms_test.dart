@@ -478,15 +478,15 @@ void main() {
         final GoRouter router = GoRouter.of(
           tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).first),
         );
-        while (byId(
-              UseSmileIDSampleTestIds.countrySheet,
-            ).evaluate().isNotEmpty ||
+        while (byId(UseSmileIDSampleTestIds.countrySheet)
+                .evaluate()
+                .isNotEmpty ||
             router.state.uri.path.endsWith('/country')) {
           Navigator.of(
             tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).last),
-            rootNavigator: byId(
-              UseSmileIDSampleTestIds.countrySheet,
-            ).evaluate().isNotEmpty,
+            rootNavigator: byId(UseSmileIDSampleTestIds.countrySheet)
+                .evaluate()
+                .isNotEmpty,
           ).pop();
           await tester.pumpAndSettle();
         }
