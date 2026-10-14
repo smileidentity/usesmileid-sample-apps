@@ -151,18 +151,12 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app.terminate()
     app.launchArguments = useSmileIDSampleLaunchSeed + ["-autostart", "smartSelfieEnrollment"]
     app.launch()
+    // Straight to the SDK: the API, not the app, says which user details a job needs.
     XCTAssertTrue(
-      element("sample_user_details_screen").waitForExistence(timeout: 10),
+      app.buttons["si_deny_button"].waitForExistence(timeout: 20),
       "the argument did not open the flow route"
     )
     XCTAssertFalse(element("sample_products_screen").exists)
-
-    type("sample_user_details_field_firstName", "Kwame")
-    type("sample_user_details_field_lastName", "Asante")
-    type("sample_user_details_field_email", "kwame@uptech.example")
-    keepNothing()
-    app.buttons["sample_user_details_continue"].tap()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
   }
 
   /// A simulator has no lens to take, so this proves the hold is inert; the contention needs a phone.

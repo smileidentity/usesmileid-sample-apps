@@ -1,13 +1,12 @@
 appId: ${APP_ID}
 ---
-# The SDK flow handoff: the route exists, the host mounts, its gate refuses a flow the SDK would
-# reject, and the wizard stacks above the tabs.
+# The SDK flow handoff: the route exists, the host mounts and hands the SDK an empty form, and the
+# wizard stacks above the tabs.
 #
-# It stops short of the SDK's own screens, and the reason is the runner rather than the app: once a
-# text field on this app is focused, Maestro's driver stops reporting the app's hierarchy at all —
-# uiautomator still sees every field, and it reproduces on `main`'s APK. Reaching consent needs the
-# user-details form filled, so this flow cannot type and the SDK-screen assertions live in the
-# Flutter twin until that is solved. See ./README.md "Traps".
+# It types nothing, and the reason is the runner rather than the app: once a text field on this app
+# is focused, Maestro's driver stops reporting the app's hierarchy at all — uiautomator still sees
+# every field, and it reproduces on `main`'s APK. So it stops at consent, and the SDK-screen
+# assertions past it live in the Flutter twin until that is solved. See ./README.md "Traps".
 #
 # Launch arguments arrive as a LINK on this platform — see ./README.md "Traps".
 
@@ -21,24 +20,22 @@ appId: ${APP_ID}
 - runFlow: subflows/link-session.yaml
 - stopApp
 # A cold link straight at the flow: the route resolves, the host reads its snapshot, and the gate
-# refuses an empty form rather than handing the SDK a payload its own validators reject.
+# hands the SDK the empty form, since the API, not the app, says which user details a job needs.
 - openLink: "usesmileid-sample-expo:///flow/smartSelfieEnrollment/run?catalogue=fixture"
-# The form, not the grid: the gate reads the SDK's own validators, finds the details missing and
-# sends the journey to the step that can still supply them.
 - extendedWaitUntil:
     visible:
-      id: "sample_user_details_screen"
+      id: "si_consent_screen"
     timeout: 60000
 - assertNotVisible:
     id: "sample_nav_products"
 
-# Relaunched rather than backed out of: on a cold link the form is the stack's only entry, so the
+# Relaunched rather than backed out of: on a cold link the flow is the stack's only entry, so the
 # system back leaves the app rather than reaching the grid.
 - stopApp
 - openLink: "usesmileid-sample-expo://?noticeWindow=60&catalogue=fixture"
 - runFlow: subflows/warm-start.yaml
 
-# Nothing was submitted, so nothing was stored: a refused run must not leave a row behind.
+# Nothing was submitted, so nothing was stored: a run stopped at consent leaves no row behind.
 - tapOn:
     id: "sample_nav_verifications"
 - assertVisible:
