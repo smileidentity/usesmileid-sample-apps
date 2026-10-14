@@ -145,8 +145,7 @@ void main() {
       );
     });
 
-    // The SDK requires a contact field even though the form labels both optional.
-    test('sends an empty form back to the form rather than to the SDK', () {
+    test('passes an empty form to the SDK, for the API to judge', () {
       expect(
         useSmileIDSamplePreflight(
           snapshotFor(
@@ -154,25 +153,8 @@ void main() {
             userDetails: const UseSmileIDSampleUserDetails(),
           ),
         ),
-        isA<UseSmileIDSampleFlowNeedsDetails>(),
+        isA<UseSmileIDSampleFlowReady>(),
       );
-    });
-
-    // Held to naming the field, because the issues are what a future surface reports.
-    test('names the fields an empty form left for the form to fix', () {
-      final UseSmileIDSampleFlowPreflight outcome = useSmileIDSamplePreflight(
-        snapshotFor(
-          UseSmileIDSampleProduct.smartSelfieEnrollment,
-          userDetails: const UseSmileIDSampleUserDetails(),
-        ),
-      );
-
-      final String reported = (outcome as UseSmileIDSampleFlowNeedsDetails)
-          .issues
-          .map((UseSmileIDValidationException issue) => issue.message)
-          .join('; ');
-      expect(reported, contains('givenNames'));
-      expect(reported, contains('lastName'));
     });
 
     test('sends a KYC product with no country back to the form', () {
@@ -380,23 +362,21 @@ void main() {
       );
     });
 
-    testWidgets('the run route exists and the gate turns an empty form back', (
+    testWidgets('the run route exists and the gate turns an empty ID form back', (
       WidgetTester tester,
     ) async {
       final GoRouter router = await pump(tester);
 
       router.go(
-        UseSmileIDSampleRoutes.sdkFlow(
-          UseSmileIDSampleProduct.smartSelfieEnrollment.id,
-        ),
+        UseSmileIDSampleRoutes.sdkFlow(UseSmileIDSampleProduct.biometricKyc.id),
       );
       await tester.pumpAndSettle();
 
-      // Never mounted: an empty form cannot reach the SDK, so the gate redirects before it does.
+      // Never mounted: a KYC run with no ID details cannot reach the SDK, so the gate redirects first.
       expect(
         router.routerDelegate.currentConfiguration.uri.toString(),
         UseSmileIDSampleRoutes.consentDetailsForm(
-          UseSmileIDSampleProduct.smartSelfieEnrollment.id,
+          UseSmileIDSampleProduct.biometricKyc.id,
         ),
       );
     });
