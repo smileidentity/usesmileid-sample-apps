@@ -343,6 +343,7 @@ export {
   createSmileIDSampleCatalogueStore,
   smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleCatalogueFieldsToCollectOf,
   smileIDSampleCatalogueIdTypesOf,
   type UseSmileIDSampleCatalogueStore,
 } from './data/use-smile-id-sample-catalogue-store';

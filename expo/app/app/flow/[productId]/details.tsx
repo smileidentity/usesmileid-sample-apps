@@ -1,5 +1,6 @@
 import {
   UserDetailsScreen,
+  smileIDSampleCatalogueFieldsToCollectOf,
   smileIDSampleLiveSession,
   smileIDSampleProductFrom,
   smileIDSampleRequirementFor,
@@ -44,13 +45,13 @@ export default function ConsentDetailsForm() {
   const bindings = useSmileIDSampleLiveBindings();
   const { scenario, catalogue } = useLaunchArgs();
   const store = smileIDSampleCatalogueStore(catalogue);
-  const fieldsToCollect = store((state) => state.fieldsToCollect);
-  const requirement = smileIDSampleRequirementFor(bindings, product, fieldsToCollect);
-
-  // A link lands here without the product tap that asks ahead, and the configuration decides which rows show.
   const liveSessionId = useSmileIDSampleSessionStore(
     (state) => smileIDSampleLiveSession(state, state.nowMillis)?.id ?? null,
   );
+  const fieldsToCollect = store((state) => smileIDSampleCatalogueFieldsToCollectOf(state, liveSessionId));
+  const requirement = smileIDSampleRequirementFor(bindings, product, fieldsToCollect);
+
+  // A link lands here without the product tap that asks ahead, and the configuration decides which rows show.
   useEffect(() => {
     const sessions = useSmileIDSampleSessionStore.getState();
     smileIDSampleEnsureEnabled(store, productId, smileIDSampleLiveSession(sessions, sessions.nowMillis));

@@ -1,5 +1,6 @@
 import {
   UseSmileIDSampleStatus,
+  smileIDSampleCatalogueFieldsToCollectOf,
   smileIDSampleDetailsWithoutHiddenNames,
   smileIDSampleLiveSession,
   smileIDSampleProductFrom,
@@ -74,7 +75,10 @@ export default function SdkFlowRun() {
     // eslint-disable-next-line react-hooks/purity -- read once, inside the entry-only memo
     const entryMillis = Date.now();
     const session = smileIDSampleLiveSession(sessions, entryMillis);
-    const fieldsToCollect = smileIDSampleCatalogueStore(args.catalogue).getState().fieldsToCollect;
+    const fieldsToCollect = smileIDSampleCatalogueFieldsToCollectOf(
+      smileIDSampleCatalogueStore(args.catalogue).getState(),
+      session?.id ?? null,
+    );
     return {
       product,
       route: args.route,

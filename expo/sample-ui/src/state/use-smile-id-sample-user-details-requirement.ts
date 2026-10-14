@@ -50,25 +50,27 @@ export const smileIDSampleFieldsToCollectKey = (product: UseSmileIDSampleProduct
     residencyDocumentVerification: 'residency_document_verification',
   })[product.id] ?? null;
 
-/// `product`'s requirement from the API's `fields_to_collect`, or the token rule when it has no entry (spec/user-details-fields.json).
+/// The token rule, less any name `product`'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json).
 export const smileIDSampleRequirementFor = (
   bindings: UseSmileIDSampleTokenBindings | null | undefined,
   product: UseSmileIDSampleProduct | null | undefined,
   fieldsToCollect: UseSmileIDSampleFieldsToCollect | null | undefined,
 ): UseSmileIDSampleUserDetailsRequirement => {
+  const token = smileIDSampleRequirementFrom(bindings);
   const key = product ? smileIDSampleFieldsToCollectKey(product) : null;
   const fields = key === null ? undefined : fieldsToCollect?.[key];
-  if (fields === undefined) return smileIDSampleRequirementFrom(bindings);
-  const firstName = fields.find((field) => field.name === 'given_names');
-  const lastName = fields.find((field) => field.name === 'last_name');
+  if (fields === undefined) return token;
+  const leftOut = (name: string, asked: boolean): boolean =>
+    asked && fields.some((field) => field.name === name && field.required !== true);
+  const hidden = [
+    ...(leftOut('given_names', token.firstName) ? [UseSmileIDSampleUserField.FirstName] : []),
+    ...(leftOut('last_name', token.lastName) ? [UseSmileIDSampleUserField.LastName] : []),
+  ];
   return {
-    firstName: firstName?.required === true,
-    lastName: lastName?.required === true,
-    contact: fields.some((field) => field.name === 'email' || field.name === 'phone_number'),
-    hidden: [
-      ...(firstName !== undefined && firstName.required !== true ? [UseSmileIDSampleUserField.FirstName] : []),
-      ...(lastName !== undefined && lastName.required !== true ? [UseSmileIDSampleUserField.LastName] : []),
-    ],
+    firstName: token.firstName && !hidden.includes(UseSmileIDSampleUserField.FirstName),
+    lastName: token.lastName && !hidden.includes(UseSmileIDSampleUserField.LastName),
+    contact: token.contact,
+    hidden,
   };
 };
 

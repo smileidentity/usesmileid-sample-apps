@@ -54,6 +54,8 @@ type State = {
   readonly enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry>;
   /// Each product's `fields_to_collect` from the same response, or null until it arrives or when it fails.
   readonly fieldsToCollect: UseSmileIDSampleFieldsToCollect | null;
+  /// The session whose token read `fieldsToCollect`, since the API leaves out what that token binds.
+  readonly fieldsSessionId: string | null;
 };
 
 type Actions = {
@@ -138,7 +140,7 @@ export const createSmileIDSampleCatalogueStore = (
       const token = enabledToken;
       const at = ++enabledGeneration;
       enabledInFlight = true;
-      set({ enabled: LOADING, fieldsToCollect: null });
+      set({ enabled: LOADING, fieldsToCollect: null, fieldsSessionId: null });
       let fieldsToCollect: UseSmileIDSampleFieldsToCollect | null = null;
       void load(
         () => source.servicesConfig(key.environment, token, key.locale),
@@ -149,7 +151,7 @@ export const createSmileIDSampleCatalogueStore = (
       ).then((enabled) => {
         if (at !== enabledGeneration) return;
         enabledInFlight = false;
-        set({ enabled, fieldsToCollect });
+        set({ enabled, fieldsToCollect, fieldsSessionId: fieldsToCollect === null ? null : key.sessionId });
       });
     };
     return {
@@ -158,6 +160,7 @@ export const createSmileIDSampleCatalogueStore = (
       documents: LOADING,
       enabled: LOADING,
       fieldsToCollect: null,
+      fieldsSessionId: null,
       begin: (environment, locale) => {
         get().stop();
         set({ run: { environment, locale } });
@@ -192,12 +195,19 @@ export const createSmileIDSampleCatalogueStore = (
           enabledInFlight = false;
           enabledKey = null;
           enabledToken = '';
-          set({ enabled: LOADING, fieldsToCollect: null });
+          set({ enabled: LOADING, fieldsToCollect: null, fieldsSessionId: null });
         }
       },
     };
   });
 };
+
+/// The fields `sessionId`'s own token read, or null for any other session or none.
+export const smileIDSampleCatalogueFieldsToCollectOf = (
+  state: State,
+  sessionId: string | null,
+): UseSmileIDSampleFieldsToCollect | null =>
+  sessionId !== null && state.fieldsSessionId === sessionId ? state.fieldsToCollect : null;
 
 const settled = <T>(items: readonly T[]): UseSmileIDSampleCatalogue<T> =>
   items.length === 0 ? { kind: 'empty' } : { kind: 'ready', items };

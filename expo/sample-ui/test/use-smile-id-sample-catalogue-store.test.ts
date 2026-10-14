@@ -2,6 +2,7 @@ import {
   createSmileIDSampleCatalogueStore,
   smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleCatalogueFieldsToCollectOf,
   smileIDSampleCatalogueIdTypesOf,
 } from '../src/data/use-smile-id-sample-catalogue-store';
 import {
@@ -144,6 +145,20 @@ describe('the catalogue store', () => {
       ],
     });
     expect(calls.config).toBe(1);
+  });
+
+  it('gives the fields only to the live session that read them', async () => {
+    const { source, calls } = counting();
+    calls.answer = '{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}]}, "products": {}}';
+    const store = createSmileIDSampleCatalogueStore(source);
+    store.getState().ensureEnabled('sandbox', 'en-GB', session('a'));
+    await settle();
+
+    expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), 'a')).toEqual({
+      enhanced_kyc: [{ name: 'given_names', required: null }],
+    });
+    expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), 'b')).toBeNull();
+    expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), null)).toBeNull();
   });
 
   it('leaves no fields after a failed configuration, so the form keeps the token rule', async () => {
