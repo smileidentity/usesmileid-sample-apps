@@ -118,14 +118,14 @@ fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUs
     contact = !(this?.email == true || this?.phoneNumber == true),
 )
 
-/** The token rule, less any name [product]'s `fields_to_collect` lets the partner leave out (spec/user-details-fields.json). */
+/** The token rule, less any name [product]'s `fields_to_collect` does not require (spec/user-details-fields.json). */
 fun UseSmileIDSampleTokenBindings?.userDetailsRequirement(
     product: UseSmileIDSampleProduct?,
     fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>?,
 ): UseSmileIDSampleUserDetailsRequirement {
     val token = userDetailsRequirement()
     val fields = product?.fieldsToCollectKey?.let { fieldsToCollect?.get(it) } ?: return token
-    fun leftOut(name: String, asked: Boolean) = asked && fields.any { it.name == name && it.required != true }
+    fun leftOut(name: String, asked: Boolean) = asked && fields.none { it.name == name && it.required == true }
     val hidden = buildSet {
         if (leftOut("given_names", token.firstName)) add(UseSmileIDSampleUserField.FirstName)
         if (leftOut("last_name", token.lastName)) add(UseSmileIDSampleUserField.LastName)
