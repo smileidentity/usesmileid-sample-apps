@@ -40,10 +40,8 @@ class UseSmileIDSampleHttpCatalogueSource
     String locale,
   ) => _get(
     Uri.parse('${environment.baseUrl}v3/services/config').replace(
-      queryParameters: <String, String>{
-        'product': UseSmileIDSampleCatalogueJson.enhancedDocumentVerification,
-        'locale': locale,
-      },
+      // No `product`, so one response carries every product's `fields_to_collect`.
+      queryParameters: <String, String>{'locale': locale},
     ),
     token: token,
   );

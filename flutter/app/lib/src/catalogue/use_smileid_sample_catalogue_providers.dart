@@ -29,13 +29,14 @@ UseSmileIDSampleEnvironment useSmileIDSampleCatalogueEnvironment(
     ? UseSmileIDSampleEnvironment.sandbox
     : UseSmileIDSampleEnvironment.production;
 
-/// Enhanced Document Verification's own list, which [live]'s token decides; any other product has none.
+/// [live]'s configuration: Enhanced Document Verification's own list, and every product's user-details fields.
 void useSmileIDSampleEnsureEnabled(
   UseSmileIDSampleCatalogueStore store,
   UseSmileIDSampleProduct? product,
   UseSmileIDSampleTokenSession? live,
 ) {
-  if (product == UseSmileIDSampleProduct.enhancedDocumentVerification) {
+  if (product == UseSmileIDSampleProduct.enhancedDocumentVerification ||
+      live != null) {
     store.ensureEnabled(
       useSmileIDSampleCatalogueEnvironment(live),
       useSmileIDSampleCatalogueLocale(),

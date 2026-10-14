@@ -211,6 +211,27 @@ class UseSmileIDSampleApiEnabledCountry {
   final List<UseSmileIDSampleApiEnabledDocument> documents;
 }
 
+/// A field of `fields_to_collect` in `GET /v3/services/config`; [required] is null when the response leaves the key out.
+class UseSmileIDSampleApiField {
+  /// Every field the requirement reads.
+  const UseSmileIDSampleApiField(this.name, {this.required});
+
+  /// The request field it names, such as `given_names`.
+  final String name;
+
+  /// Whether the request must carry it; null when the key is absent.
+  final bool? required;
+
+  @override
+  bool operator ==(Object other) =>
+      other is UseSmileIDSampleApiField &&
+      other.name == name &&
+      other.required == required;
+
+  @override
+  int get hashCode => Object.hash(name, required);
+}
+
 /// One enabled ID type: the code to submit and its label.
 class UseSmileIDSampleApiEnabledDocument {
   /// Every field the rules read.
@@ -521,7 +542,39 @@ abstract final class UseSmileIDSampleCatalogueJson {
     ];
   }
 
-  /// The product key the configuration call asks for and reads back.
+  /// `fields_to_collect` of a `GET /v3/services/config` body by product key, empty when it carries none; null when unreadable.
+  static Map<String, List<UseSmileIDSampleApiField>>? fieldsToCollect(
+    String body,
+  ) {
+    final Object? root = _decode(body);
+    if (root is! Map<String, Object?>) {
+      return null;
+    }
+    final Object? section = root['fields_to_collect'];
+    return fieldsToCollectSection(
+      section is Map<String, Object?> ? section : const <String, Object?>{},
+    );
+  }
+
+  /// One `fields_to_collect` object, each product's list kept to the fields that carry a name.
+  static Map<String, List<UseSmileIDSampleApiField>> fieldsToCollectSection(
+    Map<String, Object?> section,
+  ) => <String, List<UseSmileIDSampleApiField>>{
+    for (final MapEntry<String, Object?> product in section.entries)
+      product.key: <UseSmileIDSampleApiField>[
+        if (product.value is List<Object?>)
+          for (final Object? field in product.value! as List<Object?>)
+            if (field is Map<String, Object?> && field['name'] is String)
+              UseSmileIDSampleApiField(
+                field['name']! as String,
+                required: field['required'] is bool
+                    ? field['required']! as bool
+                    : null,
+              ),
+      ],
+  };
+
+  /// The product key Enhanced Document Verification's lists are read back under.
   static const String enhancedDocumentVerification =
       'enhanced_document_verification';
 

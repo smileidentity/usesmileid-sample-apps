@@ -117,6 +117,26 @@ void main() {
     );
   });
 
+  /// The product's `fields_to_collect` lets the partner leave the names out, so only the contact rows show.
+  testWidgets('user details with names not asked', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_user_details_names_not_asked',
+      () => _userDetails(requirement: _namesNotAsked),
+    );
+  });
+
+  testWidgets('user details with names not asked survives max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      _userDetails(requirement: _namesNotAsked),
+      ownsScrolling: true,
+      hostHeight: goldenScreenHeight * 2,
+    );
+  });
+
   /// Part-typed: what the form looks like while it is being filled in.
   testWidgets('user details editing', (WidgetTester tester) async {
     await _screenGoldens(
@@ -352,6 +372,16 @@ void main() {
     );
   });
 }
+
+const UseSmileIDSampleUserDetailsRequirement _namesNotAsked =
+    UseSmileIDSampleUserDetailsRequirement(
+      firstName: false,
+      lastName: false,
+      hidden: <UseSmileIDSampleUserField>{
+        UseSmileIDSampleUserField.firstName,
+        UseSmileIDSampleUserField.lastName,
+      },
+    );
 
 Future<void> _screenGoldens(
   WidgetTester tester,

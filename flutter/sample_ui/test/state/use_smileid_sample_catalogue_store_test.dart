@@ -127,6 +127,43 @@ void main() {
     }
   });
 
+  testWidgets('the same answer carries every product\'s fields', (
+    WidgetTester tester,
+  ) async {
+    final _CountingSource source = _CountingSource()
+      ..config =
+          '{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}, '
+          '{"name": "email", "required": false}]}, "products": {}}';
+    final UseSmileIDSampleCatalogueStore store = storeOver(source);
+    addTearDown(store.dispose);
+    expect(store.fieldsToCollect, isNull);
+    store.ensureEnabled(sandbox, 'en-GB', session('a'));
+    await tester.pump();
+
+    expect(store.fieldsToCollect, <String, List<UseSmileIDSampleApiField>>{
+      'enhanced_kyc': <UseSmileIDSampleApiField>[
+        const UseSmileIDSampleApiField('given_names'),
+        const UseSmileIDSampleApiField('email', required: false),
+      ],
+    });
+    expect(source.configCalls, 1);
+  });
+
+  testWidgets(
+    'a failed configuration leaves no fields, so the form keeps the token rule',
+    (WidgetTester tester) async {
+      final _CountingSource source = _CountingSource()..offline = true;
+      final UseSmileIDSampleCatalogueStore store = storeOver(source)
+        ..ensureEnabled(sandbox, 'en-GB', session('a'));
+      addTearDown(store.dispose);
+      await tester.pump();
+
+      expect(store.fieldsToCollect, isNull);
+      store.stop();
+      expect(store.fieldsToCollect, isNull);
+    },
+  );
+
   testWidgets('no network on the partner\'s list is the default error', (
     WidgetTester tester,
   ) async {
@@ -305,6 +342,7 @@ class _CountingSource implements UseSmileIDSampleCatalogueSource {
   String? lastToken;
   int? refusing;
   bool offline = false;
+  String? config;
   final List<String> locales = <String>[];
 
   void release() => _released.complete();
@@ -352,6 +390,9 @@ class _CountingSource implements UseSmileIDSampleCatalogueSource {
     if (offline) {
       return Future<String>.error(StateError('offline'));
     }
-    return _answer(() => _fixture.servicesConfig(environment, token, locale));
+    final String? answer = config;
+    return answer != null
+        ? _answer(() => Future<String>.value(answer))
+        : _answer(() => _fixture.servicesConfig(environment, token, locale));
   }
 }

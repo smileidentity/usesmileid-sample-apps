@@ -40,6 +40,12 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
   UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> get enabled =>
       _enabled;
 
+  Map<String, List<UseSmileIDSampleApiField>>? _fieldsToCollect;
+
+  /// Each product's `fields_to_collect` from the same response, or null until it arrives or when it fails.
+  Map<String, List<UseSmileIDSampleApiField>>? get fieldsToCollect =>
+      _fieldsToCollect;
+
   UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> _idTypes =
       const UseSmileIDSampleCatalogueLoading<UseSmileIDSampleApiIdType>();
   UseSmileIDSampleCatalogue<UseSmileIDSampleApiCountryDocuments> _documents =
@@ -125,6 +131,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
           const UseSmileIDSampleCatalogueLoading<
             UseSmileIDSampleApiEnabledCountry
           >();
+      _fieldsToCollect = null;
     }
     notifyListeners();
   }
@@ -294,16 +301,27 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
           UseSmileIDSampleApiEnabledCountry
         >();
     _enabledInFlight = true;
+    _fieldsToCollect = null;
     notifyListeners();
     final int generation = ++_enabledGeneration;
+    String? body;
     _load(
-      () => _source.servicesConfig(key.$2, token, key.$3),
+      () async => body = await _source.servicesConfig(key.$2, token, key.$3),
       UseSmileIDSampleCatalogueJson.enabledCountries,
     ).then((
       UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> result,
-    ) {
+    ) async {
+      final String? answered = body;
+      final Map<String, List<UseSmileIDSampleApiField>>? fields =
+          answered == null
+          ? null
+          : await _decode(
+              UseSmileIDSampleCatalogueJson.fieldsToCollect,
+              answered,
+            );
       if (generation == _enabledGeneration) {
         _enabled = result;
+        _fieldsToCollect = fields;
         _enabledInFlight = false;
         notifyListeners();
       }

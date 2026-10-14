@@ -1,15 +1,20 @@
+import 'package:flutter/foundation.dart';
+
+import '../model/use_smileid_sample_product.dart';
 import '../use_smileid_sample_strings.dart';
+import 'use_smileid_sample_catalogue.dart';
 import 'use_smileid_sample_contact_rules.dart';
 import 'use_smileid_sample_profiles.dart';
 import 'use_smileid_sample_token_decoder.dart';
 
-/// What the consent form still has to collect, which a token can narrow.
+/// What the consent form still has to collect, and which rows it leaves out: the product's `fields_to_collect`, or the token rule without one.
 class UseSmileIDSampleUserDetailsRequirement {
   /// Everything required, which is what a launch with no token gets.
   const UseSmileIDSampleUserDetailsRequirement({
     this.firstName = true,
     this.lastName = true,
     this.contact = true,
+    this.hidden = const <UseSmileIDSampleUserField>{},
   });
 
   /// Whether a given name is still needed.
@@ -21,13 +26,19 @@ class UseSmileIDSampleUserDetailsRequirement {
   /// Whether an email OR a phone is still needed; one of, never both.
   final bool contact;
 
+  /// The rows the form does not draw: names the partner may leave out.
+  final Set<UseSmileIDSampleUserField> hidden;
+
+  /// Whether the form draws [field]'s row.
+  bool shows(UseSmileIDSampleUserField field) => !hidden.contains(field);
+
   /// Nothing left to ask, so the form has no reason to appear.
   bool get isSatisfied => !firstName && !lastName && !contact;
 
   /// Whether the token supplied [field].
   bool supplies(UseSmileIDSampleUserField field) => switch (field) {
-    UseSmileIDSampleUserField.firstName => !firstName,
-    UseSmileIDSampleUserField.lastName => !lastName,
+    UseSmileIDSampleUserField.firstName => !firstName && shows(field),
+    UseSmileIDSampleUserField.lastName => !lastName && shows(field),
     // Contact is one of two, so neither row is supplied on its own.
     UseSmileIDSampleUserField.email || UseSmileIDSampleUserField.phone => false,
   };
@@ -37,10 +48,16 @@ class UseSmileIDSampleUserDetailsRequirement {
       other is UseSmileIDSampleUserDetailsRequirement &&
       other.firstName == firstName &&
       other.lastName == lastName &&
-      other.contact == contact;
+      other.contact == contact &&
+      setEquals(other.hidden, hidden);
 
   @override
-  int get hashCode => Object.hash(firstName, lastName, contact);
+  int get hashCode => Object.hash(
+    firstName,
+    lastName,
+    contact,
+    Object.hashAllUnordered(hidden),
+  );
 
   /// Whether [details] satisfies what is still outstanding, in a form the server accepts.
   bool isSatisfiedBy(UseSmileIDSampleUserDetails details) =>
@@ -86,6 +103,74 @@ UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
   lastName: bindings?.lastName != true,
   contact: !(bindings?.email == true || bindings?.phoneNumber == true),
 );
+
+/// [product]'s requirement from the API's `fields_to_collect`, or the token rule when it has no entry (spec/user-details-fields.json).
+UseSmileIDSampleUserDetailsRequirement
+useSmileIDSampleUserDetailsRequirementFor(
+  UseSmileIDSampleTokenBindings? bindings,
+  UseSmileIDSampleProduct? product,
+  Map<String, List<UseSmileIDSampleApiField>>? fieldsToCollect,
+) {
+  final String? key = product?.fieldsToCollectKey;
+  final List<UseSmileIDSampleApiField>? fields = key == null
+      ? null
+      : fieldsToCollect?[key];
+  if (fields == null) {
+    return useSmileIDSampleUserDetailsRequirement(bindings);
+  }
+  UseSmileIDSampleApiField? named(String name) => fields
+      .where((UseSmileIDSampleApiField it) => it.name == name)
+      .firstOrNull;
+  final UseSmileIDSampleApiField? firstName = named('given_names');
+  final UseSmileIDSampleApiField? lastName = named('last_name');
+  return UseSmileIDSampleUserDetailsRequirement(
+    firstName: firstName?.required == true,
+    lastName: lastName?.required == true,
+    contact: fields.any(
+      (UseSmileIDSampleApiField it) =>
+          it.name == 'email' || it.name == 'phone_number',
+    ),
+    hidden: <UseSmileIDSampleUserField>{
+      if (firstName != null && firstName.required != true)
+        UseSmileIDSampleUserField.firstName,
+      if (lastName != null && lastName.required != true)
+        UseSmileIDSampleUserField.lastName,
+    },
+  );
+}
+
+/// The product's key in `fields_to_collect`.
+extension UseSmileIDSampleFieldsToCollectKey on UseSmileIDSampleProduct {
+  /// Null for the SmartSelfie products, which have none.
+  String? get fieldsToCollectKey => switch (this) {
+    UseSmileIDSampleProduct.smartSelfieEnrollment ||
+    UseSmileIDSampleProduct.smartSelfieAuth => null,
+    UseSmileIDSampleProduct.biometricKyc => 'biometric_kyc',
+    UseSmileIDSampleProduct.enhancedKyc => 'enhanced_kyc',
+    UseSmileIDSampleProduct.documentVerification => 'doc_verification',
+    UseSmileIDSampleProduct.enhancedDocumentVerification =>
+      'enhanced_document_verification',
+    UseSmileIDSampleProduct.residencyDocumentVerification =>
+      'residency_document_verification',
+  };
+}
+
+/// A row the form hides submits nothing.
+extension UseSmileIDSampleHiddenNames on UseSmileIDSampleUserDetails {
+  /// These details with every name [requirement] does not show left blank.
+  UseSmileIDSampleUserDetails withoutHiddenNames(
+    UseSmileIDSampleUserDetailsRequirement requirement,
+  ) => UseSmileIDSampleUserDetails(
+    firstName: requirement.shows(UseSmileIDSampleUserField.firstName)
+        ? firstName
+        : '',
+    lastName: requirement.shows(UseSmileIDSampleUserField.lastName)
+        ? lastName
+        : '',
+    email: email,
+    phone: phone,
+  );
+}
 
 /// Mirrors the SDK's internal `bindsRequiredUserDetails`.
 extension UseSmileIDSampleRequiredUserDetails on UseSmileIDSampleTokenBindings {
