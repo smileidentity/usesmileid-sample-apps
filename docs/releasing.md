@@ -68,9 +68,18 @@ analyzers, chosen per phone. A Huawei phone without Google services runs HMS, an
 Kit. The app needs no `agconnect-services.json`: HMS's on-device analyzers run without AppGallery Connect
 services.
 
-**Size.** AppGallery takes the universal APK, so the flavor keeps only the ARM ABIs (`arm64-v8a`,
-`armeabi-v7a`): about 53 MB, against Play's 15 MB per-device download. HMS adds about 15 MB on an arm64
-phone, mostly its native libraries and bundled models. The workflow writes the APK's size to the run summary.
+**Size.** AppGallery serves the APK whole, so the flavor keeps only the ARM ABIs (`arm64-v8a`,
+`armeabi-v7a`). Measured on an arm64 Huawei:
+
+| Build | Download | Installed |
+| --- | --- | --- |
+| Play, per-device split | 14 MB | 30 MB |
+| AppGallery APK | 53 MB | 64 MB |
+| AppGallery as an App Bundle, per-device split | 24 MB | 46 MB |
+
+HMS itself adds about 10 MB to the download. The rest of the gap is the APK carrying both ARM ABIs and every
+density, which a per-device split leaves out. An App Bundle needs AGC App Signing, which puts the signing key
+with Huawei, so the lane uploads the APK. The workflow writes the APK's size to the run summary.
 
 **Signing.** The APK is signed with the Play upload key, and AppGallery distributes it as signed. AGC App
 Signing stays off, so no key is held by Huawei and the APK on the shelf has the same certificate as the one
