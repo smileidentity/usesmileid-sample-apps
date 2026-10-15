@@ -75,6 +75,8 @@ class TestPublish(unittest.TestCase):
     def setUp(self):
         self.calls = []
         self.submit_failures = 0
+        self.submit_refusal = None
+        self.submit_refusal_count = 0
         self.patch(agc, "call", self.fake_call)
         self.patch(agc, "upload", lambda headers, app, path: "https://obs/app.aab")
         self.patch(agc.time, "sleep", lambda seconds: None)
@@ -89,9 +91,12 @@ class TestPublish(unittest.TestCase):
         self.calls.append((method, path, body))
         if path == "publish/v2/appid-list":
             return {"appids": [{"key": "Smile ID", "value": "1234"}]}
+        if path == "publish/v2/app-submit" and self.submit_refusal:
+            self.submit_refusal_count += 1
+            agc.checked({"ret": self.submit_refusal})
         if path == "publish/v2/app-submit" and self.submit_failures:
             self.submit_failures -= 1
-            raise agc.AgcError("the package is being parsed")
+            agc.checked({"ret": {"code": 204144660, "msg": "[cds]submit failed, additional msg is [the package is parsing, please wait]"}})
         return {}
 
     def test_notes_then_file_then_submit(self):
@@ -113,6 +118,30 @@ class TestPublish(unittest.TestCase):
         self.submit_failures = agc.SUBMIT_ATTEMPTS
         with self.assertRaises(agc.AgcError):
             agc.publish({}, "app.aab", "Notes.")
+
+    def test_a_bundle_still_compiling_is_retried(self):
+        self.submit_refusal = {"code": 204144727, "msg": "The package is being compiled. Please try again in 3-5 minutes."}
+        with self.assertRaises(agc.AgcError):
+            agc.publish({}, "app.aab", "Notes.")
+        self.assertEqual(agc.SUBMIT_ATTEMPTS, self.submit_refusal_count)
+
+    def test_a_submit_asked_to_wait_minutes_is_retried(self):
+        self.submit_refusal = {"code": 204144660, "msg": "[cds]submit failed. It may take 2-5 minutes to process the package."}
+        with self.assertRaises(agc.AgcError):
+            agc.publish({}, "app.aab", "Notes.")
+        self.assertEqual(agc.SUBMIT_ATTEMPTS, self.submit_refusal_count)
+
+    def test_a_refusal_that_waiting_cannot_fix_fails_on_the_first_attempt(self):
+        self.submit_refusal = {"code": 204144660, "msg": "[cds]submit failed, additional msg is [registeredEntity and registeredEntityName can not be empty.]"}
+        with self.assertRaisesRegex(agc.AgcError, "registeredEntity"):
+            agc.publish({}, "app.aab", "Notes.")
+        self.assertEqual(1, self.submit_refusal_count)
+
+    def test_another_code_fails_on_the_first_attempt(self):
+        self.submit_refusal = {"code": 204144647, "msg": "app not found"}
+        with self.assertRaises(agc.AgcError):
+            agc.publish({}, "app.aab", "Notes.")
+        self.assertEqual(1, self.submit_refusal_count)
 
 
 class TestPackageSuffix(unittest.TestCase):

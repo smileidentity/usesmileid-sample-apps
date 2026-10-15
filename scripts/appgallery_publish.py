@@ -28,16 +28,28 @@ SUBMIT_ATTEMPTS = 10
 PACKAGE_SUFFIXES = ("aab", "apk")
 
 
+# AGC also returns these codes for refusals that waiting cannot fix, so only these messages mean "still processing".
+PROCESSING_MESSAGES = {204144660: ("pars", "解析", "2-5 minutes"), 204144727: ("compil", "编译", "try again")}
+
+
 class AgcError(RuntimeError):
-    pass
+    def __init__(self, message: str, code: int | None = None, msg: str = ""):
+        super().__init__(message)
+        self.code = code
+        self.msg = msg
 
 
 def checked(body: dict) -> dict:
     """AGC reports failures in `ret.code` with an HTTP 200, so a call is only good when that is 0."""
     ret = body.get("ret") or {}
     if ret.get("code", 0) != 0:
-        raise AgcError(f"AppGallery Connect error {ret.get('code')}: {ret.get('msg', '')}")
+        raise AgcError(f"AppGallery Connect error {ret.get('code')}: {ret.get('msg', '')}", ret.get("code"), ret.get("msg", ""))
     return body
+
+
+def still_processing(error: AgcError) -> bool:
+    """Whether AGC refused the submit only because it has not finished processing the package."""
+    return any(hint in error.msg.lower() for hint in PROCESSING_MESSAGES.get(error.code, ()))
 
 
 def call(method: str, url: str, headers: dict, body: dict | None = None) -> dict:
@@ -142,8 +154,8 @@ def publish(headers: dict, path: str, notes: str) -> None:
         try:
             call("POST", f"{API}/publish/v2/app-submit?{query}", headers)
             return
-        except AgcError:
-            if attempt == SUBMIT_ATTEMPTS:
+        except AgcError as error:
+            if attempt == SUBMIT_ATTEMPTS or not still_processing(error):
                 raise
 
 

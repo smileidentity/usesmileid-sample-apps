@@ -250,6 +250,7 @@ Simulate disappears from a release build.
 | The archive fails in CI with *No Accounts* | The archive step had no key to authenticate with | Pass the key to the archive as well as the export |
 | The first dispatch fails with *maximum number of certificates generated* | The team already has three distribution certificates | Revoke an unused one first |
 | AppGallery submit fails after ten attempts | AppGallery had not finished processing the bundle after about eleven minutes | Submit the uploaded version in AppGallery Connect; the package is already there |
+| AppGallery submit fails at once, with a message that is not about parsing or compiling | AppGallery Connect lacks something the review needs, such as the content rating or the developer entity | Fill it in AppGallery Connect, then submit the uploaded version there; the package is already there |
 | AppGallery reports *app not found* for the package | The app does not exist in AppGallery Connect yet | Do the first-release steps above |
 | AppGallery upload refused: the version code is not higher | A code was uploaded by hand above what Play holds | Dispatch with `lookup_only`; it reads both stores |
 | A workflow on a branch cannot be dispatched | GitHub lists a dispatchable workflow only once its file is on `main` | Merge the workflow first, or run the same step locally |
