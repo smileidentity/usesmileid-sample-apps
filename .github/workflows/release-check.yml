@@ -7,6 +7,8 @@ on:
   pull_request:
     paths:
       - 'android/play/**'
+      - 'android/appgallery/**'
+      - 'scripts/appgallery_publish.py'
       - 'android/app/build.gradle.kts'
       - 'ios/store/**'
       - 'ios/App/project.yml'
@@ -41,11 +43,15 @@ jobs:
 
       - name: Bundle
         working-directory: android
-        run: ./gradlew bundleRelease
+        run: ./gradlew bundlePlayRelease bundleAppgalleryRelease
 
       - name: Report the delivered size
         shell: bash
-        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/release/app-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/playRelease/app-play-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Report the AppGallery size
+        shell: bash
+        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Store art is present and store-legal
         run: |
@@ -70,6 +76,17 @@ jobs:
           FG=android/play/feature-graphic.png
           test -f "$FG" || { echo "::error::Play requires a feature graphic and $FG is missing"; exit 1; }
           npx --yes -p storeshots-mcp storeshots validate --preset play-feature-graphic "$FG"
+
+      - name: AppGallery icon is store-legal
+        run: |
+          ICON=android/appgallery/icon.png
+          test -f "$ICON" || { echo "::error::AppGallery requires an icon and $ICON is missing"; exit 1; }
+          dim=$(python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(33);print(f'{struct.unpack(\">I\",d[16:20])[0]}x{struct.unpack(\">I\",d[20:24])[0]}')" "$ICON")
+          size=$(stat -c %s "$ICON")
+          # AppGallery takes a 216 or 1024 px square PNG of at most 3 MB.
+          case "$dim" in 216x216|1024x1024) ;; *) echo "::error file=$ICON::$dim, expected 1024x1024 or 216x216"; exit 1;; esac
+          [ "$size" -le 3145728 ] || { echo "::error file=$ICON::$size bytes, over AppGallery's 3 MB"; exit 1; }
+          echo "  icon.png $dim, $size bytes"
 
       - name: Rendered panels are store-legal, when they have been rendered
         run: |

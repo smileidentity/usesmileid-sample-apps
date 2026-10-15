@@ -34,9 +34,11 @@ echo "==> third-party notices are current"
 # Committed into sample-ui's assets, so a dependency change nobody regenerated fails here.
 python3 "$REPO_ROOT/scripts/test_generate_licenses.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_play_publish.py" >/dev/null
+python3 "$REPO_ROOT/scripts/test_appgallery_publish.py" >/dev/null
+python3 "$REPO_ROOT/scripts/appgallery_publish.py" check-notes "$REPO_ROOT/android/appgallery/whatsnew-en-US"
 python3 "$REPO_ROOT/scripts/test_app_size.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_select_android_flows.py" >/dev/null
-./gradlew :app:checkLicenses
+./gradlew :app:checkLicenses :app:checkAppgalleryLicenses
 
 echo "==> strings are current"
 # Generated from spec/l10n/; a hand edit fails here.

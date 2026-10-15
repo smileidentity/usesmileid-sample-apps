@@ -71,7 +71,7 @@ takes once installed, these apps' own sizes for comparison, and how they are mea
 
 ```bash
 cd android
-./gradlew installDebug
+./gradlew installPlayDebug        # or installAppgalleryDebug: adds Huawei's HMS analyzers, picked per device
 adb shell am start -a android.intent.action.VIEW -d "usesmileid-sample-android://products"
 ```
 

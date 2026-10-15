@@ -1,0 +1,1 @@
+The first AppGallery release. Every product runs on Huawei phones without Google services: face and document capture use Huawei's HMS ML Kit on the device, and the app picks HMS or Google's ML Kit by what the phone has. Each product asks for a token first, and the scanner says where to get one. Country and ID type lists load live from Smile ID.

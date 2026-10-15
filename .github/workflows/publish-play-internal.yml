@@ -59,7 +59,7 @@ jobs:
       - name: Bundle
         if: ${{ !inputs.lookup_only }}
         working-directory: android
-        run: ./gradlew bundleRelease
+        run: ./gradlew bundlePlayRelease
         env:
           ORG_GRADLE_PROJECT_REQUIRE_UPLOAD_SIGNING: "true"
           ORG_GRADLE_PROJECT_VERSION_CODE: ${{ steps.version.outputs.code }}
@@ -72,6 +72,6 @@ jobs:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
           packageName: com.usesmileid.sample.android
           track: internal
-          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          releaseFiles: android/app/build/outputs/bundle/playRelease/app-play-release.aab
           releaseName: ${{ steps.version.outputs.code }}
           whatsNewDirectory: android/play/whatsnew

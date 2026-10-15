@@ -10,10 +10,12 @@ import com.usesmileid.sampleapps.ui.state.string
 data class UseSmileIDSampleLicenses(
     val openSource: List<UseSmileIDSampleNotice> = emptyList(),
     val googleServices: List<UseSmileIDSampleNotice> = emptyList(),
+    /** Present only in a build that ships Huawei's HMS analyzers. */
+    val huaweiServices: List<UseSmileIDSampleNotice> = emptyList(),
     /** Keyed by licence id, so two hundred Apache components share one copy of the text. */
     val texts: Map<String, String> = emptyMap(),
 ) {
-    val isEmpty: Boolean get() = openSource.isEmpty() && googleServices.isEmpty()
+    val isEmpty: Boolean get() = openSource.isEmpty() && googleServices.isEmpty() && huaweiServices.isEmpty()
 }
 
 /** One dependency a partner ships, and what it is licensed under. */
@@ -34,6 +36,7 @@ fun parseUseSmileIDSampleLicenses(json: String): UseSmileIDSampleLicenses {
     return UseSmileIDSampleLicenses(
         openSource = root.notices("openSource", "licenses"),
         googleServices = root.notices("googleServices", "terms"),
+        huaweiServices = root.notices("huaweiServices", "terms"),
         texts = (root.members["licenseTexts"] as? TokenJson.Obj)
             ?.members
             ?.mapNotNull { (id, value) -> (value as? TokenJson.Str)?.let { id to it.value } }

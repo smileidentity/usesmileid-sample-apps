@@ -7,6 +7,7 @@ import android.content.res.Configuration
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -138,6 +139,9 @@ fun SdkFlowScreen(
     }
     // UseSmileIDBuilder takes no theme input, so the subtree's uiMode carries the app's appearance; see docs/theming.md.
     val configuration = LocalConfiguration.current
+    val context = LocalContext.current
+    // Probed once: a binder call whose answer cannot change while the process lives.
+    val mlBackend = remember(context) { mlBackendFor(context) }
     val flowConfiguration = remember(configuration, app.resolvedDark) {
         Configuration(configuration).apply {
             uiMode = (uiMode and Configuration.UI_MODE_NIGHT_MASK.inv()) or
@@ -147,7 +151,7 @@ fun SdkFlowScreen(
     CompositionLocalProvider(LocalConfiguration provides flowConfiguration) {
         MaterialTheme(colorScheme = hostScheme) {
             UseSmileIDBuilder(modifier = Modifier.fillMaxSize()) {
-                applying(snapshot, onTokenRefreshed = app.flowResult::recordRefreshCallback)
+                applying(snapshot, mlBackend = mlBackend, onTokenRefreshed = app.flowResult::recordRefreshCallback)
                 useSmileIDSampleShellExtension?.customiseFlow(this, snapshot.product)
                 if (snapshot.scenario != UseSmileIDSampleScenario.NoCallback) {
                     onResult = { result ->

@@ -314,6 +314,7 @@
 "licenses_empty_body" = "ملف licenses.json المُنشأ غير موجود في هذا الإصدار";
 "licenses_section" = "مكوّنات مفتوحة المصدر — %1$ld";
 "licenses_google_section" = "بموجب شروط Google الخاصة — %1$ld";
+"licenses_huawei_section" = "بموجب شروط Huawei الخاصة — %1$ld";
 "licenses_text_ships_with_component" = "يُرفق النص مع المكوّن نفسه.";
 "licenses_text_ships_with_component_at" = "يأتي النص مع المكوّن نفسه، على %1$@";
 "licenses_open" = "فتح %1$@";

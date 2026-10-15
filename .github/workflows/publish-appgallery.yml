@@ -1,0 +1,87 @@
+name: Publish to AppGallery
+
+on:
+  workflow_dispatch:
+    inputs:
+      lookup_only:
+        description: Only print the versionCode the next upload would take; build and upload nothing
+        type: boolean
+        default: false
+
+concurrency:
+  group: publish-appgallery
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # The store credentials live in this environment, whose reviewers approve each run.
+    environment: release
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - name: Validate the Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+
+      - name: Materialise the upload keystore
+        if: ${{ !inputs.lookup_only }}
+        uses: timheuer/base64-to-file@v2.0.0
+        with:
+          fileName: upload.jks
+          fileDir: ./android/app
+          encodedString: ${{ secrets.UPLOAD_KEYSTORE }}
+
+      # Above both stores' codes, so AppGallery never reuses one Play has taken.
+      - name: Version code
+        id: version
+        run: |
+          play=$(python3 scripts/play_publish.py next-version-code)
+          agc=$(python3 scripts/appgallery_publish.py highest-version-code)
+          code=$(( play > agc + 1 ? play : agc + 1 ))
+          echo "code=$code" >> "$GITHUB_OUTPUT"
+          echo "### Next versionCode: $code (Play next $play, AppGallery highest $agc)" >> "$GITHUB_STEP_SUMMARY"
+        env:
+          PLAY_STORE_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT_JSON }}
+          AGC_CLIENT_ID: ${{ secrets.AGC_CLIENT_ID }}
+          AGC_CLIENT_SECRET: ${{ secrets.AGC_CLIENT_SECRET }}
+
+      - name: Assemble
+        if: ${{ !inputs.lookup_only }}
+        working-directory: android
+        run: ./gradlew bundleAppgalleryRelease
+        env:
+          ORG_GRADLE_PROJECT_REQUIRE_UPLOAD_SIGNING: "true"
+          ORG_GRADLE_PROJECT_VERSION_CODE: ${{ steps.version.outputs.code }}
+          ORG_GRADLE_PROJECT_uploadKeystorePassword: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
+
+      # AppGallery offers App Signing only on a bundle's first upload, which may need to go up by hand.
+      - name: Keep the signed bundle
+        if: ${{ !inputs.lookup_only }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: appgallery-bundle
+          path: android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab
+          retention-days: 7
+
+      - name: Upload and submit for review
+        if: ${{ !inputs.lookup_only }}
+        run: |
+          aab=android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab
+          python3 scripts/app_size.py android "$aab" >> "$GITHUB_STEP_SUMMARY" || echo "Size report failed" >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/appgallery_publish.py publish --package "$aab" --notes android/appgallery/whatsnew-en-US
+        env:
+          AGC_CLIENT_ID: ${{ secrets.AGC_CLIENT_ID }}
+          AGC_CLIENT_SECRET: ${{ secrets.AGC_CLIENT_SECRET }}

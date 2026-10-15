@@ -316,6 +316,7 @@
     <string name="sample_licenses_empty_body">Le fichier licenses.json généré est absent de cette version</string>
     <string name="sample_licenses_section">COMPOSANTS OPEN SOURCE — %1$d</string>
     <string name="sample_licenses_google_section">SOUS LES CONDITIONS PROPRES À GOOGLE — %1$d</string>
+    <string name="sample_licenses_huawei_section">SOUS LES CONDITIONS PROPRES À HUAWEI — %1$d</string>
     <string name="sample_licenses_text_ships_with_component">Le texte est fourni avec le composant.</string>
     <string name="sample_licenses_text_ships_with_component_at">Le texte est fourni avec le composant lui-même, à l\'adresse %1$s</string>
     <string name="sample_licenses_open">Ouvrir %1$s</string>

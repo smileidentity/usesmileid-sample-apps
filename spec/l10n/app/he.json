@@ -329,6 +329,7 @@
   "licenses_empty_body": "הקובץ licenses.json שנוצר חסר בגרסה זו",
   "licenses_section": "רכיבי קוד פתוח — {count}",
   "licenses_google_section": "בכפוף לתנאים של Google — {count}",
+  "licenses_huawei_section": "בכפוף לתנאים של Huawei — {count}",
   "licenses_text_ships_with_component": "הטקסט מצורף לרכיב עצמו.",
   "licenses_text_ships_with_component_at": "הטקסט מצורף לרכיב עצמו, בכתובת {url}",
   "licenses_open": "פתיחת {license}"

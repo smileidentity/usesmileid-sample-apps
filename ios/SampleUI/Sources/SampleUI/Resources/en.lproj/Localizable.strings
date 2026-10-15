@@ -314,6 +314,7 @@
 "licenses_empty_body" = "The generated licenses.json is missing from this build";
 "licenses_section" = "OPEN-SOURCE COMPONENTS — %1$ld";
 "licenses_google_section" = "UNDER GOOGLE'S OWN TERMS — %1$ld";
+"licenses_huawei_section" = "UNDER HUAWEI'S OWN TERMS — %1$ld";
 "licenses_text_ships_with_component" = "The text ships with the component itself.";
 "licenses_text_ships_with_component_at" = "The text ships with the component itself, at %1$@";
 "licenses_open" = "Open %1$@";
