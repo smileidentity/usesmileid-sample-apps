@@ -59,6 +59,10 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
   /// What is still outstanding.
   final UseSmileIDSampleUserDetailsRequirement requirement;
 
+  /// The rows the requirement shows, in the form's order.
+  List<UseSmileIDSampleUserField> get _rows =>
+      UseSmileIDSampleUserField.values.where(requirement.shows).toList();
+
   /// Who this run is for; null while there is no profile, when the form offers to create one.
   final UseSmileIDSampleProfile? profile;
 
@@ -145,53 +149,32 @@ class UseSmileIDSampleUserDetailsScreen extends StatelessWidget {
                           ),
                           const UseSmileIDSampleSettingRowDivider(),
                         ],
-                        for (
-                          int i = 0;
-                          i < UseSmileIDSampleUserField.values.length;
-                          i++
-                        ) ...<Widget>[
+                        for (int i = 0; i < _rows.length; i++) ...<Widget>[
                           if (i > 0) const UseSmileIDSampleSettingRowDivider(),
                           // Vaulted, so it cannot be prefilled.
                           UseSmileIDSampleKeyValueEditRow(
                             label: requirement.labelFor(
-                              UseSmileIDSampleUserField.values[i],
+                              _rows[i],
                               context.strings,
                             ),
-                            value:
-                                requirement.supplies(
-                                  UseSmileIDSampleUserField.values[i],
-                                )
+                            value: requirement.supplies(_rows[i])
                                 ? ''
-                                : UseSmileIDSampleUserField.values[i].valueOf(
-                                    details,
-                                  ),
-                            onChanged: (String value) => onFieldChanged(
-                              UseSmileIDSampleUserField.values[i],
-                              value,
-                            ),
-                            placeholder:
-                                requirement.supplies(
-                                  UseSmileIDSampleUserField.values[i],
-                                )
+                                : _rows[i].valueOf(details),
+                            onChanged: (String value) =>
+                                onFieldChanged(_rows[i], value),
+                            placeholder: requirement.supplies(_rows[i])
                                 ? context.strings.userDetailsFromToken
-                                : UseSmileIDSampleUserField.values[i]
-                                      .placeholder(context.strings),
-                            enabled: !requirement.supplies(
-                              UseSmileIDSampleUserField.values[i],
-                            ),
-                            keyboardType: UseSmileIDSampleUserField
-                                .values[i]
-                                .keyboardType,
+                                : _rows[i].placeholder(context.strings),
+                            enabled: !requirement.supplies(_rows[i]),
+                            keyboardType: _rows[i].keyboardType,
                             isError:
                                 UseSmileIDSampleContactRules.problem(
-                                  UseSmileIDSampleUserField.values[i],
-                                  UseSmileIDSampleUserField.values[i].valueOf(
-                                    details,
-                                  ),
+                                  _rows[i],
+                                  _rows[i].valueOf(details),
                                 ) !=
                                 null,
                             testId: UseSmileIDSampleTestIds.userDetailsField(
-                              UseSmileIDSampleUserField.values[i].id,
+                              _rows[i].id,
                             ),
                           ),
                         ],

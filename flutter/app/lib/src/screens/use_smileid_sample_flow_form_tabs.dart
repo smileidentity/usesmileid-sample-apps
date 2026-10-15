@@ -30,21 +30,40 @@ class UseSmileIDSampleUserDetailsTab extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleUserDetailsTabState
     extends ConsumerState<UseSmileIDSampleUserDetailsTab> {
+  late final UseSmileIDSampleCatalogueStore _catalogue = ref.read(
+    useSmileIDSampleCatalogueStoreProvider,
+  );
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
       final UseSmileIDSampleProfile? active = ref
           .read(useSmileIDSampleProfilesProvider)
           .active;
-      if (mounted && active != null) {
+      if (active != null) {
         ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(active);
       }
+      // A deep link lands here without the product tap that asks ahead.
+      useSmileIDSampleEnsureEnabled(
+        _catalogue,
+        _productFor(widget.productId),
+        ref.read(useSmileIDSampleSessionProvider).live,
+      );
     });
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) => ListenableBuilder(
+    // The configuration can arrive after the form opens, and it decides which rows show.
+    listenable: _catalogue,
+    builder: (BuildContext context, _) => _form(context),
+  );
+
+  Widget _form(BuildContext context) {
     final String productId = widget.productId;
     final UseSmileIDSampleProduct? product = _productFor(productId);
     final UseSmileIDSampleForms forms = ref.watch(
@@ -53,11 +72,15 @@ class _UseSmileIDSampleUserDetailsTabState
     final UseSmileIDSampleProfiles profiles = ref.watch(
       useSmileIDSampleProfilesProvider,
     );
+    final UseSmileIDSampleTokenSession? live =
+        ref.watch(useSmileIDSampleSessionProvider).live == null
+        ? null
+        : useSmileIDSampleLiveTokenSession(ref);
     final UseSmileIDSampleUserDetailsRequirement requirement =
-        useSmileIDSampleUserDetailsRequirement(
-          ref.watch(useSmileIDSampleSessionProvider).live == null
-              ? null
-              : useSmileIDSampleLiveBindings(ref),
+        useSmileIDSampleUserDetailsRequirementFor(
+          live?.bindings,
+          product,
+          _catalogue.fieldsToCollectFor(live?.id),
         );
     final UseSmileIDSampleFormsNotifier edits = ref.read(
       useSmileIDSampleFormsProvider.notifier,
