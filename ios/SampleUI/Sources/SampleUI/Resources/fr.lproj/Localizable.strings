@@ -108,8 +108,6 @@
 "user_field_last_name_placeholder" = "Ajouter le nom";
 "user_field_email_placeholder" = "nom@entreprise.com";
 "user_field_phone_placeholder" = "+254 700 000 000";
-"user_field_email_error" = "Saisissez un e-mail du type nom@entreprise.com.";
-"user_field_phone_error" = "Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.";
 "user_requirement_first_name" = "le prénom";
 "user_requirement_last_name" = "le nom";
 "user_requirement_contact" = "un e-mail ou un numéro de téléphone";

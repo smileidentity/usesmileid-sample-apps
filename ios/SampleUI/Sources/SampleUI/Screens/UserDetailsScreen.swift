@@ -147,17 +147,16 @@ public struct UserDetailsScreen: View {
       placeholder: supplied ? UseSmileIDSampleStrings.userDetailsFromToken : field.placeholder,
       enabled: !supplied,
       keyboardType: field.keyboardType,
-      isError: UseSmileIDSampleContactRules.problem(field, field.read(state.details)) != nil,
       testId: UseSmileIDSampleTestIds.userDetailsField(field.id)
     )
   }
 
   private var hint: some View {
     UseSmileIDSampleText(
-      state.details.contactProblem ?? (state.isSatisfied ? UseSmileIDSampleStrings.userDetailsEditHint : state.requirement.prompt),
+      state.isSatisfied ? UseSmileIDSampleStrings.userDetailsEditHint : state.requirement.prompt,
       style: UseSmileIDSampleTheme.type.textStyleCaption
     )
-    .foregroundColor(state.details.contactProblem == nil ? colors.textMuted : colors.input.borderError)
+    .foregroundColor(colors.textMuted)
     .useSmileIDSampleTestId(UseSmileIDSampleTestIds.userDetailsHint)
   }
 

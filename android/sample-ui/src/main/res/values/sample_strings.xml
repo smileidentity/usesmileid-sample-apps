@@ -110,8 +110,6 @@
     <string name="sample_user_field_last_name_placeholder">Add last name</string>
     <string name="sample_user_field_email_placeholder">name@company.com</string>
     <string name="sample_user_field_phone_placeholder">+254 700 000 000</string>
-    <string name="sample_user_field_email_error">Enter an email like name@company.com.</string>
-    <string name="sample_user_field_phone_error">Enter the number with its country code, like +254 700 000 000.</string>
     <string name="sample_user_requirement_first_name">first name</string>
     <string name="sample_user_requirement_last_name">last name</string>
     <string name="sample_user_requirement_contact">an email or phone number</string>

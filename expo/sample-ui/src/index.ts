@@ -258,11 +258,7 @@ export {
   type UseSmileIDSampleUserDetailsRequirement,
 } from './state/use-smile-id-sample-user-details-requirement';
 export {
-  smileIDSampleContactProblem,
   smileIDSampleContactSubmitted,
-  smileIDSampleDetailsContactProblem,
-  smileIDSampleContactProblemText,
-  type UseSmileIDSampleContactProblem,
 } from './state/use-smile-id-sample-contact-rules';
 export {
   smileIDSampleAspectRatios,

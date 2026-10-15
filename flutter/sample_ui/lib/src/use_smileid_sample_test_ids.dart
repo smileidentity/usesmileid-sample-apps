@@ -187,10 +187,6 @@ abstract final class UseSmileIDSampleTestIds {
   /// The page's only write: it saves the details AND makes the profile active.
   static const String profileConfigSave = 'sample_profile_config_save';
 
-  /// Shown under the profile's user details while the email or phone would fail the job.
-  static const String profileConfigContactError =
-      'sample_profile_config_contact_error';
-
   /// The profile's organisation row.
   static const String profileConfigName = 'sample_profile_config_name';
 
@@ -502,7 +498,6 @@ abstract final class UseSmileIDSampleTestIds {
     profileConfigScreen,
     profileConfigCallbackUrl,
     profileConfigSave,
-    profileConfigContactError,
     profileConfigName,
     profileConfigDelete,
     profileDeleteConfirm,

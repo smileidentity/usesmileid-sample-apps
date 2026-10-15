@@ -116,8 +116,6 @@ type Key =
   | 'user_field_last_name_placeholder'
   | 'user_field_email_placeholder'
   | 'user_field_phone_placeholder'
-  | 'user_field_email_error'
-  | 'user_field_phone_error'
   | 'user_requirement_first_name'
   | 'user_requirement_last_name'
   | 'user_requirement_contact'
@@ -775,14 +773,6 @@ export class UseSmileIDSampleStrings {
 
   get userFieldPhonePlaceholder(): string {
     return this.values.user_field_phone_placeholder;
-  }
-
-  get userFieldEmailError(): string {
-    return this.values.user_field_email_error;
-  }
-
-  get userFieldPhoneError(): string {
-    return this.values.user_field_phone_error;
   }
 
   get userRequirementFirstName(): string {
@@ -1733,8 +1723,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     user_field_last_name_placeholder: 'Add last name',
     user_field_email_placeholder: 'name@company.com',
     user_field_phone_placeholder: '+254 700 000 000',
-    user_field_email_error: 'Enter an email like name@company.com.',
-    user_field_phone_error: 'Enter the number with its country code, like +254 700 000 000.',
     user_requirement_first_name: 'first name',
     user_requirement_last_name: 'last name',
     user_requirement_contact: 'an email or phone number',
@@ -2055,8 +2043,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     user_field_last_name_placeholder: 'Ajouter le nom',
     user_field_email_placeholder: 'nom@entreprise.com',
     user_field_phone_placeholder: '+254 700 000 000',
-    user_field_email_error: 'Saisissez un e-mail du type nom@entreprise.com.',
-    user_field_phone_error: 'Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.',
     user_requirement_first_name: 'le prénom',
     user_requirement_last_name: 'le nom',
     user_requirement_contact: 'un e-mail ou un numéro de téléphone',
@@ -2377,8 +2363,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     user_field_last_name_placeholder: 'أضف اسم العائلة',
     user_field_email_placeholder: 'name@company.com',
     user_field_phone_placeholder: '+254 700 000 000',
-    user_field_email_error: 'أدخل بريدًا إلكترونيًا مثل name@company.com.',
-    user_field_phone_error: 'أدخل الرقم مع رمز البلد، مثل \u200e+254 700 000 000.',
     user_requirement_first_name: 'الاسم الأول',
     user_requirement_last_name: 'اسم العائلة',
     user_requirement_contact: 'بريد إلكتروني أو رقم هاتف',
@@ -2699,8 +2683,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     user_field_last_name_placeholder: 'הוספת שם משפחה',
     user_field_email_placeholder: 'name@company.com',
     user_field_phone_placeholder: '+254 700 000 000',
-    user_field_email_error: 'הזינו אימייל כמו name@company.com.',
-    user_field_phone_error: 'הזינו את המספר עם קידומת המדינה, כמו \u200e+254 700 000 000.',
     user_requirement_first_name: 'שם פרטי',
     user_requirement_last_name: 'שם משפחה',
     user_requirement_contact: 'אימייל או מספר טלפון',

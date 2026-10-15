@@ -114,8 +114,6 @@
   "user_field_last_name_placeholder": "أضف اسم العائلة",
   "user_field_email_placeholder": "name@company.com",
   "user_field_phone_placeholder": "+254 700 000 000",
-  "user_field_email_error": "أدخل بريدًا إلكترونيًا مثل name@company.com.",
-  "user_field_phone_error": "أدخل الرقم مع رمز البلد، مثل ‎+254 700 000 000.",
   "user_requirement_first_name": "الاسم الأول",
   "user_requirement_last_name": "اسم العائلة",
   "user_requirement_contact": "بريد إلكتروني أو رقم هاتف",

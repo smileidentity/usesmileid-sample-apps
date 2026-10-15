@@ -115,8 +115,6 @@ object UseSmileIDSampleStrings {
     val userFieldLastNamePlaceholder: String @Composable get() = stringResource(R.string.sample_user_field_last_name_placeholder)
     val userFieldEmailPlaceholder: String @Composable get() = stringResource(R.string.sample_user_field_email_placeholder)
     val userFieldPhonePlaceholder: String @Composable get() = stringResource(R.string.sample_user_field_phone_placeholder)
-    val userFieldEmailError: String @Composable get() = stringResource(R.string.sample_user_field_email_error)
-    val userFieldPhoneError: String @Composable get() = stringResource(R.string.sample_user_field_phone_error)
     val userRequirementFirstName: String @Composable get() = stringResource(R.string.sample_user_requirement_first_name)
     val userRequirementLastName: String @Composable get() = stringResource(R.string.sample_user_requirement_last_name)
     val userRequirementContact: String @Composable get() = stringResource(R.string.sample_user_requirement_contact)

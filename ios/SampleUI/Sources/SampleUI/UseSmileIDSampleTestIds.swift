@@ -220,7 +220,6 @@ public enum UseSmileIDSampleTestIds {
   public static let profileConfigScreen = "sample_profile_config_screen"
   public static let profileConfigCallbackUrl = "sample_profile_config_callback_url"
   public static let profileConfigSave = "sample_profile_config_save"
-  public static let profileConfigContactError = "sample_profile_config_contact_error"
   public static let profileConfigName = "sample_profile_config_name"
   public static let profileConfigDelete = "sample_profile_config_delete"
   public static let profileDeleteConfirm = "sample_profile_delete_confirm"
@@ -301,7 +300,7 @@ public enum UseSmileIDSampleTestIds {
     documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, genericDocumentSheet, genericDocumentName, genericDocumentBackSide, genericDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, settingAllowSkipBack, settingSelfieFirst, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, genericDocumentOrientationPrefix, genericDocumentAspectRatioPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
-    profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave, profileConfigContactError,
+    profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,
     profileConfigName, profileConfigDelete, profileDeleteConfirm, profileSwitchNew,
     profileSwitchSheet, newProfileSheet, newProfileName, newProfileFirstName, newProfileLastName,
     newProfileEmail, newProfilePhone, newProfileSave,

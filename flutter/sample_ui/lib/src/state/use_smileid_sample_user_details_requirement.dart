@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import '../model/use_smileid_sample_product.dart';
 import '../use_smileid_sample_strings.dart';
 import 'use_smileid_sample_catalogue.dart';
-import 'use_smileid_sample_contact_rules.dart';
 import 'use_smileid_sample_profiles.dart';
 import 'use_smileid_sample_token_decoder.dart';
 
@@ -59,14 +58,13 @@ class UseSmileIDSampleUserDetailsRequirement {
     Object.hashAllUnordered(hidden),
   );
 
-  /// Whether [details] satisfies what is still outstanding, in a form the server accepts.
+  /// Whether [details] satisfies what is still outstanding; the API judges each value's format.
   bool isSatisfiedBy(UseSmileIDSampleUserDetails details) =>
       (!firstName || details.firstName.trim().isNotEmpty) &&
       (!lastName || details.lastName.trim().isNotEmpty) &&
       (!contact ||
           details.email.trim().isNotEmpty ||
-          details.phone.trim().isNotEmpty) &&
-      details.contactProblem == null;
+          details.phone.trim().isNotEmpty);
 
   /// The row's label, which gains "(optional)" only once a token has covered contact.
   String labelFor(

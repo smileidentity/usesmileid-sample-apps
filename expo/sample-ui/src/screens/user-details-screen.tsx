@@ -42,11 +42,6 @@ import {
   UseSmileIDSampleSuffixedTestIds,
   UseSmileIDSampleTestIds,
 } from '../use-smile-id-sample-test-ids';
-import {
-  smileIDSampleContactProblem,
-  smileIDSampleContactProblemText,
-  smileIDSampleDetailsContactProblem,
-} from '../state/use-smile-id-sample-contact-rules';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 
 /// The switch line sits between the type scale's steps — spec/screens.json → userDetails.
@@ -99,7 +94,6 @@ export const UserDetailsScreen = ({
   const requirement = state.requirement ?? smileIDSampleRequirementDefaults;
   const rows = smileIDSampleUserFields.filter((field) => smileIDSampleRequirementShows(requirement, field.id));
   const satisfied = smileIDSampleDetailsSatisfy(state.details, requirement);
-  const contactProblem = smileIDSampleDetailsContactProblem(state.details);
   const { profile } = state;
   const offersSave =
     satisfied &&
@@ -160,7 +154,6 @@ export const UserDetailsScreen = ({
                   required={false}
                   enabled={!supplied}
                   {...smileIDSampleUserFieldKeyboard(field.id)}
-                  isError={smileIDSampleContactProblem(field.id, smileIDSampleUserFieldRead(field.id, state.details)) !== null}
                   testID={UseSmileIDSampleSuffixedTestIds.userDetailsField(field.id)}
                 />
               </View>
@@ -172,12 +165,12 @@ export const UserDetailsScreen = ({
           style={[
             theme.type.textStyleCaption,
             {
-              color: contactProblem === null ? theme.colors.textMuted : theme.colors.input.borderError,
+              color: theme.colors.textMuted,
               paddingHorizontal: theme.dimens.spacing.md,
             },
           ]}
         >
-          {(contactProblem === null ? null : smileIDSampleContactProblemText(contactProblem, strings)) ?? (satisfied ? strings.userDetailsEditHint : smileIDSampleRequirementPrompt(requirement, strings))}
+          {satisfied ? strings.userDetailsEditHint : smileIDSampleRequirementPrompt(requirement, strings)}
         </Text>
         {offersSave ? (
           <View

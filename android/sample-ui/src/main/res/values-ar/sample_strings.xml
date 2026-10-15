@@ -110,8 +110,6 @@
     <string name="sample_user_field_last_name_placeholder">أضف اسم العائلة</string>
     <string name="sample_user_field_email_placeholder">name@company.com</string>
     <string name="sample_user_field_phone_placeholder">+254 700 000 000</string>
-    <string name="sample_user_field_email_error">أدخل بريدًا إلكترونيًا مثل name@company.com.</string>
-    <string name="sample_user_field_phone_error">أدخل الرقم مع رمز البلد، مثل ‎+254 700 000 000.</string>
     <string name="sample_user_requirement_first_name">الاسم الأول</string>
     <string name="sample_user_requirement_last_name">اسم العائلة</string>
     <string name="sample_user_requirement_contact">بريد إلكتروني أو رقم هاتف</string>

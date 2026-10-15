@@ -110,8 +110,6 @@
     <string name="sample_user_field_last_name_placeholder">הוספת שם משפחה</string>
     <string name="sample_user_field_email_placeholder">name@company.com</string>
     <string name="sample_user_field_phone_placeholder">+254 700 000 000</string>
-    <string name="sample_user_field_email_error">הזינו אימייל כמו name@company.com.</string>
-    <string name="sample_user_field_phone_error">הזינו את המספר עם קידומת המדינה, כמו ‎+254 700 000 000.</string>
     <string name="sample_user_requirement_first_name">שם פרטי</string>
     <string name="sample_user_requirement_last_name">שם משפחה</string>
     <string name="sample_user_requirement_contact">אימייל או מספר טלפון</string>

@@ -110,8 +110,6 @@
     <string name="sample_user_field_last_name_placeholder">Ajouter le nom</string>
     <string name="sample_user_field_email_placeholder">nom@entreprise.com</string>
     <string name="sample_user_field_phone_placeholder">+254 700 000 000</string>
-    <string name="sample_user_field_email_error">Saisissez un e-mail du type nom@entreprise.com.</string>
-    <string name="sample_user_field_phone_error">Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.</string>
     <string name="sample_user_requirement_first_name">le prénom</string>
     <string name="sample_user_requirement_last_name">le nom</string>
     <string name="sample_user_requirement_contact">un e-mail ou un numéro de téléphone</string>
