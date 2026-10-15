@@ -106,7 +106,7 @@ fun UserDetailsScreen(
                         )
                         UseSmileIDSampleSettingRowDivider()
                     }
-                    UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
+                    UseSmileIDSampleUserField.entries.filter(requirement::shows).forEachIndexed { index, field ->
                         if (index > 0) UseSmileIDSampleSettingRowDivider()
                         // Shown as provided, not asked again — the value is vaulted, so it
                         // cannot be prefilled either.

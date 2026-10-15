@@ -106,6 +106,17 @@ public struct UseSmileIDSampleApiEnabledDocument: Equatable, Sendable {
   public let label: String
 }
 
+/// A field of `fields_to_collect` in `GET /v3/services/config`; `required` is nil when the response leaves the key out.
+public struct UseSmileIDSampleApiField: Equatable, Sendable {
+  public let name: String
+  public let required: Bool?
+
+  public init(name: String, required: Bool?) {
+    self.name = name
+    self.required = required
+  }
+}
+
 /// Both responses a run of the form reads; fetched together because the KYC countries need names from the second.
 public struct UseSmileIDSampleCatalogueData: Equatable, Sendable {
   public let idTypes: [UseSmileIDSampleApiIdType]
@@ -267,7 +278,23 @@ public enum UseSmileIDSampleCatalogueJson {
     }
   }
 
-  /// The product key the configuration call asks for and reads back.
+  /// `fields_to_collect` of `GET /v3/services/config` by product key, empty when it carries none; nil when unreadable.
+  public static func fieldsToCollect(_ body: Data) -> [String: [UseSmileIDSampleApiField]]? {
+    guard let root = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else { return nil }
+    return fieldsToCollect(section: root["fields_to_collect"] as? [String: Any] ?? [:])
+  }
+
+  /// One `fields_to_collect` object, each product's list kept to the fields that carry a name.
+  public static func fieldsToCollect(section: [String: Any]) -> [String: [UseSmileIDSampleApiField]] {
+    section.mapValues { fields in
+      (fields as? [[String: Any]] ?? []).compactMap { field in
+        guard let name = field["name"] as? String else { return nil }
+        return UseSmileIDSampleApiField(name: name, required: bool(field["required"]))
+      }
+    }
+  }
+
+  /// The product key Enhanced Document Verification's lists are read back under.
   public static let enhancedDocumentVerification = "enhanced_document_verification"
 
   private static func document(_ item: [String: Any]) -> UseSmileIDSampleApiDocument? {

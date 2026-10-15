@@ -44,7 +44,7 @@ struct UseSmileIDSampleDestination: View {
           profileIndex: app.profiles.activeIndex,
           saveToProfile: app.saveToProfile,
           organisation: app.organisationDraft,
-          requirement: app.userDetailsRequirement
+          requirement: app.userDetailsRequirement(for: Self.product(productId))
         ),
         onFieldChange: { field, value in app.setUserField(field, to: value) },
         onSaveToProfileChange: { app.saveToProfile = $0 },
@@ -54,7 +54,7 @@ struct UseSmileIDSampleDestination: View {
         // Pushed once: two quick taps would stack two flow levels, and so two runs.
         onContinue: {
           guard let product = Self.product(productId) else { return }
-          app.keepUserDetails()
+          app.keepUserDetails(for: Self.product(productId))
           router.pushOnce(app.stepAfterUserDetails(product))
         }
       )

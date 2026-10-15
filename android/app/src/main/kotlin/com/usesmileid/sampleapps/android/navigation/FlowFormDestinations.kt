@@ -15,7 +15,7 @@ import com.ramcosta.composedestinations.generated.navgraphs.FlowNavGraph
 import com.usesmileid.sampleapps.android.flow.entryFor
 import com.usesmileid.sampleapps.android.flow.sdkFlow
 import com.usesmileid.sampleapps.android.flow.stepAfterUserDetails
-import com.usesmileid.sampleapps.android.flow.tokenUserDetailsRequirement
+import com.usesmileid.sampleapps.android.flow.userDetailsRequirement
 import androidx.compose.runtime.LaunchedEffect
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -53,6 +53,7 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
     // A deep link to this form skips the product tap, so the lists start here if nothing has started them.
     LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { app.ensureCatalogue(product) }
     val profile = app.profiles.active
+    val requirement = app.userDetailsRequirement(product)
     UserDetailsContent(
         productLabel = product?.localizedTitle() ?: productId,
         details = app.forms.userDetails,
@@ -64,11 +65,11 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         onProfileClick = { switchingProfile = true },
         onBack = { navigator.navigateUp() },
         onContinue = {
-            app.profiles.keep(app.forms, app.tokenUserDetailsRequirement)
+            app.profiles.keep(app.forms, requirement)
             val next = product?.let(app::stepAfterUserDetails) ?: app.sdkFlow(productId)
             navigator.navigate(next) { launchSingleTop = true }
         },
-        requirement = app.tokenUserDetailsRequirement,
+        requirement = requirement,
         organisation = app.forms.organisation,
         onOrganisationChange = app.forms::organisation,
     )

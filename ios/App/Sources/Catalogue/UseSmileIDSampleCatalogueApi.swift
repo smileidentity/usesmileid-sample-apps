@@ -29,16 +29,9 @@ struct UseSmileIDSampleCatalogueApi: UseSmileIDSampleCatalogueSource {
     )
   }
 
+  /// Asked without `product`, so one response carries every product's `fields_to_collect`.
   func servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String) async throws -> Data {
-    try await get(
-      environment,
-      "v3/services/config",
-      [
-        URLQueryItem(name: "product", value: UseSmileIDSampleCatalogueJson.enhancedDocumentVerification),
-        URLQueryItem(name: "locale", value: locale)
-      ],
-      token: token
-    )
+    try await get(environment, "v3/services/config", [URLQueryItem(name: "locale", value: locale)], token: token)
   }
 
   private func get(
