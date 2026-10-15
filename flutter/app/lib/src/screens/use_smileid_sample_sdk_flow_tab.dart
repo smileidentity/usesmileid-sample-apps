@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
 
+import '../catalogue/use_smileid_sample_catalogue_providers.dart';
 import '../flow/use_smileid_sample_flow_builder_config.dart';
 import '../flow/use_smileid_sample_flow_launch_snapshot.dart';
 import '../flow/use_smileid_sample_flow_preflight.dart';
@@ -164,7 +165,15 @@ class _UseSmileIDSampleSdkFlowTabState
     return UseSmileIDSampleFlowLaunchSnapshot(
       product: product,
       route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
-      userDetails: forms.userDetails,
+      userDetails: forms.userDetails.withoutHiddenNames(
+        useSmileIDSampleUserDetailsRequirementFor(
+          session?.bindings,
+          product,
+          ref
+              .read(useSmileIDSampleCatalogueStoreProvider)
+              .fieldsToCollectFor(session?.id),
+        ),
+      ),
       idDetails: forms.idDetails,
       scenario: scenarios.scenario,
       theme: scenarios.theme,
