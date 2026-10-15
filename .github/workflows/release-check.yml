@@ -50,10 +50,13 @@ jobs:
         shell: bash
         run: python3 scripts/app_size.py android android/app/build/outputs/bundle/playRelease/app-play-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
 
-      # The AppGallery flavor adds the HMS analyzers; its size is reported beside Play's.
+      # The AppGallery flavor adds the HMS analyzers; its size is reported beside Play's, with the APK AppGallery serves.
       - name: Report the AppGallery size
         shell: bash
-        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
+        run: |
+          python3 scripts/app_size.py android android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
+          apk=android/app/build/outputs/apk/appgallery/release/app-appgallery-release.apk
+          echo "AppGallery APK: $(( $(stat -c %s "$apk") / 1000000 )) MB" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Store art is present and store-legal
         run: |

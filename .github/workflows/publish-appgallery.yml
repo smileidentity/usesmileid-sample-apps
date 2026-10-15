@@ -69,10 +69,10 @@ jobs:
 
       - name: Upload and submit for review
         if: ${{ !inputs.lookup_only }}
-        run: >-
-          python3 scripts/appgallery_publish.py publish
-          --apk android/app/build/outputs/apk/appgallery/release/app-appgallery-release.apk
-          --notes android/appgallery/whatsnew-en-US
+        run: |
+          apk=android/app/build/outputs/apk/appgallery/release/app-appgallery-release.apk
+          echo "### APK size: $(( $(stat -c %s "$apk") / 1000000 )) MB" >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/appgallery_publish.py publish --apk "$apk" --notes android/appgallery/whatsnew-en-US
         env:
           AGC_CLIENT_ID: ${{ secrets.AGC_CLIENT_ID }}
           AGC_CLIENT_SECRET: ${{ secrets.AGC_CLIENT_SECRET }}

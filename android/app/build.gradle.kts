@@ -104,7 +104,11 @@ android {
     flavorDimensions += "distribution"
     productFlavors {
         create("play") { dimension = "distribution" }
-        create("appgallery") { dimension = "distribution" }
+        create("appgallery") {
+            dimension = "distribution"
+            // AppGallery serves one universal APK and HMS ships ARM libraries only, so x86 would add size and nothing else.
+            ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
+        }
     }
 
     bundle {
