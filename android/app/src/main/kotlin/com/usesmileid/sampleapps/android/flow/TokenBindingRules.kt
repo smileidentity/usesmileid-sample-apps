@@ -43,9 +43,9 @@ private val UseSmileIDSampleAppState.liveSession: UseSmileIDSampleTokenSession?
 val UseSmileIDSampleAppState.tokenBindsUserDetails: Boolean
     get() = liveBindings?.bindsRequiredUserDetails == true
 
-/** What the form must still collect, read through the same live-session rule as the gate. */
-val UseSmileIDSampleAppState.tokenUserDetailsRequirement: UseSmileIDSampleUserDetailsRequirement
-    get() = liveBindings.userDetailsRequirement()
+/** What the form asks for [product], read through the gate's live-session rule and only that session's `fields_to_collect`. */
+fun UseSmileIDSampleAppState.userDetailsRequirement(product: UseSmileIDSampleProduct?): UseSmileIDSampleUserDetailsRequirement =
+    liveSession.let { live -> live?.bindings.userDetailsRequirement(product, catalogue.fieldsToCollectFor(live?.id)) }
 
 /** [tokenBindsUserDetails] for the ID form, read through the same live-session rule. */
 fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduct): Boolean =
