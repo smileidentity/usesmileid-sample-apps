@@ -2284,6 +2284,50 @@
       ]
     },
     {
+      "artifact": "MindSpore Lite (in HMS face-base)",
+      "version": "HMS face-base 3.18.1.300",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "FlatBuffers (in HMS face-base)",
+      "version": "1.11.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "gson (in HMS face-base)",
+      "version": "2.9.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "libc++abi (in HMS face-base)",
+      "version": "8.0.1",
+      "licenses": [
+        {
+          "id": "MIT",
+          "name": "MIT License",
+          "url": "https://opensource.org/licenses/MIT"
+        }
+      ]
+    },
+    {
       "artifact": "DM Sans",
       "version": "4.004",
       "licenses": [
@@ -2822,6 +2866,26 @@
     {
       "artifact": "com.huawei.hms:ui",
       "version": "6.11.0.302",
+      "terms": [
+        {
+          "name": "HUAWEI Developer Service Agreement",
+          "url": "https://developer.huawei.com/consumer/en/doc/start/agreement-0000001052728169"
+        }
+      ]
+    },
+    {
+      "artifact": "com.huawei.hms:ml-computer-vision-face-base",
+      "version": "3.18.1.300",
+      "terms": [
+        {
+          "name": "HUAWEI Developer Service Agreement",
+          "url": "https://developer.huawei.com/consumer/en/doc/start/agreement-0000001052728169"
+        }
+      ]
+    },
+    {
+      "artifact": "com.huawei.hms:ml-computer-vision-face-emotion-model",
+      "version": "3.18.1.300",
       "terms": [
         {
           "name": "HUAWEI Developer Service Agreement",

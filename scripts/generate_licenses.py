@@ -77,6 +77,23 @@ HUAWEI_TERMS = {
 # not a third-party notice, and listing them under an open-source heading would be wrong.
 FIRST_PARTY_GROUPS = ("com.usesmileid",)
 
+APACHE_2 = {"id": "Apache-2.0", "name": "The Apache Software License, Version 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"}
+MIT = {"id": "MIT", "name": "MIT License", "url": "https://opensource.org/licenses/MIT"}
+
+# What a first-party artifact unpacks into itself, read from face-base's open-source statement and libraries.
+FIRST_PARTY_BUNDLES = {
+    "com.usesmileid:huawei-face": {
+        "versionOf": "com.huawei.hms:ml-computer-vision-face",
+        "huawei": ["com.huawei.hms:ml-computer-vision-face-base", "com.huawei.hms:ml-computer-vision-face-emotion-model"],
+        "openSource": [
+            {"artifact": "MindSpore Lite (in HMS face-base)", "version": None, "licence": APACHE_2},
+            {"artifact": "FlatBuffers (in HMS face-base)", "version": "1.11.0", "licence": APACHE_2},
+            {"artifact": "gson (in HMS face-base)", "version": "2.9.0", "licence": APACHE_2},
+            {"artifact": "libc++abi (in HMS face-base)", "version": "8.0.1", "licence": MIT},
+        ],
+    },
+}
+
 # Artifacts that declare a licence in no POM in their chain. Each entry is a reviewed fact.
 OVERRIDES = {
     # JSR-330's reference implementation: no <licenses> block in its POM; published Apache-2.0.
@@ -253,6 +270,23 @@ def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> d
 
     if problems:
         raise Unidentified("\n".join(problems))
+
+    versions = {coordinate.rsplit(":", 1)[0]: coordinate.rsplit(":", 1)[1] for coordinate in coordinates}
+    for owner, bundle in FIRST_PARTY_BUNDLES.items():
+        if owner not in versions:
+            continue
+        version = versions.get(bundle["versionOf"])
+        if version is None:
+            raise Unidentified(f"{owner} is linked without {bundle['versionOf']}, so its bundled HMS version is unknown")
+        huawei.extend({"artifact": artifact, "version": version, "terms": [dict(HUAWEI_TERMS)]} for artifact in bundle["huawei"])
+        for component in bundle["openSource"]:
+            licence = component["licence"]
+            open_source.append({
+                "artifact": component["artifact"],
+                "version": component["version"] or f"HMS face-base {version}",
+                "licenses": [dict(licence)],
+            })
+            used_texts.add(licence["id"])
 
     licence_texts = {}
     for licence_id in sorted(used_texts):
