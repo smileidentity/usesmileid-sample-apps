@@ -107,8 +107,11 @@ dispatch:
    content rating, and the distribution countries.
 3. Declare that the app does not need Google Mobile Services (App information, GMS dependency: No). The
    build links ML Kit, and runs without it.
-4. Turn App Signing on: let AppGallery Connect generate the app signing key, and register the upload key's
-   certificate (`keytool -export -rfc -keystore upload.jks -alias upload -file upload_cert.pem`).
+4. App Signing has no setting until a bundle arrives: AppGallery Connect offers it on the first upload. If the
+   first dispatch's upload is refused for it, download the run's `appgallery-bundle` artifact, upload it in
+   Package management, let AppGallery Connect generate the app signing key, and register the upload key's
+   certificate (`keytool -export -rfc -keystore upload.jks -alias upload -file upload_cert.pem`). Then submit
+   the version in the console, or dispatch again.
 5. Enter the listing from `android/play/`, the icon from `android/appgallery/`, and the privacy answers
    below. Choose phones only: there are no tablet screenshots.
 6. Create a Connect API client (Users and permissions → API key, role App administrator) and store its id

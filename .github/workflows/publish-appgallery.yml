@@ -67,6 +67,15 @@ jobs:
           ORG_GRADLE_PROJECT_VERSION_CODE: ${{ steps.version.outputs.code }}
           ORG_GRADLE_PROJECT_uploadKeystorePassword: ${{ secrets.UPLOAD_KEYSTORE_PASSWORD }}
 
+      # AppGallery offers App Signing only on a bundle's first upload, which may need to go up by hand.
+      - name: Keep the signed bundle
+        if: ${{ !inputs.lookup_only }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: appgallery-bundle
+          path: android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab
+          retention-days: 7
+
       - name: Upload and submit for review
         if: ${{ !inputs.lookup_only }}
         run: |
