@@ -45,26 +45,3 @@ extension UseSmileIDSampleAppState {
     liveBindings?.bindsIdDetails(product) == true
   }
 }
-
-/// Drops the issues the token answers; every other rule the SDK applies still stands.
-func useSmileIDSampleOutstanding(
-  _ state: ValidationState,
-  _ requirement: UseSmileIDSampleUserDetailsRequirement
-) -> ValidationState {
-  guard case .invalid(let issues) = state else { return state }
-  let outstanding = issues.filter { !requirement.covers($0) }
-  return outstanding.isEmpty ? .valid : .invalid(outstanding)
-}
-
-private extension UseSmileIDSampleUserDetailsRequirement {
-  func covers(_ issue: any UseSmileIDValidationException) -> Bool {
-    guard let field = issue as? InvalidFieldValueException else { return false }
-    switch field.fieldName {
-    case "userDetails.givenNames": return !firstName
-    case "userDetails.lastName": return !lastName
-    // Reported against the object rather than a field, so the reason is what identifies it.
-    case "userDetails": return !contact && field.reason.range(of: "email", options: .caseInsensitive) != nil
-    default: return false
-    }
-  }
-}

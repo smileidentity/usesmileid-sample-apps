@@ -145,24 +145,11 @@ describe('the gate', () => {
     expect(smileIDSamplePreflight(snapshot({ session: null })).kind).toBe('needsSession');
   });
 
-  // The SDK requires a contact field even though the form labels both optional.
-  it('sends an empty form back to the form rather than to the SDK', () => {
+  it('passes an empty form to the SDK, for the API to judge', () => {
     const outcome = smileIDSamplePreflight(
       snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
-    expect(outcome.kind).toBe('needsDetails');
-  });
-
-  it('names the fields an empty form left for the form to fix', () => {
-    const outcome = smileIDSamplePreflight(
-      snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
-    );
-    const reported =
-      outcome.kind === 'needsDetails' || outcome.kind === 'misconfigured'
-        ? outcome.issues.map((issue) => issue.message).join('; ')
-        : '';
-    expect(reported).toContain('givenNames');
-    expect(reported).toContain('lastName');
+    expect(outcome.kind).toBe('ready');
   });
 });
 
