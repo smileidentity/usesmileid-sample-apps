@@ -21,8 +21,9 @@ API = "https://connect-api.cloud.huawei.com/api"
 SOFTWARE_PACKAGE = 5
 NOTES_LANG = "en-US"
 NOTES_LIMIT = 500
-# AGC parses an uploaded package asynchronously and refuses a submit until it has, about two minutes.
-PARSE_WAIT_S = 150
+# AGC parses an uploaded package asynchronously and refuses a submit until it has, usually within two minutes.
+PARSE_WAIT_S = 120
+SUBMIT_ATTEMPTS = 5
 
 
 class AgcError(RuntimeError):
@@ -117,8 +118,14 @@ def publish(headers: dict, apk: str, notes: str) -> None:
     call("PUT", f"{API}/publish/v2/app-file-info?{query}", headers, {
         "fileType": SOFTWARE_PACKAGE, "files": [{"fileName": os.path.basename(apk), "fileDestUrl": dest}],
     })
-    time.sleep(PARSE_WAIT_S)
-    call("POST", f"{API}/publish/v2/app-submit?{query}", headers)
+    for attempt in range(1, SUBMIT_ATTEMPTS + 1):
+        time.sleep(PARSE_WAIT_S if attempt == 1 else 60)
+        try:
+            call("POST", f"{API}/publish/v2/app-submit?{query}", headers)
+            return
+        except AgcError:
+            if attempt == SUBMIT_ATTEMPTS:
+                raise
 
 
 def main() -> int:

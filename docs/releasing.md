@@ -199,7 +199,7 @@ location, so the value is always absent here. The app's own `PrivacyInfo.xcpriva
 Data is encrypted in transit, and users can request deletion.
 
 **Huawei AppGallery: privacy statement and data collection.** The same answers as Play's Data safety,
-row for row. HMS's analyzers run on the device and send no frame to Huawei.
+row for row. HMS's face and document analyzers run on the device.
 
 **Two published answers differ from the partner guide**, and are being reconciled: Device ID on the App
 Store (not linked, where the guide says linked), and the crash and diagnostics rows on Play (shared, not
@@ -232,7 +232,7 @@ Simulate disappears from a release build.
 | `exportArchive` fails with *Cloud signing permission error* | The API key is not Admin | Generate an Admin key |
 | The archive fails in CI with *No Accounts* | The archive step had no key to authenticate with | Pass the key to the archive as well as the export |
 | The first dispatch fails with *maximum number of certificates generated* | The team already has three distribution certificates | Revoke an unused one first |
-| AppGallery submit fails with *the package is being parsed* | The submit ran before AppGallery finished reading the APK | Run the submit again; the script already waits 150 seconds |
+| AppGallery submit fails after five attempts | AppGallery had not finished reading the APK after about six minutes | Submit the uploaded version in AppGallery Connect; the package is already there |
 | AppGallery reports *app not found* for the package | The app does not exist in AppGallery Connect yet | Do the first-release steps above |
 | AppGallery upload refused: the version code is not higher | A code was uploaded by hand above what Play holds | Dispatch with `lookup_only`; it reads both stores |
 | A workflow on a branch cannot be dispatched | GitHub lists a dispatchable workflow only once its file is on `main` | Merge the workflow first, or run the same step locally |

@@ -70,6 +70,50 @@ class TestDestination(unittest.TestCase):
             agc.destination({"result": {"resultCode": "0", "UploadFileRsp": {"fileInfoList": [{}]}}})
 
 
+class TestPublish(unittest.TestCase):
+    def setUp(self):
+        self.calls = []
+        self.submit_failures = 0
+        self.patch(agc, "call", self.fake_call)
+        self.patch(agc, "upload", lambda headers, app, apk: "https://obs/app.apk")
+        self.patch(agc.time, "sleep", lambda seconds: None)
+
+    def patch(self, owner, name, value):
+        original = getattr(owner, name)
+        setattr(owner, name, value)
+        self.addCleanup(setattr, owner, name, original)
+
+    def fake_call(self, method, url, headers, body=None):
+        path = url.split("/api/", 1)[1].split("?", 1)[0]
+        self.calls.append((method, path, body))
+        if path == "publish/v2/appid-list":
+            return {"appids": [{"key": "Smile ID", "value": "1234"}]}
+        if path == "publish/v2/app-submit" and self.submit_failures:
+            self.submit_failures -= 1
+            raise agc.AgcError("the package is being parsed")
+        return {}
+
+    def test_notes_then_file_then_submit(self):
+        agc.publish({}, "app-appgallery-release.apk", "Faster capture.")
+        self.assertEqual(
+            ["publish/v2/appid-list", "publish/v2/app-language-info", "publish/v2/app-file-info", "publish/v2/app-submit"],
+            [path for _, path, _ in self.calls],
+        )
+        self.assertEqual({"lang": "en-US", "newFeatures": "Faster capture."}, self.calls[1][2])
+        self.assertEqual(agc.SOFTWARE_PACKAGE, self.calls[2][2]["fileType"])
+        self.assertEqual("https://obs/app.apk", self.calls[2][2]["files"][0]["fileDestUrl"])
+
+    def test_a_submit_refused_while_parsing_is_retried(self):
+        self.submit_failures = 2
+        agc.publish({}, "app.apk", "Notes.")
+        self.assertEqual(3, sum(1 for _, path, _ in self.calls if path == "publish/v2/app-submit"))
+
+    def test_a_submit_still_refused_after_every_attempt_fails(self):
+        self.submit_failures = agc.SUBMIT_ATTEMPTS
+        with self.assertRaises(agc.AgcError):
+            agc.publish({}, "app.apk", "Notes.")
+
+
 class TestMultipart(unittest.TestCase):
     def test_the_fields_and_the_file_are_framed_by_one_boundary(self):
         body, content_type = agc.multipart({"authCode": "abc", "fileCount": "1"}, "app.apk", b"PK\x03\x04")
