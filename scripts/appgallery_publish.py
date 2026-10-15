@@ -12,6 +12,7 @@ import json
 import os
 import sys
 import time
+import urllib.error
 import urllib.parse
 import urllib.request
 import uuid
@@ -41,8 +42,11 @@ def checked(body: dict) -> dict:
 def call(method: str, url: str, headers: dict, body: dict | None = None) -> dict:
     data = json.dumps(body).encode() if body is not None else None
     req = urllib.request.Request(url, data=data, method=method, headers={**headers, "Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=120) as response:
-        raw = response.read()
+    try:
+        with urllib.request.urlopen(req, timeout=120) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as e:
+        raise AgcError(f"{method} {url.split('?')[0]} failed with HTTP {e.code}: {e.read()[:500].decode(errors='replace')}") from e
     return checked(json.loads(raw) if raw else {})
 
 

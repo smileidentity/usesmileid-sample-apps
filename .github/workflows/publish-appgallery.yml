@@ -44,7 +44,7 @@ jobs:
           fileDir: ./android/app
           encodedString: ${{ secrets.UPLOAD_KEYSTORE }}
 
-      # One above the highest either store holds, so the two listings never disagree on what a code means.
+      # One above the highest either store holds, so AppGallery never takes a code Play already used.
       - name: Version code
         id: version
         run: |

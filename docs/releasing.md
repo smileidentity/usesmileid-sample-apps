@@ -74,8 +74,9 @@ CI built. The application id is Play's too, so either store's build installs ove
 update.
 
 **Version code.** One above the higher of Play's next code and the highest AppGallery holds
-(`scripts/appgallery_publish.py highest-version-code` reads the draft's and the live version's). One commit
-therefore carries one code on both stores. Dispatch with `lookup_only` to see it without building.
+(`scripts/appgallery_publish.py highest-version-code` reads the draft's and the live version's), so AppGallery
+never takes a code Play has used. The Play lanes read only Play, so publish to Play first when both stores
+take one commit. Dispatch with `lookup_only` to see the code without building.
 
 **Release notes.** `android/appgallery/whatsnew-en-US`, at most 500 characters. `verify.sh` checks the
 length, and the workflow refuses an empty file.
