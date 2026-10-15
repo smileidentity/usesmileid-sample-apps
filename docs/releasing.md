@@ -94,8 +94,10 @@ take one commit. Dispatch with `lookup_only` to see the code without building.
 **Release notes.** `android/appgallery/whatsnew-en-US`, at most 500 characters. `verify.sh` checks the
 length, and the workflow refuses an empty file.
 
-**Listing.** The title, short and full description, icon, feature graphic and screenshots are Play's, in
-`android/play/`, entered by hand in AppGallery Connect. One set of copy means one place to change it.
+**Listing.** The title, short and full description, feature graphic and screenshots are Play's, in
+`android/play/`, entered by hand in AppGallery Connect. One set of copy means one place to change it. The
+icon is `android/appgallery/icon.png`: AppGallery takes a 216 or 1024 px square, not Play's 512 px one
+with rounded corners. It is `svgs/android.svg` with square corners, rendered at 1024 px.
 
 **Review.** The workflow ends at submitted. Huawei's review is manual and usually takes one to three
 working days. Read its state in AppGallery Connect.

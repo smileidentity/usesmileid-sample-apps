@@ -81,6 +81,17 @@ jobs:
           test -f "$FG" || { echo "::error::Play requires a feature graphic and $FG is missing"; exit 1; }
           npx --yes -p storeshots-mcp storeshots validate --preset play-feature-graphic "$FG"
 
+      - name: AppGallery icon is store-legal
+        run: |
+          ICON=android/appgallery/icon.png
+          test -f "$ICON" || { echo "::error::AppGallery requires an icon and $ICON is missing"; exit 1; }
+          dim=$(python3 -c "import struct,sys;d=open(sys.argv[1],'rb').read(33);print(f'{struct.unpack(\">I\",d[16:20])[0]}x{struct.unpack(\">I\",d[20:24])[0]}')" "$ICON")
+          size=$(stat -c %s "$ICON")
+          # AppGallery takes a 216 or 1024 px square PNG of at most 3 MB.
+          case "$dim" in 216x216|1024x1024) ;; *) echo "::error file=$ICON::$dim, expected 1024x1024 or 216x216"; exit 1;; esac
+          [ "$size" -le 3145728 ] || { echo "::error file=$ICON::$size bytes, over AppGallery's 3 MB"; exit 1; }
+          echo "  icon.png $dim, $size bytes"
+
       - name: Rendered panels are store-legal, when they have been rendered
         run: |
           if [ -d android/play/screenshots ] && ls android/play/screenshots/*.png >/dev/null 2>&1; then
