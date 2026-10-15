@@ -217,6 +217,21 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  /// The product's `fields_to_collect` lets the partner leave the names out, so only the contact rows show.
+  func testUserDetailsNamesNotAsked() {
+    goldens("user_details_names_not_asked") {
+      userDetails(UseSmileIDSampleUserDetails(), requirement: Self.namesNotAsked)
+    }
+  }
+
+  func testUserDetailsNamesNotAskedSurvivesMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      userDetails(UseSmileIDSampleUserDetails(), requirement: Self.namesNotAsked, height: 1400)
+    }
+  }
+
+  private static let namesNotAsked = UseSmileIDSampleUserDetailsRequirement(firstName: false, lastName: false, hidden: [.firstName, .lastName])
+
   private func userDetails(
     _ details: UseSmileIDSampleUserDetails,
     requirement: UseSmileIDSampleUserDetailsRequirement = .init(),
