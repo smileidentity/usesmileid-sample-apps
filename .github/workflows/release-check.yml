@@ -43,8 +43,7 @@ jobs:
 
       - name: Bundle
         working-directory: android
-        # AppGallery's bundle is built only to size it per ABI; the store takes the APK.
-        run: ./gradlew bundlePlayRelease bundleAppgalleryRelease assembleAppgalleryRelease
+        run: ./gradlew bundlePlayRelease bundleAppgalleryRelease
 
       - name: Report the delivered size
         shell: bash
@@ -52,10 +51,7 @@ jobs:
 
       - name: Report the AppGallery size
         shell: bash
-        run: |
-          python3 scripts/app_size.py android android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
-          apk=android/app/build/outputs/apk/appgallery/release/app-appgallery-release.apk
-          echo "AppGallery APK: $(( $(stat -c %s "$apk") / 1000000 )) MB" | tee -a "$GITHUB_STEP_SUMMARY"
+        run: python3 scripts/app_size.py android android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Store art is present and store-legal
         run: |

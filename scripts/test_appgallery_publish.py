@@ -75,7 +75,7 @@ class TestPublish(unittest.TestCase):
         self.calls = []
         self.submit_failures = 0
         self.patch(agc, "call", self.fake_call)
-        self.patch(agc, "upload", lambda headers, app, apk: "https://obs/app.apk")
+        self.patch(agc, "upload", lambda headers, app, path: "https://obs/app.aab")
         self.patch(agc.time, "sleep", lambda seconds: None)
 
     def patch(self, owner, name, value):
@@ -94,24 +94,36 @@ class TestPublish(unittest.TestCase):
         return {}
 
     def test_notes_then_file_then_submit(self):
-        agc.publish({}, "app-appgallery-release.apk", "Faster capture.")
+        agc.publish({}, "app-appgallery-release.aab", "Faster capture.")
         self.assertEqual(
             ["publish/v2/appid-list", "publish/v2/app-language-info", "publish/v2/app-file-info", "publish/v2/app-submit"],
             [path for _, path, _ in self.calls],
         )
         self.assertEqual({"lang": "en-US", "newFeatures": "Faster capture."}, self.calls[1][2])
         self.assertEqual(agc.SOFTWARE_PACKAGE, self.calls[2][2]["fileType"])
-        self.assertEqual("https://obs/app.apk", self.calls[2][2]["files"][0]["fileDestUrl"])
+        self.assertEqual("https://obs/app.aab", self.calls[2][2]["files"][0]["fileDestUrl"])
 
     def test_a_submit_refused_while_parsing_is_retried(self):
         self.submit_failures = 2
-        agc.publish({}, "app.apk", "Notes.")
+        agc.publish({}, "app.aab", "Notes.")
         self.assertEqual(3, sum(1 for _, path, _ in self.calls if path == "publish/v2/app-submit"))
 
     def test_a_submit_still_refused_after_every_attempt_fails(self):
         self.submit_failures = agc.SUBMIT_ATTEMPTS
         with self.assertRaises(agc.AgcError):
-            agc.publish({}, "app.apk", "Notes.")
+            agc.publish({}, "app.aab", "Notes.")
+
+
+class TestPackageSuffix(unittest.TestCase):
+    def test_a_bundle_uploads_as_aab(self):
+        self.assertEqual("aab", agc.package_suffix("out/app-appgallery-release.aab"))
+
+    def test_an_apk_still_uploads_as_apk(self):
+        self.assertEqual("apk", agc.package_suffix("app.APK"))
+
+    def test_any_other_file_fails_before_upload(self):
+        with self.assertRaises(agc.AgcError):
+            agc.package_suffix("mapping.txt")
 
 
 class TestMultipart(unittest.TestCase):

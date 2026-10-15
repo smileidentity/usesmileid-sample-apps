@@ -26,7 +26,7 @@ general guide to what the SDK means for your own submission.
 |---|---|---|
 | **Publish to Play (internal)** | Builds the signed release bundle and uploads it to the internal testing track | none |
 | **Publish to Play (production)** | The same, to production | none |
-| **Publish to AppGallery** | Builds the signed AppGallery APK, uploads it with the release notes, and submits it for review | `lookup_only` |
+| **Publish to AppGallery** | Builds the signed AppGallery App Bundle, uploads it with the release notes, and submits it for review | `lookup_only` |
 | **Publish to TestFlight** | Archives, signs and uploads a build that TestFlight distributes to the internal group | `build_number` (empty: one above the highest App Store Connect holds) |
 | **Publish to the App Store** | Checks the listing, uploads, waits for processing, attaches the build to a new version with the copy in `ios/store/`, and submits it for review | `dry_run`, `build_number`, `marketing_version`, `release` (`manual` or on approval) |
 
@@ -63,28 +63,24 @@ review starts on the first promotion to closed testing or production.
 
 ## Huawei AppGallery
 
-**Flavor.** AppGallery gets the `appgallery` flavor (`assembleAppgalleryRelease`): ML Kit and Huawei's HMS
+**Flavor.** AppGallery gets the `appgallery` flavor (`bundleAppgalleryRelease`): ML Kit and Huawei's HMS
 analyzers, chosen per phone. A Huawei phone without Google services runs HMS, and any other phone runs ML
 Kit. The app needs no `agconnect-services.json`: HMS's on-device analyzers run without AppGallery Connect
 services.
 
-**Size.** AppGallery serves the APK whole, so the flavor keeps only the ARM ABIs (`arm64-v8a`,
-`armeabi-v7a`). Measured on an arm64 Huawei:
+**Size.** AppGallery serves the App Bundle per phone, as Play does. Measured on an arm64 Huawei:
 
 | Build | Download | Installed |
 | --- | --- | --- |
-| Play, per-device split | 14 MB | 30 MB |
-| AppGallery APK | 53 MB | 64 MB |
-| AppGallery as an App Bundle, per-device split | 24 MB | 46 MB |
+| Play | 14 MB | 30 MB |
+| AppGallery | 24 MB | 46 MB |
 
-HMS itself adds about 10 MB to the download. The rest of the gap is the APK carrying both ARM ABIs and every
-density, which a per-device split leaves out. An App Bundle needs AGC App Signing, which puts the signing key
-with Huawei, so the lane uploads the APK. The workflow writes the APK's size to the run summary.
+The AppGallery build carries ML Kit and HMS, so it runs on any phone; HMS adds about 10 MB. The workflow
+writes the bundle's per-device size to the run summary.
 
-**Signing.** The APK is signed with the Play upload key, and AppGallery distributes it as signed. AGC App
-Signing stays off, so no key is held by Huawei and the APK on the shelf has the same certificate as the one
-CI built. Play re-signs with its app signing key, so either store's build installs over the other's only
-when that key is the upload key: compare the two certificates in Play Console, under App integrity.
+**Signing.** The bundle is signed with the Play upload key, and AGC App Signing re-signs it with an app
+signing key AppGallery generated. The two stores are independent: each has its own app signing key, so a
+phone cannot update from one store's build to the other's.
 
 **Version code.** One above the higher of Play's next code and the highest AppGallery holds
 (`scripts/appgallery_publish.py highest-version-code` reads the draft's and the live version's), so AppGallery
@@ -110,9 +106,11 @@ dispatch:
 2. Create the app: package `com.usesmileid.sample.android`, category Tools, the privacy policy URL, the
    content rating, and the distribution countries.
 3. Declare that the app does not need Google Mobile Services (App information, GMS dependency: No). The
-   APK links ML Kit, and runs without it.
-4. Leave App Signing off.
-5. Enter the listing from `android/play/` and the privacy answers below.
+   build links ML Kit, and runs without it.
+4. Turn App Signing on: let AppGallery Connect generate the app signing key, and register the upload key's
+   certificate (`keytool -export -rfc -keystore upload.jks -alias upload -file upload_cert.pem`).
+5. Enter the listing from `android/play/`, the icon from `android/appgallery/`, and the privacy answers
+   below. Choose phones only: there are no tablet screenshots.
 6. Create a Connect API client (Users and permissions → API key, role App administrator) and store its id
    and secret as `AGC_CLIENT_ID` and `AGC_CLIENT_SECRET` in the `release` environment.
 7. Dispatch with `lookup_only`, then without it.
@@ -248,7 +246,7 @@ Simulate disappears from a release build.
 | `exportArchive` fails with *Cloud signing permission error* | The API key is not Admin | Generate an Admin key |
 | The archive fails in CI with *No Accounts* | The archive step had no key to authenticate with | Pass the key to the archive as well as the export |
 | The first dispatch fails with *maximum number of certificates generated* | The team already has three distribution certificates | Revoke an unused one first |
-| AppGallery submit fails after five attempts | AppGallery had not finished reading the APK after about six minutes | Submit the uploaded version in AppGallery Connect; the package is already there |
+| AppGallery submit fails after ten attempts | AppGallery had not finished processing the bundle after about eleven minutes | Submit the uploaded version in AppGallery Connect; the package is already there |
 | AppGallery reports *app not found* for the package | The app does not exist in AppGallery Connect yet | Do the first-release steps above |
 | AppGallery upload refused: the version code is not higher | A code was uploaded by hand above what Play holds | Dispatch with `lookup_only`; it reads both stores |
 | A workflow on a branch cannot be dispatched | GitHub lists a dispatchable workflow only once its file is on `main` | Merge the workflow first, or run the same step locally |

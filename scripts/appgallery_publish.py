@@ -2,7 +2,7 @@
 """Publishes the Android sample's AppGallery build through the AppGallery Connect Publishing API.
 
     AGC_CLIENT_ID=... AGC_CLIENT_SECRET=... scripts/appgallery_publish.py highest-version-code
-    AGC_CLIENT_ID=... AGC_CLIENT_SECRET=... scripts/appgallery_publish.py publish --apk <path> --notes <file>
+    AGC_CLIENT_ID=... AGC_CLIENT_SECRET=... scripts/appgallery_publish.py publish --package <path.aab> --notes <file>
     scripts/appgallery_publish.py check-notes android/appgallery/whatsnew-en-US
 """
 from __future__ import annotations
@@ -22,9 +22,10 @@ API = "https://connect-api.cloud.huawei.com/api"
 SOFTWARE_PACKAGE = 5
 NOTES_LANG = "en-US"
 NOTES_LIMIT = 500
-# AGC refuses a submit until it has parsed the upload, usually within two minutes.
+# AGC refuses a submit until it has processed the upload; a bundle also has its split APKs built.
 PARSE_WAIT_S = 120
-SUBMIT_ATTEMPTS = 5
+SUBMIT_ATTEMPTS = 10
+PACKAGE_SUFFIXES = ("aab", "apk")
 
 
 class AgcError(RuntimeError):
@@ -104,23 +105,30 @@ def destination(upload_response: dict) -> str:
     raise AgcError(f"upload reported no destination: {upload_response}")
 
 
-def upload(headers: dict, app: str, apk: str) -> str:
-    query = urllib.parse.urlencode({"appId": app, "suffix": "apk"})
+def package_suffix(path: str) -> str:
+    suffix = path.rsplit(".", 1)[-1].lower()
+    if suffix not in PACKAGE_SUFFIXES:
+        raise AgcError(f"{path}: AppGallery takes an .aab or an .apk")
+    return suffix
+
+
+def upload(headers: dict, app: str, path: str) -> str:
+    query = urllib.parse.urlencode({"appId": app, "suffix": package_suffix(path)})
     target = call("GET", f"{API}/publish/v2/upload-url?{query}", headers)
-    with open(apk, "rb") as package:
-        body, content_type = multipart({"authCode": target["authCode"], "fileCount": "1"}, os.path.basename(apk), package.read())
+    with open(path, "rb") as package:
+        body, content_type = multipart({"authCode": target["authCode"], "fileCount": "1"}, os.path.basename(path), package.read())
     req = urllib.request.Request(target["uploadUrl"], data=body, method="POST", headers={"Content-Type": content_type})
     with urllib.request.urlopen(req, timeout=900) as response:
         return destination(json.loads(response.read()))
 
 
-def publish(headers: dict, apk: str, notes: str) -> None:
+def publish(headers: dict, path: str, notes: str) -> None:
     app = app_id(headers)
     query = urllib.parse.urlencode({"appId": app})
     call("PUT", f"{API}/publish/v2/app-language-info?{query}", headers, {"lang": NOTES_LANG, "newFeatures": notes})
-    dest = upload(headers, app, apk)
+    dest = upload(headers, app, path)
     call("PUT", f"{API}/publish/v2/app-file-info?{query}", headers, {
-        "fileType": SOFTWARE_PACKAGE, "files": [{"fileName": os.path.basename(apk), "fileDestUrl": dest}],
+        "fileType": SOFTWARE_PACKAGE, "files": [{"fileName": os.path.basename(path), "fileDestUrl": dest}],
     })
     for attempt in range(1, SUBMIT_ATTEMPTS + 1):
         time.sleep(PARSE_WAIT_S if attempt == 1 else 60)
@@ -137,7 +145,7 @@ def main() -> int:
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("highest-version-code")
     pub = sub.add_parser("publish")
-    pub.add_argument("--apk", required=True)
+    pub.add_argument("--package", required=True)
     pub.add_argument("--notes", required=True)
     sub.add_parser("check-notes").add_argument("notes")
     args = parser.parse_args()
@@ -151,8 +159,8 @@ def main() -> int:
         query = urllib.parse.urlencode({"appId": app_id(headers)})
         print(highest_version_code(call("GET", f"{API}/publish/v2/app-info?{query}", headers)))
     else:
-        publish(headers, args.apk, notes)
-        print(f"Submitted {os.path.basename(args.apk)} for AppGallery review")
+        publish(headers, args.package, notes)
+        print(f"Submitted {os.path.basename(args.package)} for AppGallery review")
     return 0
 
 

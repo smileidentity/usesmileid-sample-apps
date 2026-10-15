@@ -61,7 +61,7 @@ jobs:
       - name: Assemble
         if: ${{ !inputs.lookup_only }}
         working-directory: android
-        run: ./gradlew assembleAppgalleryRelease
+        run: ./gradlew bundleAppgalleryRelease
         env:
           ORG_GRADLE_PROJECT_REQUIRE_UPLOAD_SIGNING: "true"
           ORG_GRADLE_PROJECT_VERSION_CODE: ${{ steps.version.outputs.code }}
@@ -70,9 +70,9 @@ jobs:
       - name: Upload and submit for review
         if: ${{ !inputs.lookup_only }}
         run: |
-          apk=android/app/build/outputs/apk/appgallery/release/app-appgallery-release.apk
-          echo "### APK size: $(( $(stat -c %s "$apk") / 1000000 )) MB" >> "$GITHUB_STEP_SUMMARY"
-          python3 scripts/appgallery_publish.py publish --apk "$apk" --notes android/appgallery/whatsnew-en-US
+          aab=android/app/build/outputs/bundle/appgalleryRelease/app-appgallery-release.aab
+          python3 scripts/app_size.py android "$aab" >> "$GITHUB_STEP_SUMMARY" || echo "Size report failed" >> "$GITHUB_STEP_SUMMARY"
+          python3 scripts/appgallery_publish.py publish --package "$aab" --notes android/appgallery/whatsnew-en-US
         env:
           AGC_CLIENT_ID: ${{ secrets.AGC_CLIENT_ID }}
           AGC_CLIENT_SECRET: ${{ secrets.AGC_CLIENT_SECRET }}
