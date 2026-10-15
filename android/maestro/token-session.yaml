@@ -97,7 +97,6 @@ appId: ${APP_ID}
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
-# The SDK requires a contact field even though the form labels both optional.
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText

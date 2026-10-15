@@ -27,11 +27,8 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment, userDetails: complete)), .ready)
   }
 
-  func testEmptyDetailsAreSentToTheForm() {
-    guard case .needsDetails(let issues) = useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment)) else {
-      return XCTFail("an empty payload passed the gate")
-    }
-    XCTAssertFalse(issues.isEmpty, "the redirect carries no reason")
+  func testEmptyDetailsReachTheSdkForTheApiToJudge() {
+    XCTAssertEqual(useSmileIDSamplePreflight(snapshot(.smartSelfieEnrollment)), .ready)
   }
 
   func testAKycRunWithNoIdNumberIsSentToTheForm() {
@@ -59,25 +56,12 @@ final class UseSmileIDSampleFlowPreflightTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePreflight(bound), .ready)
   }
 
-  func testAPartialBindingStillGoesToTheForm() {
+  func testAPartialBindingReachesTheSdkForTheApiToJudge() {
     let partial = snapshot(
       .smartSelfieEnrollment,
       session: session(bindings: UseSmileIDSampleTokenBindings(givenNames: true))
     )
-    guard case .needsDetails = useSmileIDSamplePreflight(partial) else {
-      return XCTFail("a partial binding was treated as a whole one")
-    }
-  }
-
-  func testARefreshScenarioDoesNotReadTheBindings() {
-    let expired = snapshot(
-      .smartSelfieEnrollment,
-      scenario: .badRefresh,
-      session: session(bindings: UseSmileIDSampleTokenBindings(givenNames: true, lastName: true, email: true))
-    )
-    guard case .needsDetails = useSmileIDSamplePreflight(expired) else {
-      return XCTFail("a scenario that starts expired read the token's bindings")
-    }
+    XCTAssertEqual(useSmileIDSamplePreflight(partial), .ready)
   }
 
   /// By design no host's gate checks consent; pinned so no platform diverges alone.
