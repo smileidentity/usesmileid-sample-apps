@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -42,6 +43,12 @@ data class UseSmileIDSampleUserDetails(
     val submittedPhone: String?
         get() = UseSmileIDSampleContactRules.submitted(UseSmileIDSampleUserField.Phone, phone).ifEmpty { null }
 
+    /** These details with every name [requirement] does not show left blank, since a row the form hides submits nothing. */
+    fun withoutHiddenNames(requirement: UseSmileIDSampleUserDetailsRequirement): UseSmileIDSampleUserDetails = copy(
+        firstName = firstName.takeIf { requirement.shows(UseSmileIDSampleUserField.FirstName) }.orEmpty(),
+        lastName = lastName.takeIf { requirement.shows(UseSmileIDSampleUserField.LastName) }.orEmpty(),
+    )
+
     companion object {
         val Saver: Saver<MutableState<UseSmileIDSampleUserDetails>, Any> = listSaver(
             save = { listOf(it.value.firstName, it.value.lastName, it.value.email, it.value.phone) },
@@ -51,15 +58,19 @@ data class UseSmileIDSampleUserDetails(
 }
 
 /**
- * What the form must still collect: the SDK's rule minus what the token binds. The static `required` flags
- * below cannot express either half of that.
+ * What the form must still collect, and which rows it leaves out: the product's `fields_to_collect`, or the token
+ * rule without one. The static `required` flags below cannot express either.
  */
 @Immutable
 data class UseSmileIDSampleUserDetailsRequirement(
     val firstName: Boolean = true,
     val lastName: Boolean = true,
     val contact: Boolean = true,
+    val hidden: Set<UseSmileIDSampleUserField> = emptySet(),
 ) {
+    /** Whether the form draws [field]'s row; a name the partner may leave out is not drawn at all. */
+    fun shows(field: UseSmileIDSampleUserField): Boolean = field !in hidden
+
     /** Nothing left to ask, so the form has no reason to appear. */
     val isSatisfied: Boolean get() = !firstName && !lastName && !contact
 
@@ -68,8 +79,8 @@ data class UseSmileIDSampleUserDetailsRequirement(
 
     /** Whether [field] is one the token already supplied, which is why it renders as provided. */
     fun supplies(field: UseSmileIDSampleUserField): Boolean = when (field) {
-        UseSmileIDSampleUserField.FirstName -> !firstName
-        UseSmileIDSampleUserField.LastName -> !lastName
+        UseSmileIDSampleUserField.FirstName -> !firstName && shows(field)
+        UseSmileIDSampleUserField.LastName -> !lastName && shows(field)
         // Neither contact row is individually supplied: the rule is "one of", so a bound email leaves
         // phone askable and vice versa. Only the requirement itself lifts.
         UseSmileIDSampleUserField.Email, UseSmileIDSampleUserField.Phone -> false
@@ -100,15 +111,42 @@ data class UseSmileIDSampleUserDetailsRequirement(
     }
 }
 
-/**
- * The requirement a token leaves behind. Mirrors the SDK's union rule field for field, and the unit
- * tests pin it to `FlowValidator.validateUserDetails`, which is the authority.
- */
+/** The requirement a token leaves behind: each name and one contact, unless the token binds it. */
 fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUserDetailsRequirement(
     firstName = this?.givenNames != true,
     lastName = this?.lastName != true,
     contact = !(this?.email == true || this?.phoneNumber == true),
 )
+
+/** The token rule, less any name [product]'s `fields_to_collect` does not require (spec/user-details-fields.json). */
+fun UseSmileIDSampleTokenBindings?.userDetailsRequirement(
+    product: UseSmileIDSampleProduct?,
+    fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>?,
+): UseSmileIDSampleUserDetailsRequirement {
+    val token = userDetailsRequirement()
+    val fields = product?.fieldsToCollectKey?.let { fieldsToCollect?.get(it) } ?: return token
+    fun leftOut(name: String, asked: Boolean) = asked && fields.none { it.name == name && it.required == true }
+    val hidden = buildSet {
+        if (leftOut("given_names", token.firstName)) add(UseSmileIDSampleUserField.FirstName)
+        if (leftOut("last_name", token.lastName)) add(UseSmileIDSampleUserField.LastName)
+    }
+    return token.copy(
+        firstName = token.firstName && UseSmileIDSampleUserField.FirstName !in hidden,
+        lastName = token.lastName && UseSmileIDSampleUserField.LastName !in hidden,
+        hidden = hidden,
+    )
+}
+
+/** The product's key in `fields_to_collect`; null for the SmartSelfie products, which have none. */
+val UseSmileIDSampleProduct.fieldsToCollectKey: String?
+    get() = when (this) {
+        UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleProduct.SmartSelfieAuth -> null
+        UseSmileIDSampleProduct.BiometricKyc -> "biometric_kyc"
+        UseSmileIDSampleProduct.EnhancedKyc -> "enhanced_kyc"
+        UseSmileIDSampleProduct.DocumentVerification -> "doc_verification"
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> "enhanced_document_verification"
+        UseSmileIDSampleProduct.ResidencyDocumentVerification -> "residency_document_verification"
+    }
 
 /** Which user-details row changed, so the form reports one callback rather than four. */
 enum class UseSmileIDSampleUserField(

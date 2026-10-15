@@ -3,7 +3,6 @@ package com.usesmileid.sampleapps.android.catalogue
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueHttpException
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueSource
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueJson
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -20,10 +19,10 @@ interface UseSmileIDSampleCatalogueApi {
     @GET("v3/services/supported_documents")
     suspend fun supportedDocuments(@Query("locale") locale: String): Response<ResponseBody>
 
+    /** Asked without `product`, so one response carries every product's `fields_to_collect`. */
     @GET("v3/services/config")
     suspend fun servicesConfig(
         @Header("SmileID-Token") token: String,
-        @Query("product") product: String,
         @Query("locale") locale: String,
     ): Response<ResponseBody>
 
@@ -54,9 +53,7 @@ class RetrofitCatalogueSource : UseSmileIDSampleCatalogueSource {
         UseSmileIDSampleCatalogueApi.of(environment).supportedDocuments(locale).bodyOrThrow()
 
     override suspend fun servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String): String =
-        UseSmileIDSampleCatalogueApi.of(environment)
-            .servicesConfig(token, UseSmileIDSampleCatalogueJson.ENHANCED_DOCUMENT_VERIFICATION, locale)
-            .bodyOrThrow()
+        UseSmileIDSampleCatalogueApi.of(environment).servicesConfig(token, locale).bodyOrThrow()
 
     private fun Response<ResponseBody>.bodyOrThrow(): String {
         val body = body()
