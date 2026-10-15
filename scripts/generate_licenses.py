@@ -66,7 +66,7 @@ GOOGLE_TERMS = {
     "play core software development kit terms of service",
 }
 
-# Huawei's HMS artifacts declare no licence anywhere; its developer agreement (which the ML Kit terms supplement) governs them.
+# HMS artifacts declare no licence; Huawei's developer agreement governs them.
 HUAWEI_GROUPS = ("com.huawei.",)
 HUAWEI_TERMS = {
     "name": "HUAWEI Developer Service Agreement",
@@ -283,7 +283,6 @@ def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> d
         "openSource": open_source,
         "googleServices": google,
     }
-    # Only the AppGallery build carries HMS, so every other asset keeps its shape.
     if huawei:
         notices["huaweiServices"] = huawei
     notices["licenseTexts"] = licence_texts

@@ -16,7 +16,6 @@ internal val STORE_ML_BACKEND = UseSmileIDMobileServicesProvider.HUAWEI
 internal fun mlBackendFor(context: Context): UseSmileIDMobileServicesProvider =
     UseSmileIDMobileServices.preferred(context).orStoreBackend()
 
-/** A device with neither vendor's services still gets this store's backend rather than none. */
 internal fun UseSmileIDMobileServicesProvider.orStoreBackend(): UseSmileIDMobileServicesProvider =
     if (this == UseSmileIDMobileServicesProvider.NONE) STORE_ML_BACKEND else this
 

@@ -30,7 +30,7 @@ dependencyResolutionManagement {
         maven("https://central.sonatype.com/repository/maven-snapshots/") {
             content { includeGroup("com.usesmileid") }
         }
-        // The AppGallery build's HMS analyzers, which Huawei publishes nowhere else.
+        // Huawei publishes HMS only here.
         maven("https://developer.huawei.com/repo/") {
             content { includeGroupAndSubgroups("com.huawei") }
         }

@@ -22,7 +22,7 @@ API = "https://connect-api.cloud.huawei.com/api"
 SOFTWARE_PACKAGE = 5
 NOTES_LANG = "en-US"
 NOTES_LIMIT = 500
-# AGC parses an uploaded package asynchronously and refuses a submit until it has, usually within two minutes.
+# AGC refuses a submit until it has parsed the upload, usually within two minutes.
 PARSE_WAIT_S = 120
 SUBMIT_ATTEMPTS = 5
 
@@ -66,7 +66,7 @@ def app_id(headers: dict) -> str:
 
 
 def highest_version_code(app_info: dict) -> int:
-    """The higher of the draft's code and the live one's: a draft can sit above what is on the shelf."""
+    """The higher of the draft's and the live version's codes."""
     info = app_info.get("appInfo", {})
     return max(int(info.get("versionCode") or 0), int(info.get("onShelfVersionCode") or 0))
 

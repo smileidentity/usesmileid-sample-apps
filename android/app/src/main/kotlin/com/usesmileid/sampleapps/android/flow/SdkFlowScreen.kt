@@ -140,7 +140,7 @@ fun SdkFlowScreen(
     // UseSmileIDBuilder takes no theme input, so the subtree's uiMode carries the app's appearance; see docs/theming.md.
     val configuration = LocalConfiguration.current
     val context = LocalContext.current
-    // Probed once: the answer is a binder call and cannot change while the process lives.
+    // Probed once: a binder call whose answer cannot change while the process lives.
     val mlBackend = remember(context) { mlBackendFor(context) }
     val flowConfiguration = remember(configuration, app.resolvedDark) {
         Configuration(configuration).apply {

@@ -30,8 +30,8 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleNotice
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * The notices the app ships rather than links to (Apache-2.0 §4). Vendor sections apart, because the Google
- * and Huawei artifacts declare terms of service rather than a licence. A flat list, not the rounded section
+ * The notices the app ships rather than links to (Apache-2.0 §4). Google and Huawei get their own sections,
+ * because their artifacts declare terms of service rather than a licence. A flat list, not the rounded section
  * cards: this screen has no design frame, and two hundred rows in one card compose all at once.
  */
 @Composable

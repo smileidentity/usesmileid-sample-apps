@@ -100,13 +100,13 @@ android {
         }
     }
 
-    // One app, one id, per store: Play ships Google's ML Kit only; AppGallery adds HMS and picks per device.
+    // Play ships ML Kit only; AppGallery adds HMS and picks per phone.
     flavorDimensions += "distribution"
     productFlavors {
         create("play") { dimension = "distribution" }
         create("appgallery") {
             dimension = "distribution"
-            // AppGallery serves one universal APK and HMS ships ARM libraries only, so x86 would add size and nothing else.
+            // AppGallery serves the APK whole, and HMS has no x86 libraries.
             ndk { abiFilters += listOf("arm64-v8a", "armeabi-v7a") }
         }
     }
@@ -279,7 +279,7 @@ androidComponents {
         }
         // Resolved when the task reads it, not while configuring: every build would pay otherwise.
         val poms = provider { resolvePomIndex(modules.get()) }
-        // Play keeps sample-ui's shared asset; AppGallery's own copy overrides it, since HMS ships only there.
+        // AppGallery's own notices override sample-ui's, since only it ships HMS.
         val play = variant.flavorName == "play"
         val asset = if (play) {
             layout.projectDirectory.file("../sample-ui/src/main/assets/licenses.json")
