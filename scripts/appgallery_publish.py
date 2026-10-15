@@ -118,8 +118,15 @@ def upload(headers: dict, app: str, path: str) -> str:
     with open(path, "rb") as package:
         body, content_type = multipart({"authCode": target["authCode"], "fileCount": "1"}, os.path.basename(path), package.read())
     req = urllib.request.Request(target["uploadUrl"], data=body, method="POST", headers={"Content-Type": content_type})
-    with urllib.request.urlopen(req, timeout=900) as response:
-        return destination(json.loads(response.read()))
+    try:
+        with urllib.request.urlopen(req, timeout=900) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as e:
+        raise AgcError(f"upload failed with HTTP {e.code}: {e.read()[:500].decode(errors='replace')}") from e
+    try:
+        return destination(json.loads(raw))
+    except json.JSONDecodeError as e:
+        raise AgcError(f"upload returned a non-JSON body: {raw[:500].decode(errors='replace')}") from e
 
 
 def publish(headers: dict, path: str, notes: str) -> None:

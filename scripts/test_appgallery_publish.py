@@ -2,6 +2,7 @@
 """Tests for the AppGallery publish script. Run: python3 scripts/test_appgallery_publish.py"""
 from __future__ import annotations
 
+import io
 import os
 import sys
 import tempfile
@@ -124,6 +125,48 @@ class TestPackageSuffix(unittest.TestCase):
     def test_any_other_file_fails_before_upload(self):
         with self.assertRaises(agc.AgcError):
             agc.package_suffix("mapping.txt")
+
+
+class TestUpload(unittest.TestCase):
+    def setUp(self):
+        package = tempfile.NamedTemporaryFile(suffix=".aab", delete=False)
+        package.write(b"PK")
+        package.close()
+        self.addCleanup(os.unlink, package.name)
+        self.package = package.name
+        self.patch(agc, "call", lambda method, url, headers, body=None: {"authCode": "a", "uploadUrl": "https://obs/up"})
+
+    def patch(self, owner, name, value):
+        original = getattr(owner, name)
+        setattr(owner, name, value)
+        self.addCleanup(setattr, owner, name, original)
+
+    def respond(self, body: bytes):
+        class Response(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *exc):
+                return False
+
+        self.patch(agc.urllib.request, "urlopen", lambda req, timeout: Response(body))
+
+    def test_a_refused_upload_reports_the_store_s_error(self):
+        def refuse(req, timeout):
+            raise agc.urllib.error.HTTPError(req.full_url, 413, "too large", {}, io.BytesIO(b"package too large"))
+
+        self.patch(agc.urllib.request, "urlopen", refuse)
+        with self.assertRaisesRegex(agc.AgcError, "HTTP 413: package too large"):
+            agc.upload({}, "1234", self.package)
+
+    def test_a_non_json_reply_fails_with_its_body(self):
+        self.respond(b"<html>gateway timeout</html>")
+        with self.assertRaisesRegex(agc.AgcError, "gateway timeout"):
+            agc.upload({}, "1234", self.package)
+
+    def test_a_good_reply_returns_the_destination(self):
+        self.respond(b'{"result": {"resultCode": "0", "UploadFileRsp": {"fileDestUrl": "https://obs/app.aab"}}}')
+        self.assertEqual("https://obs/app.aab", agc.upload({}, "1234", self.package))
 
 
 class TestMultipart(unittest.TestCase):
