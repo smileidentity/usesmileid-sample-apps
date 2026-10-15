@@ -14,11 +14,13 @@ import {
   smileIDSampleCatalogueIdTypes,
   smileIDSampleDecodeDocuments,
   smileIDSampleDecodeEnabledCountries,
+  smileIDSampleDecodeFieldsToCollect,
   smileIDSampleDecodeIdTypes,
   type UseSmileIDSampleApiCountryDocuments,
   type UseSmileIDSampleApiEnabledCountry,
   type UseSmileIDSampleApiIdType,
   type UseSmileIDSampleCatalogue,
+  type UseSmileIDSampleFieldsToCollect,
 } from '../state/use-smile-id-sample-catalogue';
 import type {
   UseSmileIDSampleCatalogueFamily,
@@ -50,6 +52,10 @@ type State = {
   readonly documents: UseSmileIDSampleCatalogue<UseSmileIDSampleApiCountryDocuments>;
   /// The partner's Enhanced Document Verification list, kept per session: only a relink or a locale change asks again.
   readonly enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry>;
+  /// Each product's `fields_to_collect` from the same response, or null until it arrives or when it fails.
+  readonly fieldsToCollect: UseSmileIDSampleFieldsToCollect | null;
+  /// The session whose token read `fieldsToCollect`, since the API leaves out what that token binds.
+  readonly fieldsSessionId: string | null;
 };
 
 type Actions = {
@@ -57,7 +63,7 @@ type Actions = {
   begin: (environment: UseSmileIDSampleEnvironment, locale: string) => void;
   /// The form itself: a deep link can land there without the product tap, so start only if nothing has.
   ensure: (environment: UseSmileIDSampleEnvironment, locale: string) => void;
-  /// Enhanced Document Verification: fetches `session`'s list unless it is already here or on its way.
+  /// The session's configuration, for Enhanced Document Verification's list and every product's fields, unless already here or on its way.
   ensureEnabled: (
     environment: UseSmileIDSampleEnvironment,
     locale: string,
@@ -134,14 +140,18 @@ export const createSmileIDSampleCatalogueStore = (
       const token = enabledToken;
       const at = ++enabledGeneration;
       enabledInFlight = true;
-      set({ enabled: LOADING });
+      set({ enabled: LOADING, fieldsToCollect: null, fieldsSessionId: null });
+      let fieldsToCollect: UseSmileIDSampleFieldsToCollect | null = null;
       void load(
         () => source.servicesConfig(key.environment, token, key.locale),
-        smileIDSampleDecodeEnabledCountries,
+        (body) => {
+          fieldsToCollect = smileIDSampleDecodeFieldsToCollect(body);
+          return smileIDSampleDecodeEnabledCountries(body);
+        },
       ).then((enabled) => {
         if (at !== enabledGeneration) return;
         enabledInFlight = false;
-        set({ enabled });
+        set({ enabled, fieldsToCollect, fieldsSessionId: fieldsToCollect === null ? null : key.sessionId });
       });
     };
     return {
@@ -149,6 +159,8 @@ export const createSmileIDSampleCatalogueStore = (
       idTypes: LOADING,
       documents: LOADING,
       enabled: LOADING,
+      fieldsToCollect: null,
+      fieldsSessionId: null,
       begin: (environment, locale) => {
         get().stop();
         set({ run: { environment, locale } });
@@ -183,12 +195,19 @@ export const createSmileIDSampleCatalogueStore = (
           enabledInFlight = false;
           enabledKey = null;
           enabledToken = '';
-          set({ enabled: LOADING });
+          set({ enabled: LOADING, fieldsToCollect: null, fieldsSessionId: null });
         }
       },
     };
   });
 };
+
+/// The fields `sessionId`'s own token read, or null for any other session or none.
+export const smileIDSampleCatalogueFieldsToCollectOf = (
+  state: State,
+  sessionId: string | null,
+): UseSmileIDSampleFieldsToCollect | null =>
+  sessionId !== null && state.fieldsSessionId === sessionId ? state.fieldsToCollect : null;
 
 const settled = <T>(items: readonly T[]): UseSmileIDSampleCatalogue<T> =>
   items.length === 0 ? { kind: 'empty' } : { kind: 'ready', items };

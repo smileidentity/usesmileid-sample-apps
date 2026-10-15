@@ -1,7 +1,10 @@
 import {
   UseSmileIDSampleStatus,
+  smileIDSampleCatalogueFieldsToCollectOf,
+  smileIDSampleDetailsWithoutHiddenNames,
   smileIDSampleLiveSession,
   smileIDSampleProductFrom,
+  smileIDSampleRequirementFor,
   smileIDSampleSessionExpired,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
@@ -24,6 +27,7 @@ import {
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { smileIDSampleCatalogueStore } from '../../../src/catalogue/use-smile-id-sample-catalogue';
 import { useSmileIDSampleShellExtension } from '../../../src/extension';
 import {
   smileIDSampleApplying,
@@ -71,10 +75,17 @@ export default function SdkFlowRun() {
     // eslint-disable-next-line react-hooks/purity -- read once, inside the entry-only memo
     const entryMillis = Date.now();
     const session = smileIDSampleLiveSession(sessions, entryMillis);
+    const fieldsToCollect = smileIDSampleCatalogueFieldsToCollectOf(
+      smileIDSampleCatalogueStore(args.catalogue).getState(),
+      session?.id ?? null,
+    );
     return {
       product,
       route: args.route,
-      userDetails,
+      userDetails: smileIDSampleDetailsWithoutHiddenNames(
+        userDetails,
+        smileIDSampleRequirementFor(session?.bindings, product, fieldsToCollect),
+      ),
       idDetails,
       scenario: args.scenario,
       theme: args.theme,

@@ -2,6 +2,7 @@ import {
   createSmileIDSampleCatalogueStore,
   smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleCatalogueFieldsToCollectOf,
   smileIDSampleCatalogueIdTypesOf,
 } from '../src/data/use-smile-id-sample-catalogue-store';
 import {
@@ -46,6 +47,7 @@ const counting = (options: { failIdTypes?: boolean; hang?: boolean } = {}) => {
     lastToken: null as string | null,
     refusing: null as number | null,
     offline: false,
+    answer: null as string | null,
   };
   const source: UseSmileIDSampleCatalogueSource = {
     supportedIdTypes: async (environment) => {
@@ -65,7 +67,7 @@ const counting = (options: { failIdTypes?: boolean; hang?: boolean } = {}) => {
       calls.lastToken = token;
       if (calls.refusing !== null) throw new UseSmileIDSampleCatalogueHttpError(calls.refusing);
       if (calls.offline) throw new Error('offline');
-      return fixture.servicesConfig(environment, token, locale);
+      return calls.answer ?? fixture.servicesConfig(environment, token, locale);
     },
   };
   return { source, calls, release: () => release() };
@@ -125,6 +127,50 @@ describe('the catalogue store', () => {
     store.getState().retry();
     await settle();
     expect(smileIDSampleCatalogueCountriesOf(store.getState(), 'document', EDV).kind).toBe('ready');
+  });
+
+  it("carries every product's fields in the same answer", async () => {
+    const { source, calls } = counting();
+    calls.answer =
+      '{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}, {"name": "email", "required": false}]}, "products": {}}';
+    const store = createSmileIDSampleCatalogueStore(source);
+    expect(store.getState().fieldsToCollect).toBeNull();
+    store.getState().ensureEnabled('sandbox', 'en-GB', session('a'));
+    await settle();
+
+    expect(store.getState().fieldsToCollect).toEqual({
+      enhanced_kyc: [
+        { name: 'given_names', required: null },
+        { name: 'email', required: false },
+      ],
+    });
+    expect(calls.config).toBe(1);
+  });
+
+  it('gives the fields only to the live session that read them', async () => {
+    const { source, calls } = counting();
+    calls.answer = '{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}]}, "products": {}}';
+    const store = createSmileIDSampleCatalogueStore(source);
+    store.getState().ensureEnabled('sandbox', 'en-GB', session('a'));
+    await settle();
+
+    expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), 'a')).toEqual({
+      enhanced_kyc: [{ name: 'given_names', required: null }],
+    });
+    expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), 'b')).toBeNull();
+    expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), null)).toBeNull();
+  });
+
+  it('leaves no fields after a failed configuration, so the form keeps the token rule', async () => {
+    const { source, calls } = counting();
+    calls.offline = true;
+    const store = createSmileIDSampleCatalogueStore(source);
+    store.getState().ensureEnabled('sandbox', 'en-GB', session('a'));
+    await settle();
+
+    expect(store.getState().fieldsToCollect).toBeNull();
+    store.getState().stop();
+    expect(store.getState().fieldsToCollect).toBeNull();
   });
 
   it("gives no network on the partner's list the default line", async () => {
