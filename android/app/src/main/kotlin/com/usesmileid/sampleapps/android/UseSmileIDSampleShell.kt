@@ -176,14 +176,12 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         if (started) return@LaunchedEffect
-        // Ahead of autostart, which snapshots the session as the flow opens; marked after, so a recreation mid-link links again.
+        // Linked and loaded before autostart, which snapshots the session as the flow opens; marked after, so a recreation mid-link redoes it.
         linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)?.let { linked ->
-            // The app reads the session from the store's flow, which can trail the write.
             withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.session?.id }.first { it == linked.id } }
         }
         started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
-        // The run snapshots the session as it opens, and the store's first read can still be in flight.
         withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.sessionLoaded }.first { it } }
         navigator.navigate(
             SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),

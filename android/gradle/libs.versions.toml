@@ -1,11 +1,11 @@
 [versions]
-# Each module pins its own snapshot build, since 12.2.0-SNAPSHOT moves.
-usesmileid = "12.2.0-20261013.215422-237"
-usesmileid-bom = "12.2.0-20261013.215422-238"
-usesmileid-mlkit-face = "12.2.0-20261013.215422-234"
-usesmileid-mlkit-document = "12.2.0-20261013.215422-235"
-usesmileid-huawei-face = "12.2.0-20261013.215422-237"
-usesmileid-huawei-document = "12.2.0-20261013.215422-237"
+# The released SDK, from Maven Central.
+usesmileid = "12.3.0"
+usesmileid-bom = "12.3.0"
+usesmileid-mlkit-face = "12.3.0"
+usesmileid-mlkit-document = "12.3.0"
+usesmileid-huawei-face = "12.3.0"
+usesmileid-huawei-document = "12.3.0"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.20"

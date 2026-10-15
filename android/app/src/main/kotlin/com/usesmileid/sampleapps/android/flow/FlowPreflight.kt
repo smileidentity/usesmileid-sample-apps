@@ -5,7 +5,6 @@ import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
 import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
-import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 
 /** §7.3's entry gate: the SDK's non-throwing pre-flight plus its per-payload validators. */
 fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
@@ -18,11 +17,8 @@ fun preflight(snapshot: FlowLaunchSnapshot): FlowPreflight {
         useSmileIDSampleShellExtension?.customiseFlow(this, snapshot.product)
     }
     // A form can fix what the user typed but not how the host built the flow, and §7.3 redirects only the first.
-    val requirement = snapshot.liveSession?.bindings.userDetailsRequirement()
+    // User details are not checked here: the API reports any a job needs, on the result card.
     val payloadChecks = buildList {
-        // The SDK still does the validating — its overload that takes a token payload is not public API
-        // at 12.0.2, so the bindings are subtracted from what it reports instead.
-        builder.userDetails?.let { add(builder.validateUserDetails(it).minus(requirement)) }
         builder.biometricKYCParams?.let { add(builder.validateBiometricKYCParams(it)) }
         builder.enhancedKYCParams?.let { add(builder.validateEnhancedKYCParams(it)) }
         builder.documentVerificationParams?.let { add(builder.validateDocumentVerificationParams(it)) }

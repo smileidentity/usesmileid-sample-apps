@@ -11,11 +11,14 @@ import {
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
 import { DocumentCaptureConfigBuilder, UseSmileIDFlowBuilder } from '@smileid/usesmileid';
+import { UseSmileIDMobileServicesProvider } from '@smileid/usesmileid_bridge';
 
 import {
   smileIDSampleApplyDocumentOptions,
   smileIDSampleApplying,
   smileIDSampleJourneyStepsFor,
+  smileIDSampleDocumentAnalyzerFor,
+  smileIDSampleFaceAnalyzerFor,
   type UseSmileIDSampleFlowJourneyStep,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
@@ -27,6 +30,8 @@ jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key:
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
 jest.mock('@smileid/usesmileid_mlkit_document', () => ({ useSmileIDMlkitDocument: { key: 'mlkit-document' } }));
 jest.mock('@smileid/usesmileid_vision_document', () => ({ useSmileIDVisionDocument: { key: 'vision-document' } }));
+jest.mock('@smileid/usesmileid_huawei_face', () => ({ useSmileIDHuaweiFace: { key: 'huawei' } }));
+jest.mock('@smileid/usesmileid_huawei_document', () => ({ useSmileIDHuaweiDocument: { key: 'huawei-document' } }));
 
 const productFor = (id: string): UseSmileIDSampleProduct =>
   smileIDSampleProducts.find((product) => product.id === id)!;
@@ -140,24 +145,11 @@ describe('the gate', () => {
     expect(smileIDSamplePreflight(snapshot({ session: null })).kind).toBe('needsSession');
   });
 
-  // The SDK requires a contact field even though the form labels both optional.
-  it('sends an empty form back to the form rather than to the SDK', () => {
+  it('passes an empty form to the SDK, for the API to judge', () => {
     const outcome = smileIDSamplePreflight(
       snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
     );
-    expect(outcome.kind).toBe('needsDetails');
-  });
-
-  it('names the fields an empty form left for the form to fix', () => {
-    const outcome = smileIDSamplePreflight(
-      snapshot({ userDetails: { firstName: '', lastName: '', email: '', phone: '' } }),
-    );
-    const reported =
-      outcome.kind === 'needsDetails' || outcome.kind === 'misconfigured'
-        ? outcome.issues.map((issue) => issue.message).join('; ')
-        : '';
-    expect(reported).toContain('givenNames');
-    expect(reported).toContain('lastName');
+    expect(outcome.kind).toBe('ready');
   });
 });
 
@@ -340,5 +332,31 @@ describe('customiseNetwork', () => {
       customiseNetwork: (_network, product) => customised.push(product.id),
     });
     expect(customised).toEqual(['smartSelfieEnrollment']);
+  });
+});
+
+describe('the analyzers follow the phone', () => {
+  const { Google, Huawei, None } = UseSmileIDMobileServicesProvider;
+
+  it('a Huawei without Google Play services gets HMS for faces and documents', () => {
+    expect(smileIDSampleFaceAnalyzerFor(Huawei, 'android')).toEqual({ key: 'huawei' });
+    expect(smileIDSampleDocumentAnalyzerFor(Huawei, 'android')).toEqual({ key: 'huawei-document' });
+  });
+
+  it('Google Play services, and a phone reporting neither, keep ML Kit', () => {
+    for (const services of [Google, None]) {
+      expect([services, smileIDSampleFaceAnalyzerFor(services, 'android')]).toEqual([services, { key: 'mlkit' }]);
+      expect([services, smileIDSampleDocumentAnalyzerFor(services, 'android')]).toEqual([
+        services,
+        { key: 'mlkit-document' },
+      ]);
+    }
+  });
+
+  it('iOS runs Vision whatever the probe says', () => {
+    for (const services of [Google, Huawei, None]) {
+      expect(smileIDSampleFaceAnalyzerFor(services, 'ios')).toEqual({ key: 'vision' });
+      expect(smileIDSampleDocumentAnalyzerFor(services, 'ios')).toEqual({ key: 'vision-document' });
+    }
   });
 });

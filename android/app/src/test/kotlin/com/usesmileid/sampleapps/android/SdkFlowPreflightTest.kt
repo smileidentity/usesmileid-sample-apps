@@ -58,10 +58,9 @@ class SdkFlowPreflightTest {
     }
 
     @Test
-    fun `missing user details route to the forms rather than the SDK`() {
+    fun `missing user details reach the SDK, for the API to judge`() {
         UseSmileIDSampleProduct.entries.forEach { product ->
-            val verdict = preflight(snapshotFor(product).copy(userDetails = UseSmileIDSampleUserDetails()))
-            assertTrue("$product should need details, got $verdict", verdict is FlowPreflight.NeedsDetails)
+            assertEquals("$product", FlowPreflight.Ready, preflight(snapshotFor(product).copy(userDetails = UseSmileIDSampleUserDetails())))
         }
     }
 
@@ -74,11 +73,9 @@ class SdkFlowPreflightTest {
     }
 
     @Test
-    fun `names without a contact field still need details`() {
+    fun `names without a contact field reach the SDK, for the API to judge`() {
         val namesOnly = UseSmileIDSampleUserDetails(firstName = "Ada", lastName = "Okafor")
-        assertTrue(namesOnly.isComplete)
-        val verdict = preflight(snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(userDetails = namesOnly))
-        assertTrue("expected NeedsDetails, got $verdict", verdict is FlowPreflight.NeedsDetails)
+        assertEquals(FlowPreflight.Ready, preflight(snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(userDetails = namesOnly)))
     }
 
     @Test
@@ -118,7 +115,6 @@ class SdkFlowPreflightTest {
 
     @Test
     fun `a token binding the required details does not send the journey back to a form`() {
-        // The SDK relaxes these inside build(); its host-facing validateUserDetails cannot see a token.
         val snapshot = snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(
             userDetails = UseSmileIDSampleUserDetails(),
             session = session(UseSmileIDSampleSimulatedBindings(userDetails = true)),
@@ -127,23 +123,17 @@ class SdkFlowPreflightTest {
     }
 
     @Test
-    fun `a token binding only consent leaves the user-details requirement standing`() {
-        val snapshot = snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(
-            userDetails = UseSmileIDSampleUserDetails(),
-            session = session(UseSmileIDSampleSimulatedBindings(consent = true)),
-        )
-        assertTrue(preflight(snapshot) is FlowPreflight.NeedsDetails)
-    }
-
-    @Test
-    fun `the two refresh scenarios keep the fixture path, so their token relaxes nothing`() {
-        listOf(UseSmileIDSampleScenario.ExpiredToken, UseSmileIDSampleScenario.BadRefresh).forEach { scenario ->
+    fun `user details are left to the API whatever the token binds`() {
+        listOf(
+            session(UseSmileIDSampleSimulatedBindings(consent = true)),
+            boundSession(""""given_names":"pii_1","last_name":"pii_2""""),
+            boundSession(""""phone_number":"pii_1""""),
+        ).forEach { bound ->
             val snapshot = snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(
                 userDetails = UseSmileIDSampleUserDetails(),
-                scenario = scenario,
-                session = session(UseSmileIDSampleSimulatedBindings(userDetails = true)),
+                session = bound,
             )
-            assertTrue("$scenario should still need details", preflight(snapshot) is FlowPreflight.NeedsDetails)
+            assertEquals(FlowPreflight.Ready, preflight(snapshot))
         }
     }
 
@@ -193,53 +183,6 @@ class SdkFlowPreflightTest {
         val params = requireNotNull(UseSmileIDFlowBuilder().apply { applying(snapshot) }.enhancedKYCParams)
         assertEquals("KE", params.country)
         assertEquals("0000000", params.idNumber)
-    }
-
-    @Test
-    fun `a token binding both names but no contact still asks for one`() {
-        val bound = boundSession(""""given_names":"pii_1","last_name":"pii_2"""")
-        val snapshot = snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(
-            userDetails = UseSmileIDSampleUserDetails(),
-            session = bound,
-        )
-        val verdict = preflight(snapshot)
-        assertTrue("expected NeedsDetails, got $verdict", verdict is FlowPreflight.NeedsDetails)
-        assertEquals(
-            "the contact field is the only thing outstanding",
-            listOf("userDetails"),
-            (verdict as FlowPreflight.NeedsDetails).issues.fieldNames(),
-        )
-        val withContact = snapshot.copy(userDetails = UseSmileIDSampleUserDetails(email = "ada@example.com"))
-        assertEquals(FlowPreflight.Ready, preflight(withContact))
-    }
-
-    @Test
-    fun `a partially bound token asks only for the fields it left out`() {
-        val bound = boundSession(""""given_names":"pii_1","email":"pii_2"""")
-        val snapshot = snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(
-            userDetails = UseSmileIDSampleUserDetails(),
-            session = bound,
-        )
-        val verdict = preflight(snapshot)
-        assertEquals(
-            "only the last name is missing",
-            listOf("userDetails.lastName"),
-            (verdict as FlowPreflight.NeedsDetails).issues.fieldNames(),
-        )
-        val filled = snapshot.copy(userDetails = UseSmileIDSampleUserDetails(lastName = "Okafor"))
-        assertEquals(FlowPreflight.Ready, preflight(filled))
-    }
-
-    @Test
-    fun `a token binding only a contact still asks for both names`() {
-        val snapshot = snapshotFor(UseSmileIDSampleProduct.SmartSelfieEnrollment).copy(
-            userDetails = UseSmileIDSampleUserDetails(),
-            session = boundSession(""""phone_number":"pii_1""""),
-        )
-        assertEquals(
-            listOf("userDetails.givenNames", "userDetails.lastName"),
-            (preflight(snapshot) as FlowPreflight.NeedsDetails).issues.fieldNames(),
-        )
     }
 
     // The forbidden pair is absent because no host can catch it: `validate()` is `validateBuilder`,

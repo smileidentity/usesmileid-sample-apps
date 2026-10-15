@@ -3,9 +3,7 @@ import {
   useSmileIDSampleSessionStore,
   type UseSmileIDSampleTokenBindings,
   type UseSmileIDSampleTokenSession,
-  type UseSmileIDSampleUserDetailsRequirement,
 } from '@smileid/sample-ui';
-import type { UseSmileIDValidationException, ValidationState } from '@smileid/usesmileid';
 
 import { useLaunchArgs } from '../use-smile-id-sample-launch';
 
@@ -32,29 +30,4 @@ export const useSmileIDSampleLiveBindings = (): UseSmileIDSampleTokenBindings | 
   const live = useSmileIDSampleSessionStore((state) => state.live);
   const nowMillis = useSmileIDSampleSessionStore((state) => state.nowMillis);
   return smileIDSampleLiveSessionFor(live, scenario, nowMillis)?.bindings ?? null;
-};
-
-/// Drops the issues the token already answers; every other rule the SDK applies still stands.
-export const smileIDSampleMinusRequirement = (
-  state: ValidationState,
-  requirement: UseSmileIDSampleUserDetailsRequirement,
-): ValidationState => {
-  if (state.valid) return state;
-  const outstanding = state.issues.filter((issue) => !covers(requirement, issue));
-  return outstanding.length === 0 ? { valid: true } : { ...state, issues: outstanding };
-};
-
-const covers = (requirement: UseSmileIDSampleUserDetailsRequirement, issue: UseSmileIDValidationException): boolean => {
-  const details = issue.errorDetails as { fieldName?: unknown; reason?: unknown } | undefined;
-  switch (details?.fieldName) {
-    case 'userDetails.givenNames':
-      return !requirement.firstName;
-    case 'userDetails.lastName':
-      return !requirement.lastName;
-    // The contact rule is reported against the object; its reason identifies it.
-    case 'userDetails':
-      return !requirement.contact && String(details.reason).toLowerCase().includes('email');
-    default:
-      return false;
-  }
 };
