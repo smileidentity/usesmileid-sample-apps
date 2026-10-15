@@ -52,7 +52,16 @@ type UseSmileIDSampleApiEnabledDocument = {
   readonly label: string;
 };
 
-/// The product key the configuration call asks for and reads back.
+/// A field of `fields_to_collect` in `GET /v3/services/config`; `required` is null when the response leaves the key out.
+export type UseSmileIDSampleApiField = {
+  readonly name: string;
+  readonly required: boolean | null;
+};
+
+/// Each product's `fields_to_collect`, by its key in the response.
+export type UseSmileIDSampleFieldsToCollect = Readonly<Record<string, readonly UseSmileIDSampleApiField[]>>;
+
+/// The product key Enhanced Document Verification's lists are read back under.
 export const smileIDSampleEnhancedDocumentVerificationKey = 'enhanced_document_verification';
 
 /// What a failed list tells the reader to do, worded where it is shown.
@@ -336,6 +345,28 @@ export const smileIDSampleDecodeDocuments = (body: string): UseSmileIDSampleApiC
     });
   }
   return out;
+};
+
+/// One `fields_to_collect` object, each product's list kept to the fields that carry a name.
+export const smileIDSampleFieldsToCollectSection = (
+  section: Readonly<Record<string, unknown>>,
+): UseSmileIDSampleFieldsToCollect =>
+  Object.fromEntries(
+    Object.entries(section).map(([product, fields]) => [
+      product,
+      (Array.isArray(fields) ? fields : []).flatMap((raw: unknown) => {
+        const field = record(raw);
+        if (field === null || typeof field.name !== 'string') return [];
+        return [{ name: field.name, required: typeof field.required === 'boolean' ? field.required : null }];
+      }),
+    ]),
+  );
+
+/// Decodes `fields_to_collect` of a `GET /v3/services/config` body, empty when it carries none; null when malformed.
+export const smileIDSampleDecodeFieldsToCollect = (body: string): UseSmileIDSampleFieldsToCollect | null => {
+  const root = record(parse(body));
+  if (root === null) return null;
+  return smileIDSampleFieldsToCollectSection(record(root.fields_to_collect) ?? {});
 };
 
 /// Decodes `products.enhanced_document_verification` of a `GET /v3/services/config` body; null when malformed.

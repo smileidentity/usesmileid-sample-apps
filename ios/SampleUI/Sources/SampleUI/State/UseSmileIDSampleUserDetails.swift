@@ -53,16 +53,23 @@ private extension String {
   }
 }
 
-/// What the form must still collect: the SDK's rule minus what the token binds.
+/// What the form must still collect, and which rows it leaves out: the product's `fields_to_collect`, or the token rule without one.
 public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
   public var firstName: Bool
   public var lastName: Bool
   public var contact: Bool
+  public var hidden: Set<UseSmileIDSampleUserField>
 
-  public init(firstName: Bool = true, lastName: Bool = true, contact: Bool = true) {
+  public init(firstName: Bool = true, lastName: Bool = true, contact: Bool = true, hidden: Set<UseSmileIDSampleUserField> = []) {
     self.firstName = firstName
     self.lastName = lastName
     self.contact = contact
+    self.hidden = hidden
+  }
+
+  /// Whether the form draws `field`'s row; a name the partner may leave out is not drawn at all.
+  public func shows(_ field: UseSmileIDSampleUserField) -> Bool {
+    !hidden.contains(field)
   }
 
   /// Nothing left to ask, so the form has no reason to appear.
@@ -78,8 +85,8 @@ public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
   /// Whether the token already supplied `field`, which is why it renders as provided.
   public func supplies(_ field: UseSmileIDSampleUserField) -> Bool {
     switch field {
-    case .firstName: !firstName
-    case .lastName: !lastName
+    case .firstName: !firstName && shows(field)
+    case .lastName: !lastName && shows(field)
     // The rule is "one of", so a bound email leaves phone askable. Only the requirement lifts.
     case .email, .phone: false
     }
@@ -121,13 +128,66 @@ public struct UseSmileIDSampleUserDetailsRequirement: Equatable, Sendable {
 }
 
 public extension UseSmileIDSampleUserDetailsRequirement {
-  /// What a token leaves the form to collect, mirroring the SDK's union rule: both names plus one contact field.
+  /// What a token leaves the form to collect: each name and one contact, unless the token binds it.
   init(bindings: UseSmileIDSampleTokenBindings?) {
     self.init(
       firstName: bindings?.givenNames != true,
       lastName: bindings?.lastName != true,
       contact: !(bindings?.email == true || bindings?.phoneNumber == true)
     )
+  }
+
+  /// The token rule, less any name `product`'s `fields_to_collect` does not require (spec/user-details-fields.json).
+  init(bindings: UseSmileIDSampleTokenBindings?, product: UseSmileIDSampleProduct?, fieldsToCollect: [String: [UseSmileIDSampleApiField]]?) {
+    let token = Self(bindings: bindings)
+    guard let key = product?.fieldsToCollectKey, let fields = fieldsToCollect?[key] else {
+      self = token
+      return
+    }
+    func leftOut(_ name: String, asked: Bool) -> Bool {
+      asked && !fields.contains { $0.name == name && $0.required == true }
+    }
+    var hidden: Set<UseSmileIDSampleUserField> = []
+    if leftOut("given_names", asked: token.firstName) {
+      hidden.insert(.firstName)
+    }
+    if leftOut("last_name", asked: token.lastName) {
+      hidden.insert(.lastName)
+    }
+    self.init(
+      firstName: token.firstName && !hidden.contains(.firstName),
+      lastName: token.lastName && !hidden.contains(.lastName),
+      contact: token.contact,
+      hidden: hidden
+    )
+  }
+}
+
+public extension UseSmileIDSampleUserDetails {
+  /// These details with every name `requirement` does not show left blank, since a row the form hides submits nothing.
+  func withoutHiddenNames(_ requirement: UseSmileIDSampleUserDetailsRequirement) -> UseSmileIDSampleUserDetails {
+    var details = self
+    if !requirement.shows(.firstName) {
+      details.firstName = ""
+    }
+    if !requirement.shows(.lastName) {
+      details.lastName = ""
+    }
+    return details
+  }
+}
+
+public extension UseSmileIDSampleProduct {
+  /// The product's key in `fields_to_collect`; nil for the SmartSelfie products, which have none.
+  var fieldsToCollectKey: String? {
+    switch self {
+    case .smartSelfieEnrollment, .smartSelfieAuth: nil
+    case .biometricKyc: "biometric_kyc"
+    case .enhancedKyc: "enhanced_kyc"
+    case .documentVerification: "doc_verification"
+    case .enhancedDocumentVerification: "enhanced_document_verification"
+    case .residencyDocumentVerification: "residency_document_verification"
+    }
   }
 }
 

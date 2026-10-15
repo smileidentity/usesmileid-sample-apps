@@ -14,15 +14,17 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
     var configCalls = 0
     var lastToken: String?
     var refusing: Int?
+    var config: Data?
 
     init() throws {
       fixture = try UseSmileIDSampleFixtureCatalogueSource(fixture: UseSmileIDSampleCatalogueFixtures.json)
     }
 
-    func set(failing: Bool = false, hanging: Bool = false, refusing: Int? = nil) {
+    func set(failing: Bool = false, hanging: Bool = false, refusing: Int? = nil, config: Data? = nil) {
       self.failing = failing
       self.hanging = hanging
       self.refusing = refusing
+      self.config = config
     }
 
     func servicesConfig(environment: UseSmileIDSampleEnvironment, token: String, locale: String) async throws -> Data {
@@ -31,8 +33,12 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
       if let refusing {
         throw UseSmileIDSampleCatalogueError.http(refusing)
       }
+      let config = config
       return try await answer(environment) {
-        try await self.fixture.servicesConfig(environment: environment, token: token, locale: locale)
+        if let config {
+          return config
+        }
+        return try await self.fixture.servicesConfig(environment: environment, token: token, locale: locale)
       }
     }
 
@@ -133,6 +139,44 @@ final class UseSmileIDSampleCatalogueStoreTest: XCTestCase {
         return XCTFail("retry did not load")
       }
     }
+  }
+
+  func testTheSameAnswerCarriesEveryProductsFields() async throws {
+    let source = try FakeSource()
+    let body = #"{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}, {"name": "email", "required": false}]}, "products": {}}"#
+    await source.set(config: Data(body.utf8))
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    XCTAssertNil(store.fieldsToCollect)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(store.fieldsToCollect != nil)
+    XCTAssertEqual(
+      store.fieldsToCollect,
+      ["enhanced_kyc": [UseSmileIDSampleApiField(name: "given_names", required: nil), UseSmileIDSampleApiField(name: "email", required: false)]]
+    )
+    let calls = await source.configCalls
+    XCTAssertEqual(calls, 1)
+  }
+
+  func testTheFieldsGoOnlyToTheLiveSessionThatReadThem() async throws {
+    let source = try FakeSource()
+    await source.set(config: Data(#"{"fields_to_collect": {"enhanced_kyc": [{"name": "given_names"}]}, "products": {}}"#.utf8))
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(store.fieldsToCollect != nil)
+    XCTAssertEqual(store.fieldsToCollect(for: "a"), ["enhanced_kyc": [UseSmileIDSampleApiField(name: "given_names", required: nil)]])
+    XCTAssertNil(store.fieldsToCollect(for: "b"))
+    XCTAssertNil(store.fieldsToCollect(for: nil))
+  }
+
+  func testAFailedConfigurationLeavesNoFieldsSoTheFormKeepsTheTokenRule() async throws {
+    let source = try FakeSource()
+    await source.set(failing: true)
+    let store = UseSmileIDSampleCatalogueStore(source: source)
+    store.ensureEnabled(environment: .sandbox, locale: "en-GB", session: session("a"))
+    await eventually(store.enabled.isFailed)
+    XCTAssertNil(store.fieldsToCollect)
+    store.stop()
+    XCTAssertNil(store.fieldsToCollect)
   }
 
   func testNoNetworkOnThePartnersListIsTheDefaultError() async throws {

@@ -126,7 +126,7 @@ public struct UserDetailsScreen: View {
         )
         UseSmileIDSampleRowDivider()
       }
-      ForEach(Array(UseSmileIDSampleUserField.allCases.enumerated()), id: \.element) { index, field in
+      ForEach(Array(UseSmileIDSampleUserField.allCases.filter(state.requirement.shows).enumerated()), id: \.element) { index, field in
         if index > 0 {
           UseSmileIDSampleRowDivider()
         }
