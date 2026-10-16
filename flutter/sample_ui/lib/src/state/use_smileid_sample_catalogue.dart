@@ -232,6 +232,10 @@ class UseSmileIDSampleApiField {
   int get hashCode => Object.hash(name, required);
 }
 
+/// Each ID type's fields from `products`, by product key, then country code, then ID type.
+typedef UseSmileIDSampleIdTypeFields =
+    Map<String, Map<String, Map<String, List<UseSmileIDSampleApiField>>>>;
+
 /// One enabled ID type: the code to submit and its label.
 class UseSmileIDSampleApiEnabledDocument {
   /// Every field the rules read.
@@ -561,18 +565,56 @@ abstract final class UseSmileIDSampleCatalogueJson {
     Map<String, Object?> section,
   ) => <String, List<UseSmileIDSampleApiField>>{
     for (final MapEntry<String, Object?> product in section.entries)
-      product.key: <UseSmileIDSampleApiField>[
-        if (product.value is List<Object?>)
-          for (final Object? field in product.value! as List<Object?>)
-            if (field is Map<String, Object?> && field['name'] is String)
+      product.key: _apiFields(product.value, 'name'),
+  };
+
+  /// `products` of a `GET /v3/services/config` body by ID type, empty when it carries none; null when unreadable.
+  static UseSmileIDSampleIdTypeFields? idTypeFields(String body) {
+    final Object? root = _decode(body);
+    if (root is! Map<String, Object?>) {
+      return null;
+    }
+    final Object? section = root['products'];
+    return idTypeFieldsSection(
+      section is Map<String, Object?> ? section : const <String, Object?>{},
+    );
+  }
+
+  /// One `products` object, each country's entries keyed by ID type and kept to the fields that carry a name.
+  static UseSmileIDSampleIdTypeFields idTypeFieldsSection(
+    Map<String, Object?> section,
+  ) => <String, Map<String, Map<String, List<UseSmileIDSampleApiField>>>>{
+    for (final MapEntry<String, Object?> product in section.entries)
+      product.key: <String, Map<String, List<UseSmileIDSampleApiField>>>{
+        if (product.value is Map<String, Object?>)
+          for (final MapEntry<String, Object?> country
+              in (product.value! as Map<String, Object?>).entries)
+            country.key: <String, List<UseSmileIDSampleApiField>>{
+              if (country.value is List<Object?>)
+                for (final Object? entry in country.value! as List<Object?>)
+                  if (entry is Map<String, Object?> &&
+                      entry['key_name'] is String)
+                    entry['key_name']! as String: _apiFields(
+                      entry['fields'],
+                      'key_name',
+                    ),
+            },
+      },
+  };
+
+  /// The fields of a list that carry a name under [key], each kept to its name and `required`.
+  static List<UseSmileIDSampleApiField> _apiFields(Object? list, String key) =>
+      <UseSmileIDSampleApiField>[
+        if (list is List<Object?>)
+          for (final Object? field in list)
+            if (field is Map<String, Object?> && field[key] is String)
               UseSmileIDSampleApiField(
-                field['name']! as String,
+                field[key]! as String,
                 required: field['required'] is bool
                     ? field['required']! as bool
                     : null,
               ),
-      ],
-  };
+      ];
 
   /// The product key Enhanced Document Verification's lists are read back under.
   static const String enhancedDocumentVerification =

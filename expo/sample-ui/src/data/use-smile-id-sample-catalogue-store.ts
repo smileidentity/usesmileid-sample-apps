@@ -15,12 +15,14 @@ import {
   smileIDSampleDecodeDocuments,
   smileIDSampleDecodeEnabledCountries,
   smileIDSampleDecodeFieldsToCollect,
+  smileIDSampleDecodeIdTypeFields,
   smileIDSampleDecodeIdTypes,
   type UseSmileIDSampleApiCountryDocuments,
   type UseSmileIDSampleApiEnabledCountry,
   type UseSmileIDSampleApiIdType,
   type UseSmileIDSampleCatalogue,
   type UseSmileIDSampleFieldsToCollect,
+  type UseSmileIDSampleIdTypeFields,
 } from '../state/use-smile-id-sample-catalogue';
 import type {
   UseSmileIDSampleCatalogueFamily,
@@ -54,6 +56,8 @@ type State = {
   readonly enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry>;
   /// Each product's `fields_to_collect` from the same response, or null until it arrives or when it fails.
   readonly fieldsToCollect: UseSmileIDSampleFieldsToCollect | null;
+  /// Each KYC ID type's fields from the same response's `products`, read under the same session as `fieldsToCollect`.
+  readonly idTypeFields: UseSmileIDSampleIdTypeFields | null;
   /// The session whose token read `fieldsToCollect`, since the API leaves out what that token binds.
   readonly fieldsSessionId: string | null;
 };
@@ -140,18 +144,25 @@ export const createSmileIDSampleCatalogueStore = (
       const token = enabledToken;
       const at = ++enabledGeneration;
       enabledInFlight = true;
-      set({ enabled: LOADING, fieldsToCollect: null, fieldsSessionId: null });
+      set({ enabled: LOADING, fieldsToCollect: null, idTypeFields: null, fieldsSessionId: null });
       let fieldsToCollect: UseSmileIDSampleFieldsToCollect | null = null;
+      let idTypeFields: UseSmileIDSampleIdTypeFields | null = null;
       void load(
         () => source.servicesConfig(key.environment, token, key.locale),
         (body) => {
           fieldsToCollect = smileIDSampleDecodeFieldsToCollect(body);
+          idTypeFields = smileIDSampleDecodeIdTypeFields(body);
           return smileIDSampleDecodeEnabledCountries(body);
         },
       ).then((enabled) => {
         if (at !== enabledGeneration) return;
         enabledInFlight = false;
-        set({ enabled, fieldsToCollect, fieldsSessionId: fieldsToCollect === null ? null : key.sessionId });
+        set({
+          enabled,
+          fieldsToCollect,
+          idTypeFields,
+          fieldsSessionId: fieldsToCollect === null ? null : key.sessionId,
+        });
       });
     };
     return {
@@ -160,6 +171,7 @@ export const createSmileIDSampleCatalogueStore = (
       documents: LOADING,
       enabled: LOADING,
       fieldsToCollect: null,
+      idTypeFields: null,
       fieldsSessionId: null,
       begin: (environment, locale) => {
         get().stop();
@@ -195,7 +207,7 @@ export const createSmileIDSampleCatalogueStore = (
           enabledInFlight = false;
           enabledKey = null;
           enabledToken = '';
-          set({ enabled: LOADING, fieldsToCollect: null, fieldsSessionId: null });
+          set({ enabled: LOADING, fieldsToCollect: null, idTypeFields: null, fieldsSessionId: null });
         }
       },
     };
@@ -208,6 +220,13 @@ export const smileIDSampleCatalogueFieldsToCollectOf = (
   sessionId: string | null,
 ): UseSmileIDSampleFieldsToCollect | null =>
   sessionId !== null && state.fieldsSessionId === sessionId ? state.fieldsToCollect : null;
+
+/// The ID-type fields `sessionId`'s own token read, or null for any other session or none.
+export const smileIDSampleCatalogueIdTypeFieldsOf = (
+  state: State,
+  sessionId: string | null,
+): UseSmileIDSampleIdTypeFields | null =>
+  sessionId !== null && state.fieldsSessionId === sessionId ? state.idTypeFields : null;
 
 const settled = <T>(items: readonly T[]): UseSmileIDSampleCatalogue<T> =>
   items.length === 0 ? { kind: 'empty' } : { kind: 'ready', items };

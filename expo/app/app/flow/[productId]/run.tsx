@@ -1,9 +1,11 @@
 import {
   UseSmileIDSampleStatus,
   smileIDSampleCatalogueFieldsToCollectOf,
+  smileIDSampleCatalogueIdTypeFieldsOf,
   smileIDSampleDetailsWithoutHiddenNames,
   smileIDSampleLiveSession,
   smileIDSampleProductFrom,
+  smileIDSampleIdTypeEntry,
   smileIDSampleRequirementFor,
   smileIDSampleSessionExpired,
   useSmileIDSampleActiveProfile,
@@ -75,16 +77,21 @@ export default function SdkFlowRun() {
     // eslint-disable-next-line react-hooks/purity -- read once, inside the entry-only memo
     const entryMillis = Date.now();
     const session = smileIDSampleLiveSession(sessions, entryMillis);
-    const fieldsToCollect = smileIDSampleCatalogueFieldsToCollectOf(
-      smileIDSampleCatalogueStore(args.catalogue).getState(),
-      session?.id ?? null,
-    );
+    const catalogue = smileIDSampleCatalogueStore(args.catalogue).getState();
+    const fieldsToCollect = smileIDSampleCatalogueFieldsToCollectOf(catalogue, session?.id ?? null);
+    const idTypeFields = smileIDSampleCatalogueIdTypeFieldsOf(catalogue, session?.id ?? null);
     return {
       product,
       route: args.route,
       userDetails: smileIDSampleDetailsWithoutHiddenNames(
         userDetails,
-        smileIDSampleRequirementFor(session?.bindings, product, fieldsToCollect),
+        smileIDSampleRequirementFor(session?.bindings, product, fieldsToCollect, idTypeFields),
+        smileIDSampleIdTypeEntry(
+          idTypeFields,
+          product,
+          idDetails.country?.code ?? '',
+          idDetails.idType?.type ?? '',
+        ),
       ),
       idDetails,
       scenario: args.scenario,

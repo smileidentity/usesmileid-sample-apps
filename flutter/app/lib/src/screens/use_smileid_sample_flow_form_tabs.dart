@@ -81,6 +81,7 @@ class _UseSmileIDSampleUserDetailsTabState
           live?.bindings,
           product,
           _catalogue.fieldsToCollectFor(live?.id),
+          _catalogue.idTypeFieldsFor(live?.id),
         );
     final UseSmileIDSampleFormsNotifier edits = ref.read(
       useSmileIDSampleFormsProvider.notifier,

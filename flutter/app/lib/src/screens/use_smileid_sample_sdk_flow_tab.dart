@@ -162,6 +162,9 @@ class _UseSmileIDSampleSdkFlowTabState
       record.live,
       entryMillis,
     );
+    final UseSmileIDSampleCatalogueStore catalogue = ref.read(
+      useSmileIDSampleCatalogueStoreProvider,
+    );
     return UseSmileIDSampleFlowLaunchSnapshot(
       product: product,
       route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
@@ -169,10 +172,16 @@ class _UseSmileIDSampleSdkFlowTabState
         useSmileIDSampleUserDetailsRequirementFor(
           session?.bindings,
           product,
-          ref
-              .read(useSmileIDSampleCatalogueStoreProvider)
-              .fieldsToCollectFor(session?.id),
+          catalogue.fieldsToCollectFor(session?.id),
+          catalogue.idTypeFieldsFor(session?.id),
         ),
+        entry: catalogue
+            .idTypeFieldsFor(session?.id)
+            .entryFor(
+              product,
+              forms.idDetails.country?.code,
+              forms.idDetails.idType?.type,
+            ),
       ),
       idDetails: forms.idDetails,
       scenario: scenarios.scenario,

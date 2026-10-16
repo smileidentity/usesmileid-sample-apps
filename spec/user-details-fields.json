@@ -1,5 +1,5 @@
 {
-  "description": "Which rows the user-details form shows, read from `fields_to_collect` in `GET /v3/services/config`. The form asks only for what the API says a product needs: a name the partner may leave out is not shown at all, and a field the token binds shows as provided. The configuration is read without `product`, so one response carries every product's fields; Enhanced Document Verification still reads its lists from the same response's `products` entry. All four platforms assert every case.",
+  "description": "Which rows the user-details form shows, read from `fields_to_collect` in `GET /v3/services/config`. The form asks only for what the API says a product needs: a name the partner may leave out is not shown at all, and a field the token binds shows as provided. The configuration is read without `product`, so one response carries every product's fields; Enhanced and Biometric KYC also read that response's `products` entry, which lists each country's ID types with their own fields, and Enhanced Document Verification reads its lists from there too. All four platforms assert every case.",
   "productKeys": {
     "smartSelfieEnrollment": null,
     "smartSelfieAuth": null,
@@ -9,16 +9,20 @@
     "enhancedDocumentVerification": "enhanced_document_verification",
     "residencyDocumentVerification": "residency_document_verification"
   },
+  "idTypeProducts": ["biometricKyc", "enhancedKyc"],
   "rules": {
     "names": "`given_names` and `last_name` each: a name the token binds shows as provided, whatever the list says. Otherwise the product's list decides: listed with `required: true` asks for it, and a name the list leaves out is not shown. The API leaves the names out when the partner may skip them; servers that predate that list them with `required: false`, which is not shown either. The API also leaves out whatever the token binds, which is why a binding is read first.",
     "contact": "`email` and `phone_number` share `one_of_group: contact`, and the list never hides them: one of the two is asked for unless the token binds either.",
     "fallback": "A product with no key, a key the response does not carry, or no configuration at all keeps the token rule: each name, and one contact, is asked for unless the token binds it. A configuration read for another session, or with no live session, counts as none.",
-    "submission": "A row that is not shown submits nothing. The API judges what is missing and its message reaches the result card."
+    "submission": "A row that is not shown submits nothing. The API judges what is missing and its message reaches the result card.",
+    "idTypes": "For the `idTypeProducts`, the form comes before the ID type is picked, so a name the list leaves out is still asked when any ID type in `products.<key>` lists it with `required: true`. At submit, a name the picked country and ID type's entry does not list with `required: true` is not sent; with no entry for that pair, the form's rows decide. Other products read only `fields_to_collect`."
   },
   "outcomes": {
     "ask": "The row is shown and the form needs it before Continue.",
     "hidden": "The row is not shown.",
-    "provided": "The token binds it, so the row shows as provided."
+    "provided": "The token binds it, so the row shows as provided.",
+    "sent": "A typed name is submitted.",
+    "dropped": "A typed name is left out of the submission."
   },
   "cases": [
     {
@@ -159,6 +163,123 @@
       "fieldsToCollect": null,
       "bindings": {},
       "expect": { "firstName": "ask", "lastName": "ask", "contact": "ask" }
+    },
+    {
+      "name": "a name the list leaves out that an ID type on offer needs",
+      "product": "enhancedKyc",
+      "fieldsToCollect": {
+        "enhanced_kyc": [
+          { "label": "ID number", "name": "id_number", "required": true, "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" }
+        ]
+      },
+      "products": {
+        "enhanced_kyc": {
+          "KE": [
+            { "key_name": "ALIEN_CARD", "label": "Alien Card", "fields": [
+              { "label": "ID number", "key_name": "id_number", "required": true, "field_type": "text" },
+              { "label": "Email address", "key_name": "email", "one_of_group": "contact", "required": false, "field_type": "email" }
+            ] },
+            { "key_name": "NATIONAL_ID", "label": "National ID", "fields": [
+              { "label": "ID number", "key_name": "id_number", "required": true, "field_type": "text" },
+              { "label": "Given names", "key_name": "given_names", "required": true, "field_type": "text" },
+              { "label": "Last name", "key_name": "last_name", "required": true, "field_type": "text" },
+              { "label": "Email address", "key_name": "email", "one_of_group": "contact", "required": false, "field_type": "email" }
+            ] }
+          ]
+        }
+      },
+      "bindings": {},
+      "expect": { "firstName": "ask", "lastName": "ask", "contact": "ask" },
+      "submit": [
+        { "country": "KE", "idType": "ALIEN_CARD", "firstName": "dropped", "lastName": "dropped" },
+        { "country": "KE", "idType": "NATIONAL_ID", "firstName": "sent", "lastName": "sent" },
+        { "country": "KE", "idType": "PASSPORT", "firstName": "sent", "lastName": "sent" },
+        { "country": "NG", "idType": "NATIONAL_ID", "firstName": "sent", "lastName": "sent" }
+      ]
+    },
+    {
+      "name": "no ID type on offer needs the names",
+      "product": "biometricKyc",
+      "fieldsToCollect": {
+        "biometric_kyc": [
+          { "label": "ID number", "name": "id_number", "required": true, "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" }
+        ]
+      },
+      "products": {
+        "biometric_kyc": {
+          "KE": [
+            { "key_name": "ALIEN_CARD", "label": "Alien Card", "fields": [
+              { "label": "ID number", "key_name": "id_number", "required": true, "field_type": "text" },
+              { "label": "Email address", "key_name": "email", "one_of_group": "contact", "required": false, "field_type": "email" }
+            ] }
+          ],
+          "GH": [
+            { "key_name": "PASSPORT", "label": "Passport", "fields": [
+              { "label": "ID number", "key_name": "id_number", "required": true, "field_type": "text" },
+              { "label": "Email address", "key_name": "email", "one_of_group": "contact", "required": false, "field_type": "email" }
+            ] }
+          ]
+        }
+      },
+      "bindings": {},
+      "expect": { "firstName": "hidden", "lastName": "hidden", "contact": "ask" },
+      "submit": [
+        { "country": "KE", "idType": "ALIEN_CARD", "firstName": "dropped", "lastName": "dropped" }
+      ]
+    },
+    {
+      "name": "an ID type that needs a name the token binds",
+      "product": "biometricKyc",
+      "fieldsToCollect": {
+        "biometric_kyc": [
+          { "label": "ID number", "name": "id_number", "required": true, "type": "text" },
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" }
+        ]
+      },
+      "products": {
+        "biometric_kyc": {
+          "KE": [
+            { "key_name": "NATIONAL_ID", "label": "National ID", "fields": [
+              { "label": "ID number", "key_name": "id_number", "required": true, "field_type": "text" },
+              { "label": "Given names", "key_name": "given_names", "required": true, "field_type": "text" },
+              { "label": "Last name", "key_name": "last_name", "required": true, "field_type": "text" },
+              { "label": "Email address", "key_name": "email", "one_of_group": "contact", "required": false, "field_type": "email" }
+            ] }
+          ]
+        }
+      },
+      "bindings": { "givenNames": true },
+      "expect": { "firstName": "provided", "lastName": "ask", "contact": "ask" },
+      "submit": [
+        { "country": "KE", "idType": "NATIONAL_ID", "firstName": "sent", "lastName": "sent" }
+      ]
+    },
+    {
+      "name": "a product outside idTypeProducts reads only its list",
+      "product": "documentVerification",
+      "fieldsToCollect": {
+        "doc_verification": [
+          { "label": "Email address", "name": "email", "one_of_group": "contact", "required": false, "type": "email" }
+        ]
+      },
+      "products": {
+        "doc_verification": {
+          "KE": [
+            { "key_name": "NATIONAL_ID", "label": "National ID", "fields": [
+              { "label": "Given names", "key_name": "given_names", "required": true, "field_type": "text" },
+              { "label": "Last name", "key_name": "last_name", "required": true, "field_type": "text" },
+              { "label": "Email address", "key_name": "email", "one_of_group": "contact", "required": false, "field_type": "email" }
+            ] }
+          ]
+        }
+      },
+      "bindings": {},
+      "expect": { "firstName": "hidden", "lastName": "hidden", "contact": "ask" },
+      "submit": [
+        { "country": "KE", "idType": "NATIONAL_ID", "firstName": "sent", "lastName": "sent" }
+      ]
     }
   ]
 }

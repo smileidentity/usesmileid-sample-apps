@@ -137,15 +137,21 @@ public extension UseSmileIDSampleUserDetailsRequirement {
     )
   }
 
-  /// The token rule, less any name `product`'s `fields_to_collect` does not require (spec/user-details-fields.json).
-  init(bindings: UseSmileIDSampleTokenBindings?, product: UseSmileIDSampleProduct?, fieldsToCollect: [String: [UseSmileIDSampleApiField]]?) {
+  /// The token rule, less any name neither `product`'s `fields_to_collect` nor an ID type it offers requires (spec/user-details-fields.json).
+  init(
+    bindings: UseSmileIDSampleTokenBindings?,
+    product: UseSmileIDSampleProduct?,
+    fieldsToCollect: [String: [UseSmileIDSampleApiField]]?,
+    idTypeFields: UseSmileIDSampleIdTypeFields? = nil
+  ) {
     let token = Self(bindings: bindings)
-    guard let key = product?.fieldsToCollectKey, let fields = fieldsToCollect?[key] else {
+    guard let product, let key = product.fieldsToCollectKey, let fields = fieldsToCollect?[key] else {
       self = token
       return
     }
+    let offered = product.readsIdTypes ? (idTypeFields?[key] ?? [:]).values.flatMap(\.values) : []
     func leftOut(_ name: String, asked: Bool) -> Bool {
-      asked && !fields.contains { $0.name == name && $0.required == true }
+      asked && !fields.requires(name) && !offered.contains { $0.requires(name) }
     }
     var hidden: Set<UseSmileIDSampleUserField> = []
     if leftOut("given_names", asked: token.firstName) {
@@ -164,20 +170,46 @@ public extension UseSmileIDSampleUserDetailsRequirement {
 }
 
 public extension UseSmileIDSampleUserDetails {
-  /// These details with every name `requirement` does not show left blank, since a row the form hides submits nothing.
-  func withoutHiddenNames(_ requirement: UseSmileIDSampleUserDetailsRequirement) -> UseSmileIDSampleUserDetails {
+  /// These details with every name `requirement` does not show, or the picked ID type's `entry` does not require, left blank.
+  func withoutHiddenNames(
+    _ requirement: UseSmileIDSampleUserDetailsRequirement,
+    entry: [UseSmileIDSampleApiField]? = nil
+  ) -> UseSmileIDSampleUserDetails {
+    func sends(_ field: UseSmileIDSampleUserField, _ name: String) -> Bool {
+      requirement.shows(field) && (entry?.requires(name) ?? true)
+    }
     var details = self
-    if !requirement.shows(.firstName) {
+    if !sends(.firstName, "given_names") {
       details.firstName = ""
     }
-    if !requirement.shows(.lastName) {
+    if !sends(.lastName, "last_name") {
       details.lastName = ""
     }
     return details
   }
 }
 
+extension [UseSmileIDSampleApiField] {
+  /// Whether this list names `name` with `required: true`.
+  func requires(_ name: String) -> Bool {
+    contains { $0.name == name && $0.required == true }
+  }
+}
+
+public extension UseSmileIDSampleIdTypeFields? {
+  /// The picked ID type's fields, or nil for a product that reads none or a pair with no entry.
+  func entry(for product: UseSmileIDSampleProduct?, country: String?, idType: String?) -> [UseSmileIDSampleApiField]? {
+    guard let product, product.readsIdTypes, let key = product.fieldsToCollectKey, let country, let idType else { return nil }
+    return self?[key]?[country]?[idType]
+  }
+}
+
 public extension UseSmileIDSampleProduct {
+  /// Whether this product asks for names before its ID type is picked, so each ID type's entry in `products` counts.
+  var readsIdTypes: Bool {
+    self == .biometricKyc || self == .enhancedKyc
+  }
+
   /// The product's key in `fields_to_collect`; nil for the SmartSelfie products, which have none.
   var fieldsToCollectKey: String? {
     switch self {

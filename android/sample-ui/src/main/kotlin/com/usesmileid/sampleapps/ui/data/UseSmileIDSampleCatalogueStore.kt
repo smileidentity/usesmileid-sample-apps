@@ -16,6 +16,7 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueJson
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogueRules
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdTypeFields
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.CancellationException
@@ -63,12 +64,19 @@ class UseSmileIDSampleCatalogueStore(
     var fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>? by mutableStateOf(null)
         private set
 
+    /** Each KYC ID type's fields from the same response's `products`, read under the same session as [fieldsToCollect]. */
+    private var idTypeFields: UseSmileIDSampleIdTypeFields? = null
+
     /** The session whose token read [fieldsToCollect], since the API leaves out what that token binds. */
     private var fieldsSessionId: String? = null
 
     /** The fields [sessionId]'s own token read, or null for any other session or none. */
     fun fieldsToCollectFor(sessionId: String?): Map<String, List<UseSmileIDSampleApiField>>? =
         fieldsToCollect.takeIf { sessionId != null && sessionId == fieldsSessionId }
+
+    /** The ID-type fields [sessionId]'s own token read, or null for any other session or none. */
+    fun idTypeFieldsFor(sessionId: String?): UseSmileIDSampleIdTypeFields? =
+        idTypeFields.takeIf { sessionId != null && sessionId == fieldsSessionId }
 
     /** A product tap: a new run always asks the server again, so a list changed on the server shows up. */
     fun begin(environment: UseSmileIDSampleEnvironment, locale: String) {
@@ -113,6 +121,7 @@ class UseSmileIDSampleCatalogueStore(
             enabledToken = ""
             enabled = UseSmileIDSampleCatalogue.Loading
             fieldsToCollect = null
+            idTypeFields = null
             fieldsSessionId = null
         }
     }
@@ -176,15 +185,19 @@ class UseSmileIDSampleCatalogueStore(
         enabledJob?.cancel()
         enabled = UseSmileIDSampleCatalogue.Loading
         fieldsToCollect = null
+        idTypeFields = null
         fieldsSessionId = null
         enabledJob = scope.launch {
             var fields: Map<String, List<UseSmileIDSampleApiField>>? = null
+            var byIdType: UseSmileIDSampleIdTypeFields? = null
             enabled = load {
                 val body = source.servicesConfig(key.environment, token, key.locale)
                 fields = UseSmileIDSampleCatalogueJson.fieldsToCollect(body)
+                byIdType = UseSmileIDSampleCatalogueJson.idTypeFields(body)
                 UseSmileIDSampleCatalogueJson.enabledCountries(body)
             }
             fieldsSessionId = key.sessionId.takeIf { fields != null }
+            idTypeFields = byIdType
             fieldsToCollect = fields
         }
     }

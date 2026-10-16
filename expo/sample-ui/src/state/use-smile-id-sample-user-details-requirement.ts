@@ -1,4 +1,8 @@
-import type { UseSmileIDSampleFieldsToCollect } from './use-smile-id-sample-catalogue';
+import type {
+  UseSmileIDSampleApiField,
+  UseSmileIDSampleFieldsToCollect,
+  UseSmileIDSampleIdTypeFields,
+} from './use-smile-id-sample-catalogue';
 import type { UseSmileIDSampleTokenBindings } from './use-smile-id-sample-token-decoder';
 import type { UseSmileIDSampleUserDetails } from './use-smile-id-sample-profiles';
 import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
@@ -49,18 +53,51 @@ export const smileIDSampleFieldsToCollectKey = (product: UseSmileIDSampleProduct
     residencyDocumentVerification: 'residency_document_verification',
   })[product.id] ?? null;
 
-/// The token rule, less any name `product`'s `fields_to_collect` does not require (spec/user-details-fields.json).
+/// Whether `fields` lists `name` with `required: true`.
+const requires = (fields: readonly UseSmileIDSampleApiField[], name: string): boolean =>
+  fields.some((field) => field.name === name && field.required === true);
+
+/// Whether `product` asks for names before its ID type is picked, so each ID type's entry in `products` counts.
+export const smileIDSampleReadsIdTypes = (product: UseSmileIDSampleProduct): boolean =>
+  product.id === 'biometricKyc' || product.id === 'enhancedKyc';
+
+/// The picked ID type's fields in `products`, or null for a product that reads none or a pair with no entry.
+export const smileIDSampleIdTypeEntry = (
+  idTypeFields: UseSmileIDSampleIdTypeFields | null | undefined,
+  product: UseSmileIDSampleProduct | null | undefined,
+  country: string,
+  idType: string,
+): readonly UseSmileIDSampleApiField[] | null => {
+  if (!product || !smileIDSampleReadsIdTypes(product)) return null;
+  const key = smileIDSampleFieldsToCollectKey(product);
+  return (key === null ? undefined : idTypeFields?.[key]?.[country]?.[idType]) ?? null;
+};
+
+/// Whether any ID type `product` offers in `products` requires `name`.
+const anyIdTypeRequires = (
+  idTypeFields: UseSmileIDSampleIdTypeFields | null | undefined,
+  product: UseSmileIDSampleProduct,
+  key: string,
+  name: string,
+): boolean =>
+  smileIDSampleReadsIdTypes(product) &&
+  Object.values(idTypeFields?.[key] ?? {}).some((entries) =>
+    Object.values(entries).some((fields) => requires(fields, name)),
+  );
+
+/// The token rule, less any name neither `product`'s `fields_to_collect` nor an ID type it offers requires (spec/user-details-fields.json).
 export const smileIDSampleRequirementFor = (
   bindings: UseSmileIDSampleTokenBindings | null | undefined,
   product: UseSmileIDSampleProduct | null | undefined,
   fieldsToCollect: UseSmileIDSampleFieldsToCollect | null | undefined,
+  idTypeFields?: UseSmileIDSampleIdTypeFields | null,
 ): UseSmileIDSampleUserDetailsRequirement => {
   const token = smileIDSampleRequirementFrom(bindings);
   const key = product ? smileIDSampleFieldsToCollectKey(product) : null;
   const fields = key === null ? undefined : fieldsToCollect?.[key];
-  if (fields === undefined) return token;
+  if (!product || key === null || fields === undefined) return token;
   const leftOut = (name: string, asked: boolean): boolean =>
-    asked && !fields.some((field) => field.name === name && field.required === true);
+    asked && !requires(fields, name) && !anyIdTypeRequires(idTypeFields, product, key, name);
   const hidden = [
     ...(leftOut('given_names', token.firstName) ? [UseSmileIDSampleUserField.FirstName] : []),
     ...(leftOut('last_name', token.lastName) ? [UseSmileIDSampleUserField.LastName] : []),
@@ -73,15 +110,20 @@ export const smileIDSampleRequirementFor = (
   };
 };
 
-/// `details` with every name `requirement` does not show left blank, since a row the form hides submits nothing.
+/// `details` with every name `requirement` does not show, or the picked ID type's `entry` does not require, left blank.
 export const smileIDSampleDetailsWithoutHiddenNames = (
   details: UseSmileIDSampleUserDetails,
   requirement: UseSmileIDSampleUserDetailsRequirement,
-): UseSmileIDSampleUserDetails => ({
-  ...details,
-  firstName: smileIDSampleRequirementShows(requirement, UseSmileIDSampleUserField.FirstName) ? details.firstName : '',
-  lastName: smileIDSampleRequirementShows(requirement, UseSmileIDSampleUserField.LastName) ? details.lastName : '',
-});
+  entry?: readonly UseSmileIDSampleApiField[] | null,
+): UseSmileIDSampleUserDetails => {
+  const sends = (field: UseSmileIDSampleUserField, name: string): boolean =>
+    smileIDSampleRequirementShows(requirement, field) && (!entry || requires(entry, name));
+  return {
+    ...details,
+    firstName: sends(UseSmileIDSampleUserField.FirstName, 'given_names') ? details.firstName : '',
+    lastName: sends(UseSmileIDSampleUserField.LastName, 'last_name') ? details.lastName : '',
+  };
+};
 
 /// Nothing left to ask, so the form has no reason to appear.
 export const smileIDSampleRequirementSatisfied = (

@@ -1,6 +1,7 @@
 import {
   UserDetailsScreen,
   smileIDSampleCatalogueFieldsToCollectOf,
+  smileIDSampleCatalogueIdTypeFieldsOf,
   smileIDSampleLiveSession,
   smileIDSampleProductFrom,
   smileIDSampleRequirementFor,
@@ -49,7 +50,8 @@ export default function ConsentDetailsForm() {
     (state) => smileIDSampleLiveSession(state, state.nowMillis)?.id ?? null,
   );
   const fieldsToCollect = store((state) => smileIDSampleCatalogueFieldsToCollectOf(state, liveSessionId));
-  const requirement = smileIDSampleRequirementFor(bindings, product, fieldsToCollect);
+  const idTypeFields = store((state) => smileIDSampleCatalogueIdTypeFieldsOf(state, liveSessionId));
+  const requirement = smileIDSampleRequirementFor(bindings, product, fieldsToCollect, idTypeFields);
 
   // A link lands here without the product tap that asks ahead, and the configuration decides which rows show.
   useEffect(() => {

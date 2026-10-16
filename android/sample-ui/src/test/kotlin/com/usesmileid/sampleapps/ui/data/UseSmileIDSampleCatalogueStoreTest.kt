@@ -122,6 +122,24 @@ class UseSmileIDSampleCatalogueStoreTest {
     }
 
     @Test
+    fun each_kyc_id_types_fields_go_only_to_the_live_session_that_read_them() = runTest {
+        val source = FakeSource().apply {
+            config =
+                """{"fields_to_collect": {}, "products": {"enhanced_kyc": {"KE": [{"key_name": "NATIONAL_ID", "fields": [{"key_name": "given_names", "required": true}]}]}}}"""
+        }
+        val store = store(source)
+        assertNull(store.idTypeFieldsFor("a"))
+        store.ensureEnabled(UseSmileIDSampleEnvironment.Sandbox, "en-GB", session("a"))
+        advanceUntilIdle()
+        assertEquals(
+            mapOf("enhanced_kyc" to mapOf("KE" to mapOf("NATIONAL_ID" to listOf(UseSmileIDSampleApiField("given_names", true))))),
+            store.idTypeFieldsFor("a"),
+        )
+        assertNull(store.idTypeFieldsFor("b"))
+        assertNull(store.idTypeFieldsFor(null))
+    }
+
+    @Test
     fun a_failed_configuration_leaves_no_fields_so_the_form_keeps_the_token_rule() = runTest {
         val source = FakeSource().apply { failing = true }
         val store = store(source)
