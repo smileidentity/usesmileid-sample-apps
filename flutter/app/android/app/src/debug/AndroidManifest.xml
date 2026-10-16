@@ -4,4 +4,6 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Debug only: the SDK repo's source build routes the flow to an in-process test server on loopback. -->
+    <application android:networkSecurityConfig="@xml/network_security_config" />
 </manifest>
