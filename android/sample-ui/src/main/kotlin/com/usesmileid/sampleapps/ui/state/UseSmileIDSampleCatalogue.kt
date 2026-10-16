@@ -95,6 +95,9 @@ data class UseSmileIDSampleApiEnabledDocument(val code: String, val label: Strin
 @Immutable
 data class UseSmileIDSampleApiField(val name: String, val required: Boolean?)
 
+/** Each ID type's fields from `products`, by product key, then country code, then ID type. */
+typealias UseSmileIDSampleIdTypeFields = Map<String, Map<String, Map<String, List<UseSmileIDSampleApiField>>>>
+
 /** Both responses a run of the form reads; fetched together because the KYC countries need names from the second. */
 @Immutable
 data class UseSmileIDSampleCatalogueData(
@@ -260,11 +263,30 @@ object UseSmileIDSampleCatalogueJson {
 
     /** One `fields_to_collect` object, each product's list kept to the fields that carry a name. */
     internal fun fieldsToCollect(section: TokenJson.Obj): Map<String, List<UseSmileIDSampleApiField>> =
-        section.members.mapValues { (_, fields) ->
-            (fields as? TokenJson.Arr)?.items.orEmpty().mapNotNull { item ->
-                val o = item as? TokenJson.Obj ?: return@mapNotNull null
-                UseSmileIDSampleApiField(name = o.string("name") ?: return@mapNotNull null, required = o.boolean("required"))
+        section.members.mapValues { (_, fields) -> fields.apiFields("name") }
+
+    /** `products` of `GET /v3/services/config` by ID type, empty when it carries none; null when unreadable. */
+    fun idTypeFields(body: String): UseSmileIDSampleIdTypeFields? {
+        val root = parseTokenJson(body) as? TokenJson.Obj ?: return null
+        return root.obj("products")?.let(::idTypeFields).orEmpty()
+    }
+
+    /** One `products` object, each country's entries keyed by ID type and kept to the fields that carry a name. */
+    internal fun idTypeFields(section: TokenJson.Obj): UseSmileIDSampleIdTypeFields =
+        section.members.mapValues { (_, countries) ->
+            (countries as? TokenJson.Obj)?.members.orEmpty().mapValues { (_, entries) ->
+                (entries as? TokenJson.Arr)?.items.orEmpty().mapNotNull { item ->
+                    val o = item as? TokenJson.Obj ?: return@mapNotNull null
+                    (o.string("key_name") ?: return@mapNotNull null) to (o.members["fields"]?.apiFields("key_name").orEmpty())
+                }.toMap()
             }
+        }
+
+    /** The fields of a list that carry a name under [key], each kept to its name and `required`. */
+    private fun TokenJson.apiFields(key: String): List<UseSmileIDSampleApiField> =
+        (this as? TokenJson.Arr)?.items.orEmpty().mapNotNull { item ->
+            val o = item as? TokenJson.Obj ?: return@mapNotNull null
+            UseSmileIDSampleApiField(name = o.string(key) ?: return@mapNotNull null, required = o.boolean("required"))
         }
 
     /** The product key Enhanced Document Verification's lists are read back under. */

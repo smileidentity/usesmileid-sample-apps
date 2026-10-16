@@ -46,6 +46,9 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
   Map<String, List<UseSmileIDSampleApiField>>? get fieldsToCollect =>
       _fieldsToCollect;
 
+  /// Each KYC ID type's fields from the same response's `products`, read under the same session as [fieldsToCollect].
+  UseSmileIDSampleIdTypeFields? _idTypeFields;
+
   /// The session whose token read [fieldsToCollect], since the API leaves out what that token binds.
   String? _fieldsSessionId;
 
@@ -55,6 +58,10 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
   ) => sessionId != null && sessionId == _fieldsSessionId
       ? _fieldsToCollect
       : null;
+
+  /// The ID-type fields [sessionId]'s own token read, or null for any other session or none.
+  UseSmileIDSampleIdTypeFields? idTypeFieldsFor(String? sessionId) =>
+      sessionId != null && sessionId == _fieldsSessionId ? _idTypeFields : null;
 
   UseSmileIDSampleCatalogue<UseSmileIDSampleApiIdType> _idTypes =
       const UseSmileIDSampleCatalogueLoading<UseSmileIDSampleApiIdType>();
@@ -142,6 +149,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
             UseSmileIDSampleApiEnabledCountry
           >();
       _fieldsToCollect = null;
+      _idTypeFields = null;
       _fieldsSessionId = null;
     }
     notifyListeners();
@@ -313,6 +321,7 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
         >();
     _enabledInFlight = true;
     _fieldsToCollect = null;
+    _idTypeFields = null;
     _fieldsSessionId = null;
     notifyListeners();
     final int generation = ++_enabledGeneration;
@@ -331,9 +340,13 @@ class UseSmileIDSampleCatalogueStore extends ChangeNotifier {
               UseSmileIDSampleCatalogueJson.fieldsToCollect,
               answered,
             );
+      final UseSmileIDSampleIdTypeFields? idTypeFields = answered == null
+          ? null
+          : await _decode(UseSmileIDSampleCatalogueJson.idTypeFields, answered);
       if (generation == _enabledGeneration) {
         _enabled = result;
         _fieldsToCollect = fields;
+        _idTypeFields = idTypeFields;
         _fieldsSessionId = fields == null ? null : key.$1;
         _enabledInFlight = false;
         notifyListeners();

@@ -30,6 +30,8 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
   @Published public private(set) var enabled: UseSmileIDSampleCatalogue<UseSmileIDSampleApiEnabledCountry> = .loading
   /// Each product's `fields_to_collect` from the same response, or nil until it arrives or when it fails.
   @Published public private(set) var fieldsToCollect: [String: [UseSmileIDSampleApiField]]?
+  /// Each KYC ID type's fields from the same response's `products`, read under the same session as `fieldsToCollect`.
+  private var idTypeFields: UseSmileIDSampleIdTypeFields?
   /// The session whose token read `fieldsToCollect`, since the API leaves out what that token binds.
   private var fieldsSessionId: String?
 
@@ -92,6 +94,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
       enabledToken = ""
       enabled = .loading
       fieldsToCollect = nil
+      idTypeFields = nil
       fieldsSessionId = nil
     }
   }
@@ -100,6 +103,12 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
   public func fieldsToCollect(for sessionId: String?) -> [String: [UseSmileIDSampleApiField]]? {
     guard let sessionId, sessionId == fieldsSessionId else { return nil }
     return fieldsToCollect
+  }
+
+  /// The ID-type fields `sessionId`'s own token read, or nil for any other session or none.
+  public func idTypeFields(for sessionId: String?) -> UseSmileIDSampleIdTypeFields? {
+    guard let sessionId, sessionId == fieldsSessionId else { return nil }
+    return idTypeFields
   }
 
   /// `product` Enhanced Document Verification offers only the countries its partner enabled.
@@ -163,6 +172,7 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
     enabledTask?.cancel()
     enabled = .loading
     fieldsToCollect = nil
+    idTypeFields = nil
     fieldsSessionId = nil
     let source = source
     let token = enabledToken
@@ -171,11 +181,13 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
       let result = await load {
         let body = try await source.servicesConfig(environment: key.environment, token: token, locale: key.locale)
         fields.value = UseSmileIDSampleCatalogueJson.fieldsToCollect(body)
+        fields.idTypes = UseSmileIDSampleCatalogueJson.idTypeFields(body)
         return UseSmileIDSampleCatalogueJson.enabledCountries(body)
       }
       if !Task.isCancelled {
         enabled = result
         fieldsSessionId = fields.value == nil ? nil : key.sessionId
+        idTypeFields = fields.idTypes
         fieldsToCollect = fields.value
         enabledTask = nil
       }
@@ -245,4 +257,5 @@ public final class UseSmileIDSampleCatalogueStore: ObservableObject {
 /// Carries the fields parsed off the decoding task back to the store, which reads them only once that task is done.
 private final class FieldsBox: @unchecked Sendable {
   var value: [String: [UseSmileIDSampleApiField]]?
+  var idTypes: UseSmileIDSampleIdTypeFields?
 }

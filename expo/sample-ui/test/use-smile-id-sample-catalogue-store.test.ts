@@ -3,6 +3,7 @@ import {
   smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
   smileIDSampleCatalogueFieldsToCollectOf,
+  smileIDSampleCatalogueIdTypeFieldsOf,
   smileIDSampleCatalogueIdTypesOf,
 } from '../src/data/use-smile-id-sample-catalogue-store';
 import {
@@ -161,6 +162,22 @@ describe('the catalogue store', () => {
     expect(smileIDSampleCatalogueFieldsToCollectOf(store.getState(), null)).toBeNull();
   });
 
+  it("gives each KYC ID type's fields only to the live session that read them", async () => {
+    const { source, calls } = counting();
+    calls.answer =
+      '{"fields_to_collect": {}, "products": {"enhanced_kyc": {"KE": [{"key_name": "NATIONAL_ID", "fields": [{"key_name": "given_names", "required": true}]}]}}}';
+    const store = createSmileIDSampleCatalogueStore(source);
+    expect(store.getState().idTypeFields).toBeNull();
+    store.getState().ensureEnabled('sandbox', 'en-GB', session('a'));
+    await settle();
+
+    expect(smileIDSampleCatalogueIdTypeFieldsOf(store.getState(), 'a')).toEqual({
+      enhanced_kyc: { KE: { NATIONAL_ID: [{ name: 'given_names', required: true }] } },
+    });
+    expect(smileIDSampleCatalogueIdTypeFieldsOf(store.getState(), 'b')).toBeNull();
+    expect(smileIDSampleCatalogueIdTypeFieldsOf(store.getState(), null)).toBeNull();
+  });
+
   it('leaves no fields after a failed configuration, so the form keeps the token rule', async () => {
     const { source, calls } = counting();
     calls.offline = true;
@@ -169,8 +186,10 @@ describe('the catalogue store', () => {
     await settle();
 
     expect(store.getState().fieldsToCollect).toBeNull();
+    expect(store.getState().idTypeFields).toBeNull();
     store.getState().stop();
     expect(store.getState().fieldsToCollect).toBeNull();
+    expect(store.getState().idTypeFields).toBeNull();
   });
 
   it("gives no network on the partner's list the default line", async () => {

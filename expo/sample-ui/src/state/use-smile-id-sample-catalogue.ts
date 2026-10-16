@@ -61,6 +61,11 @@ export type UseSmileIDSampleApiField = {
 /// Each product's `fields_to_collect`, by its key in the response.
 export type UseSmileIDSampleFieldsToCollect = Readonly<Record<string, readonly UseSmileIDSampleApiField[]>>;
 
+/// Each ID type's fields from `products`, by product key, then country code, then ID type.
+export type UseSmileIDSampleIdTypeFields = Readonly<
+  Record<string, Readonly<Record<string, Readonly<Record<string, readonly UseSmileIDSampleApiField[]>>>>>
+>;
+
 /// The product key Enhanced Document Verification's lists are read back under.
 export const smileIDSampleEnhancedDocumentVerificationKey = 'enhanced_document_verification';
 
@@ -347,6 +352,14 @@ export const smileIDSampleDecodeDocuments = (body: string): UseSmileIDSampleApiC
   return out;
 };
 
+/// One field kept to its name and `required`, or null when it carries no name under `key`.
+const apiField = (raw: unknown, key: 'name' | 'key_name'): UseSmileIDSampleApiField | null => {
+  const field = record(raw);
+  const name = field?.[key];
+  if (typeof name !== 'string') return null;
+  return { name, required: typeof field?.required === 'boolean' ? field.required : null };
+};
+
 /// One `fields_to_collect` object, each product's list kept to the fields that carry a name.
 export const smileIDSampleFieldsToCollectSection = (
   section: Readonly<Record<string, unknown>>,
@@ -355,12 +368,42 @@ export const smileIDSampleFieldsToCollectSection = (
     Object.entries(section).map(([product, fields]) => [
       product,
       (Array.isArray(fields) ? fields : []).flatMap((raw: unknown) => {
-        const field = record(raw);
-        if (field === null || typeof field.name !== 'string') return [];
-        return [{ name: field.name, required: typeof field.required === 'boolean' ? field.required : null }];
+        const field = apiField(raw, 'name');
+        return field === null ? [] : [field];
       }),
     ]),
   );
+
+/// One `products` object, each country's entries keyed by ID type and kept to the fields that carry a name.
+export const smileIDSampleIdTypeFieldsSection = (section: Readonly<Record<string, unknown>>): UseSmileIDSampleIdTypeFields =>
+  Object.fromEntries(
+    Object.entries(section).map(([product, countries]) => [
+      product,
+      Object.fromEntries(
+        Object.entries(record(countries) ?? {}).map(([country, entries]) => [
+          country,
+          Object.fromEntries(
+            (Array.isArray(entries) ? entries : []).flatMap((raw: unknown) => {
+              const entry = record(raw);
+              if (entry === null || typeof entry.key_name !== 'string') return [];
+              const fields = (Array.isArray(entry.fields) ? entry.fields : []).flatMap((field: unknown) => {
+                const decoded = apiField(field, 'key_name');
+                return decoded === null ? [] : [decoded];
+              });
+              return [[entry.key_name, fields]];
+            }),
+          ),
+        ]),
+      ),
+    ]),
+  );
+
+/// Decodes `products` of a `GET /v3/services/config` body by ID type, empty when it carries none; null when malformed.
+export const smileIDSampleDecodeIdTypeFields = (body: string): UseSmileIDSampleIdTypeFields | null => {
+  const root = record(parse(body));
+  if (root === null) return null;
+  return smileIDSampleIdTypeFieldsSection(record(root.products) ?? {});
+};
 
 /// Decodes `fields_to_collect` of a `GET /v3/services/config` body, empty when it carries none; null when malformed.
 export const smileIDSampleDecodeFieldsToCollect = (body: string): UseSmileIDSampleFieldsToCollect | null => {

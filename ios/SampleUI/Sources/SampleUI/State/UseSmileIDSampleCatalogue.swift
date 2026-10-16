@@ -117,6 +117,9 @@ public struct UseSmileIDSampleApiField: Equatable, Sendable {
   }
 }
 
+/// Each ID type's fields from `products`, by product key, then country code, then ID type.
+public typealias UseSmileIDSampleIdTypeFields = [String: [String: [String: [UseSmileIDSampleApiField]]]]
+
 /// Both responses a run of the form reads; fetched together because the KYC countries need names from the second.
 public struct UseSmileIDSampleCatalogueData: Equatable, Sendable {
   public let idTypes: [UseSmileIDSampleApiIdType]
@@ -286,11 +289,34 @@ public enum UseSmileIDSampleCatalogueJson {
 
   /// One `fields_to_collect` object, each product's list kept to the fields that carry a name.
   public static func fieldsToCollect(section: [String: Any]) -> [String: [UseSmileIDSampleApiField]] {
-    section.mapValues { fields in
-      (fields as? [[String: Any]] ?? []).compactMap { field in
-        guard let name = field["name"] as? String else { return nil }
-        return UseSmileIDSampleApiField(name: name, required: bool(field["required"]))
+    section.mapValues { apiFields($0, key: "name") }
+  }
+
+  /// `products` of `GET /v3/services/config` by ID type, empty when it carries none; nil when unreadable.
+  public static func idTypeFields(_ body: Data) -> UseSmileIDSampleIdTypeFields? {
+    guard let root = try? JSONSerialization.jsonObject(with: body) as? [String: Any] else { return nil }
+    return idTypeFields(section: root["products"] as? [String: Any] ?? [:])
+  }
+
+  /// One `products` object, each country's entries keyed by ID type and kept to the fields that carry a name.
+  public static func idTypeFields(section: [String: Any]) -> UseSmileIDSampleIdTypeFields {
+    section.mapValues { countries in
+      (countries as? [String: Any] ?? [:]).mapValues { entries in
+        Dictionary(
+          (entries as? [[String: Any]] ?? []).compactMap { entry in
+            (entry["key_name"] as? String).map { ($0, apiFields(entry["fields"], key: "key_name")) }
+          },
+          uniquingKeysWith: { first, _ in first }
+        )
       }
+    }
+  }
+
+  /// The fields of a list that carry a name under `key`, each kept to its name and `required`.
+  private static func apiFields(_ list: Any?, key: String) -> [UseSmileIDSampleApiField] {
+    (list as? [[String: Any]] ?? []).compactMap { field in
+      guard let name = field[key] as? String else { return nil }
+      return UseSmileIDSampleApiField(name: name, required: bool(field["required"]))
     }
   }
 

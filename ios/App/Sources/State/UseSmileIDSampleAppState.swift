@@ -494,14 +494,21 @@ final class UseSmileIDSampleAppState: ObservableObject {
     idDetails.choose(country: country)
   }
 
-  /// What the form asks for `product`, read through the gate's own session rule and only that session's `fields_to_collect`.
+  /// What the form asks for `product`, read through the gate's own session rule and only that session's configuration.
   func userDetailsRequirement(for product: UseSmileIDSampleProduct?) -> UseSmileIDSampleUserDetailsRequirement {
     let live = sessionActive ? session : nil
     return UseSmileIDSampleUserDetailsRequirement(
       bindings: live?.bindings,
       product: product,
-      fieldsToCollect: catalogue.fieldsToCollect(for: live?.id)
+      fieldsToCollect: catalogue.fieldsToCollect(for: live?.id),
+      idTypeFields: catalogue.idTypeFields(for: live?.id)
     )
+  }
+
+  /// The picked ID type's fields for `product`, read through the same session rule, or nil without an entry.
+  func idTypeEntry(for product: UseSmileIDSampleProduct?) -> [UseSmileIDSampleApiField]? {
+    catalogue.idTypeFields(for: (sessionActive ? session : nil)?.id)
+      .entry(for: product, country: idDetails.country?.code, idType: idDetails.idType?.type)
   }
 
   var versionLabel: String {
