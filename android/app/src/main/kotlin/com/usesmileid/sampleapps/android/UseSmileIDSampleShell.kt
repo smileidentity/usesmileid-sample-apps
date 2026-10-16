@@ -178,7 +178,8 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
         if (started) return@LaunchedEffect
         // Linked and loaded before autostart, which snapshots the session as the flow opens; marked after, so a recreation mid-link redoes it.
         linkLaunchSession(useSmileIDSampleShellExtension, app.store::linkTokenSession)?.let { linked ->
-            withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.session?.id }.first { it == linked.id } }
+            // The write has landed and only the store's emission is awaited; it trails by seconds while the first frames jank.
+            withTimeoutOrNull(LINKED_SESSION_WAIT) { snapshotFlow { app.session?.id }.first { it == linked.id } }
         }
         started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
@@ -246,3 +247,6 @@ private val UseSmileIDSampleNavItem.graph: Direction
 private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)
 
 private val LAUNCH_SESSION_WAIT = 5.seconds
+
+/** Bounds a wait on a write that already landed, so only a store that never emits ends it; 5 s sent cold launches to the scanner. */
+private val LINKED_SESSION_WAIT = 30.seconds
