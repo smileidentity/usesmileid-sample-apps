@@ -98,25 +98,32 @@ with rounded corners. It is `svgs/android.svg` with square corners, rendered at 
 **Review.** The workflow ends at submitted. Huawei's review is manual and usually takes one to three
 working days. Read its state in AppGallery Connect.
 
-**First release, once, in AppGallery Connect.** The API publishes an app that exists. Before the first
-dispatch:
+**First release, once, in AppGallery Connect.** The API publishes an app that already has a package, so the
+first one goes up by hand:
 
 1. Sign in with the Smile ID company developer account, and accept the HUAWEI ML Kit service agreement
    (HMS API Services). An app that calls ML Kit without it is refused.
-2. Create the app: package `com.usesmileid.sample.android`, category Tools, the privacy policy URL, the
-   content rating, and the distribution countries.
+2. Create the app as an **Android** app: package `com.usesmileid.sample.android`, category Tools. "Apps and
+   atomic services" creates a HarmonyOS app instead, whose package type is APP and which takes only `.app`
+   files; the Publishing API then refuses the bundle with `204144641 The files url is not objectId`.
 3. Declare that the app does not need Google Mobile Services (App information, GMS dependency: No). The
    build links ML Kit, and runs without it.
-4. App Signing has no setting until a bundle arrives: AppGallery Connect offers it on the first upload. If the
-   first dispatch's upload is refused for it, download the run's `appgallery-bundle` artifact, upload it in
-   Package management, let AppGallery Connect generate the app signing key, and register the upload key's
-   certificate (`keytool -export -rfc -keystore upload.jks -alias upload -file upload_cert.pem`). Then submit
-   the version in the console, or dispatch again.
-5. Enter the listing from `android/play/`, the icon from `android/appgallery/`, and the privacy answers
-   below. Choose phones only: there are no tablet screenshots.
-6. Create a Connect API client (Users and permissions → API key, role App administrator) and store its id
-   and secret as `AGC_CLIENT_ID` and `AGC_CLIENT_SECRET` in the `release` environment.
-7. Dispatch with `lookup_only`, then without it.
+4. Enter the listing from `android/play/`, the icon from `android/appgallery/`, the privacy answers below,
+   the content rating (16+ from Huawei's questionnaire), and the countries, without mainland China. Choose
+   phones only: there are no tablet screenshots.
+5. Create a Connect API client (Users and permissions → API key → API client, project N/A, role App
+   administrator) and store its id and key as `AGC_CLIENT_ID` and `AGC_CLIENT_SECRET` in the `release`
+   environment. A service account key does not work with the script.
+6. Dispatch the workflow with `lookup_only` unticked. Its upload fails, because the app has no package name
+   until a package is uploaded, but it leaves the signed bundle as the run's `appgallery-bundle` artifact.
+7. Set up App Signing (the link on App information): sign the agreement, choose Method 1, AppGallery Connect
+   creates the key, and upload the upload certificate. Take it from the bundle, so no keystore is needed:
+   `keytool -printcert -rfc -jarfile app-appgallery-release.aab`, keeping only the `BEGIN`/`END` block.
+8. Upload the bundle in Manage packages, select it in the version, and submit for review.
+9. From then on, every release is a dispatch: `lookup_only` first, then without it.
+
+**Approval.** The `release` environment needs a mobile team reviewer who did not start the run. Whoever
+dispatches asks a teammate to approve, as the Play and App Store lanes do.
 
 ## App Store
 

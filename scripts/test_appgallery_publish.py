@@ -33,6 +33,26 @@ class TestHighestVersionCode(unittest.TestCase):
         self.assertEqual(0, agc.highest_version_code({"appInfo": {}}))
 
 
+class TestStoreHighestVersionCode(unittest.TestCase):
+    def answer(self, appids):
+        def fake_call(method, url, headers, body=None):
+            if "appid-list" in url:
+                return {"appids": appids}
+            return {"appInfo": {"versionCode": 118, "onShelfVersionCode": 0}}
+
+        original = agc.call
+        agc.call = fake_call
+        self.addCleanup(setattr, agc, "call", original)
+
+    def test_an_app_with_no_package_yet_counts_as_zero(self):
+        self.answer([])
+        self.assertEqual(0, agc.store_highest_version_code({}))
+
+    def test_an_app_with_a_package_reads_its_versions(self):
+        self.answer([{"key": "Smile ID", "value": "1234"}])
+        self.assertEqual(118, agc.store_highest_version_code({}))
+
+
 class TestReleaseNotes(unittest.TestCase):
     def notes(self, text: str) -> str:
         handle = tempfile.NamedTemporaryFile("w", suffix=".txt", delete=False)

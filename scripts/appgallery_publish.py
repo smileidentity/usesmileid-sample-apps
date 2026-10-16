@@ -74,8 +74,19 @@ def app_id(headers: dict) -> str:
     query = urllib.parse.urlencode({"packageName": PACKAGE})
     ids = call("GET", f"{API}/publish/v2/appid-list?{query}", headers).get("appids", [])
     if not ids:
-        raise AgcError(f"AppGallery Connect has no app for {PACKAGE}; create it in the console first")
+        raise AgcError(f"AppGallery Connect has no app with a {PACKAGE} package: create it as an Android app, and upload its first package in the console")
     return ids[0]["value"]
+
+
+def store_highest_version_code(headers: dict) -> int:
+    """0 for an app with no package yet: the API cannot find it by package name until one is uploaded."""
+    query = urllib.parse.urlencode({"packageName": PACKAGE})
+    ids = call("GET", f"{API}/publish/v2/appid-list?{query}", headers).get("appids")
+    if not ids:
+        print(f"AppGallery Connect has no app with a {PACKAGE} package yet; counting its highest code as 0", file=sys.stderr)
+        return 0
+    query = urllib.parse.urlencode({"appId": ids[0]["value"]})
+    return highest_version_code(call("GET", f"{API}/publish/v2/app-info?{query}", headers))
 
 
 def highest_version_code(app_info: dict) -> int:
@@ -175,8 +186,7 @@ def main() -> int:
         notes = release_notes(args.notes)
     headers = auth_headers(os.environ["AGC_CLIENT_ID"], os.environ["AGC_CLIENT_SECRET"])
     if args.command == "highest-version-code":
-        query = urllib.parse.urlencode({"appId": app_id(headers)})
-        print(highest_version_code(call("GET", f"{API}/publish/v2/app-info?{query}", headers)))
+        print(store_highest_version_code(headers))
     else:
         publish(headers, args.package, notes)
         print(f"Submitted {os.path.basename(args.package)} for AppGallery review")
