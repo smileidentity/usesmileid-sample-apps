@@ -30,6 +30,10 @@ dependencyResolutionManagement {
         maven("https://central.sonatype.com/repository/maven-snapshots/") {
             content { includeGroup("com.usesmileid") }
         }
+        // Huawei publishes HMS only here.
+        maven("https://developer.huawei.com/repo/") {
+            content { includeGroupAndSubgroups("com.huawei") }
+        }
     }
 }
 

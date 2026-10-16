@@ -110,8 +110,6 @@
     <string name="sample_user_field_last_name_placeholder">أضف اسم العائلة</string>
     <string name="sample_user_field_email_placeholder">name@company.com</string>
     <string name="sample_user_field_phone_placeholder">+254 700 000 000</string>
-    <string name="sample_user_field_email_error">أدخل بريدًا إلكترونيًا مثل name@company.com.</string>
-    <string name="sample_user_field_phone_error">أدخل الرقم مع رمز البلد، مثل ‎+254 700 000 000.</string>
     <string name="sample_user_requirement_first_name">الاسم الأول</string>
     <string name="sample_user_requirement_last_name">اسم العائلة</string>
     <string name="sample_user_requirement_contact">بريد إلكتروني أو رقم هاتف</string>
@@ -318,6 +316,7 @@
     <string name="sample_licenses_empty_body">ملف licenses.json المُنشأ غير موجود في هذا الإصدار</string>
     <string name="sample_licenses_section">مكوّنات مفتوحة المصدر — %1$d</string>
     <string name="sample_licenses_google_section">بموجب شروط Google الخاصة — %1$d</string>
+    <string name="sample_licenses_huawei_section">بموجب شروط Huawei الخاصة — %1$d</string>
     <string name="sample_licenses_text_ships_with_component">يُرفق النص مع المكوّن نفسه.</string>
     <string name="sample_licenses_text_ships_with_component_at">يأتي النص مع المكوّن نفسه، على %1$s</string>
     <string name="sample_licenses_open">فتح %1$s</string>

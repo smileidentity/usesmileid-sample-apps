@@ -90,7 +90,7 @@ jobs:
         working-directory: android
         env:
           VARIANT: ${{ needs.plan.outputs.variant }}
-        run: ./gradlew ":app:assemble${VARIANT^}"
+        run: ./gradlew ":app:assemblePlay${VARIANT^}"
 
       # The daemons hold a heap this runner needs back before an emulator will fit beside it.
       - name: Stop the Gradle and Kotlin daemons
@@ -121,7 +121,7 @@ jobs:
           else
             echo "APP_ID=com.usesmileid.sample.android.debug" >> "$GITHUB_ENV"
           fi
-          echo "APK=android/app/build/outputs/apk/$VARIANT/app-$VARIANT.apk" >> "$GITHUB_ENV"
+          echo "APK=android/app/build/outputs/apk/play/$VARIANT/app-play-$VARIANT.apk" >> "$GITHUB_ENV"
           echo "FLOWS=$(for f in ${{ matrix.flows }}; do printf 'android/maestro/%s.yaml ' "$f"; done)" >> "$GITHUB_ENV"
 
       - name: Run the device flows

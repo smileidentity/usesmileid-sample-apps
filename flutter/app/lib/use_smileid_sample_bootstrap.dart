@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid/usesmileid.dart';
 
 import 'src/data/use_smileid_sample_preferences_jobs_repository.dart';
 import 'src/data/use_smileid_sample_preferences_settings_repository.dart';
 import 'src/data/use_smileid_sample_secure_profiles_repository.dart';
 import 'src/data/use_smileid_sample_secure_session_repository.dart';
+import 'src/flow/use_smileid_sample_flow_builder_config.dart';
 import 'src/state/use_smileid_sample_providers.dart';
 import 'src/state/use_smileid_sample_session_providers.dart';
 import 'src/use_smileid_sample_app.dart';
@@ -24,6 +26,13 @@ Future<void> useSmileIDSampleBootstrap({
   WidgetsFlutterBinding.ensureInitialized();
   // Android 15 imposes edge to edge; earlier versions opt in here.
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  // Once: the analyzers a flow registers follow the phone's mobile services.
+  if (defaultTargetPlatform == TargetPlatform.android) {
+    useSmileIDSampleMobileServices =
+        await useSmileIDSamplePreferredMobileServices(
+          UseSmileIDMobileServices().preferred,
+        );
+  }
   final UseSmileIDSamplePreferencesSettingsRepository settings =
       await UseSmileIDSamplePreferencesSettingsRepository.open();
   final UseSmileIDSampleSettings stored = await settings.read();

@@ -100,6 +100,13 @@ android {
         }
     }
 
+    // Play ships ML Kit only; AppGallery adds HMS and picks per phone.
+    flavorDimensions += "distribution"
+    productFlavors {
+        create("play") { dimension = "distribution" }
+        create("appgallery") { dimension = "distribution" }
+    }
+
     bundle {
         abi { enableSplit = true }
         density { enableSplit = true }
@@ -268,12 +275,19 @@ androidComponents {
         }
         // Resolved when the task reads it, not while configuring: every build would pay otherwise.
         val poms = provider { resolvePomIndex(modules.get()) }
-        val asset = layout.projectDirectory.file("../sample-ui/src/main/assets/licenses.json")
+        // AppGallery's own notices override sample-ui's, since only it ships HMS.
+        val play = variant.flavorName == "play"
+        val asset = if (play) {
+            layout.projectDirectory.file("../sample-ui/src/main/assets/licenses.json")
+        } else {
+            layout.projectDirectory.file("src/${variant.flavorName}/assets/licenses.json")
+        }
+        val suffix = if (play) "" else variant.flavorName.orEmpty().replaceFirstChar(Char::uppercase)
         val script = layout.projectDirectory.file("../../scripts/generate_licenses.py")
         val texts = layout.projectDirectory.dir("../../scripts/license-texts")
 
-        tasks.register<LicenseNotices>("generateLicenses") {
-            description = "Regenerates sample-ui's third-party notices from the release runtime classpath."
+        tasks.register<LicenseNotices>("generate${suffix}Licenses") {
+            description = "Regenerates this flavor's third-party notices from its release runtime classpath."
             // Never skipped: the asset is no output here, because the check task takes it as input.
             outputs.upToDateWhen { false }
             pomLines.set(poms)
@@ -281,12 +295,12 @@ androidComponents {
             generator.set(script)
             licenseTexts.set(texts)
             notices.set(asset)
-            pomIndex.set(layout.buildDirectory.file("licenses/poms.tsv"))
+            pomIndex.set(layout.buildDirectory.file("licenses/${variant.name}-poms.tsv"))
             notCompatibleWithConfigurationCache("resolves POM artifacts for the licence scan")
         }
 
-        tasks.register<LicenseNotices>("checkLicenses") {
-            description = "Fails when the committed third-party notices no longer match the release classpath."
+        tasks.register<LicenseNotices>("check${suffix}Licenses") {
+            description = "Fails when this flavor's committed third-party notices no longer match its release classpath."
             // Never skipped: an edited asset with an unchanged classpath would pass on staleness.
             outputs.upToDateWhen { false }
             pomLines.set(poms)
@@ -294,7 +308,7 @@ androidComponents {
             generator.set(script)
             licenseTexts.set(texts)
             notices.set(asset)
-            pomIndex.set(layout.buildDirectory.file("licenses/checked-poms.tsv"))
+            pomIndex.set(layout.buildDirectory.file("licenses/${variant.name}-checked-poms.tsv"))
             notCompatibleWithConfigurationCache("resolves POM artifacts for the licence scan")
         }
     }
@@ -307,6 +321,8 @@ dependencies {
     implementation(libs.usesmileid)
     implementation(libs.usesmileid.mlkit.face)
     implementation(libs.usesmileid.mlkit.document)
+    "appgalleryImplementation"(libs.usesmileid.huawei.face)
+    "appgalleryImplementation"(libs.usesmileid.huawei.document)
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.activity.compose)

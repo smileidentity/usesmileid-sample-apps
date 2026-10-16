@@ -7,7 +7,6 @@ import '../components/use_smileid_sample_key_value_edit_row.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_text_input.dart';
-import '../state/use_smileid_sample_contact_rules.dart';
 import '../state/use_smileid_sample_profiles.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
@@ -105,12 +104,11 @@ class _UseSmileIDSampleNewProfileSheetState
   String _name = '';
   UseSmileIDSampleUserDetails _details = const UseSmileIDSampleUserDetails();
 
-  /// The name and both required names, and no contact the server would refuse.
+  /// The name and both required names; the API judges the contacts.
   bool get _canCreate =>
       _name.trim().isNotEmpty &&
       _details.firstName.trim().isNotEmpty &&
-      _details.lastName.trim().isNotEmpty &&
-      _details.contactProblem == null;
+      _details.lastName.trim().isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
@@ -146,16 +144,6 @@ class _UseSmileIDSampleNewProfileSheetState
                 setState(() => _details = field.apply(_details, value)),
             placeholder: field.label(context.strings),
             keyboardType: field.keyboardType,
-            isError:
-                UseSmileIDSampleContactRules.problem(
-                  field,
-                  field.valueOf(_details),
-                ) !=
-                null,
-            errorMessage: UseSmileIDSampleContactRules.problem(
-              field,
-              field.valueOf(_details),
-            )?.message(context.strings),
             testId: _sheetTestIds[field]!,
           ),
           const SizedBox(height: SmileDimens.spacingSm),

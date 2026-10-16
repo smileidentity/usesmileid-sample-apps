@@ -1,0 +1,197 @@
+#!/usr/bin/env python3
+"""Publishes the Android sample's AppGallery build through the AppGallery Connect Publishing API.
+
+    AGC_CLIENT_ID=... AGC_CLIENT_SECRET=... scripts/appgallery_publish.py highest-version-code
+    AGC_CLIENT_ID=... AGC_CLIENT_SECRET=... scripts/appgallery_publish.py publish --package <path.aab> --notes <file>
+    scripts/appgallery_publish.py check-notes android/appgallery/whatsnew-en-US
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+import sys
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import uuid
+
+PACKAGE = "com.usesmileid.sample.android"
+API = "https://connect-api.cloud.huawei.com/api"
+SOFTWARE_PACKAGE = 5
+NOTES_LANG = "en-US"
+NOTES_LIMIT = 500
+# AGC refuses a submit until it has processed the upload; a bundle also has its split APKs built.
+PARSE_WAIT_S = 120
+SUBMIT_ATTEMPTS = 10
+PACKAGE_SUFFIXES = ("aab", "apk")
+
+
+# AGC also returns these codes for refusals that waiting cannot fix, so only these messages mean "still processing".
+PROCESSING_MESSAGES = {204144660: ("pars", "解析", "2-5 minutes"), 204144727: ("compil", "编译", "try again")}
+
+
+class AgcError(RuntimeError):
+    def __init__(self, message: str, code: int | None = None, msg: str = ""):
+        super().__init__(message)
+        self.code = code
+        self.msg = msg
+
+
+def checked(body: dict) -> dict:
+    """AGC reports failures in `ret.code` with an HTTP 200, so a call is only good when that is 0."""
+    ret = body.get("ret") or {}
+    if ret.get("code", 0) != 0:
+        raise AgcError(f"AppGallery Connect error {ret.get('code')}: {ret.get('msg', '')}", ret.get("code"), ret.get("msg", ""))
+    return body
+
+
+def still_processing(error: AgcError) -> bool:
+    """Whether AGC refused the submit only because it has not finished processing the package."""
+    return any(hint in error.msg.lower() for hint in PROCESSING_MESSAGES.get(error.code, ()))
+
+
+def call(method: str, url: str, headers: dict, body: dict | None = None) -> dict:
+    data = json.dumps(body).encode() if body is not None else None
+    req = urllib.request.Request(url, data=data, method=method, headers={**headers, "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(req, timeout=120) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as e:
+        raise AgcError(f"{method} {url.split('?')[0]} failed with HTTP {e.code}: {e.read()[:500].decode(errors='replace')}") from e
+    return checked(json.loads(raw) if raw else {})
+
+
+def auth_headers(client_id: str, client_secret: str) -> dict:
+    token = call("POST", f"{API}/oauth2/v1/token", {}, {
+        "grant_type": "client_credentials", "client_id": client_id, "client_secret": client_secret,
+    })["access_token"]
+    return {"client_id": client_id, "Authorization": f"Bearer {token}"}
+
+
+def app_id(headers: dict) -> str:
+    query = urllib.parse.urlencode({"packageName": PACKAGE})
+    ids = call("GET", f"{API}/publish/v2/appid-list?{query}", headers).get("appids", [])
+    if not ids:
+        raise AgcError(f"AppGallery Connect has no app with a {PACKAGE} package: create it as an Android app, and upload its first package in the console")
+    return ids[0]["value"]
+
+
+def store_highest_version_code(headers: dict) -> int:
+    """0 for an app with no package yet: the API cannot find it by package name until one is uploaded."""
+    query = urllib.parse.urlencode({"packageName": PACKAGE})
+    ids = call("GET", f"{API}/publish/v2/appid-list?{query}", headers).get("appids")
+    if not ids:
+        print(f"AppGallery Connect has no app with a {PACKAGE} package yet; counting its highest code as 0", file=sys.stderr)
+        return 0
+    query = urllib.parse.urlencode({"appId": ids[0]["value"]})
+    return highest_version_code(call("GET", f"{API}/publish/v2/app-info?{query}", headers))
+
+
+def highest_version_code(app_info: dict) -> int:
+    """The higher of the draft's and the live version's codes."""
+    info = app_info.get("appInfo", {})
+    return max(int(info.get("versionCode") or 0), int(info.get("onShelfVersionCode") or 0))
+
+
+def release_notes(path: str) -> str:
+    text = open(path, encoding="utf-8").read().strip()
+    if not text:
+        raise AgcError(f"{path} is empty; stale or missing notes would ship silently")
+    if len(text) > NOTES_LIMIT:
+        raise AgcError(f"{path} is {len(text)} characters; AppGallery takes at most {NOTES_LIMIT}")
+    return text
+
+
+def multipart(fields: dict, file_name: str, content: bytes) -> tuple[bytes, str]:
+    boundary = uuid.uuid4().hex
+    parts = [f'--{boundary}\r\nContent-Disposition: form-data; name="{k}"\r\n\r\n{v}\r\n'.encode() for k, v in fields.items()]
+    parts.append(
+        f'--{boundary}\r\nContent-Disposition: form-data; name="file"; filename="{file_name}"\r\n'
+        "Content-Type: application/octet-stream\r\n\r\n".encode() + content + b"\r\n"
+    )
+    parts.append(f"--{boundary}--\r\n".encode())
+    return b"".join(parts), f"multipart/form-data; boundary={boundary}"
+
+
+def destination(upload_response: dict) -> str:
+    """Where AGC stored the file. Its own field is spelt `fileDestUlr`; both spellings are read."""
+    result = upload_response.get("result", {})
+    if str(result.get("resultCode", "0")) != "0":
+        raise AgcError(f"upload refused: {upload_response}")
+    rsp = result.get("UploadFileRsp", {})
+    for info in rsp.get("fileInfoList") or [rsp]:
+        url = info.get("fileDestUlr") or info.get("fileDestUrl")
+        if url:
+            return url
+    raise AgcError(f"upload reported no destination: {upload_response}")
+
+
+def package_suffix(path: str) -> str:
+    suffix = path.rsplit(".", 1)[-1].lower()
+    if suffix not in PACKAGE_SUFFIXES:
+        raise AgcError(f"{path}: AppGallery takes an .aab or an .apk")
+    return suffix
+
+
+def upload(headers: dict, app: str, path: str) -> str:
+    query = urllib.parse.urlencode({"appId": app, "suffix": package_suffix(path)})
+    target = call("GET", f"{API}/publish/v2/upload-url?{query}", headers)
+    with open(path, "rb") as package:
+        body, content_type = multipart({"authCode": target["authCode"], "fileCount": "1"}, os.path.basename(path), package.read())
+    req = urllib.request.Request(target["uploadUrl"], data=body, method="POST", headers={"Content-Type": content_type})
+    try:
+        with urllib.request.urlopen(req, timeout=900) as response:
+            raw = response.read()
+    except urllib.error.HTTPError as e:
+        raise AgcError(f"upload failed with HTTP {e.code}: {e.read()[:500].decode(errors='replace')}") from e
+    try:
+        return destination(json.loads(raw))
+    except json.JSONDecodeError as e:
+        raise AgcError(f"upload returned a non-JSON body: {raw[:500].decode(errors='replace')}") from e
+
+
+def publish(headers: dict, path: str, notes: str) -> None:
+    app = app_id(headers)
+    query = urllib.parse.urlencode({"appId": app})
+    call("PUT", f"{API}/publish/v2/app-language-info?{query}", headers, {"lang": NOTES_LANG, "newFeatures": notes})
+    dest = upload(headers, app, path)
+    call("PUT", f"{API}/publish/v2/app-file-info?{query}", headers, {
+        "fileType": SOFTWARE_PACKAGE, "files": [{"fileName": os.path.basename(path), "fileDestUrl": dest}],
+    })
+    for attempt in range(1, SUBMIT_ATTEMPTS + 1):
+        time.sleep(PARSE_WAIT_S if attempt == 1 else 60)
+        try:
+            call("POST", f"{API}/publish/v2/app-submit?{query}", headers)
+            return
+        except AgcError as error:
+            if attempt == SUBMIT_ATTEMPTS or not still_processing(error):
+                raise
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    sub = parser.add_subparsers(dest="command", required=True)
+    sub.add_parser("highest-version-code")
+    pub = sub.add_parser("publish")
+    pub.add_argument("--package", required=True)
+    pub.add_argument("--notes", required=True)
+    sub.add_parser("check-notes").add_argument("notes")
+    args = parser.parse_args()
+    if args.command == "check-notes":
+        release_notes(args.notes)
+        return 0
+    if args.command == "publish":
+        notes = release_notes(args.notes)
+    headers = auth_headers(os.environ["AGC_CLIENT_ID"], os.environ["AGC_CLIENT_SECRET"])
+    if args.command == "highest-version-code":
+        print(store_highest_version_code(headers))
+    else:
+        publish(headers, args.package, notes)
+        print(f"Submitted {os.path.basename(args.package)} for AppGallery review")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

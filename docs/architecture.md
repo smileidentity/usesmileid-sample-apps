@@ -173,8 +173,8 @@ country. A token that binds a country or ID type narrows that answer on the serv
   under the error state's Retry. Any other failure keeps the default line. The error state never becomes
   an empty list. `spec/catalogue-rules.json` → `failures` holds the exact lines.
 - **No per-ID-type field rules yet.** For this product, each entry's `fields` lists the two names and the
-  two contacts. The phone rule matches `spec/contact-rules.json`, which every form already applies. At
-  least one contact is already the SDK's user-details rule. There is no ID number field to check, because
+  two contacts. No form checks a contact's format: the API judges it. At least one contact is already
+  the form's user-details rule. There is no ID number field to check, because
   the product submits none.
 
 **The rules are data.** Five pure functions run on whatever the server returns, and

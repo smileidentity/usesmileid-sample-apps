@@ -49,8 +49,27 @@ Done when each language has been read in the running app by a native speaker.
 ### iOS: a language pick that applies at once
 
 On iOS a pick in the Language sheet applies on the next launch, because the SDK reads its strings in the
-language the process started with. Once the SDK takes a language override, apply the pick at once as the
-other three apps do, and drop the next-launch note from the sheet.
+language the process started with. Once an iOS SDK release ships `UseSmileIDStrings.language`, bump the
+pin in `ios/App/project.yml` to that release and apply the pick at once as the other three apps do:
+
+- `setLanguage` sets `UseSmileIDStrings.language` (nil for System) instead of writing `AppleLanguages`,
+  and swaps `UseSmileIDSampleStrings.bundle` to the picked `.lproj`, through a public setter with a lock.
+- At launch, set the override from the stored setting first, then remove any `AppleLanguages` value an
+  earlier build wrote; the removal lands one launch late, so the override is what keeps that launch right.
+- Delete `runningLanguage`, the `deviceLanguages(in:)` cache and its `device_languages` key; they only
+  exist because `AppleLanguages` masks the device list.
+- Apply `.environment(\.locale, …)` and `.environment(\.layoutDirection, …)` from the resolved language
+  unconditionally, never behind an `if let`: toggling that branch changes the view's identity and drops
+  navigation state. The `appLocale` launch argument keeps precedence over the pick.
+- `catalogueLocale` and the verifications calendar follow the pick, not `Locale.current`, so API-translated
+  names and day headers switch too.
+- The sheet closes on a pick: drop `pending` and the "Applies the next time the app opens." line, remove
+  `language_applies_on_relaunch` from `spec/l10n/app/*.json`, rewrite the `languageSheet` note in
+  `spec/screens.json`, and update the iOS rows in `docs/localisation.md`.
+- Tests: the settings UI test asserts a pick applies at once, on ids; delete the `pending: true` golden
+  variants and record the plain sheet. On the simulator: pick fr → the SDK consent screen is French with
+  no relaunch; pick ar → sample and SDK screens are right to left, noting which chrome does not mirror
+  (navigation bars, the camera alert, the gallery picker); System → the device language.
 
 ## Tests and structural checks
 

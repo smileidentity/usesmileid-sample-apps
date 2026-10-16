@@ -41,7 +41,6 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleContactRules
 import androidx.compose.ui.platform.LocalAutofillManager
 
 /** The Consent Details Form, shown for every product. Sample-owned and ahead of the flow, which is why it needs no SDK change. */
@@ -106,7 +105,7 @@ fun UserDetailsScreen(
                         )
                         UseSmileIDSampleSettingRowDivider()
                     }
-                    UseSmileIDSampleUserField.entries.forEachIndexed { index, field ->
+                    UseSmileIDSampleUserField.entries.filter(requirement::shows).forEachIndexed { index, field ->
                         if (index > 0) UseSmileIDSampleSettingRowDivider()
                         // Shown as provided, not asked again — the value is vaulted, so it
                         // cannot be prefilled either.
@@ -119,22 +118,16 @@ fun UserDetailsScreen(
                             required = false,
                             enabled = !supplied,
                             keyboardOptions = field.keyboardOptions,
-                            isError = UseSmileIDSampleContactRules.problem(field, field.read(details)) != null,
                             testId = UseSmileIDSampleTestIds.userDetailsField(field.id),
                         )
                     }
                 }
             }
             item {
-                val problem = details.contactProblem
                 Text(
-                    text = when {
-                        problem != null -> stringResource(problem)
-                        details.satisfies(requirement) -> UseSmileIDSampleStrings.userDetailsEditHint
-                        else -> requirement.prompt()
-                    },
+                    text = if (details.satisfies(requirement)) UseSmileIDSampleStrings.userDetailsEditHint else requirement.prompt(),
                     style = UseSmileIDSampleTheme.type.textStyleCaption,
-                    color = if (problem != null) UseSmileIDSampleTheme.colors.input.borderError else UseSmileIDSampleTheme.colors.textMuted,
+                    color = UseSmileIDSampleTheme.colors.textMuted,
                     modifier = Modifier
                         .testTag(UseSmileIDSampleTestIds.USER_DETAILS_HINT)
                         .padding(horizontal = SmileDimens.spacingMd),

@@ -3,7 +3,7 @@ import 'package:sample_ui/sample_ui.dart';
 
 import 'spec_file.dart';
 
-/// spec/contact-rules.json: which emails and phone numbers pass, what each submits, and the error it shows.
+/// spec/contact-rules.json: what each email and phone number submits, and that no form checks either.
 void main() {
   final Map<String, Object?> file = spec('contact-rules.json');
   final List<Map<String, Object?>> cases = objects(file['cases']);
@@ -12,67 +12,36 @@ void main() {
       ? UseSmileIDSampleUserField.email
       : UseSmileIDSampleUserField.phone;
 
-  test('every case matches the spec', () {
+  test('every case submits as the spec says', () {
     expect(cases, isNotEmpty);
     for (final Map<String, Object?> c in cases) {
       final String value = c['value']! as String;
-      final bool valid = c['valid']! as bool;
       expect(
-        UseSmileIDSampleContactRules.problem(field(c['field']), value) == null,
-        valid,
+        UseSmileIDSampleContactRules.submitted(field(c['field']), value),
+        c['submits'],
         reason: '${c['field']} "$value"',
       );
-      if (valid) {
-        expect(
-          UseSmileIDSampleContactRules.submitted(field(c['field']), value),
-          c['submits'],
-          reason: '${c['field']} "$value"',
-        );
-      }
     }
   });
 
-  test('the errors are the spec sentences', () {
-    expect(
-      UseSmileIDSampleContactRules.problem(
-        UseSmileIDSampleUserField.email,
-        'ada',
-      )?.message(_en),
-      (file['email']! as Map<String, Object?>)['error'],
-    );
-    expect(
-      UseSmileIDSampleContactRules.problem(
-        UseSmileIDSampleUserField.phone,
-        '0700',
-      )?.message(_en),
-      (file['phone']! as Map<String, Object?>)['error'],
-    );
-  });
-
-  test(
-    'a bad contact keeps the form from continuing, a blank one does not',
-    () {
-      const UseSmileIDSampleUserDetailsRequirement requirement =
-          UseSmileIDSampleUserDetailsRequirement();
-      const UseSmileIDSampleUserDetails named = UseSmileIDSampleUserDetails(
-        firstName: 'Ada',
-        lastName: 'Okafor',
-        email: 'ada@example.com',
+  test('no contact holds the form back', () {
+    const UseSmileIDSampleUserDetailsRequirement requirement =
+        UseSmileIDSampleUserDetailsRequirement();
+    for (final Map<String, Object?> c in cases.where(
+      (Map<String, Object?> c) => (c['submits']! as String).isNotEmpty,
+    )) {
+      final String value = c['value']! as String;
+      final UseSmileIDSampleUserDetails details = field(c['field']).apply(
+        const UseSmileIDSampleUserDetails(firstName: 'Ada', lastName: 'Okafor'),
+        value,
       );
-      expect(requirement.isSatisfiedBy(named), isTrue);
       expect(
-        requirement.isSatisfiedBy(
-          const UseSmileIDSampleUserDetails(
-            firstName: 'Ada',
-            lastName: 'Okafor',
-            email: 'ada@example.com',
-            phone: '0700000000',
-          ),
-        ),
-        isFalse,
+        requirement.isSatisfiedBy(details),
+        isTrue,
+        reason: '${c['field']} "$value"',
       );
-    },
-  );
+    }
+  });
 
   test('the submitted phone has no separators', () {
     expect(
@@ -87,5 +56,3 @@ void main() {
     );
   });
 }
-
-final UseSmileIDSampleStrings _en = UseSmileIDSampleStrings.forLanguage('en');

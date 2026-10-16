@@ -118,3 +118,17 @@ appId: ${APP_ID}
 - tapOn:
     id: "sample_language_option_system"
 - assertVisible: "Settings"
+
+# autostart opens the product's run at launch; with no session linked, the run goes to the scanner.
+- stopApp
+- clearState
+- openLink: "usesmileid-sample-expo://?autostart=biometricKyc"
+# The scanner asks for the camera as it opens, and the prompt hides the screen until answered.
+- extendedWaitUntil:
+    visible:
+      id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    timeout: 60000
+- tapOn:
+    id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "sample_scan_token_screen"

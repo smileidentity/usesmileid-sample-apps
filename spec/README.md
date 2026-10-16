@@ -34,7 +34,8 @@ Rules:
 | `catalogue-fixture.json` | The country, ID-type and document lists a device flow sees under `catalogue=fixture` or on a simulated session, in the API's response shape, including the partner configuration Enhanced Document Verification reads. A UI test input of about a dozen rows, not a copy of the API | added 2026-09-28 |
 | `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, the partner's enabled documents, the error line, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |
 | `id-number-hints.json` | Test cases for the ID-number hint computed from a type's regex, and the regexes every platform's engine must compile | added 2026-09-28 |
-| `contact-rules.json` | The email and phone checks the forms run before Continue, mirroring the v3 API's schema, and the value each submits | added 2026-09-30 |
+| `contact-rules.json` | How the forms submit an email or a phone number: trimmed, and a phone number without separators. No form checks either value; the API judges them | added 2026-09-30; checks dropped 2026-10-14 |
+| `user-details-fields.json` | Which user-details rows the form shows for a product, read from `fields_to_collect` in the API's configuration: a name the partner may leave out is not shown, a field the token binds shows as provided | added 2026-10-14; the four apps follow in their own pull requests |
 | `l10n/` | Every string the apps show and the SDK overrides they ship, in each language `languages.json` lists. `scripts/sync_l10n.py` generates each platform's files from it; never edit those by hand | added 2026-10-05 |
 
 ## `screens.json` entry shape

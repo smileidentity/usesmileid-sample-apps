@@ -306,7 +306,11 @@ void main() {
       final GoRouter router = useSmileIDSampleRouter();
       await tester.pumpWidget(
         ProviderScope(
-          overrides: useSmileIDSampleLinkedSessionOverrides(),
+          // The form reads the session's configuration, so the catalogue decodes inline to settle.
+          overrides: [
+            ...useSmileIDSampleLinkedSessionOverrides(),
+            useSmileIDSampleFixtureCatalogueOverride(),
+          ],
           child: MaterialApp.router(
             theme: UseSmileIDSampleTheme.light(),
             routerConfig: router,

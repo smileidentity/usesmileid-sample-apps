@@ -114,8 +114,6 @@
   "user_field_last_name_placeholder": "Ajouter le nom",
   "user_field_email_placeholder": "nom@entreprise.com",
   "user_field_phone_placeholder": "+254 700 000 000",
-  "user_field_email_error": "Saisissez un e-mail du type nom@entreprise.com.",
-  "user_field_phone_error": "Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.",
   "user_requirement_first_name": "le prénom",
   "user_requirement_last_name": "le nom",
   "user_requirement_contact": "un e-mail ou un numéro de téléphone",
@@ -331,6 +329,7 @@
   "licenses_empty_body": "Le fichier licenses.json généré est absent de cette version",
   "licenses_section": "COMPOSANTS OPEN SOURCE — {count}",
   "licenses_google_section": "SOUS LES CONDITIONS PROPRES À GOOGLE — {count}",
+  "licenses_huawei_section": "SOUS LES CONDITIONS PROPRES À HUAWEI — {count}",
   "licenses_text_ships_with_component": "Le texte est fourni avec le composant.",
   "licenses_text_ships_with_component_at": "Le texte est fourni avec le composant lui-même, à l'adresse {url}",
   "licenses_open": "Ouvrir {license}"

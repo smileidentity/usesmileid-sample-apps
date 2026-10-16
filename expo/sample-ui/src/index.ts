@@ -243,22 +243,22 @@ export {
 } from './model/use-smile-id-sample-user-fields';
 export {
   smileIDSampleDetailsSatisfy,
+  smileIDSampleDetailsWithoutHiddenNames,
+  smileIDSampleFieldsToCollectKey,
   smileIDSampleRequirementBindsNothing,
   smileIDSampleRequirementDefaults,
+  smileIDSampleRequirementFor,
   smileIDSampleRequirementFrom,
   smileIDSampleRequirementLabel,
   smileIDSampleRequirementPrompt,
   smileIDSampleRequirementSatisfied,
+  smileIDSampleRequirementShows,
   smileIDSampleRequirementSupplies,
   type UseSmileIDSampleTokenBindings,
   type UseSmileIDSampleUserDetailsRequirement,
 } from './state/use-smile-id-sample-user-details-requirement';
 export {
-  smileIDSampleContactProblem,
   smileIDSampleContactSubmitted,
-  smileIDSampleDetailsContactProblem,
-  smileIDSampleContactProblemText,
-  type UseSmileIDSampleContactProblem,
 } from './state/use-smile-id-sample-contact-rules';
 export {
   smileIDSampleAspectRatios,
@@ -308,8 +308,12 @@ export {
   smileIDSampleCatalogueEnabledDocuments,
   smileIDSampleDecodeDocuments,
   smileIDSampleDecodeEnabledCountries,
+  smileIDSampleDecodeFieldsToCollect,
   smileIDSampleDecodeIdTypes,
   smileIDSampleEnhancedDocumentVerificationKey,
+  smileIDSampleFieldsToCollectSection,
+  type UseSmileIDSampleApiField,
+  type UseSmileIDSampleFieldsToCollect,
   type UseSmileIDSampleApiCountryDocuments,
   type UseSmileIDSampleApiEnabledCountry,
   type UseSmileIDSampleApiIdType,
@@ -335,6 +339,7 @@ export {
   createSmileIDSampleCatalogueStore,
   smileIDSampleCatalogueCountriesOf,
   smileIDSampleCatalogueDocumentsOf,
+  smileIDSampleCatalogueFieldsToCollectOf,
   smileIDSampleCatalogueIdTypesOf,
   type UseSmileIDSampleCatalogueStore,
 } from './data/use-smile-id-sample-catalogue-store';

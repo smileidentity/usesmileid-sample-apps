@@ -110,8 +110,6 @@
     <string name="sample_user_field_last_name_placeholder">הוספת שם משפחה</string>
     <string name="sample_user_field_email_placeholder">name@company.com</string>
     <string name="sample_user_field_phone_placeholder">+254 700 000 000</string>
-    <string name="sample_user_field_email_error">הזינו אימייל כמו name@company.com.</string>
-    <string name="sample_user_field_phone_error">הזינו את המספר עם קידומת המדינה, כמו ‎+254 700 000 000.</string>
     <string name="sample_user_requirement_first_name">שם פרטי</string>
     <string name="sample_user_requirement_last_name">שם משפחה</string>
     <string name="sample_user_requirement_contact">אימייל או מספר טלפון</string>
@@ -318,6 +316,7 @@
     <string name="sample_licenses_empty_body">הקובץ licenses.json שנוצר חסר בגרסה זו</string>
     <string name="sample_licenses_section">רכיבי קוד פתוח — %1$d</string>
     <string name="sample_licenses_google_section">בכפוף לתנאים של Google — %1$d</string>
+    <string name="sample_licenses_huawei_section">בכפוף לתנאים של Huawei — %1$d</string>
     <string name="sample_licenses_text_ships_with_component">הטקסט מצורף לרכיב עצמו.</string>
     <string name="sample_licenses_text_ships_with_component_at">הטקסט מצורף לרכיב עצמו, בכתובת %1$s</string>
     <string name="sample_licenses_open">פתיחת %1$s</string>

@@ -75,6 +75,15 @@ class FormGoldenTest : GoldenTest() {
         assertSurvivesMaxFontScale { UserDetails(UseSmileIDSampleUserDetails(), TOKEN_SUPPLIED_NAMES) }
 
     @Test
+    fun user_details_names_not_asked() = goldens("screen_user_details_names_not_asked") {
+        UserDetails(UseSmileIDSampleUserDetails(), NAMES_NOT_ASKED)
+    }
+
+    @Test
+    fun user_details_names_not_asked_max_font_scale() =
+        assertSurvivesMaxFontScale { UserDetails(UseSmileIDSampleUserDetails(), NAMES_NOT_ASKED) }
+
+    @Test
     fun kyc_form_empty() = goldens("screen_kyc_form_empty") { KycForm(UseSmileIDSampleIdDetails()) }
 
     @Test
@@ -204,6 +213,11 @@ class FormGoldenTest : GoldenTest() {
         /** A token binding both names and no contact — the partial case the form has to explain. */
         val TOKEN_SUPPLIED_NAMES = UseSmileIDSampleTokenBindings(givenNames = true, lastName = true)
             .userDetailsRequirement()
+        val NAMES_NOT_ASKED = UseSmileIDSampleUserDetailsRequirement(
+            firstName = false,
+            lastName = false,
+            hidden = setOf(UseSmileIDSampleUserField.FirstName, UseSmileIDSampleUserField.LastName),
+        )
         val SELECTED = UseSmileIDSampleIdDetails(
             country = CatalogueFixtures.kenya,
             idType = CatalogueFixtures.idTypes("KE").first { it.type == "NATIONAL_ID" },

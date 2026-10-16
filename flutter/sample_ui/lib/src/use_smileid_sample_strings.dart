@@ -153,8 +153,6 @@ final class UseSmileIDSampleStrings {
       _values['user_field_email_placeholder']!;
   String get userFieldPhonePlaceholder =>
       _values['user_field_phone_placeholder']!;
-  String get userFieldEmailError => _values['user_field_email_error']!;
-  String get userFieldPhoneError => _values['user_field_phone_error']!;
   String get userRequirementFirstName =>
       _values['user_requirement_first_name']!;
   String get userRequirementLastName => _values['user_requirement_last_name']!;
@@ -447,6 +445,8 @@ final class UseSmileIDSampleStrings {
       _format('licenses_section', {'count': count});
   String licensesGoogleSection({required int count}) =>
       _format('licenses_google_section', {'count': count});
+  String licensesHuaweiSection({required int count}) =>
+      _format('licenses_huawei_section', {'count': count});
   String get licensesTextShipsWithComponent =>
       _values['licenses_text_ships_with_component']!;
   String licensesTextShipsWithComponentAt({required String url}) =>
@@ -580,9 +580,6 @@ final class UseSmileIDSampleStrings {
       'user_field_last_name_placeholder': 'Add last name',
       'user_field_email_placeholder': 'name@company.com',
       'user_field_phone_placeholder': '+254 700 000 000',
-      'user_field_email_error': 'Enter an email like name@company.com.',
-      'user_field_phone_error':
-          'Enter the number with its country code, like +254 700 000 000.',
       'user_requirement_first_name': 'first name',
       'user_requirement_last_name': 'last name',
       'user_requirement_contact': 'an email or phone number',
@@ -800,6 +797,7 @@ final class UseSmileIDSampleStrings {
           'The generated licenses.json is missing from this build',
       'licenses_section': 'OPEN-SOURCE COMPONENTS — {count}',
       'licenses_google_section': 'UNDER GOOGLE\'S OWN TERMS — {count}',
+      'licenses_huawei_section': 'UNDER HUAWEI\'S OWN TERMS — {count}',
       'licenses_text_ships_with_component':
           'The text ships with the component itself.',
       'licenses_text_ships_with_component_at':
@@ -936,10 +934,6 @@ final class UseSmileIDSampleStrings {
       'user_field_last_name_placeholder': 'Ajouter le nom',
       'user_field_email_placeholder': 'nom@entreprise.com',
       'user_field_phone_placeholder': '+254 700 000 000',
-      'user_field_email_error':
-          'Saisissez un e-mail du type nom@entreprise.com.',
-      'user_field_phone_error':
-          'Saisissez le numéro avec son indicatif, par exemple +254 700 000 000.',
       'user_requirement_first_name': 'le prénom',
       'user_requirement_last_name': 'le nom',
       'user_requirement_contact': 'un e-mail ou un numéro de téléphone',
@@ -1172,6 +1166,8 @@ final class UseSmileIDSampleStrings {
       'licenses_section': 'COMPOSANTS OPEN SOURCE — {count}',
       'licenses_google_section':
           'SOUS LES CONDITIONS PROPRES À GOOGLE — {count}',
+      'licenses_huawei_section':
+          'SOUS LES CONDITIONS PROPRES À HUAWEI — {count}',
       'licenses_text_ships_with_component':
           'Le texte est fourni avec le composant.',
       'licenses_text_ships_with_component_at':
@@ -1298,9 +1294,6 @@ final class UseSmileIDSampleStrings {
       'user_field_last_name_placeholder': 'أضف اسم العائلة',
       'user_field_email_placeholder': 'name@company.com',
       'user_field_phone_placeholder': '+254 700 000 000',
-      'user_field_email_error': 'أدخل بريدًا إلكترونيًا مثل name@company.com.',
-      'user_field_phone_error':
-          'أدخل الرقم مع رمز البلد، مثل \u200e+254 700 000 000.',
       'user_requirement_first_name': 'الاسم الأول',
       'user_requirement_last_name': 'اسم العائلة',
       'user_requirement_contact': 'بريد إلكتروني أو رقم هاتف',
@@ -1518,6 +1511,7 @@ final class UseSmileIDSampleStrings {
           'ملف licenses.json المُنشأ غير موجود في هذا الإصدار',
       'licenses_section': 'مكوّنات مفتوحة المصدر — {count}',
       'licenses_google_section': 'بموجب شروط Google الخاصة — {count}',
+      'licenses_huawei_section': 'بموجب شروط Huawei الخاصة — {count}',
       'licenses_text_ships_with_component': 'يُرفق النص مع المكوّن نفسه.',
       'licenses_text_ships_with_component_at':
           'يأتي النص مع المكوّن نفسه، على {url}',
@@ -1643,9 +1637,6 @@ final class UseSmileIDSampleStrings {
       'user_field_last_name_placeholder': 'הוספת שם משפחה',
       'user_field_email_placeholder': 'name@company.com',
       'user_field_phone_placeholder': '+254 700 000 000',
-      'user_field_email_error': 'הזינו אימייל כמו name@company.com.',
-      'user_field_phone_error':
-          'הזינו את המספר עם קידומת המדינה, כמו \u200e+254 700 000 000.',
       'user_requirement_first_name': 'שם פרטי',
       'user_requirement_last_name': 'שם משפחה',
       'user_requirement_contact': 'אימייל או מספר טלפון',
@@ -1859,6 +1850,7 @@ final class UseSmileIDSampleStrings {
       'licenses_empty_body': 'הקובץ licenses.json שנוצר חסר בגרסה זו',
       'licenses_section': 'רכיבי קוד פתוח — {count}',
       'licenses_google_section': 'בכפוף לתנאים של Google — {count}',
+      'licenses_huawei_section': 'בכפוף לתנאים של Huawei — {count}',
       'licenses_text_ships_with_component': 'הטקסט מצורף לרכיב עצמו.',
       'licenses_text_ships_with_component_at':
           'הטקסט מצורף לרכיב עצמו, בכתובת {url}',

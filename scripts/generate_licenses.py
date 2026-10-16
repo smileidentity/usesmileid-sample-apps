@@ -5,8 +5,8 @@ Gradle hands over the release runtime classpath; the rules here are: walk parent
 reviewed override table, keep every licence an artifact declares, and fail rather than emit
 "Unknown" — one that reaches a partner is worse than a red build.
 
-    ./gradlew :app:generateLicenses      # rewrite the committed asset
-    ./gradlew :app:checkLicenses         # fail if the committed asset is stale
+    ./gradlew :app:generateLicenses :app:generateAppgalleryLicenses   # rewrite both committed assets
+    ./gradlew :app:checkLicenses :app:checkAppgalleryLicenses         # fail if either is stale
 """
 
 from __future__ import annotations
@@ -66,9 +66,33 @@ GOOGLE_TERMS = {
     "play core software development kit terms of service",
 }
 
+# HMS artifacts declare no licence; Huawei's developer agreement governs them.
+HUAWEI_GROUPS = ("com.huawei.",)
+HUAWEI_TERMS = {
+    "name": "HUAWEI Developer Service Agreement",
+    "url": "https://developer.huawei.com/consumer/en/doc/start/agreement-0000001052728169",
+}
+
 # The SDK itself, which a partner licenses from us rather than being told about. Its own terms are
 # not a third-party notice, and listing them under an open-source heading would be wrong.
 FIRST_PARTY_GROUPS = ("com.usesmileid",)
+
+APACHE_2 = {"id": "Apache-2.0", "name": "The Apache Software License, Version 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"}
+MIT = {"id": "MIT", "name": "MIT License", "url": "https://opensource.org/licenses/MIT"}
+
+# What a first-party artifact unpacks into itself, read from face-base's open-source statement and libraries.
+FIRST_PARTY_BUNDLES = {
+    "com.usesmileid:huawei-face": {
+        "versionOf": "com.huawei.hms:ml-computer-vision-face",
+        "huawei": ["com.huawei.hms:ml-computer-vision-face-base", "com.huawei.hms:ml-computer-vision-face-emotion-model"],
+        "openSource": [
+            {"artifact": "MindSpore Lite (in HMS face-base)", "version": None, "licence": APACHE_2},
+            {"artifact": "FlatBuffers (in HMS face-base)", "version": "1.11.0", "licence": APACHE_2},
+            {"artifact": "gson (in HMS face-base)", "version": "2.9.0", "licence": APACHE_2},
+            {"artifact": "libc++abi (in HMS face-base)", "version": "8.0.1", "licence": MIT},
+        ],
+    },
+}
 
 # Artifacts that declare a licence in no POM in their chain. Each entry is a reviewed fact.
 OVERRIDES = {
@@ -210,6 +234,7 @@ def bundled_assets(path: str = BUNDLED_ASSETS) -> list[dict]:
 def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> dict:
     open_source: list[dict] = []
     google: list[dict] = []
+    huawei: list[dict] = []
     used_texts: set[str] = set()
     problems: list[str] = []
 
@@ -219,6 +244,9 @@ def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> d
             continue
         own_pom = read_pom(group, artifact, version)
         if own_pom is not None and is_platform(own_pom):
+            continue
+        if group.startswith(HUAWEI_GROUPS) and not (own_pom is not None and declared_licences(own_pom)):
+            huawei.append({"artifact": f"{group}:{artifact}", "version": version, "terms": [dict(HUAWEI_TERMS)]})
             continue
         try:
             entries = []
@@ -242,6 +270,23 @@ def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> d
 
     if problems:
         raise Unidentified("\n".join(problems))
+
+    versions = {coordinate.rsplit(":", 1)[0]: coordinate.rsplit(":", 1)[1] for coordinate in coordinates}
+    for owner, bundle in FIRST_PARTY_BUNDLES.items():
+        if owner not in versions:
+            continue
+        version = versions.get(bundle["versionOf"])
+        if version is None:
+            raise Unidentified(f"{owner} is linked without {bundle['versionOf']}, so its bundled HMS version is unknown")
+        huawei.extend({"artifact": artifact, "version": version, "terms": [dict(HUAWEI_TERMS)]} for artifact in bundle["huawei"])
+        for component in bundle["openSource"]:
+            licence = component["licence"]
+            open_source.append({
+                "artifact": component["artifact"],
+                "version": component["version"] or f"HMS face-base {version}",
+                "licenses": [dict(licence)],
+            })
+            used_texts.add(licence["id"])
 
     licence_texts = {}
     for licence_id in sorted(used_texts):
@@ -267,12 +312,15 @@ def build(coordinates: list[str], texts_dir: str, bundled: list[dict] = ()) -> d
         if existing.strip() != text.strip():
             raise Unidentified(f"{asset['component']}: a different {asset['licenseId']} text is already listed")
 
-    return {
+    notices = {
         "generatedBy": "scripts/generate_licenses.py from the Android app's release runtime classpath and spec/bundled-assets.json",
         "openSource": open_source,
         "googleServices": google,
-        "licenseTexts": licence_texts,
     }
+    if huawei:
+        notices["huaweiServices"] = huawei
+    notices["licenseTexts"] = licence_texts
+    return notices
 
 
 def main() -> int:
@@ -299,24 +347,24 @@ def main() -> int:
     rendered = json.dumps(notices, indent=2, ensure_ascii=False) + "\n"
     if args.check:
         if not os.path.isfile(args.out):
-            print(f"third-party notices: {args.out} is missing; run :app:generateLicenses", file=sys.stderr)
+            print(f"third-party notices: {args.out} is missing; run :app:generateLicenses or :app:generateAppgalleryLicenses", file=sys.stderr)
             return 1
         with open(args.out, encoding="utf-8") as handle:
             written = handle.read()
         if written != rendered:
             print(
                 "third-party notices are stale: the release classpath no longer matches "
-                f"{args.out}. Run ./gradlew :app:generateLicenses and commit the result.",
+                f"{args.out}. Run ./gradlew :app:generateLicenses :app:generateAppgalleryLicenses and commit the result.",
                 file=sys.stderr,
             )
             return 1
-        print(f"    {len(notices['openSource'])} open-source components, {len(notices['googleServices'])} under Google's terms")
+        print(f"    {len(notices['openSource'])} open-source components, {len(notices['googleServices'])} under Google's terms, {len(notices.get('huaweiServices', []))} under Huawei's")
         return 0
 
     os.makedirs(os.path.dirname(os.path.abspath(args.out)), exist_ok=True)
     with open(args.out, "w", encoding="utf-8") as handle:
         handle.write(rendered)
-    print(f"wrote {args.out}: {len(notices['openSource'])} open-source, {len(notices['googleServices'])} Google terms")
+    print(f"wrote {args.out}: {len(notices['openSource'])} open-source, {len(notices['googleServices'])} Google terms, {len(notices.get('huaweiServices', []))} Huawei terms")
     return 0
 
 

@@ -439,14 +439,6 @@ public enum UseSmileIDSampleStrings {
     text("user_field_phone_placeholder")
   }
 
-  public static var userFieldEmailError: String {
-    text("user_field_email_error")
-  }
-
-  public static var userFieldPhoneError: String {
-    text("user_field_phone_error")
-  }
-
   public static var userRequirementFirstName: String {
     text("user_requirement_first_name")
   }
@@ -1269,6 +1261,10 @@ public enum UseSmileIDSampleStrings {
 
   public static func licensesGoogleSection(count: Int) -> String {
     String(format: text("licenses_google_section"), count)
+  }
+
+  public static func licensesHuaweiSection(count: Int) -> String {
+    String(format: text("licenses_huawei_section"), count)
   }
 
   public static var licensesTextShipsWithComponent: String {

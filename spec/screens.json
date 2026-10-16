@@ -274,7 +274,7 @@
         {
           "state": "empty",
           "node": "5206-3804",
-          "note": "Placeholders; 'First and last name are required.' An email or a phone is required too, unless the token binds one: the SDK rejects a submission with neither, so every app enforces it although the design labels both rows optional. With no profile, the profile row reads 'No profile yet' and a 'Profile name (optional)' row leads the card."
+          "note": "Placeholders; 'First and last name are required.' An email or a phone is required too, unless the token binds one: the API rejects a submission with neither, so every app enforces it although the design labels both rows optional. Which rows show is the product's `fields_to_collect`, per `user-details-fields.json`. With no profile, the profile row reads 'No profile yet' and a 'Profile name (optional)' row leads the card."
         },
         {
           "state": "editing",
@@ -811,8 +811,7 @@
         "sample_profile_config_callback_url",
         "sample_profile_config_delete",
         "sample_profile_delete_confirm",
-        "sample_profile_config_save",
-        "sample_profile_config_contact_error"
+        "sample_profile_config_save"
       ]
     },
     {

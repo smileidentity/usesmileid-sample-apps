@@ -91,6 +91,10 @@ data class UseSmileIDSampleApiEnabledCountry(val code: String, val documents: Li
 @Immutable
 data class UseSmileIDSampleApiEnabledDocument(val code: String, val label: String)
 
+/** A field of `fields_to_collect` in `GET /v3/services/config`; [required] is null when the response leaves the key out. */
+@Immutable
+data class UseSmileIDSampleApiField(val name: String, val required: Boolean?)
+
 /** Both responses a run of the form reads; fetched together because the KYC countries need names from the second. */
 @Immutable
 data class UseSmileIDSampleCatalogueData(
@@ -248,7 +252,22 @@ object UseSmileIDSampleCatalogueJson {
         }
     }
 
-    /** The product key the configuration call asks for and reads back. */
+    /** `fields_to_collect` of `GET /v3/services/config` by product key, empty when it carries none; null when unreadable. */
+    fun fieldsToCollect(body: String): Map<String, List<UseSmileIDSampleApiField>>? {
+        val root = parseTokenJson(body) as? TokenJson.Obj ?: return null
+        return root.obj("fields_to_collect")?.let(::fieldsToCollect).orEmpty()
+    }
+
+    /** One `fields_to_collect` object, each product's list kept to the fields that carry a name. */
+    internal fun fieldsToCollect(section: TokenJson.Obj): Map<String, List<UseSmileIDSampleApiField>> =
+        section.members.mapValues { (_, fields) ->
+            (fields as? TokenJson.Arr)?.items.orEmpty().mapNotNull { item ->
+                val o = item as? TokenJson.Obj ?: return@mapNotNull null
+                UseSmileIDSampleApiField(name = o.string("name") ?: return@mapNotNull null, required = o.boolean("required"))
+            }
+        }
+
+    /** The product key Enhanced Document Verification's lists are read back under. */
     const val ENHANCED_DOCUMENT_VERIFICATION = "enhanced_document_verification"
 
     private fun document(item: TokenJson): UseSmileIDSampleApiDocument? {

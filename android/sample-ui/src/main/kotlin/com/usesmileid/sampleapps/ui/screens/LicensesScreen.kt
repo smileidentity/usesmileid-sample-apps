@@ -30,8 +30,8 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleNotice
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /**
- * The notices the app ships rather than links to (Apache-2.0 §4). Two sections, because the Google
- * artifacts declare terms of service rather than a licence. A flat list, not the rounded section
+ * The notices the app ships rather than links to (Apache-2.0 §4). Google and Huawei get their own sections,
+ * because their artifacts declare terms of service rather than a licence. A flat list, not the rounded section
  * cards: this screen has no design frame, and two hundred rows in one card compose all at once.
  */
 @Composable
@@ -53,6 +53,7 @@ fun LicensesScreen(
         UseSmileIDSampleTopAppBar(title = UseSmileIDSampleStrings.licensesTitle, onBack = onBack)
         val openSourceLabel = UseSmileIDSampleStrings.licensesSection(licenses.openSource.size)
         val googleLabel = UseSmileIDSampleStrings.licensesGoogleSection(licenses.googleServices.size)
+        val huaweiLabel = UseSmileIDSampleStrings.licensesHuaweiSection(licenses.huaweiServices.size)
         LazyColumn(contentPadding = contentPadding) {
             if (licenses.isEmpty) {
                 item {
@@ -77,9 +78,10 @@ fun LicensesScreen(
                 )
             }
 
-            if (licenses.googleServices.isNotEmpty()) {
-                label(googleLabel)
-                items(licenses.googleServices, key = { it.artifact }) { notice ->
+            for ((heading, notices) in listOf(googleLabel to licenses.googleServices, huaweiLabel to licenses.huaweiServices)) {
+                if (notices.isEmpty()) continue
+                label(heading)
+                items(notices, key = { it.artifact }) { notice ->
                     NoticeRow(
                         notice = notice,
                         // A terms page is the licence, so there is no text to ship for these.

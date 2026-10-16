@@ -1,7 +1,10 @@
 import {
   UseSmileIDSampleStatus,
+  smileIDSampleCatalogueFieldsToCollectOf,
+  smileIDSampleDetailsWithoutHiddenNames,
   smileIDSampleLiveSession,
   smileIDSampleProductFrom,
+  smileIDSampleRequirementFor,
   smileIDSampleSessionExpired,
   useSmileIDSampleActiveProfile,
   useSmileIDSampleFormsStore,
@@ -22,10 +25,15 @@ import {
   type UseSmileIDResult,
 } from '@smileid/usesmileid';
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
+import { smileIDSampleCatalogueStore } from '../../../src/catalogue/use-smile-id-sample-catalogue';
 import { useSmileIDSampleShellExtension } from '../../../src/extension';
-import { smileIDSampleApplying } from '../../../src/flow/use-smile-id-sample-flow-builder-config';
+import {
+  smileIDSampleApplying,
+  smileIDSampleAnalyzersReady,
+  smileIDSampleAnalyzersSettled,
+} from '../../../src/flow/use-smile-id-sample-flow-builder-config';
 import {
   smileIDSampleSnapshotSession,
   type UseSmileIDSampleFlowLaunchSnapshot,
@@ -67,10 +75,17 @@ export default function SdkFlowRun() {
     // eslint-disable-next-line react-hooks/purity -- read once, inside the entry-only memo
     const entryMillis = Date.now();
     const session = smileIDSampleLiveSession(sessions, entryMillis);
+    const fieldsToCollect = smileIDSampleCatalogueFieldsToCollectOf(
+      smileIDSampleCatalogueStore(args.catalogue).getState(),
+      session?.id ?? null,
+    );
     return {
       product,
       route: args.route,
-      userDetails,
+      userDetails: smileIDSampleDetailsWithoutHiddenNames(
+        userDetails,
+        smileIDSampleRequirementFor(session?.bindings, product, fieldsToCollect),
+      ),
       idDetails,
       scenario: args.scenario,
       theme: args.theme,
@@ -95,6 +110,19 @@ export default function SdkFlowRun() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // The analyzers follow the phone's mobile services, answered a few milliseconds after launch; settled long
+  // before a run mounts, except an autostart racing it, which waits here.
+  const [analyzersReady, setAnalyzersReady] = useState(smileIDSampleAnalyzersSettled());
+  useEffect(() => {
+    if (analyzersReady) return;
+    let mounted = true;
+    void smileIDSampleAnalyzersReady.then(() => {
+      if (mounted) setAnalyzersReady(true);
+    });
+    return () => {
+      mounted = false;
+    };
+  }, [analyzersReady]);
   const preflight = useMemo(
     () => (snapshot === null ? null : smileIDSamplePreflight(snapshot)),
     [snapshot],
@@ -131,6 +159,7 @@ export default function SdkFlowRun() {
     return <RecordBlocked reason={reason} run={runOf(snapshot)} />;
   }
   if (preflight?.kind !== 'ready') return <Redirect href="/products" />;
+  if (!analyzersReady) return null;
 
   return (
     <UseSmileIDBuilder

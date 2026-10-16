@@ -11,6 +11,7 @@ import {
   useSmileIDSampleTheme,
   smileIDSampleContactSubmitted,
 } from '@smileid/sample-ui';
+import { UseSmileIDMobileServices, UseSmileIDMobileServicesProvider } from '@smileid/usesmileid_bridge';
 import {
   CaptureType,
   DocumentCaptureMode,
@@ -250,30 +251,69 @@ const applyIdParams = (
   }
 };
 
-/// The analyzer contract, read off a package the app declares rather than the SDK's transitive one.
+/// The phone's mobile services, asked once when this module loads: `None` until the answer lands, and off Android.
+let mobileServices: UseSmileIDMobileServicesProvider = UseSmileIDMobileServicesProvider.None;
+let analyzersSettled = Platform.OS !== 'android';
+
+/// Resolves once the analyzers below are final; a run waits on it so an autostart on a Huawei never gets ML Kit.
+export const smileIDSampleAnalyzersReady: Promise<void> = analyzersSettled
+  ? Promise.resolve()
+  : UseSmileIDMobileServices.preferred()
+      .then((services) => {
+        mobileServices = services;
+      })
+      // A probe that fails keeps the ML Kit default; the run screen must never wait on a rejection.
+      .catch(() => {
+        mobileServices = UseSmileIDMobileServicesProvider.None;
+      })
+      .finally(() => {
+        analyzersSettled = true;
+      });
+
+/// True once the probe has answered, so a screen that mounts after it never re-renders for it.
+export const smileIDSampleAnalyzersSettled = (): boolean => analyzersSettled;
+
 type FaceAnalyzer = typeof useSmileIDMlkitFace;
-
-/// Required, not imported: a provider resolves its native module on import and would take the bundle down.
-const selfieAnalyzer = (): FaceAnalyzer =>
-  Platform.OS === 'android'
-    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
-      (require('@smileid/usesmileid_mlkit_face') as { useSmileIDMlkitFace: FaceAnalyzer })
-        .useSmileIDMlkitFace
-    : // eslint-disable-next-line @typescript-eslint/no-require-imports
-      (require('@smileid/usesmileid_vision_face') as { useSmileIDVisionFace: FaceAnalyzer })
-        .useSmileIDVisionFace;
-
 type DocumentAnalyzer = typeof useSmileIDMlkitDocument;
 
-/// Required, not imported, for the same reason as the selfie analyzer.
-const documentAnalyzer = (): DocumentAnalyzer =>
-  Platform.OS === 'android'
+/// Vision off Android; on Android HMS where only Huawei's services run, ML Kit everywhere else.
+/// Required, not imported: a provider resolves its native module on import and would take the bundle down.
+export const smileIDSampleFaceAnalyzerFor = (
+  services: UseSmileIDMobileServicesProvider,
+  os: typeof Platform.OS,
+): FaceAnalyzer => {
+  if (os !== 'android') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return (require('@smileid/usesmileid_vision_face') as { useSmileIDVisionFace: FaceAnalyzer }).useSmileIDVisionFace;
+  }
+  return services === UseSmileIDMobileServicesProvider.Huawei
     ? // eslint-disable-next-line @typescript-eslint/no-require-imports
-      (require('@smileid/usesmileid_mlkit_document') as { useSmileIDMlkitDocument: DocumentAnalyzer })
-        .useSmileIDMlkitDocument
+      (require('@smileid/usesmileid_huawei_face') as { useSmileIDHuaweiFace: FaceAnalyzer }).useSmileIDHuaweiFace
     : // eslint-disable-next-line @typescript-eslint/no-require-imports
-      (require('@smileid/usesmileid_vision_document') as { useSmileIDVisionDocument: DocumentAnalyzer })
-        .useSmileIDVisionDocument;
+      (require('@smileid/usesmileid_mlkit_face') as { useSmileIDMlkitFace: FaceAnalyzer }).useSmileIDMlkitFace;
+};
+
+/// The document twin of [smileIDSampleFaceAnalyzerFor].
+export const smileIDSampleDocumentAnalyzerFor = (
+  services: UseSmileIDMobileServicesProvider,
+  os: typeof Platform.OS,
+): DocumentAnalyzer => {
+  if (os !== 'android') {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return (require('@smileid/usesmileid_vision_document') as { useSmileIDVisionDocument: DocumentAnalyzer })
+      .useSmileIDVisionDocument;
+  }
+  return services === UseSmileIDMobileServicesProvider.Huawei
+    ? // eslint-disable-next-line @typescript-eslint/no-require-imports
+      (require('@smileid/usesmileid_huawei_document') as { useSmileIDHuaweiDocument: DocumentAnalyzer })
+        .useSmileIDHuaweiDocument
+    : // eslint-disable-next-line @typescript-eslint/no-require-imports
+      (require('@smileid/usesmileid_mlkit_document') as { useSmileIDMlkitDocument: DocumentAnalyzer })
+        .useSmileIDMlkitDocument;
+};
+
+const selfieAnalyzer = (): FaceAnalyzer => smileIDSampleFaceAnalyzerFor(mobileServices, Platform.OS);
+const documentAnalyzer = (): DocumentAnalyzer => smileIDSampleDocumentAnalyzerFor(mobileServices, Platform.OS);
 
 /// The partner mark the consent screen draws, resolving its colour where the SDK mounts it.
 const PartnerMark = () => {

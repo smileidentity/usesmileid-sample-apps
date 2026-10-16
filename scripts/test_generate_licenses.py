@@ -156,6 +156,35 @@ class TestSections(GeneratorCase):
         self.assertEqual([], notices["openSource"])
         self.assertEqual("com.google.mlkit:barcode-scanning", notices["googleServices"][0]["artifact"])
 
+    def test_huaweis_undeclared_artifacts_are_listed_under_its_terms(self):
+        self.write_pom("com.huawei.hms:ml-computer-vision-face:3.18.1.300", pom(""))
+        notices = gen.build(["com.huawei.hms:ml-computer-vision-face:3.18.1.300"], self.texts)
+        self.assertEqual([], notices["openSource"])
+        self.assertEqual("com.huawei.hms:ml-computer-vision-face", notices["huaweiServices"][0]["artifact"])
+        self.assertEqual("HUAWEI Developer Service Agreement", notices["huaweiServices"][0]["terms"][0]["name"])
+
+    def test_a_build_without_hms_has_no_huawei_section(self):
+        terms = "<name>ML Kit Terms of Service</name><url>https://developers.google.com/ml-kit/terms</url>"
+        self.write_pom("com.google.mlkit:barcode-scanning:17.3.0", pom(licences(terms)))
+        self.assertNotIn("huaweiServices", gen.build(["com.google.mlkit:barcode-scanning:17.3.0"], self.texts))
+
+    def test_what_huawei_face_unpacks_into_itself_is_listed(self):
+        self.write_pom("com.usesmileid:huawei-face:12.3.0", pom())
+        self.write_pom("com.huawei.hms:ml-computer-vision-face:3.18.1.300", pom())
+        notices = gen.build(["com.usesmileid:huawei-face:12.3.0", "com.huawei.hms:ml-computer-vision-face:3.18.1.300"], self.texts)
+        huawei = {(it["artifact"], it["version"]) for it in notices["huaweiServices"]}
+        self.assertIn(("com.huawei.hms:ml-computer-vision-face-base", "3.18.1.300"), huawei)
+        self.assertIn(("com.huawei.hms:ml-computer-vision-face-emotion-model", "3.18.1.300"), huawei)
+        bundled = {it["artifact"]: (it["version"], it["licenses"][0]["id"]) for it in notices["openSource"]}
+        self.assertEqual(("HMS face-base 3.18.1.300", "Apache-2.0"), bundled["MindSpore Lite (in HMS face-base)"])
+        self.assertEqual(("8.0.1", "MIT"), bundled["libc++abi (in HMS face-base)"])
+        self.assertEqual({"Apache-2.0", "MIT"}, set(notices["licenseTexts"]))
+
+    def test_huawei_face_without_its_hms_artifact_fails_rather_than_guessing_a_version(self):
+        self.write_pom("com.usesmileid:huawei-face:12.3.0", pom())
+        with self.assertRaises(gen.Unidentified):
+            gen.build(["com.usesmileid:huawei-face:12.3.0"], self.texts)
+
     def test_the_sdk_itself_is_not_a_third_party_notice(self):
         own = "<name>Smile ID Terms of Use</name><url>https://smile.id/terms-and-conditions</url>"
         self.write_pom("com.usesmileid:usesmileid:12.0.2", pom(licences(own)))

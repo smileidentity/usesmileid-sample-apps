@@ -2,9 +2,8 @@ package com.usesmileid.sampleapps.android.flow
 
 import androidx.compose.ui.unit.dp
 import com.usesmileid.bridge.dsl.builder.FaceDetectorMode
-import com.usesmileid.bridge.mlkit.document.DocumentDetectorAnalyzer
-import com.usesmileid.bridge.mlkit.face.FaceDetectorAnalyzer
 import com.usesmileid.bridge.model.CaptureType
+import com.usesmileid.bridge.services.UseSmileIDMobileServicesProvider
 import com.usesmileid.core.models.JobType
 import com.usesmileid.data.dsl.config.NetworkConfiguration
 import com.usesmileid.data.model.UserDetails
@@ -40,6 +39,7 @@ import com.usesmileid.sampleapps.ui.R as SampleUiR
 /** The one place that decides what the SDK is handed (§8.1). */
 fun UseSmileIDFlowBuilder.applying(
     snapshot: FlowLaunchSnapshot,
+    mlBackend: UseSmileIDMobileServicesProvider = STORE_ML_BACKEND,
     onTokenRefreshed: () -> Unit = {},
     extension: UseSmileIDSampleShellExtension? = useSmileIDSampleShellExtension,
 ) {
@@ -61,12 +61,12 @@ fun UseSmileIDFlowBuilder.applying(
         ml {
             analyzers {
                 forCaptureType(CaptureType.SELFIE) {
-                    addAnalyzer(factory = FaceDetectorAnalyzer.Factory())
+                    addFaceAnalyzer(mlBackend)
                     detectorMode = FaceDetectorMode.Default
                 }
                 if (snapshot.product.needsDocumentCapture) {
                     forCaptureType(CaptureType.DOCUMENT) {
-                        addAnalyzer(factory = DocumentDetectorAnalyzer.Factory())
+                        addDocumentAnalyzer(mlBackend)
                     }
                 }
             }

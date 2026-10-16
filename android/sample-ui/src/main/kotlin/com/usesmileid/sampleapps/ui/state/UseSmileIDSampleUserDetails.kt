@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
@@ -21,18 +22,11 @@ data class UseSmileIDSampleUserDetails(
     /** The design's own rule: "First and last name are required." */
     val isComplete: Boolean get() = firstName.isNotBlank() && lastName.isNotBlank()
 
-    /** Whether the form has collected what [requirement] still asks of it, in a form the server accepts. */
+    /** Whether the form has collected what [requirement] still asks of it; the API judges each value's format. */
     fun satisfies(requirement: UseSmileIDSampleUserDetailsRequirement): Boolean =
         (!requirement.firstName || firstName.isNotBlank()) &&
             (!requirement.lastName || lastName.isNotBlank()) &&
-            (!requirement.contact || email.isNotBlank() || phone.isNotBlank()) &&
-            contactProblem == null
-
-    /** Why the email or phone would fail the job, email first; null when both would pass. */
-    @get:StringRes
-    val contactProblem: Int?
-        get() = UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Email, email)
-            ?: UseSmileIDSampleContactRules.problem(UseSmileIDSampleUserField.Phone, phone)
+            (!requirement.contact || email.isNotBlank() || phone.isNotBlank())
 
     /** The email as the server wants it, or null when blank. */
     val submittedEmail: String?
@@ -41,6 +35,12 @@ data class UseSmileIDSampleUserDetails(
     /** The phone number as the server wants it, or null when blank. */
     val submittedPhone: String?
         get() = UseSmileIDSampleContactRules.submitted(UseSmileIDSampleUserField.Phone, phone).ifEmpty { null }
+
+    /** These details with every name [requirement] does not show left blank, since a row the form hides submits nothing. */
+    fun withoutHiddenNames(requirement: UseSmileIDSampleUserDetailsRequirement): UseSmileIDSampleUserDetails = copy(
+        firstName = firstName.takeIf { requirement.shows(UseSmileIDSampleUserField.FirstName) }.orEmpty(),
+        lastName = lastName.takeIf { requirement.shows(UseSmileIDSampleUserField.LastName) }.orEmpty(),
+    )
 
     companion object {
         val Saver: Saver<MutableState<UseSmileIDSampleUserDetails>, Any> = listSaver(
@@ -51,15 +51,19 @@ data class UseSmileIDSampleUserDetails(
 }
 
 /**
- * What the form must still collect: the SDK's rule minus what the token binds. The static `required` flags
- * below cannot express either half of that.
+ * What the form must still collect, and which rows it leaves out: the product's `fields_to_collect`, or the token
+ * rule without one. The static `required` flags below cannot express either.
  */
 @Immutable
 data class UseSmileIDSampleUserDetailsRequirement(
     val firstName: Boolean = true,
     val lastName: Boolean = true,
     val contact: Boolean = true,
+    val hidden: Set<UseSmileIDSampleUserField> = emptySet(),
 ) {
+    /** Whether the form draws [field]'s row; a name the partner may leave out is not drawn at all. */
+    fun shows(field: UseSmileIDSampleUserField): Boolean = field !in hidden
+
     /** Nothing left to ask, so the form has no reason to appear. */
     val isSatisfied: Boolean get() = !firstName && !lastName && !contact
 
@@ -68,8 +72,8 @@ data class UseSmileIDSampleUserDetailsRequirement(
 
     /** Whether [field] is one the token already supplied, which is why it renders as provided. */
     fun supplies(field: UseSmileIDSampleUserField): Boolean = when (field) {
-        UseSmileIDSampleUserField.FirstName -> !firstName
-        UseSmileIDSampleUserField.LastName -> !lastName
+        UseSmileIDSampleUserField.FirstName -> !firstName && shows(field)
+        UseSmileIDSampleUserField.LastName -> !lastName && shows(field)
         // Neither contact row is individually supplied: the rule is "one of", so a bound email leaves
         // phone askable and vice versa. Only the requirement itself lifts.
         UseSmileIDSampleUserField.Email, UseSmileIDSampleUserField.Phone -> false
@@ -100,15 +104,42 @@ data class UseSmileIDSampleUserDetailsRequirement(
     }
 }
 
-/**
- * The requirement a token leaves behind. Mirrors the SDK's union rule field for field, and the unit
- * tests pin it to `FlowValidator.validateUserDetails`, which is the authority.
- */
+/** The requirement a token leaves behind: each name and one contact, unless the token binds it. */
 fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUserDetailsRequirement(
     firstName = this?.givenNames != true,
     lastName = this?.lastName != true,
     contact = !(this?.email == true || this?.phoneNumber == true),
 )
+
+/** The token rule, less any name [product]'s `fields_to_collect` does not require (spec/user-details-fields.json). */
+fun UseSmileIDSampleTokenBindings?.userDetailsRequirement(
+    product: UseSmileIDSampleProduct?,
+    fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>?,
+): UseSmileIDSampleUserDetailsRequirement {
+    val token = userDetailsRequirement()
+    val fields = product?.fieldsToCollectKey?.let { fieldsToCollect?.get(it) } ?: return token
+    fun leftOut(name: String, asked: Boolean) = asked && fields.none { it.name == name && it.required == true }
+    val hidden = buildSet {
+        if (leftOut("given_names", token.firstName)) add(UseSmileIDSampleUserField.FirstName)
+        if (leftOut("last_name", token.lastName)) add(UseSmileIDSampleUserField.LastName)
+    }
+    return token.copy(
+        firstName = token.firstName && UseSmileIDSampleUserField.FirstName !in hidden,
+        lastName = token.lastName && UseSmileIDSampleUserField.LastName !in hidden,
+        hidden = hidden,
+    )
+}
+
+/** The product's key in `fields_to_collect`; null for the SmartSelfie products, which have none. */
+val UseSmileIDSampleProduct.fieldsToCollectKey: String?
+    get() = when (this) {
+        UseSmileIDSampleProduct.SmartSelfieEnrollment, UseSmileIDSampleProduct.SmartSelfieAuth -> null
+        UseSmileIDSampleProduct.BiometricKyc -> "biometric_kyc"
+        UseSmileIDSampleProduct.EnhancedKyc -> "enhanced_kyc"
+        UseSmileIDSampleProduct.DocumentVerification -> "doc_verification"
+        UseSmileIDSampleProduct.EnhancedDocumentVerification -> "enhanced_document_verification"
+        UseSmileIDSampleProduct.ResidencyDocumentVerification -> "residency_document_verification"
+    }
 
 /** Which user-details row changed, so the form reports one callback rather than four. */
 enum class UseSmileIDSampleUserField(
@@ -138,31 +169,13 @@ enum class UseSmileIDSampleUserField(
     }
 }
 
-/** The email and phone checks from `spec/contact-rules.json`, which mirror the v3 API's own request schema. */
+/** How `spec/contact-rules.json` submits an email or a phone number; no form checks either. */
 object UseSmileIDSampleContactRules {
-    @StringRes val EMAIL_ERROR = R.string.sample_user_field_email_error
-
-    @StringRes val PHONE_ERROR = R.string.sample_user_field_phone_error
-
-    private val email = Regex("^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$")
     private val phoneSeparators = Regex("[\\s().-]")
-    private val phone = Regex("^\\+[1-9][0-9]{6,14}$")
 
     /** [value] as it is submitted: trimmed, and a phone number without its separators. */
     fun submitted(field: UseSmileIDSampleUserField, value: String): String = when (field) {
         UseSmileIDSampleUserField.Phone -> value.trim().replace(phoneSeparators, "")
         else -> value.trim()
-    }
-
-    /** Why [value] would fail the job as [field], or null when it would pass; blank always passes. */
-    @StringRes
-    fun problem(field: UseSmileIDSampleUserField, value: String): Int? {
-        val submitted = submitted(field, value)
-        if (submitted.isEmpty()) return null
-        return when (field) {
-            UseSmileIDSampleUserField.Email -> EMAIL_ERROR.takeUnless { email.matches(submitted) }
-            UseSmileIDSampleUserField.Phone -> PHONE_ERROR.takeUnless { phone.matches(submitted) }
-            else -> null
-        }
     }
 }

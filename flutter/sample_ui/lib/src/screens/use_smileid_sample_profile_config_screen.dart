@@ -6,11 +6,9 @@ import '../components/use_smileid_sample_key_value_edit_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
-import '../state/use_smileid_sample_contact_rules.dart';
 import '../state/use_smileid_sample_profiles.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
-import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_strings_scope.dart';
@@ -161,14 +159,6 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                             keyboardType: UseSmileIDSampleUserField
                                 .values[i]
                                 .keyboardType,
-                            isError:
-                                UseSmileIDSampleContactRules.problem(
-                                  UseSmileIDSampleUserField.values[i],
-                                  UseSmileIDSampleUserField.values[i].valueOf(
-                                    details,
-                                  ),
-                                ) !=
-                                null,
                             testId: UseSmileIDSampleTestIds.profileConfigField(
                               UseSmileIDSampleUserField.values[i].id,
                             ),
@@ -178,21 +168,6 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (details.contactProblem
-                    case final UseSmileIDSampleContactProblem
-                        problem) ...<Widget>[
-                  const SizedBox(height: SmileDimens.spacingXs),
-                  Semantics(
-                    identifier:
-                        UseSmileIDSampleTestIds.profileConfigContactError,
-                    child: Text(
-                      problem.message(context.strings),
-                      style: UseSmileIDSampleType.textStyleCaption.copyWith(
-                        color: colors.input.borderError,
-                      ),
-                    ),
-                  ),
-                ],
                 const SizedBox(height: SmileDimens.spacingSm),
                 // Its own section, not a row in the card above: a webhook URL is not a user detail.
                 UseSmileIDSampleSectionLabel(
@@ -255,7 +230,7 @@ class UseSmileIDSampleProfileConfigScreen extends StatelessWidget {
                   ? context.strings.profileConfigSave
                   : context.strings.profileConfigUse,
               onPressed: onSave,
-              enabled: (changed || !isActive) && details.contactProblem == null,
+              enabled: changed || !isActive,
               testId: UseSmileIDSampleTestIds.profileConfigSave,
             ),
           ),

@@ -114,8 +114,6 @@
   "user_field_last_name_placeholder": "أضف اسم العائلة",
   "user_field_email_placeholder": "name@company.com",
   "user_field_phone_placeholder": "+254 700 000 000",
-  "user_field_email_error": "أدخل بريدًا إلكترونيًا مثل name@company.com.",
-  "user_field_phone_error": "أدخل الرقم مع رمز البلد، مثل ‎+254 700 000 000.",
   "user_requirement_first_name": "الاسم الأول",
   "user_requirement_last_name": "اسم العائلة",
   "user_requirement_contact": "بريد إلكتروني أو رقم هاتف",
@@ -331,6 +329,7 @@
   "licenses_empty_body": "ملف licenses.json المُنشأ غير موجود في هذا الإصدار",
   "licenses_section": "مكوّنات مفتوحة المصدر — {count}",
   "licenses_google_section": "بموجب شروط Google الخاصة — {count}",
+  "licenses_huawei_section": "بموجب شروط Huawei الخاصة — {count}",
   "licenses_text_ships_with_component": "يُرفق النص مع المكوّن نفسه.",
   "licenses_text_ships_with_component_at": "يأتي النص مع المكوّن نفسه، على {url}",
   "licenses_open": "فتح {license}"
