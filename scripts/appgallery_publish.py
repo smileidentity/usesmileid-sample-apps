@@ -81,10 +81,11 @@ def app_id(headers: dict) -> str:
 def store_highest_version_code(headers: dict) -> int:
     """0 for an app with no package yet: the API cannot find it by package name until one is uploaded."""
     query = urllib.parse.urlencode({"packageName": PACKAGE})
-    if not call("GET", f"{API}/publish/v2/appid-list?{query}", headers).get("appids"):
+    ids = call("GET", f"{API}/publish/v2/appid-list?{query}", headers).get("appids")
+    if not ids:
         print(f"AppGallery Connect has no app with a {PACKAGE} package yet; counting its highest code as 0", file=sys.stderr)
         return 0
-    query = urllib.parse.urlencode({"appId": app_id(headers)})
+    query = urllib.parse.urlencode({"appId": ids[0]["value"]})
     return highest_version_code(call("GET", f"{API}/publish/v2/app-info?{query}", headers))
 
 
