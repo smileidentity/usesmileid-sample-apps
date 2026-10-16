@@ -59,7 +59,7 @@ fun buildSnapshot(
     return FlowLaunchSnapshot(
         product = product,
         route = args.route,
-        userDetails = app.forms.userDetails.withoutHiddenNames(app.userDetailsRequirement(product)),
+        userDetails = app.forms.userDetails.withoutHiddenNames(app.userDetailsRequirement(product), app.idTypeEntry(product)),
         idDetails = app.forms.idDetails,
         scenario = app.flowResult.scenario,
         theme = app.flowResult.theme,

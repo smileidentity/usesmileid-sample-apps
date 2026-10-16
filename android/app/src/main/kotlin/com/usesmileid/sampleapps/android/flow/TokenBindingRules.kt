@@ -3,11 +3,13 @@ package com.usesmileid.sampleapps.android.flow
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleApiField
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenBindings
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetailsRequirement
 import com.usesmileid.sampleapps.ui.state.bindsIdDetails
 import com.usesmileid.sampleapps.ui.state.bindsRequiredUserDetails
+import com.usesmileid.sampleapps.ui.state.entryFor
 import com.usesmileid.sampleapps.ui.state.userDetailsRequirement
 
 /**
@@ -43,9 +45,15 @@ private val UseSmileIDSampleAppState.liveSession: UseSmileIDSampleTokenSession?
 val UseSmileIDSampleAppState.tokenBindsUserDetails: Boolean
     get() = liveBindings?.bindsRequiredUserDetails == true
 
-/** What the form asks for [product], read through the gate's live-session rule and only that session's `fields_to_collect`. */
+/** What the form asks for [product], read through the gate's live-session rule and only that session's configuration. */
 fun UseSmileIDSampleAppState.userDetailsRequirement(product: UseSmileIDSampleProduct?): UseSmileIDSampleUserDetailsRequirement =
-    liveSession.let { live -> live?.bindings.userDetailsRequirement(product, catalogue.fieldsToCollectFor(live?.id)) }
+    liveSession.let { live ->
+        live?.bindings.userDetailsRequirement(product, catalogue.fieldsToCollectFor(live?.id), catalogue.idTypeFieldsFor(live?.id))
+    }
+
+/** The picked ID type's fields for [product], read through the same live-session rule, or null without an entry. */
+fun UseSmileIDSampleAppState.idTypeEntry(product: UseSmileIDSampleProduct?): List<UseSmileIDSampleApiField>? =
+    catalogue.idTypeFieldsFor(liveSession?.id).entryFor(product, forms.idDetails.country?.code, forms.idDetails.idType?.type)
 
 /** [tokenBindsUserDetails] for the ID form, read through the same live-session rule. */
 fun UseSmileIDSampleAppState.tokenBindsIdDetails(product: UseSmileIDSampleProduct): Boolean =

@@ -36,11 +36,17 @@ data class UseSmileIDSampleUserDetails(
     val submittedPhone: String?
         get() = UseSmileIDSampleContactRules.submitted(UseSmileIDSampleUserField.Phone, phone).ifEmpty { null }
 
-    /** These details with every name [requirement] does not show left blank, since a row the form hides submits nothing. */
-    fun withoutHiddenNames(requirement: UseSmileIDSampleUserDetailsRequirement): UseSmileIDSampleUserDetails = copy(
-        firstName = firstName.takeIf { requirement.shows(UseSmileIDSampleUserField.FirstName) }.orEmpty(),
-        lastName = lastName.takeIf { requirement.shows(UseSmileIDSampleUserField.LastName) }.orEmpty(),
-    )
+    /** These details with every name [requirement] does not show, or the picked ID type's [entry] does not require, left blank. */
+    fun withoutHiddenNames(
+        requirement: UseSmileIDSampleUserDetailsRequirement,
+        entry: List<UseSmileIDSampleApiField>? = null,
+    ): UseSmileIDSampleUserDetails {
+        fun sends(field: UseSmileIDSampleUserField, name: String) = requirement.shows(field) && (entry == null || entry.requires(name))
+        return copy(
+            firstName = firstName.takeIf { sends(UseSmileIDSampleUserField.FirstName, "given_names") }.orEmpty(),
+            lastName = lastName.takeIf { sends(UseSmileIDSampleUserField.LastName, "last_name") }.orEmpty(),
+        )
+    }
 
     companion object {
         val Saver: Saver<MutableState<UseSmileIDSampleUserDetails>, Any> = listSaver(
@@ -111,14 +117,28 @@ fun UseSmileIDSampleTokenBindings?.userDetailsRequirement() = UseSmileIDSampleUs
     contact = !(this?.email == true || this?.phoneNumber == true),
 )
 
-/** The token rule, less any name [product]'s `fields_to_collect` does not require (spec/user-details-fields.json). */
+/** Whether this list names [name] with `required: true`. */
+private fun List<UseSmileIDSampleApiField>.requires(name: String): Boolean = any { it.name == name && it.required == true }
+
+/** Whether this product asks for names before its ID type is picked, so each ID type's entry in `products` counts. */
+val UseSmileIDSampleProduct.readsIdTypes: Boolean
+    get() = this == UseSmileIDSampleProduct.BiometricKyc || this == UseSmileIDSampleProduct.EnhancedKyc
+
+/** The picked ID type's fields, or null for a product that reads none or a pair with no entry. */
+fun UseSmileIDSampleIdTypeFields?.entryFor(product: UseSmileIDSampleProduct?, country: String?, idType: String?): List<UseSmileIDSampleApiField>? =
+    product?.takeIf { it.readsIdTypes }?.fieldsToCollectKey?.let { this?.get(it)?.get(country)?.get(idType) }
+
+/** The token rule, less any name neither [product]'s `fields_to_collect` nor an ID type it offers requires (spec/user-details-fields.json). */
 fun UseSmileIDSampleTokenBindings?.userDetailsRequirement(
     product: UseSmileIDSampleProduct?,
     fieldsToCollect: Map<String, List<UseSmileIDSampleApiField>>?,
+    idTypeFields: UseSmileIDSampleIdTypeFields? = null,
 ): UseSmileIDSampleUserDetailsRequirement {
     val token = userDetailsRequirement()
-    val fields = product?.fieldsToCollectKey?.let { fieldsToCollect?.get(it) } ?: return token
-    fun leftOut(name: String, asked: Boolean) = asked && fields.none { it.name == name && it.required == true }
+    val key = product?.fieldsToCollectKey ?: return token
+    val fields = fieldsToCollect?.get(key) ?: return token
+    val offered = idTypeFields?.get(key)?.values?.flatMap { it.values }.orEmpty().takeIf { product.readsIdTypes }.orEmpty()
+    fun leftOut(name: String, asked: Boolean) = asked && !fields.requires(name) && offered.none { it.requires(name) }
     val hidden = buildSet {
         if (leftOut("given_names", token.firstName)) add(UseSmileIDSampleUserField.FirstName)
         if (leftOut("last_name", token.lastName)) add(UseSmileIDSampleUserField.LastName)

@@ -102,27 +102,34 @@ UseSmileIDSampleUserDetailsRequirement useSmileIDSampleUserDetailsRequirement(
   contact: !(bindings?.email == true || bindings?.phoneNumber == true),
 );
 
-/// The token rule, less any name [product]'s `fields_to_collect` does not require (spec/user-details-fields.json).
+/// The token rule, less any name neither [product]'s `fields_to_collect` nor an ID type it offers requires (spec/user-details-fields.json).
 UseSmileIDSampleUserDetailsRequirement
 useSmileIDSampleUserDetailsRequirementFor(
   UseSmileIDSampleTokenBindings? bindings,
   UseSmileIDSampleProduct? product,
-  Map<String, List<UseSmileIDSampleApiField>>? fieldsToCollect,
-) {
+  Map<String, List<UseSmileIDSampleApiField>>? fieldsToCollect, [
+  UseSmileIDSampleIdTypeFields? idTypeFields,
+]) {
   final UseSmileIDSampleUserDetailsRequirement token =
       useSmileIDSampleUserDetailsRequirement(bindings);
   final String? key = product?.fieldsToCollectKey;
   final List<UseSmileIDSampleApiField>? fields = key == null
       ? null
       : fieldsToCollect?[key];
-  if (fields == null) {
+  if (product == null || key == null || fields == null) {
     return token;
   }
+  final Iterable<List<UseSmileIDSampleApiField>> offered = product.readsIdTypes
+      ? (idTypeFields?[key]?.values ??
+                const <Map<String, List<UseSmileIDSampleApiField>>>[])
+            .expand(
+              (Map<String, List<UseSmileIDSampleApiField>> it) => it.values,
+            )
+      : const <List<UseSmileIDSampleApiField>>[];
   bool leftOut(String name, {required bool asked}) =>
       asked &&
-      !fields.any(
-        (UseSmileIDSampleApiField it) => it.name == name && it.required == true,
-      );
+      !fields.requires(name) &&
+      !offered.any((List<UseSmileIDSampleApiField> it) => it.requires(name));
   final Set<UseSmileIDSampleUserField> hidden = <UseSmileIDSampleUserField>{
     if (leftOut('given_names', asked: token.firstName))
       UseSmileIDSampleUserField.firstName,
@@ -140,8 +147,37 @@ useSmileIDSampleUserDetailsRequirementFor(
   );
 }
 
+/// Whether a field list asks for a name.
+extension UseSmileIDSampleApiFieldsRequire on List<UseSmileIDSampleApiField> {
+  /// Whether this list names [name] with `required: true`.
+  bool requires(String name) => any(
+    (UseSmileIDSampleApiField it) => it.name == name && it.required == true,
+  );
+}
+
+/// The picked ID type's entry in `products`.
+extension UseSmileIDSampleIdTypeEntry on UseSmileIDSampleIdTypeFields? {
+  /// The picked ID type's fields, or null for a product that reads none or a pair with no entry.
+  List<UseSmileIDSampleApiField>? entryFor(
+    UseSmileIDSampleProduct? product,
+    String? country,
+    String? idType,
+  ) {
+    final String? key = product?.fieldsToCollectKey;
+    if (product == null || !product.readsIdTypes || key == null) {
+      return null;
+    }
+    return this?[key]?[country]?[idType];
+  }
+}
+
 /// The product's key in `fields_to_collect`.
 extension UseSmileIDSampleFieldsToCollectKey on UseSmileIDSampleProduct {
+  /// Whether this product asks for names before its ID type is picked, so each ID type's entry in `products` counts.
+  bool get readsIdTypes =>
+      this == UseSmileIDSampleProduct.biometricKyc ||
+      this == UseSmileIDSampleProduct.enhancedKyc;
+
   /// Null for the SmartSelfie products, which have none.
   String? get fieldsToCollectKey => switch (this) {
     UseSmileIDSampleProduct.smartSelfieEnrollment ||
@@ -158,19 +194,24 @@ extension UseSmileIDSampleFieldsToCollectKey on UseSmileIDSampleProduct {
 
 /// A row the form hides submits nothing.
 extension UseSmileIDSampleHiddenNames on UseSmileIDSampleUserDetails {
-  /// These details with every name [requirement] does not show left blank.
+  /// These details with every name [requirement] does not show, or the picked ID type's [entry] does not require, left blank.
   UseSmileIDSampleUserDetails withoutHiddenNames(
-    UseSmileIDSampleUserDetailsRequirement requirement,
-  ) => UseSmileIDSampleUserDetails(
-    firstName: requirement.shows(UseSmileIDSampleUserField.firstName)
-        ? firstName
-        : '',
-    lastName: requirement.shows(UseSmileIDSampleUserField.lastName)
-        ? lastName
-        : '',
-    email: email,
-    phone: phone,
-  );
+    UseSmileIDSampleUserDetailsRequirement requirement, {
+    List<UseSmileIDSampleApiField>? entry,
+  }) {
+    bool sends(UseSmileIDSampleUserField field, String name) =>
+        requirement.shows(field) && (entry?.requires(name) ?? true);
+    return UseSmileIDSampleUserDetails(
+      firstName: sends(UseSmileIDSampleUserField.firstName, 'given_names')
+          ? firstName
+          : '',
+      lastName: sends(UseSmileIDSampleUserField.lastName, 'last_name')
+          ? lastName
+          : '',
+      email: email,
+      phone: phone,
+    );
+  }
 }
 
 /// Mirrors the SDK's internal `bindsRequiredUserDetails`.
