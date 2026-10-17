@@ -1,13 +1,13 @@
 {
-  "originHash" : "1585f61b1573e399e25b902872eebffb355d504582437c10dc7ef59083b68b66",
+  "originHash" : "21377fb7d791bbd27986f95632dc0d54bd106c17793f1cd2b8ff6e08fe0138fa",
   "pins" : [
     {
       "identity" : "ios-spm",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/ios-spm.git",
       "state" : {
-        "revision" : "d91472fb5f0e6252588fcac5770c76f3052471f0",
-        "version" : "12.3.0"
+        "revision" : "ce5e9959581de5b4996c8984795f6e425b916756",
+        "version" : "12.3.0-SNAPSHOT.20261016215011.38971355427"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/kamera-spm",
       "state" : {
-        "revision" : "1f1fcad0a224ac32071878453127b00067443429",
-        "version" : "1.2.0"
+        "revision" : "a6fde3d4c753e0bced93a2196cd311da135877a0",
+        "version" : "1.2.1-SNAPSHOT.22"
       }
     },
     {
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "0aff16288f8dc1e3dab35cbf5cf45979673fd3df",
         "version" : "4.6.1"
+      }
+    },
+    {
+      "identity" : "njia-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smileidentity/njia-spm",
+      "state" : {
+        "revision" : "411fd3d9e295fef93e9720536227982a5816a98a",
+        "version" : "0.0.1-SNAPSHOT.3"
       }
     },
     {
