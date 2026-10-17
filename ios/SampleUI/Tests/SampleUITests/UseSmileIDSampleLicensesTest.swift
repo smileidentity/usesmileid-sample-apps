@@ -65,16 +65,16 @@ final class UseSmileIDSampleLicensesTest: XCTestCase {
     }
   }
 
-  /// Keyed per component, not per licence: sharing one copy would attribute one component's holder to another.
-  func testTheMitComponentsShareNeitherATextNorAHolder() {
+  /// Keyed per component, not per licence: one vendor's packages may share a text, but one copy must never serve two holders.
+  func testTheMitComponentsShareATextOnlyWhenTheyShareAHolder() {
     let mit = licenses.components.filter { $0.licenseId == "MIT" }.compactMap(\.text)
     XCTAssertGreaterThan(mit.count, 1, "expected more than one MIT component")
-    XCTAssertEqual(Set(mit).count, mit.count, "two MIT components share one text")
     let holders = mit.compactMap { text in
       text.split(separator: "\n").first { $0.lowercased().contains("copyright") }.map(String.init)
     }
     XCTAssertEqual(holders.count, mit.count, "an MIT text carries no copyright line")
-    XCTAssertEqual(Set(holders).count, holders.count, "two MIT components name one holder")
+    XCTAssertGreaterThan(Set(holders).count, 1, "every MIT component names one holder, so one copy was shared")
+    XCTAssertEqual(Set(mit).count, Set(holders).count, "an MIT text serves two holders, or one holder carries two texts")
   }
 
   func testTheApacheTextShipsRatherThanBeingLinked() {
