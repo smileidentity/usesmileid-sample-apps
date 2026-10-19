@@ -37,7 +37,10 @@ import com.ramcosta.composedestinations.utils.startDestination
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
@@ -108,6 +111,15 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             }
         },
         debugRows = {
+            val context = LocalContext.current
+            UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
+                UseSmileIDSampleSettingRow(
+                    title = "Network logs",
+                    supportingText = "The SDK's requests from the last hour",
+                    onClick = { context.startActivity(intent) },
+                    trailing = { UseSmileIDSampleSettingRowChevron() },
+                )
+            }
             useSmileIDSampleShellExtension?.let { extension ->
                 val host = remember(app) {
                     object : UseSmileIDSampleShellHost {
