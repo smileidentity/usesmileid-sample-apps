@@ -172,7 +172,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(element("sample_selection_bar").waitForExistence(timeout: 10))
     element("sample_selection_checkbox_0").tap()
 
-    open("settings")
+    app.useSmileIDSampleOpen("settings")
     XCTAssertTrue(element("sample_settings_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(element("sample_selection_bar").waitForNonExistence(timeout: 5))
     XCTAssertTrue(element("sample_nav_products").exists, "the pill never came back")
@@ -205,7 +205,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
   /// The link launches the app, so the row arrives after the screen — the case where "not loaded yet" read as "no row".
   func testAColdStartLinkIntoASettledRowRefreshesNothing() {
     app.terminate()
-    open("verifications/job_00ky31za00")
+    app.useSmileIDSampleOpen("verifications/job_00ky31za00")
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 15))
     XCTAssertFalse(element("sample_details_empty").exists, "the stored row did not survive the relaunch")
     XCTAssertFalse(element("sample_toast").waitForExistence(timeout: 3), "a settled row refreshed itself")
@@ -243,15 +243,5 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     let snapshot = try element.snapshot() as AnyObject
     XCTAssertTrue(snapshot.responds(to: NSSelectorFromString("traits")), "the snapshot carries no traits")
     return try XCTUnwrap((snapshot.value(forKey: "traits") as? NSNumber)?.uint64Value)
-  }
-
-  private func open(_ path: String) {
-    XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
-    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let confirm = springboard.buttons["Open"]
-    if confirm.waitForExistence(timeout: 2) {
-      confirm.tap()
-    }
-    XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10), "the link did not reach this app")
   }
 }

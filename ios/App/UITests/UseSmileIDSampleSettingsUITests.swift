@@ -32,7 +32,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
   func testTheAppearanceSheetChecksTheChoiceAndAPickHolds() {
     launch()
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    open("settings/appearance")
+    app.useSmileIDSampleOpen("settings/appearance")
     XCTAssertTrue(element(Self.appearanceSheet).waitForExistence(timeout: 10))
     XCTAssertTrue(app.buttons["sample_appearance_option_light"].isSelected, "the seeded appearance is not checked")
     XCTAssertFalse(app.buttons["sample_appearance_option_system"].isSelected)
@@ -41,7 +41,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
 
     XCTAssertTrue(element(Self.appearanceSheet).waitForNonExistence(timeout: 5))
     XCTAssertTrue(element(Self.appearance).waitForExistence(timeout: 10))
-    open("settings/appearance")
+    app.useSmileIDSampleOpen("settings/appearance")
     XCTAssertTrue(element(Self.appearanceSheet).waitForExistence(timeout: 10))
     XCTAssertTrue(app.buttons["sample_appearance_option_dark"].isSelected, "the pick did not hold")
     app.buttons["sample_appearance_option_light"].tap()
@@ -50,7 +50,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
   func testALanguagePickWaitsForTheNextLaunchAndSaysSo() {
     launch()
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
-    open("settings/language")
+    app.useSmileIDSampleOpen("settings/language")
     XCTAssertTrue(element(Self.languageSheet).waitForExistence(timeout: 10))
     XCTAssertTrue(app.buttons["sample_language_option_system"].isSelected, "the seeded language is not checked")
 
@@ -223,16 +223,6 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
 
   private func element(_ id: String) -> XCUIElement {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
-  }
-
-  private func open(_ path: String) {
-    XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
-    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let confirm = springboard.buttons["Open"]
-    if confirm.waitForExistence(timeout: 2) {
-      confirm.tap()
-    }
-    XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
   }
 
   private static let enhancedSmartSelfie = "sample_setting_enhanced_smart_selfie"
