@@ -115,7 +115,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
                 UseSmileIDSampleSettingRow(
                     title = "Network logs",
-                    supportingText = "The SDK's requests from the last hour",
+                    supportingText = "Requests from the last hour",
                     onClick = { context.startActivity(intent) },
                     trailing = { UseSmileIDSampleSettingRowChevron() },
                 )

@@ -9,7 +9,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 
-/** A debug build records the SDK's traffic through one Chucker interceptor, and Settings can open it. */
+/** A debug build records the app's and the SDK's traffic through one Chucker interceptor, and Settings can open it. */
 @RunWith(RobolectricTestRunner::class)
 class UseSmileIDSampleNetworkLogTest {
 
@@ -21,6 +21,13 @@ class UseSmileIDSampleNetworkLogTest {
 
         assertTrue(first is ChuckerInterceptor)
         assertSame(first, UseSmileIDSampleNetworkLog.interceptor())
+    }
+
+    @Test
+    fun the_app_s_own_client_is_recorded_too() {
+        UseSmileIDSampleNetworkLog.install(RuntimeEnvironment.getApplication())
+
+        assertTrue(UseSmileIDSampleNetworkLog.client().interceptors.any { it is ChuckerInterceptor })
     }
 
     @Test

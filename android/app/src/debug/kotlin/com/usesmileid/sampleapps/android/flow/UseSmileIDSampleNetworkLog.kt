@@ -7,22 +7,26 @@ import com.chuckerteam.chucker.api.ChuckerCollector
 import com.chuckerteam.chucker.api.ChuckerInterceptor
 import com.chuckerteam.chucker.api.RetentionManager
 import okhttp3.Interceptor
+import okhttp3.OkHttpClient
 
-/** Debug only: Chucker records the SDK's traffic for an hour, and Settings opens it. The release source set has neither. */
+/** Debug only: Chucker records the app's and the SDK's traffic for an hour, and Settings opens it. The release source set has neither. */
 internal object UseSmileIDSampleNetworkLog {
-    private var interceptor: Interceptor? = null
+    @Volatile private var interceptor: Interceptor? = null
 
-    /** Starts recording; Chucker keeps one store per process, so a second call changes nothing. */
+    /** Starts recording; a second call keeps the first interceptor. */
     fun install(context: Context) {
         if (interceptor != null) return
         val app = context.applicationContext
         interceptor = ChuckerInterceptor.Builder(app)
             .collector(ChuckerCollector(app, retentionPeriod = RetentionManager.Period.ONE_HOUR))
-            .redactHeaders("Authorization", "Cookie", "Set-Cookie")
+            .redactHeaders("Authorization", "SmileID-Token", "Cookie", "Set-Cookie")
             .build()
     }
 
     fun interceptor(): Interceptor? = interceptor
+
+    /** The app's own client, recorded too. */
+    fun client(): OkHttpClient = OkHttpClient.Builder().apply { interceptor?.let { addInterceptor(it) } }.build()
 
     fun intent(context: Context): Intent? = Chucker.getLaunchIntent(context)
 }
