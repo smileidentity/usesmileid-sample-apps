@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.status
 
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -35,6 +36,7 @@ interface UseSmileIDSampleStatusApi {
 
         private fun build(baseUrl: String): UseSmileIDSampleStatusApi = Retrofit.Builder()
             .baseUrl(baseUrl)
+            .client(UseSmileIDSampleNetworkLog.client())
             // Unknown keys ignored: a field added server-side must not turn a good response into a crash.
             .addConverterFactory(Json { ignoreUnknownKeys = true }.asConverterFactory(JSON_MEDIA_TYPE))
             .build()

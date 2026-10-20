@@ -18,7 +18,7 @@ interface UseSmileIDSampleShellExtension {
     /** Runs after the shell has configured a flow, so it may replace any of that configuration. */
     fun customiseFlow(builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) {}
 
-    /** Runs last inside the shell's network block, so it may add to that configuration without replacing it. */
+    /** Runs last inside the shell's network block; an `interceptors {}` block here replaces the shell's debug interceptors. */
     fun customiseNetwork(network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) {}
 
     /** Runs once at launch, with the intent the app was started by. */
