@@ -18,7 +18,7 @@ internal object UseSmileIDSampleNetworkLog {
         if (interceptor != null) return
         val app = context.applicationContext
         interceptor = ChuckerInterceptor.Builder(app)
-            .collector(ChuckerCollector(app, retentionPeriod = RetentionManager.Period.ONE_HOUR))
+            .collector(ChuckerCollector(app, showNotification = false, retentionPeriod = RetentionManager.Period.ONE_HOUR))
             .redactHeaders("Authorization", "SmileID-Token", "Cookie", "Set-Cookie")
             .build()
     }
