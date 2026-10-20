@@ -8,12 +8,13 @@ extension XCUIApplication {
   func useSmileIDSampleOpen(_ path: String) {
     let key = "UseSmileIDSampleURLScheme"
     guard let scheme = Bundle(for: UseSmileIDSampleLinkBundle.self).object(forInfoDictionaryKey: key) as? String,
-          !scheme.isEmpty
+          !scheme.isEmpty,
+          let url = URL(string: "\(scheme)://\(path)")
     else {
-      XCTFail("\(key) is missing from the runner's Info.plist — set USESMILEID_SAMPLE_URL_SCHEME on the project")
+      XCTFail("\(key) is missing or invalid in the runner's Info.plist — set USESMILEID_SAMPLE_URL_SCHEME on the project")
       return
     }
-    XCUIDevice.shared.system.open(URL(string: "\(scheme)://\(path)")!)
+    XCUIDevice.shared.system.open(url)
     let confirm = XCUIApplication(bundleIdentifier: "com.apple.springboard").buttons["Open"]
     if confirm.waitForExistence(timeout: 2) {
       confirm.tap()
