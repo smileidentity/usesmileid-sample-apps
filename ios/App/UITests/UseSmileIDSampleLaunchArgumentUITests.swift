@@ -30,7 +30,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
   /// The argument seeds the first launch only: a drawer choice wins after it, and a relaunch restores nothing.
   func testTheDrawerWinsOverTheArgumentAndARelaunchIsAFreshRun() {
     launch(["-scenario", "expiredToken", "-probes", "true"])
-    open("debug/scenarios")
+    app.useSmileIDSampleOpen("debug/scenarios")
     XCTAssertTrue(element("sample_scenario_drawer").waitForExistence(timeout: 10))
     XCTAssertTrue(app.buttons["sample_scenario_item_expiredToken"].isSelected, "the argument did not reach the drawer")
     app.buttons["sample_scenario_item_offlineRetry"].tap()
@@ -78,7 +78,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
     signOut.tap()
     app.alerts.buttons["sample_sign_out_confirm"].firstMatch.tap()
     launch([])
-    open("profiles")
+    app.useSmileIDSampleOpen("profiles")
     XCTAssertTrue(element("sample_profiles_screen").waitForExistence(timeout: 10))
     XCTAssertFalse(element("sample_profile_row_p-1").exists, "a profile arrived on a plain launch")
     XCTAssertFalse(app.staticTexts["PesaLink"].exists)
@@ -86,7 +86,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
 
   func testSeedProfilesCarriesTheDesignsThree() {
     launch(["-seedProfiles", "true"])
-    open("profiles")
+    app.useSmileIDSampleOpen("profiles")
     XCTAssertTrue(element("sample_profile_row_p-3").waitForExistence(timeout: 10))
     XCTAssertTrue(app.staticTexts["PesaLink"].exists)
     XCTAssertTrue(app.staticTexts["Kwame Asante \u{00B7} active"].exists)
@@ -95,7 +95,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
   /// Rows persist, so the plain-empty default is a unit test on the store rather than a flow here.
   func testSeedJobsStoresTheDesignsRowsSoTheDetailsScreenCanReadOne() {
     launch(["-seedJobs", "true"])
-    open("verifications/job_00ky31za00")
+    app.useSmileIDSampleOpen("verifications/job_00ky31za00")
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertFalse(element("sample_details_empty").exists, "the seeded row never reached the store")
     XCTAssertTrue(app.staticTexts["SmartSelfie Enrollment"].exists)
@@ -106,12 +106,12 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
 
   func testHidingAVerificationRemovesTheStoredRow() {
     launch(["-seedJobs", "true"])
-    open("verifications/job_01ky31za07")
+    app.useSmileIDSampleOpen("verifications/job_01ky31za07")
     XCTAssertTrue(element("sample_details_delete").waitForExistence(timeout: 10))
     element("sample_details_delete").tap()
     XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
 
-    open("verifications/job_01ky31za07")
+    app.useSmileIDSampleOpen("verifications/job_01ky31za07")
     XCTAssertTrue(element("sample_details_empty").waitForExistence(timeout: 10))
   }
 
@@ -129,7 +129,7 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
 
   /// The details route with no job is where the card is and nothing else changes.
   private func openDetails(expectingCard: Bool = true) {
-    open("verifications/job_missing")
+    app.useSmileIDSampleOpen("verifications/job_missing")
     XCTAssertTrue(element("sample_details_empty").waitForExistence(timeout: 10))
     if expectingCard {
       XCTAssertTrue(element("sample_result_card").waitForExistence(timeout: 10))
@@ -138,15 +138,5 @@ final class UseSmileIDSampleLaunchArgumentUITests: XCTestCase {
 
   private func element(_ id: String) -> XCUIElement {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
-  }
-
-  private func open(_ path: String) {
-    XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
-    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let confirm = springboard.buttons["Open"]
-    if confirm.waitForExistence(timeout: 2) {
-      confirm.tap()
-    }
-    XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10), "the link did not reach this app")
   }
 }
