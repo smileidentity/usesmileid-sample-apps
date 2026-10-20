@@ -12,4 +12,19 @@ describe('sourceBuildPlugins', () => {
       './other.js',
     ]);
   });
+
+  it('says so when a build is no longer the registry build', () => {
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => undefined);
+    process.env.USESMILEID_SAMPLE_PLUGINS = './other.js';
+    try {
+      jest.isolateModules(() => {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        require('../app.config');
+      });
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('./other.js'));
+    } finally {
+      delete process.env.USESMILEID_SAMPLE_PLUGINS;
+      warn.mockRestore();
+    }
+  });
 });
