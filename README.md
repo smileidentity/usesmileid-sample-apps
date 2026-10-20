@@ -75,6 +75,9 @@ cd android
 adb shell am start -a android.intent.action.VIEW -d "usesmileid-sample-android://products"
 ```
 
+In debug builds, Settings → Network logs opens the app's and the SDK's requests from the last hour,
+in [Chucker](https://github.com/ChuckerTeam/chucker), with credential headers redacted.
+
 ### iOS
 
 ```bash

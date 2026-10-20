@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android.catalogue
 
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueHttpException
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleCatalogueSource
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
@@ -38,6 +39,7 @@ interface UseSmileIDSampleCatalogueApi {
 
         private fun build(baseUrl: String): UseSmileIDSampleCatalogueApi = Retrofit.Builder()
             .baseUrl(baseUrl)
+            .client(UseSmileIDSampleNetworkLog.client())
             .build()
             .create(UseSmileIDSampleCatalogueApi::class.java)
     }

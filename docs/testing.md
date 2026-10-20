@@ -121,7 +121,7 @@ Verification.
 they never see a submission. On an Android debug build a probe on the SDK's public interceptor hook logs
 `auto_capture_enabled`, `capture_both_sides`, `allow_skip_back` and `allow_gallery_upload` from the submission metadata,
 and nothing else, under the `UseSmileIDSampleWire` tag: capture a real document on sandbox and read
-`adb logcat -s UseSmileIDSampleWire`. On iOS the request shows in Loupe. Release logs no traffic. A
+`adb logcat -s UseSmileIDSampleWire`, or open Settings → Network logs. On iOS the request shows in Loupe. Release logs no traffic. A
 release run checks what the screen does instead: under `manual` the shutter shows at once, under the
 default after 10 seconds, and under `auto` not while the scan runs. Every mode shows it once a scan times out.
 
