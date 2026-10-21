@@ -98,6 +98,8 @@
 "si_document_too_far" = "התקרב למסמך";
 "si_document_too_close" = "התרחק מהמסמך";
 "si_document_hold_still" = "שמור על יציבות";
+"si_document_blurry" = "החזק את המסמך יציב ושטוח";
+"si_document_glare" = "הטה את המסמך הרחק מהאור";
 "si_doc_v_capture_directive_wrong_aspect_ratio" = "התאם את המסמך למתאר";
 "si_document_initial_instruction" = "יישר את המסמך במסגרת";
 "si_document_ready" = "יישר את המסמך במסגרת ולחץ על צילום כדי להמשיך";
