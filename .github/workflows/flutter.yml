@@ -94,7 +94,7 @@ jobs:
 
   # The release APKs need neither a Mac nor its rasteriser, so they build on the cheaper Linux runner.
   android-release:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
