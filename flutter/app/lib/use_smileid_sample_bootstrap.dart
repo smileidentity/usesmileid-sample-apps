@@ -67,7 +67,7 @@ Future<void> useSmileIDSampleBootstrap({
   );
   // Eager, so a lapsed session retires before any screen draws.
   container.read(useSmileIDSampleSessionProvider);
-  // iOS's scene lifecycle launches at '/' and pushes the link after the first frame; Android never does.
+  // The runner's SceneDelegate seeds a cold link as the initial route, so on iOS this listens only after an icon launch.
   if (defaultTargetPlatform == TargetPlatform.iOS &&
       PlatformDispatcher.instance.defaultRouteName == '/') {
     UseSmileIDSampleColdLink(
