@@ -111,6 +111,9 @@
 "si_document_capture_back" = "Capturer le verso de la pièce d’identité";
 "si_capture_button_document" = "Capturer le document";
 "si_document_flip_title" = "Retournez votre {id_type}";
+"si_document_type_passport" = "passeport";
+"si_document_type_green_book" = "Green Book";
+"si_document_type_generic" = "document";
 "si_document_skip_back" = "Passer";
 "si_instructions_emphasis_visa" = "visa";
 "si_document_preview_title" = "Confirmer la qualité de l’image";
