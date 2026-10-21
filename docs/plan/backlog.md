@@ -92,7 +92,28 @@ envelope at 320 on all four apps and fix what it finds.
 The XCUITest device lane has a counterpart for every Android flow, with the opener and exactly-once
 assertions. The camera permission prompt on a fresh install is the one case it does not yet drive.
 
+### Flutter iOS: a UI test lane
+
+Flutter's iOS app has no UI test at all: its flows run on Android only, and `flutter/verify.sh` builds
+the iOS app without launching it. A cold link that reached the app as `/` went unnoticed because of it.
+Done looks like a simulator XCUITest that cold-opens a link with launch arguments and asserts what they
+do, run by `flutter/verify.sh` on the Mac.
+
 ## Spec and code health
+
+### Flutter iOS: retire the first-push launch listener
+
+`UseSmileIDSampleColdLink` takes a cold link from the first route push within two seconds of the first
+frame, because iOS used to launch the engine at `/`. The runner's `SceneDelegate` now seeds the link as
+the initial route, so the listener runs only after an icon launch and does nothing a test relies on.
+Done looks like the listener, its provider and its test removed, with the cold link proven on iOS first.
+
+### Flutter iOS: profiles and the token session outlive an uninstall
+
+Profiles and the token session are kept in the Keychain, which iOS keeps when the app is deleted. A
+reinstall opens with the last install's profiles and an ended session instead of an empty app, which a
+partner reading the sample will take for state the app made up. Done looks like the stores cleared on
+the first launch after an install, on iOS, with a test for it.
 
 ### Back onto released SDKs with the next SDK release
 
