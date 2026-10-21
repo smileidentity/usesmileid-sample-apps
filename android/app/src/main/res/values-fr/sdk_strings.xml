@@ -100,6 +100,8 @@
     <string name="si_document_too_far">Rapprochez-vous du document</string>
     <string name="si_document_too_close">Éloignez-vous du document</string>
     <string name="si_document_hold_still">Ne bougez plus</string>
+    <string name="si_document_blurry">Tenez le document immobile et à plat</string>
+    <string name="si_document_glare">Inclinez le document pour éviter les reflets</string>
     <string name="si_doc_v_capture_directive_wrong_aspect_ratio">Alignez le document sur le contour</string>
     <string name="si_document_initial_instruction">Alignez le document dans le cadre</string>
     <string name="si_document_ready">Alignez le document dans le cadre et appuyez sur capturer pour continuer</string>

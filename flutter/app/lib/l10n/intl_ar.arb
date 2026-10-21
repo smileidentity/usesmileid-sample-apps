@@ -99,6 +99,8 @@
   "si_document_too_far": "اقترب أكثر من المستند",
   "si_document_too_close": "ابتعد قليلًا عن المستند",
   "si_document_hold_still": "حافظ على ثباتك",
+  "si_document_blurry": "أمسك المستند بثبات واجعله مستويًا",
+  "si_document_glare": "أمِل المستند بعيدًا عن الضوء",
   "si_doc_v_capture_directive_wrong_aspect_ratio": "طابق المستند مع المخطط التفصيلي",
   "si_document_initial_instruction": "قم بمحاذاة المستند داخل الإطار",
   "si_document_ready": "قم بمحاذاة المستند داخل الإطار واضغط على زر الالتقاط للمتابعة",
