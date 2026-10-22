@@ -22,7 +22,7 @@ interface UseSmileIDSampleShellExtension {
     /** Runs last inside the shell's network block; an `interceptors {}` block here replaces the shell's debug interceptors. */
     fun customiseNetwork(network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) {}
 
-    /** Runs once per process and before any other member, with the intent the app was started by; a throw fails the launch. */
+    /** Runs once per launch and before any other member, with the intent the app was started by; a throw fails the launch. */
     fun onLaunch(intent: Intent) {}
 
     /** A session the shell links once, after [onLaunch] and before autostart, as if its token had been scanned. */
@@ -50,9 +50,9 @@ var useSmileIDSampleShellExtension: UseSmileIDSampleShellExtension? =
 @VisibleForTesting
 internal var useSmileIDSampleShellExtensionLaunched = false
 
-/** Runs the extension's `onLaunch` once per process: a recreation skips it, a process restored from saved state does not. */
-fun launchUseSmileIDSampleShellExtension(intent: Intent) {
-    if (useSmileIDSampleShellExtensionLaunched) return
+/** Runs the extension's `onLaunch` on a fresh launch and in a process restored from saved state, never on a recreation. */
+fun launchUseSmileIDSampleShellExtension(intent: Intent, restored: Boolean) {
+    if (restored && useSmileIDSampleShellExtensionLaunched) return
     useSmileIDSampleShellExtensionLaunched = true
     useSmileIDSampleShellExtension?.onLaunch(intent)
 }

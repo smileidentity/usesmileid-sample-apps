@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.extension
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import com.usesmileid.sampleapps.android.UseSmileIDSampleActivity
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
@@ -18,6 +19,7 @@ import org.robolectric.shadows.ShadowLooper
 @Config(sdk = [36])
 class UseSmileIDSampleLaunchOrderTest {
     private val calls = mutableListOf<String>()
+    private val intents = mutableListOf<Intent>()
     private val installed = useSmileIDSampleShellExtension
 
     @Before
@@ -26,6 +28,7 @@ class UseSmileIDSampleLaunchOrderTest {
         useSmileIDSampleShellExtension = object : UseSmileIDSampleShellExtension {
             override fun onLaunch(intent: Intent) {
                 calls += "onLaunch"
+                intents += intent
             }
 
             override fun launchSession(): UseSmileIDSampleTokenSession? {
@@ -62,5 +65,16 @@ class UseSmileIDSampleLaunchOrderTest {
         ShadowLooper.idleMainLooper()
 
         assertEquals(1, calls.count { it == "onLaunch" })
+    }
+
+    @Test
+    fun `a second launch in the same process runs onLaunch with its own intent`() {
+        val second = Intent(Intent.ACTION_VIEW, Uri.parse("usesmileid-sample-android://?probes=true"))
+        Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().pause().stop().destroy()
+        Robolectric.buildActivity(UseSmileIDSampleActivity::class.java, second).setup()
+        ShadowLooper.idleMainLooper()
+
+        assertEquals(2, intents.size)
+        assertEquals(second.data, intents.last().data)
     }
 }

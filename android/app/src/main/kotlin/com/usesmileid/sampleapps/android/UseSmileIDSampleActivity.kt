@@ -21,7 +21,7 @@ class UseSmileIDSampleActivity : ComponentActivity() {
         intent.foldUseSmileIDSampleSheetLink()
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
         UseSmileIDSampleNetworkLog.install(this)
-        launchUseSmileIDSampleShellExtension(intent)
+        launchUseSmileIDSampleShellExtension(intent, restored = savedInstanceState != null)
         setContent {
             // Read above every override, so these are the device's values, not the app's.
             val deviceLocales = LocalConfiguration.current.locales
