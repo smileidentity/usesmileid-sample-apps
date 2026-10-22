@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "njia-spm",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/smileidentity/njia-spm",
+      "state" : {
+        "revision" : "411fd3d9e295fef93e9720536227982a5816a98a",
+        "version" : "0.0.1-SNAPSHOT.3"
+      }
+    },
+    {
       "identity" : "sentry-cocoa",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/getsentry/sentry-cocoa",

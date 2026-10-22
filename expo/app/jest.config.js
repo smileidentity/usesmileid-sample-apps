@@ -9,9 +9,9 @@ module.exports = {
   preset: 'jest-expo',
   testEnvironment: 'node',
   roots: ['<rootDir>/test'],
-  // The SDK ships ESM, so the preset's first pattern has to let it reach Babel like a source file.
+  // The SDK and its njia dependency ship ESM, so the preset's first pattern lets both reach Babel like source files.
   transformIgnorePatterns: [
-    preset.transformIgnorePatterns[0].replace('(?!(', '(?!(@smileid/usesmileid|yoga-layout|'),
+    preset.transformIgnorePatterns[0].replace('(?!(', '(?!(@smileid/usesmileid|@smileid/njia|yoga-layout|'),
     ...preset.transformIgnorePatterns.slice(1),
   ],
   // The real SDK, not a stub: the flow host's gate calls its validators, and stubbing them would
