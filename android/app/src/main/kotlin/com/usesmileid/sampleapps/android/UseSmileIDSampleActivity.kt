@@ -11,14 +11,12 @@ import com.usesmileid.sampleapps.android.extension.launchUseSmileIDSampleShellEx
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.launch.UseSmileIDSampleAppLocale
 import com.usesmileid.sampleapps.android.launch.useSmileIDSampleLaunchArgs
-import com.usesmileid.sampleapps.android.navigation.foldUseSmileIDSampleSheetLink
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** Single-activity host: every route, including the SDK flow, is a destination in one graph. */
+/** Single-activity host: every step, including the SDK flow, is drawn from one njia graph. */
 class UseSmileIDSampleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intent.foldUseSmileIDSampleSheetLink()
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
         UseSmileIDSampleNetworkLog.install(this)
         launchUseSmileIDSampleShellExtension(intent, restored = savedInstanceState != null)

@@ -1,5 +1,12 @@
 package com.usesmileid.sampleapps.android.flow
 
+import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleEngine
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleStep
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleStepScope
+import com.usesmileid.sampleapps.android.navigation.leaveRun
+import com.usesmileid.sampleapps.android.navigation.leaveToProducts
+import com.usesmileid.sampleapps.android.navigation.runProductId
+
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -15,23 +22,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.destinations.AuthUserIdScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
-import com.ramcosta.composedestinations.generated.navgraphs.FlowNavGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.core.models.UseSmileIDResult
 import com.usesmileid.data.model.JobSubmissionResponse
 import com.usesmileid.presentation.flow.dsl.UseSmileIDBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
-import com.usesmileid.sampleapps.android.navigation.FlowGraph
-import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
-import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFlowTransitions
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
@@ -44,49 +40,37 @@ import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleCameraHold
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 
-/**
- * The single route hosting the SDK flow, in both presentations (R3). The SDK owns everything inside
- * it (R2): no host BackHandler, no host chrome. [productId] looks unused because KSP reads this
- * parameter list to generate the route's arguments, which the ViewModel then reads back.
- */
-@Destination<FlowGraph>(style = UseSmileIDSampleFlowTransitions::class, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SDK_FLOW)])
+/** The step hosting the SDK flow, in both presentations (R3); the SDK owns everything inside it (R2): no host BackHandler, no host chrome. */
 @Composable
-fun SdkFlowScreen(
-    productId: String,
-    route: UseSmileIDSampleFlowRoute = UseSmileIDSampleFlowRoute.Fullscreen,
-    navigator: DestinationsNavigator,
-    viewModel: SdkFlowViewModel = viewModel(),
-) {
+internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowViewModel = viewModel()) {
     val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
+    val route = if (scope.step.kind == UseSmileIDSampleStep.SdkFlowFullScreen) UseSmileIDSampleFlowRoute.Fullscreen else UseSmileIDSampleFlowRoute.Shell
     LaunchedEffect(route) { app.flowResult.enterRoute(route) }
     if (!app.profiles.loaded || !app.sessionLoaded) return
 
     // Once per entry: the ViewModel and its args are scoped to this back-stack entry, so no key can change.
     val snapshot = remember {
         viewModel.snapshot
-            ?: buildSnapshot(viewModel.args, app)
+            ?: buildSnapshot(engine.runProductId(scope.entry), route, app)
                 ?.also { viewModel.snapshot = it }
     }
     if (snapshot == null) {
-        LaunchedEffect(Unit) { navigator.popBackStack(FlowNavGraph, inclusive = true) }
+        LaunchedEffect(Unit) { engine.leaveToProducts() }
         return
     }
 
     when (val preflight = remember(snapshot) { preflight(snapshot) }) {
         is FlowPreflight.NeedsDetails -> {
             LaunchedEffect(Unit) {
-                navigator.navigate(ConsentDetailsFormScreenDestination(productId = snapshot.product.id)) {
-                    // The graph, not the screen: a deep link synthesizes a form beneath the flow (§8.1).
-                    popUpTo(FlowNavGraph) { inclusive = true }
-                }
+                // In the run's place, not over it: a deep link synthesizes a form beneath the flow (§8.1).
+                engine.leaveRun(scope.entry, UseSmileIDSampleStep.ConsentDetailsForm.wireName, arg = snapshot.product.id)
             }
             return
         }
         FlowPreflight.NeedsUserId -> {
             LaunchedEffect(Unit) {
-                navigator.navigate(AuthUserIdScreenDestination(productId = snapshot.product.id)) {
-                    popUpTo(FlowNavGraph) { inclusive = true }
-                }
+                engine.leaveRun(scope.entry, UseSmileIDSampleStep.AuthUserId.wireName, arg = snapshot.product.id)
             }
             return
         }
@@ -96,9 +80,7 @@ fun SdkFlowScreen(
                 app.interruptedRun.send(
                     UseSmileIDSampleRunIntent(productId = snapshot.product.id, route = snapshot.route),
                 )
-                navigator.navigate(ScanTokenScreenDestination) {
-                    popUpTo(FlowNavGraph) { inclusive = true }
-                }
+                engine.leaveRun(scope.entry, UseSmileIDSampleStep.ScanToken.wireName)
             }
             return
         }
@@ -112,7 +94,7 @@ fun SdkFlowScreen(
                         .ifBlank { "The flow did not validate" },
                     snapshot.environment,
                 )
-                navigator.popBackStack(FlowNavGraph, inclusive = true)
+                engine.leaveToProducts()
             }
             return
         }
@@ -168,19 +150,13 @@ fun SdkFlowScreen(
                                         snapshot.liveSession?.bindings,
                                     )
                                 }
-                                navigator.navigate(VerificationDetailsScreenDestination(jobId = result.value.jobId)) {
-                                    popUpTo(FlowNavGraph) { inclusive = true }
-                                    // A repeated delivery must not stack a second landing screen.
-                                    launchSingleTop = true
-                                }
+                                // A repeated delivery is stale once the run's entry has gone, so it stacks no second landing screen.
+                                engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = result.value.jobId)
                             }
                             is UseSmileIDResult.Failure, is UseSmileIDResult.Captured ->
-                                navigator.navigate(VerificationDetailsScreenDestination(jobId = UNSUBMITTED_JOB_ID)) {
-                                    popUpTo(FlowNavGraph) { inclusive = true }
-                                    launchSingleTop = true
-                                }
+                                engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
                             UseSmileIDResult.Cancelled ->
-                                if (composed.value) navigator.popBackStack(FlowNavGraph, inclusive = true)
+                                if (composed.value) engine.leaveToProducts()
                         }
                     }
                 }

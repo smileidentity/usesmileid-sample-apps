@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.android.flow
 
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestinationNavArgs
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
@@ -47,10 +46,11 @@ data class FlowLaunchSnapshot(
 }
 
 fun buildSnapshot(
-    args: SdkFlowScreenDestinationNavArgs,
+    productId: String?,
+    route: UseSmileIDSampleFlowRoute,
     app: UseSmileIDSampleAppState,
 ): FlowLaunchSnapshot? {
-    val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == args.productId } ?: return null
+    val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId } ?: return null
     // The clock is read here rather than through the app state's ticking value: the snapshot is taken
     // once at entry (R2), and subscribing the flow host to a once-a-second tick would recompose it —
     // which the SDK answers by re-running `build()` and tearing the run down.
@@ -58,7 +58,7 @@ fun buildSnapshot(
     val session = app.session
     return FlowLaunchSnapshot(
         product = product,
-        route = args.route,
+        route = route,
         userDetails = app.forms.userDetails.withoutHiddenNames(app.userDetailsRequirement(product), app.idTypeEntry(product)),
         idDetails = app.forms.idDetails,
         scenario = app.flowResult.scenario,

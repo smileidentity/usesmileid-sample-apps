@@ -6,15 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
-import com.ramcosta.composedestinations.generated.navgraphs.FlowNavGraph
 import com.usesmileid.sampleapps.android.flow.entryFor
-import com.usesmileid.sampleapps.android.flow.sdkFlow
-import com.usesmileid.sampleapps.android.flow.stepAfterUserDetails
 import com.usesmileid.sampleapps.android.flow.userDetailsRequirement
 import androidx.compose.runtime.LaunchedEffect
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
@@ -35,16 +28,16 @@ import com.usesmileid.sampleapps.ui.screens.AuthUserIdScreen as AuthUserIdConten
 import com.usesmileid.sampleapps.ui.state.previousAuthUsers
 import com.usesmileid.sampleapps.ui.state.settledItems
 
-/** The pre-flow wizard's routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
+/** The pre-flow wizard's steps. Each form's Continue is `next`, and the graph skips the forms the run's facts leave out. */
 
 /** The Consent Details Form. Shown for every product, before the SDK flow starts. */
-@Destination<FlowGraph>(start = true, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.CONSENT_DETAILS_FORM)])
 @Composable
-fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
+internal fun ConsentDetailsFormScreen(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
+    val productId = engine.runProductId(scope.entry).orEmpty()
     val product = productOf(productId)
     var filled by rememberSaveable { mutableStateOf(false) }
-    var switchingProfile by rememberSaveable { mutableStateOf(false) }
     if (!app.profiles.loaded) return
     LaunchedEffect(Unit) {
         if (!filled) app.profiles.active?.let(app.forms::fillFrom)
@@ -62,30 +55,23 @@ fun ConsentDetailsFormScreen(productId: String, navigator: DestinationsNavigator
         saveToProfile = app.forms.saveToProfile,
         onFieldChange = app.forms::setUserField,
         onSaveToProfileChange = app.forms::saveToProfile,
-        onProfileClick = { switchingProfile = true },
-        onBack = { navigator.navigateUp() },
+        onProfileClick = { scope.navigator.go(UseSmileIDSampleStep.ProfileSwitch) },
+        onBack = scope.navigator::back,
         onContinue = {
             app.profiles.keep(app.forms, requirement)
-            val next = product?.let(app::stepAfterUserDetails) ?: app.sdkFlow(productId)
-            navigator.navigate(next) { launchSingleTop = true }
+            scope.navigator.next()
         },
         requirement = requirement,
         organisation = app.forms.organisation,
         onOrganisationChange = app.forms::organisation,
     )
-    if (switchingProfile) {
-        ProfileSwitchSheet(
-            onDismissRequest = { switchingProfile = false },
-            onPicked = app.forms::fillFrom,
-        )
-    }
 }
 
 /** SmartSelfie Authentication's user ID, typed or picked from runs that enrolled one; the run never makes one up. */
-@Destination<FlowGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.AUTH_USER_ID)])
 @Composable
-fun AuthUserIdScreen(productId: String, navigator: DestinationsNavigator) {
+internal fun AuthUserIdScreen(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
     AuthUserIdContent(
         userId = app.forms.authUserId,
         // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
@@ -93,27 +79,28 @@ fun AuthUserIdScreen(productId: String, navigator: DestinationsNavigator) {
         onUserIdChange = app.forms::authUserId,
         onRegister = {
             app.forms.startRun(app.profiles.active)
-            navigator.navigate(app.entryFor(UseSmileIDSampleProduct.SmartSelfieEnrollment)) {
-                popUpTo(FlowNavGraph) { inclusive = true }
+            val enrolment = UseSmileIDSampleProduct.SmartSelfieEnrollment
+            val start = engine.runStart(scope.entry)?.id
+            val run = app.entryFor(engine.graph, enrolment)
+            if (run == null) {
+                scope.navigator.go(UseSmileIDSampleStep.ScanToken.wireName, replace = start)
+            } else {
+                engine.startRun(scope.entry, enrolment, run, replace = start)
             }
         },
-        onBack = { navigator.navigateUp() },
-        onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
+        onBack = scope.navigator::back,
+        onContinue = scope.navigator::next,
     )
 }
 
-/** Only for products that need ID details. */
-@Destination<FlowGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.ID_DETAILS_FORM)])
+/** Only for products that need ID details; its pickers are sheet steps over it. */
 @Composable
-fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
+internal fun IdDetailsFormScreen(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
+    val productId = engine.runProductId(scope.entry).orEmpty()
     val product = productOf(productId)
     val family = product?.catalogueFamily ?: UseSmileIDSampleCatalogueFamily.Kyc
-    var pickingCountry by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CountryPicker)
-    var pickingIdType by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.IdTypePicker)
-    var pickingDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.DocumentPicker)
-    var pickingCaptureAs by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureAs)
-    var buildingGenericDocument by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.GenericDocument)
     // A deep link lands here without the product tap that fetches ahead, so the form starts it if nothing has.
     LaunchedEffect(app.environment, app.catalogueLocale, app.session?.id) { app.ensureCatalogue(product) }
     LaunchedEffect(product) { product?.let(app.forms::keepDocumentListedOn) }
@@ -131,14 +118,6 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
             )
         }
     }
-    // A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
-    LaunchedEffect(pickingIdType, pickingDocument, pickingCaptureAs, countryCode, details.document) {
-        if (countryCode == null) {
-            pickingIdType = false
-            pickingDocument = false
-        }
-        if (details.document == null) pickingCaptureAs = false
-    }
     KycIdFormContent(
         productLabel = product?.localizedTitle() ?: productId,
         family = family,
@@ -148,64 +127,44 @@ fun IdDetailsFormScreen(productId: String, navigator: DestinationsNavigator) {
             family == UseSmileIDSampleCatalogueFamily.Kyc -> app.catalogue.idTypes(countryCode)
             else -> app.catalogue.documents(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification)
         },
-        onCountryClick = { pickingCountry = true },
-        onIdTypeClick = { pickingIdType = true },
-        onDocumentClick = { pickingDocument = true },
-        onCaptureAsClick = { pickingCaptureAs = true },
+        onCountryClick = { scope.navigator.go(UseSmileIDSampleStep.CountryPicker) },
+        onIdTypeClick = { scope.navigator.go(UseSmileIDSampleStep.IdTypePicker) },
+        onDocumentClick = { scope.navigator.go(UseSmileIDSampleStep.DocumentPicker) },
+        onCaptureAsClick = { scope.navigator.go(UseSmileIDSampleStep.CaptureAs) },
         onIdNumberChange = app.forms::setIdNumber,
-        onBack = { navigator.navigateUp() },
-        onContinue = { navigator.navigate(app.sdkFlow(productId)) { launchSingleTop = true } },
-        onTokenClick = { navigator.navigate(ScanTokenScreenDestination) },
+        onBack = scope.navigator::back,
+        onContinue = scope.navigator::next,
+        onTokenClick = { scope.navigator.go(UseSmileIDSampleStep.ScanToken) },
     )
-    if (pickingCountry) CountryPickerSheet(family, product, onDismissRequest = { pickingCountry = false })
-    if (pickingIdType && countryCode != null) IdTypePickerSheet(countryCode, onDismissRequest = { pickingIdType = false })
-    if (pickingDocument && countryCode != null) {
-        DocumentPickerSheet(countryCode, product ?: UseSmileIDSampleProduct.DocumentVerification, onDismissRequest = { pickingDocument = false })
-    }
-    if (pickingCaptureAs && details.document != null) {
-        CaptureAsContent(
-            selected = details.captureAsOverride,
-            matched = resolvedCaptureAs(details.document, override = null, details.genericDocument),
-            onSelect = { choice ->
-                pickingCaptureAs = false
-                if (choice == UseSmileIDSampleCaptureAs.GenericDocument) buildingGenericDocument = true else app.forms.setCaptureAs(choice)
-            },
-            onDismissRequest = { pickingCaptureAs = false },
-        )
-    }
-    if (buildingGenericDocument) {
-        GenericDocumentContent(
-            initial = details.genericDocument,
-            onDone = { app.forms.setGenericDocument(it); buildingGenericDocument = false },
-            onDismissRequest = { buildingGenericDocument = false },
-        )
-    }
 }
 
-/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
+/** The country picker over the ID-details form. */
 @Composable
-private fun CountryPickerSheet(
-    family: UseSmileIDSampleCatalogueFamily,
-    product: UseSmileIDSampleProduct?,
-    onDismissRequest: () -> Unit,
-) {
+internal fun CountryPickerSheet(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val product = productOf(LocalUseSmileIDSampleEngine.current.runProductId(scope.entry))
+    val family = product?.catalogueFamily ?: UseSmileIDSampleCatalogueFamily.Kyc
     var query by rememberSaveable { mutableStateOf("") }
     CountryPickerContent(
         catalogue = app.catalogue.countries(family, product),
         selected = app.forms.idDetails.country,
         query = query,
         onQueryChange = { query = it },
-        onSelect = { app.forms.setCountry(it); onDismissRequest() },
+        onSelect = { app.forms.setCountry(it); scope.navigator.back() },
         onRetry = app.catalogue::retry,
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = scope.navigator::back,
     )
 }
 
-/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
+/** The ID-type picker, which needs a country first; a link that arrives before one is picked closes it. */
 @Composable
-private fun IdTypePickerSheet(countryCode: String, onDismissRequest: () -> Unit) {
+internal fun IdTypePickerSheet(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val countryCode = app.forms.idDetails.country?.code
+    if (countryCode == null) {
+        LaunchedEffect(Unit) { scope.navigator.back() }
+        return
+    }
     var query by rememberSaveable { mutableStateOf("") }
     IdTypePickerContent(
         country = app.forms.idDetails.country,
@@ -213,16 +172,22 @@ private fun IdTypePickerSheet(countryCode: String, onDismissRequest: () -> Unit)
         selected = app.forms.idDetails.idType,
         query = query,
         onQueryChange = { query = it },
-        onSelect = { app.forms.setIdType(it); onDismissRequest() },
+        onSelect = { app.forms.setIdType(it); scope.navigator.back() },
         onRetry = app.catalogue::retry,
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = scope.navigator::back,
     )
 }
 
-/** A layer the ID-details form owns; it is not a destination (`docs/architecture.md` §4). */
+/** The document picker, which needs a country first; a link that arrives before one is picked closes it. */
 @Composable
-private fun DocumentPickerSheet(countryCode: String, product: UseSmileIDSampleProduct, onDismissRequest: () -> Unit) {
+internal fun DocumentPickerSheet(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val product = productOf(LocalUseSmileIDSampleEngine.current.runProductId(scope.entry)) ?: UseSmileIDSampleProduct.DocumentVerification
+    val countryCode = app.forms.idDetails.country?.code
+    if (countryCode == null) {
+        LaunchedEffect(Unit) { scope.navigator.back() }
+        return
+    }
     var query by rememberSaveable { mutableStateOf("") }
     DocumentPickerContent(
         country = app.forms.idDetails.country,
@@ -230,10 +195,46 @@ private fun DocumentPickerSheet(countryCode: String, product: UseSmileIDSamplePr
         selected = app.forms.idDetails.document,
         query = query,
         onQueryChange = { query = it },
-        onSelect = { app.forms.setDocument(it); onDismissRequest() },
+        onSelect = { app.forms.setDocument(it); scope.navigator.back() },
         onRetry = app.catalogue::retry,
-        onDismissRequest = onDismissRequest,
+        onDismissRequest = scope.navigator::back,
     )
 }
 
-private fun productOf(productId: String) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }
+/** How the picked document is captured; a generic document swaps this sheet for its builder. */
+@Composable
+internal fun CaptureAsSheet(scope: UseSmileIDSampleStepScope) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val details = app.forms.idDetails
+    val document = details.document
+    if (document == null) {
+        LaunchedEffect(Unit) { scope.navigator.back() }
+        return
+    }
+    CaptureAsContent(
+        selected = details.captureAsOverride,
+        matched = resolvedCaptureAs(document, override = null, details.genericDocument),
+        onSelect = { choice ->
+            if (choice == UseSmileIDSampleCaptureAs.GenericDocument) {
+                scope.navigator.go(UseSmileIDSampleStep.GenericDocument.wireName, replace = scope.entry.id)
+            } else {
+                app.forms.setCaptureAs(choice)
+                scope.navigator.back()
+            }
+        },
+        onDismissRequest = scope.navigator::back,
+    )
+}
+
+/** The generic document's builder, in the capture-as sheet's place. */
+@Composable
+internal fun GenericDocumentSheet(scope: UseSmileIDSampleStepScope) {
+    val app = LocalUseSmileIDSampleAppState.current
+    GenericDocumentContent(
+        initial = app.forms.idDetails.genericDocument,
+        onDone = { app.forms.setGenericDocument(it); scope.navigator.back() },
+        onDismissRequest = scope.navigator::back,
+    )
+}
+
+private fun productOf(productId: String?) = UseSmileIDSampleProduct.entries.firstOrNull { it.id == productId }

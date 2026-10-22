@@ -25,7 +25,8 @@
           "kind": "verifications",
           "link": "verifications",
           "to": [
-            "verificationDetails"
+            "verificationDetails",
+            "scanToken"
           ]
         },
         {
@@ -38,7 +39,8 @@
             "appearance",
             "language",
             "profiles",
-            "scenarioDrawer"
+            "scenarioDrawer",
+            "scanToken"
           ]
         }
       ]

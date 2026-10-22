@@ -11,15 +11,10 @@ import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.currentStateAsState
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.RootGraph
-import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleFlowTokens
-import com.usesmileid.sampleapps.android.flow.firstStepFor
+import com.usesmileid.sampleapps.android.flow.runEntryFor
+import com.usesmileid.sampleapps.android.flow.runOnly
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleScanReason
@@ -30,12 +25,11 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.screens.ScanTokenScreen as ScanTokenContent
 
-/** The token-scanning route. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
-
-@Destination<RootGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SCAN_TOKEN)])
+/** The token scanner: links a session, then returns, or carries an interrupted run on in its own place. */
 @Composable
-fun ScanTokenScreen(navigator: DestinationsNavigator) {
+internal fun ScanTokenScreen(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
     val clipboard = LocalClipboardManager.current
     var torchOn by rememberSaveable { mutableStateOf(false) }
     // Read here, cleared in the effect below: an abandoned composition must not swallow the run.
@@ -58,7 +52,7 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
         // A resumed run leaves on the effect below instead.
         if (resuming == null) {
             app.interruptedRun.runPartnerId = session.partnerId
-            navigator.navigateUp()
+            scope.navigator.back()
         }
     }
 
@@ -72,20 +66,17 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
         if (linked.hasExpired(System.currentTimeMillis())) {
             // An already-expired relink cannot start the run, and the pill offers no retry — so leave
             // rather than freeze on a screen saying "linked".
-            navigator.navigateUp()
+            scope.navigator.back()
         } else {
             val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == resuming.productId }
             val intoFlow = resuming.resumesInFlow(app.interruptedRun.runPartnerId, linked.partnerId)
             app.interruptedRun.runPartnerId = linked.partnerId
-            val next = if (!intoFlow && product != null) {
-                app.firstStepFor(product)
+            if (product == null) {
+                scope.navigator.back()
             } else {
-                SdkFlowScreenDestination(productId = resuming.productId, route = resuming.route)
-            }
-            navigator.navigate(next) {
-                popUpTo(ScanTokenScreenDestination) { inclusive = true }
-                // Two quick taps mint two tokens; without this the second navigate stacks a duplicate run.
-                launchSingleTop = true
+                val run = if (intoFlow) app.runOnly(product, resuming.route) else app.runEntryFor(engine.graph, product)
+                // In the scanner's place, so a second quick tap is stale against an entry that has gone.
+                engine.startRun(scope.entry, product, run, replace = scope.entry.id)
             }
         }
     }
@@ -96,7 +87,7 @@ fun ScanTokenScreen(navigator: DestinationsNavigator) {
             arrivedEnded -> UseSmileIDSampleScanReason.SessionEnded
             else -> UseSmileIDSampleScanReason.SessionNeeded
         },
-        onBack = { navigator.navigateUp() },
+        onBack = scope.navigator::back,
         onLink = link,
         onPaste = { clipboard.getText()?.text },
         onSimulate = { span, bindings, environment ->

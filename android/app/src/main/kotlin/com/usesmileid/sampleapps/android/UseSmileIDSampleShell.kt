@@ -1,110 +1,105 @@
 package com.usesmileid.sampleapps.android
 
-import kotlin.time.Duration.Companion.seconds
-import kotlinx.coroutines.withTimeoutOrNull
-import kotlinx.coroutines.flow.first
-import androidx.compose.runtime.snapshotFlow
 import android.content.Intent
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.ScaffoldDefaults
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
-import androidx.compose.runtime.remember
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.consumeWindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.IntOffset
 import androidx.core.util.Consumer
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.ramcosta.composedestinations.DestinationsNavHost
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
-import com.ramcosta.composedestinations.generated.navgraphs.ProductsNavGraph
-import com.ramcosta.composedestinations.generated.navgraphs.SettingsNavGraph
-import com.ramcosta.composedestinations.generated.navgraphs.VerificationsNavGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.spec.DestinationSpec
-import com.ramcosta.composedestinations.spec.Direction
-import com.ramcosta.composedestinations.utils.currentDestinationAsState
-import com.ramcosta.composedestinations.utils.rememberDestinationsNavigator
-import com.ramcosta.composedestinations.utils.startDestination
-import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.usesmileid.njia.NjiaPresentation
+import com.usesmileid.njia.NjiaState
+import com.usesmileid.njia.compose.NjiaDisplay
+import com.usesmileid.njia.compose.rememberNjiaState
+import com.usesmileid.njia.select
+import com.usesmileid.njia.stepOf
+import com.usesmileid.njia.isDone
+import com.usesmileid.njia.tabBar
 import com.usesmileid.sampleapps.android.extension.linkLaunchSession
-import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavTransitions
-import androidx.compose.runtime.CompositionLocalProvider
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
+import com.usesmileid.sampleapps.android.flow.runOnly
+import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
+import com.usesmileid.sampleapps.android.navigation.ComponentGalleryScreen
 import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleChrome
+import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleEngine
 import com.usesmileid.sampleapps.android.navigation.ProvideUseSmileIDSampleUrlOpener
-import com.usesmileid.sampleapps.android.navigation.LocalUseSmileIDSampleSheetRequests
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleChromeState
-import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetLinks
-import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetRequests
-import com.usesmileid.sampleapps.android.navigation.openUseSmileIDSampleSheet
-import com.usesmileid.sampleapps.android.navigation.pendingUseSmileIDSampleSheet
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleEngine
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFact
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleLink
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNavigationModel
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleStep
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSteps
+import com.usesmileid.sampleapps.android.navigation.go
+import com.usesmileid.sampleapps.android.navigation.startRun
+import com.usesmileid.sampleapps.android.navigation.useSmileIDSampleFacts
 import com.usesmileid.sampleapps.ui.components.LocalUseSmileIDSampleNoticeWindow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.njia.navigator
+import kotlin.time.Duration.Companion.seconds
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.withTimeoutOrNull
 
-/**
- * Three tabs with preserved per-tab back stacks, plus the detached token affordance. The nav bar
- * shows only inside a tab graph, so a pushed screen or the SDK flow covers it without any screen
- * having to declare that it does.
- */
+/** njia draws the three tabs' stacks from `spec/njia-graph.json`; the shell floats the nav bar over each tab's root and opens links. */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun UseSmileIDSampleShell() {
-    val navController = rememberNavController()
-    val navigator = navController.rememberDestinationsNavigator()
-    val destination by navController.currentDestinationAsState()
-    val selectedTab = destination?.tab()
-    // Only ever written with a real tab: writing state from the composition body gets it skipped.
-    var lastTab by remember { mutableStateOf(UseSmileIDSampleNavItem.Products) }
-    LaunchedEffect(selectedTab) { lastTab = selectedTab ?: lastTab }
+    val model: UseSmileIDSampleNavigationModel = viewModel()
+    val engine = model.engine
+    val state by rememberNjiaState(engine)
     val chrome = remember { UseSmileIDSampleChromeState() }
-
-    val sheetRequests = remember { UseSmileIDSampleSheetRequests() }
+    var galleryOpen by rememberSaveable { mutableStateOf(false) }
 
     // Seconds in the argument, millis in the local: the notice host counts in millis.
     val noticeWindowMillis = LocalUseSmileIDSampleAppState.current.launchArgs.noticeWindow
         ?.let { it * 1_000L }
         ?: LocalUseSmileIDSampleNoticeWindow.current
 
-    ForwardNewIntentsTo(navController, sheetRequests)
-    AutostartFlowOnce(navigator)
-    OpenSheetLinkOnce(sheetRequests)
+    val openLink = rememberLinkOpener(model) { galleryOpen = true }
+    OpenLaunchLinkOnce(model, openLink)
+    LeaveOnRootBack(model, state.isDone)
+    ForwardNewIntentsTo(openLink)
+    AutostartFlowOnce(engine)
 
+    val top = state.entries.lastOrNull()?.let(engine::stepOf)
     // The fullscreen flow handles its own insets, so the host contributes none (R3).
-    val backStackEntry by navController.currentBackStackEntryAsState()
-    val fullscreenFlow = backStackEntry?.let { entry ->
-        entry.destination.route == SdkFlowScreenDestination.route &&
-            SdkFlowScreenDestination.argsFrom(entry).route == UseSmileIDSampleFlowRoute.Fullscreen
-    } == true
+    val fullscreenFlow = top?.kind == UseSmileIDSampleStep.SdkFlowFullScreen
+    val tab = selectedTabRoot(engine, state)
 
     Scaffold(
         // UI automation only sees Compose test tags once they are published as resource ids.
@@ -113,10 +108,7 @@ fun UseSmileIDSampleShell() {
         bottomBar = {
             // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
             chrome.selection?.let { selection ->
-                UseSmileIDSampleSelectionBar(
-                    selectedCount = selection.count,
-                    onRemove = selection.onRemove,
-                )
+                UseSmileIDSampleSelectionBar(selectedCount = selection.count, onRemove = selection.onRemove)
             }
         },
     ) { contentPadding ->
@@ -124,23 +116,27 @@ fun UseSmileIDSampleShell() {
         Box(modifier = Modifier.fillMaxSize()) {
             CompositionLocalProvider(
                 LocalUseSmileIDSampleChrome provides chrome,
-                LocalUseSmileIDSampleSheetRequests provides sheetRequests,
+                LocalUseSmileIDSampleEngine provides engine,
                 // Only automation passes one; without it the local's default is the product's.
                 LocalUseSmileIDSampleNoticeWindow provides noticeWindowMillis,
             ) {
                 ProvideUseSmileIDSampleUrlOpener {
-                    DestinationsNavHost(
-                        navGraph = NavGraphs.root,
-                        navController = navController,
-                        defaultTransitions = UseSmileIDSampleNavTransitions,
-                        // Consumed, or every screen and the SDK under the shell route pad the same inset again.
-                        modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
-                    )
+                    if (galleryOpen) {
+                        BackHandler { galleryOpen = false }
+                        Box(Modifier.padding(contentPadding).consumeWindowInsets(contentPadding)) { ComponentGalleryScreen() }
+                    } else {
+                        NjiaDisplay(
+                            engine = engine,
+                            steps = UseSmileIDSampleSteps,
+                            // Consumed, or every screen and the SDK under the shell pad the same inset again.
+                            modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
+                        )
+                    }
                 }
             }
             // Over the content: reserving a row drew a seam with the last row clipped against it.
             AnimatedVisibility(
-                visible = selectedTab != null,
+                visible = tab != null && !galleryOpen,
                 modifier = Modifier.align(Alignment.BottomCenter),
                 enter = slideInVertically(NAV_BAR_SPEC) { it } + fadeIn(),
                 exit = slideOutVertically(NAV_BAR_SPEC) { it } + fadeOut(),
@@ -148,30 +144,93 @@ fun UseSmileIDSampleShell() {
                 val app = LocalUseSmileIDSampleAppState.current
                 UseSmileIDSampleNavBar(
                     sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
-                    selected = lastTab,
-                    onSelect = { item ->
-                        navigator.navigate(item.graph) {
-                            popUpTo(NavGraphs.root.startDestination) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onTokenClick = {
-                        navigator.navigate(ScanTokenScreenDestination) { launchSingleTop = true }
-                    },
+                    selected = tab ?: UseSmileIDSampleNavItem.Products,
+                    onSelect = { item -> engine.select(item.step.wireName) },
+                    onTokenClick = { engine.navigator(state.entries.last()).go(UseSmileIDSampleStep.ScanToken) },
                     // Published so a screen can clear a bar it is not inset by.
-                    modifier = Modifier.onSizeChanged {
-                        chrome.navBarHeight = with(density) { it.height.toDp() }
-                    },
+                    modifier = Modifier.onSizeChanged { chrome.navBarHeight = with(density) { it.height.toDp() } },
                 )
             }
         }
     }
 }
 
-/** Saveable rather than keyed on the argument: the intent is re-read on recreation, and navigating again would drag a rotated device out of where the run had reached. */
+/** The tab whose root is under everything on top, sheets set aside; null once a screen is pushed over the root. */
+private fun selectedTabRoot(engine: UseSmileIDSampleEngine, state: NjiaState<UseSmileIDSampleFact>): UseSmileIDSampleNavItem? {
+    val shown = state.entries.lastOrNull { engine.stepOf(it).presentation != NjiaPresentation.Sheet } ?: return null
+    val selected = engine.graph.tabBar(state)?.selected ?: return null
+    return UseSmileIDSampleNavItem.entries.firstOrNull { it.step.wireName == selected && it.step.wireName == shown.step }
+}
+
+/** The step each nav bar item selects. */
+private val UseSmileIDSampleNavItem.step: UseSmileIDSampleStep
+    get() = when (this) {
+        UseSmileIDSampleNavItem.Products -> UseSmileIDSampleStep.Products
+        UseSmileIDSampleNavItem.Verifications -> UseSmileIDSampleStep.Verifications
+        UseSmileIDSampleNavItem.Settings -> UseSmileIDSampleStep.Settings
+    }
+
+/** Opens an app URI as a new flow, under the facts its product runs with, or the dev gallery for its link. */
 @Composable
-private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
+private fun rememberLinkOpener(model: UseSmileIDSampleNavigationModel, openGallery: () -> Unit): (String) -> Unit {
+    val app by rememberUpdatedState(LocalUseSmileIDSampleAppState.current)
+    return remember(model) {
+        { uri ->
+            if (uri.substringBefore('?').substringBefore('#').trimEnd('/') == UseSmileIDSampleDeepLinks.COMPONENT_GALLERY) {
+                openGallery()
+            } else {
+                UseSmileIDSampleDeepLinks.linkOf(uri)?.let { link -> model.open(link.path, app.factsFor(link)) }
+            }
+        }
+    }
+}
+
+/** The facts a link's run starts with: its product's, on the route it asked for, or the launch's. */
+private fun UseSmileIDSampleAppState.factsFor(link: UseSmileIDSampleLink): Set<UseSmileIDSampleFact> {
+    val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == UseSmileIDSampleDeepLinks.productIdOf(link) } ?: return emptySet()
+    return useSmileIDSampleFacts(product, tokenBindsIdDetails(product), link.route ?: launchArgs.route)
+}
+
+/** Back from the products tab's root finishes the flow: the app goes to the background, as a root back does, and comes back on a fresh one. */
+@Composable
+private fun LeaveOnRootBack(model: UseSmileIDSampleNavigationModel, done: Boolean) {
+    val activity = LocalActivity.current
+    LaunchedEffect(done) {
+        if (!done) return@LaunchedEffect
+        model.restart()
+        activity?.moveTaskToBack(true)
+    }
+}
+
+/** The launching intent's link, once: saveable, and skipped when the flow came back from saved state. */
+@Composable
+private fun OpenLaunchLinkOnce(model: UseSmileIDSampleNavigationModel, openLink: (String) -> Unit) {
+    val activity = LocalActivity.current ?: return
+    var opened by rememberSaveable { mutableStateOf(model.restored) }
+    LaunchedEffect(Unit) {
+        if (opened) return@LaunchedEffect
+        opened = true
+        activity.intent?.takeIf { it.action == Intent.ACTION_VIEW }?.data?.toString()?.let(openLink)
+    }
+}
+
+/** A warm deep link arrives as a new intent; a singleTop launcher relaunch is a data-less `ACTION_MAIN` and is left alone. */
+@Composable
+private fun ForwardNewIntentsTo(openLink: (String) -> Unit) {
+    val activity = LocalActivity.current as? ComponentActivity ?: return
+    DisposableEffect(activity, openLink) {
+        val listener = Consumer<Intent> { intent ->
+            val data = intent.data
+            if (intent.action == Intent.ACTION_VIEW && data != null) openLink(data.toString())
+        }
+        activity.addOnNewIntentListener(listener)
+        onDispose { activity.removeOnNewIntentListener(listener) }
+    }
+}
+
+/** Saveable rather than keyed on the argument: the intent is re-read on recreation, and starting again would drag a rotated device out of where the run had reached. */
+@Composable
+private fun AutostartFlowOnce(engine: UseSmileIDSampleEngine) {
     val app = LocalUseSmileIDSampleAppState.current
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -184,66 +243,11 @@ private fun AutostartFlowOnce(navigator: DestinationsNavigator) {
         started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
         withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.sessionLoaded }.first { it } }
-        navigator.navigate(
-            SdkFlowScreenDestination(productId = product.id, route = app.launchArgs.route),
-        )
+        engine.startRun(engine.state.entries.last(), product, app.runOnly(product, app.launchArgs.route))
     }
 }
 
-/**
- * Cold start is handled when the graph is created; a warm deep link arrives as a new intent.
- *
- * A singleTop launcher relaunch lands here too, as a data-less `ACTION_MAIN`, so only the URI intents
- * the manifest's VIEW filter admits are forwarded — widen this for a `NavDeepLinkBuilder` intent, which
- * carries extras rather than data.
- */
-@Composable
-private fun ForwardNewIntentsTo(navController: NavHostController, sheetRequests: UseSmileIDSampleSheetRequests) {
-    val activity = LocalActivity.current as? ComponentActivity ?: return
-    DisposableEffect(activity, navController) {
-        val listener = Consumer<Intent> { intent ->
-            val data = intent.data
-            if (intent.action != Intent.ACTION_VIEW || data == null) return@Consumer
-            val link = UseSmileIDSampleSheetLinks.resolve(data.toString())
-            if (link == null) {
-                navController.handleDeepLink(intent)
-            } else {
-                navController.openUseSmileIDSampleSheet(link, sheetRequests)
-            }
-        }
-        activity.addOnNewIntentListener(listener)
-        onDispose { activity.removeOnNewIntentListener(listener) }
-    }
-}
-
-/** Asks the owner a cold link reached for its sheet; saveable, so a rotation does not reopen it. */
-@Composable
-private fun OpenSheetLinkOnce(sheetRequests: UseSmileIDSampleSheetRequests) {
-    val activity = LocalActivity.current ?: return
-    var followed by rememberSaveable { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        if (followed) return@LaunchedEffect
-        followed = true
-        activity.intent?.pendingUseSmileIDSampleSheet()?.let(sheetRequests::request)
-    }
-}
-
-/** The tab a destination IS — its graph's START destination. Membership put a bar on a pushed detail screen. */
-private fun DestinationSpec.tab(): UseSmileIDSampleNavItem? = when (this) {
-    ProductsNavGraph.startDestination -> UseSmileIDSampleNavItem.Products
-    VerificationsNavGraph.startDestination -> UseSmileIDSampleNavItem.Verifications
-    SettingsNavGraph.startDestination -> UseSmileIDSampleNavItem.Settings
-    else -> null
-}
-
-private val UseSmileIDSampleNavItem.graph: Direction
-    get() = when (this) {
-        UseSmileIDSampleNavItem.Products -> ProductsNavGraph
-        UseSmileIDSampleNavItem.Verifications -> VerificationsNavGraph
-        UseSmileIDSampleNavItem.Settings -> SettingsNavGraph
-    }
-
-/** Matches the route transition, so the bar and the screen move together. */
+/** Matches the step transition, so the bar and the screen move together. */
 private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)
 
 private val LAUNCH_SESSION_WAIT = 5.seconds

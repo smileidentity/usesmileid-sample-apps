@@ -1,11 +1,15 @@
 package com.usesmileid.sampleapps.android
 
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
-import com.ramcosta.composedestinations.spec.DestinationSpec
-import com.ramcosta.composedestinations.spec.NavGraphSpec
+import com.usesmileid.njia.NjiaKit
+import com.usesmileid.njia.NjiaPresentation
+import com.usesmileid.njia.decodeGraph
+import com.usesmileid.njia.stepOf
+import com.usesmileid.njia.steps
+import com.usesmileid.sampleapps.android.navigation.USE_SMILE_ID_SAMPLE_NJIA_GRAPH
 import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleDeepLinks
-import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleSheetLinks
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFact
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleNjiaCodec
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleStep
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import java.io.File
 import org.junit.Assert.assertEquals
@@ -15,15 +19,13 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /**
- * Asserts the generated destinations against `spec/routes.json`, the four-platform route
- * contract: a renamed parameter or edited URI otherwise kills a deep link with no compile error.
+ * Asserts the app's links against `spec/routes.json`, the four-platform route contract, through
+ * `spec/njia-graph.json`: a renamed path or step otherwise kills a deep link with no compile error.
  * Values are extracted with a bracket-depth scan plus key regexes: `org.json` is only a stub here.
  */
 class UseSmileIDSampleRoutesSpecTest {
 
-    private val destinationsByName: Map<String, DestinationSpec> by lazy {
-        NavGraphs.root.allDestinations().associateBy { it::class.simpleName.orEmpty() }
-    }
+    private val graph by lazy { UseSmileIDSampleNjiaCodec.decodeGraph(spec(USE_SMILE_ID_SAMPLE_NJIA_GRAPH)) }
 
     private val specRoutes: List<SpecRoute> by lazy {
         val routes = spec("routes.json").jsonArrayObjects("routes").map { chunk ->
@@ -48,72 +50,55 @@ class UseSmileIDSampleRoutesSpecTest {
     }
 
     @Test
-    fun every_spec_route_has_a_destination_registering_exactly_its_deep_link() {
-        for (route in specRoutes.filterNot { it.isSheet }) {
-            val destination = destinationsByName[route.destination]
-            assertNotNull("${route.id}: no generated destination named ${route.destination}", destination)
-            // Exact, not inclusion: an extra pattern is a second claim on the route, possibly
-            // under a scheme app-identity.json reserves.
-            assertEquals(
-                "${route.id}: deep links",
-                listOf(route.expectedUriPattern()),
-                destination!!.deepLinks.mapNotNull { it.uriPattern },
-            )
-        }
-    }
-
-    /** R12: re-adding a destination for a sheet path is what left the scrim covering a grey void. */
-    @Test
-    fun every_sheet_route_resolves_to_its_owner_and_no_destination_claims_it() {
-        val sheets = specRoutes.filter { it.isSheet }
-        check(sheets.isNotEmpty()) { "no sheet routes extracted from spec/routes.json" }
-        for (route in sheets) {
-            val uri = route.expectedUriPattern()
-            val link = requireNotNull(UseSmileIDSampleSheetLinks.resolve(uri)) { "${route.id}: $uri resolves to no sheet" }
-            assertEquals("${route.id}: sheet", route.sheet, "UseSmileIDSampleSheet." + link.sheet.name)
-            val owner = specRoutes.first { it.destination == route.destination && !it.isSheet }
-            assertEquals("${route.id}: owner link", owner.expectedUriPattern(), link.ownerUri)
-            assertNotNull("${route.id}: no destination named ${route.destination}", destinationsByName[route.destination])
-            val claimed = destinationsByName.filterValues { spec -> spec.deepLinks.any { it.uriPattern == uri } }
-            assertEquals("${route.id}: destinations claiming the sheet path", emptySet<String>(), claimed.keys)
-        }
-    }
-
-    /** The other side of it: the resolver must not swallow a route the graph owns, query or no query. */
-    @Test
-    fun the_sheet_resolver_leaves_every_other_route_to_the_graph() {
-        for (route in specRoutes.filterNot { it.isSheet }) {
-            assertNull("${route.id} is not a sheet", UseSmileIDSampleSheetLinks.resolve(route.expectedUriPattern()))
-        }
-        // launch-args.yaml opens the drawer with ?probes=true, which the launch args read off the intent.
-        val drawer = specRoutes.first { it.id == "scenarioDrawer" }
-        assertNotNull(UseSmileIDSampleSheetLinks.resolve(drawer.expectedUriPattern() + "?probes=true"))
-    }
-
-    @Test
-    fun destination_arguments_match_the_spec_names_and_optionality() {
+    fun every_spec_askedis_the_graph_step_the_android_column_names_linked_at_its_path() {
         for (route in specRoutes) {
-            val destination = destinationsByName.getValue(route.destination)
-            // Set equality both ways: even an optional Android-only argument drifts the
-            // four-platform contract, because it becomes real query-param surface.
-            assertEquals(
-                "${route.id}: argument names",
-                route.args.map { it.name }.toSet(),
-                destination.arguments.map { it.name }.toSet(),
-            )
-            val byName = destination.arguments.associateBy { it.name }
-            for (arg in route.args) {
-                val named = byName.getValue(arg.name)
-                val optional = named.argument.isDefaultValuePresent || named.argument.isNullable
-                assertEquals("${route.id}.${arg.name}: optionality", !arg.required, optional)
-            }
+            val step = graph.steps.firstOrNull { it.id == route.id }
+            assertNotNull("${route.id}: no step in the graph", step)
+            assertEquals("${route.id}: link", route.path.removePrefix("/"), step!!.link)
+            assertEquals("${route.id}: android", "UseSmileIDSampleStep.${step.kind.name}", route.android.substringBefore(KIND_SEPARATOR))
         }
+    }
+
+    @Test
+    fun every_step_id_is_its_kind_wire_name() {
+        for (step in graph.steps) assertEquals(step.kind.wireName, step.id)
+    }
+
+    @Test
+    fun a_spec_sheet_is_a_sheet_step_and_nothing_else_is() {
+        for (route in specRoutes) {
+            val sheet = graph.steps.first { it.id == route.id }.presentation == NjiaPresentation.Sheet
+            assertEquals("${route.id}: sheet", route.isSheet, sheet)
+        }
+    }
+
+    /** Every link opens at its own step, with the stack a user would have had, once its product's facts are set. */
+    @Test
+    fun every_spec_link_opens_at_its_step() {
+        for (route in specRoutes) {
+            val link = requireNotNull(UseSmileIDSampleDeepLinks.linkOf(route.sampleUri())) { "${route.id}: no link" }
+            val asked = link.route ?: UseSmileIDSampleFlowRoute.Shell
+            val engine = requireNotNull(NjiaKit.openLink(graph, link.path, factsFor(asked))) { "${route.id}: ${link.path} opened nothing" }
+            val expected = if (route.id == RUN && asked == UseSmileIDSampleFlowRoute.Fullscreen) UseSmileIDSampleStep.SdkFlowFullScreen.wireName else route.id
+            assertEquals("${route.id}: top", expected, engine.state.entries.last().step)
+        }
+    }
+
+    /** One URI, two presentations: the run opens full screen unless its `route` asks for the shell. */
+    @Test
+    fun the_run_link_opens_full_screen_unless_it_asks_for_the_shell() {
+        val run = specRoutes.first { it.id == RUN }
+        assertEquals(UseSmileIDSampleFlowRoute.Fullscreen, UseSmileIDSampleDeepLinks.linkOf(run.sampleUri())?.route)
+        val shell = UseSmileIDSampleDeepLinks.linkOf(run.sampleUri() + "?route=shell&probes=true")
+        assertEquals(UseSmileIDSampleFlowRoute.Shell, shell?.route)
+        val engine = requireNotNull(NjiaKit.openLink(graph, shell!!.path, factsFor(UseSmileIDSampleFlowRoute.Shell)))
+        assertEquals(UseSmileIDSampleStep.SdkFlow, graph.stepOf(engine.state.entries.last()).kind)
     }
 
     /** Parsing is case-insensitive, so a constant reaches its spec id only while they differ by case alone. */
     @Test
-    fun the_flow_route_enum_matches_the_spec_values_up_to_case() {
-        val routeArg = specRoutes.first { it.id == "sdkFlow" }.args.first { it.name == "route" }
+    fun the_flow_askedenum_matches_the_spec_values_up_to_case() {
+        val routeArg = specRoutes.first { it.id == RUN }.args.first { it.name == "route" }
         val specValues = requireNotNull(ENUM_VALUES.find(routeArg.type)) {
             "sdkFlow.route type is not enum(...): ${routeArg.type}"
         }.groupValues[1].split(",")
@@ -122,22 +107,25 @@ class UseSmileIDSampleRoutesSpecTest {
             assertEquals("constant ${entry.name} must be its id up to case", entry.id, entry.name.lowercase())
         }
         assertEquals("spec default", routeArg.default, UseSmileIDSampleFlowRoute.Fullscreen.id)
-        val generatedDefault = SdkFlowScreenDestination.arguments.first { it.name == "route" }.argument.defaultValue
-        assertEquals(UseSmileIDSampleFlowRoute.Fullscreen, generatedDefault)
     }
 
+    /** The graph's one link outside the spec is the run's full-screen form; the dev gallery is in neither. */
     @Test
-    fun a_direction_the_app_builds_stays_within_the_spec_values() {
-        val direction = SdkFlowScreenDestination(productId = "biometricKyc", route = UseSmileIDSampleFlowRoute.Shell)
-        assertEquals("shell", direction.route.substringAfter("?route=").substringBefore("&").lowercase())
+    fun the_only_links_outside_the_spec_are_the_full_screen_run() {
+        val spec = specRoutes.map { it.path.removePrefix("/") }.toSet()
+        assertEquals(listOf("flow/:productId/run-fullscreen"), graph.steps.mapNotNull { it.link }.filterNot { it in spec })
+        assertNull(UseSmileIDSampleDeepLinks.linkOf(UseSmileIDSampleDeepLinks.COMPONENT_GALLERY))
+        assertNull(UseSmileIDSampleDeepLinks.linkOf("another-scheme://products"))
     }
 
-    @Test
-    fun the_only_destinations_outside_the_spec_are_the_dev_allowlist() {
-        val bound = specRoutes.map { it.destination }.toSet()
-        val extras = destinationsByName.keys.filterNot { it in bound }.sorted()
-        assertEquals(listOf("ComponentGalleryScreenDestination"), extras)
-    }
+    /** Every fact a link might need: the run's forms all shown, on [route]. */
+    private fun factsFor(route: UseSmileIDSampleFlowRoute): Set<UseSmileIDSampleFact> =
+        setOf(UseSmileIDSampleFact.NeedsUserId, UseSmileIDSampleFact.NeedsIdDetails) +
+            if (route == UseSmileIDSampleFlowRoute.Fullscreen) setOf(UseSmileIDSampleFact.FullScreenRun) else emptySet()
+
+    /** The route's path under this app's scheme, each parameter filled with a sample value. */
+    private fun SpecRoute.sampleUri(): String =
+        UseSmileIDSampleDeepLinks.SCHEME + "://" + path.removePrefix("/").replace(PATH_PARAM) { "sample-${it.groupValues[1]}" }
 
     @Test
     fun the_scheme_is_the_android_entry_in_app_identity() {
@@ -182,12 +170,6 @@ class UseSmileIDSampleRoutesSpecTest {
         assertTrue("the launcher label is hard-coded", "android:label=\"\${usesmileidSampleLabel}\"" in manifest)
     }
 
-    private fun SpecRoute.expectedUriPattern(): String {
-        val path = path.removePrefix("/").replace(PATH_PARAM) { "{${it.groupValues[1]}}" }
-        val query = args.filterNot { it.required }.joinToString("&") { "${it.name}={${it.name}}" }
-        return UseSmileIDSampleDeepLinks.SCHEME + "://" + path + if (query.isEmpty()) "" else "?$query"
-    }
-
     private data class SpecRoute(
         val id: String,
         val path: String,
@@ -195,10 +177,7 @@ class UseSmileIDSampleRoutesSpecTest {
         val android: String,
         val args: List<SpecArg>,
     ) {
-        /** A sheet's cell names the destination that owns it and the sheet it opens; every other route names its own. */
         val isSheet: Boolean get() = presentation.endsWith("Sheet")
-        val destination: String get() = android.substringBefore(SHEET_SEPARATOR)
-        val sheet: String get() = android.substringAfter(SHEET_SEPARATOR, missingDelimiterValue = "")
     }
     private data class SpecArg(val name: String, val type: String, val required: Boolean, val default: String?)
 
@@ -246,9 +225,6 @@ class UseSmileIDSampleRoutesSpecTest {
         spec("app-identity.json").jsonArrayObjects(block).firstOrNull { it.optional("platform") == "android" }
             ?: error("no android entry under \"$block\" in spec/app-identity.json")
 
-    private fun NavGraphSpec.allDestinations(): List<DestinationSpec> =
-        destinations + nestedNavGraphs.flatMap { it.allDestinations() }
-
     private fun specDir(): File = File(
         requireNotNull(System.getProperty("sampleapps.spec.dir")) {
             "sampleapps.spec.dir is not set; see app/build.gradle.kts"
@@ -262,8 +238,9 @@ class UseSmileIDSampleRoutesSpecTest {
     }
 
     private companion object {
-        /** How `spec/routes.json` joins a sheet's owning destination to the sheet it opens. */
-        const val SHEET_SEPARATOR = " + "
+        /** How `spec/routes.json` joins the run's two step kinds, one per presentation. */
+        const val KIND_SEPARATOR = " | "
+        const val RUN = "sdkFlow"
         val PATH_PARAM = Regex(":([A-Za-z][A-Za-z0-9]*)")
         val ENUM_VALUES = Regex("enum\\(([^)]*)\\)")
     }

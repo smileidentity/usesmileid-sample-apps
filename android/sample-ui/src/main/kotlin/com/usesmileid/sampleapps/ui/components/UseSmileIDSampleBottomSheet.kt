@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -31,6 +33,9 @@ import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
+/** Whether a navigation host draws the sheet's window, scrim and dismissal, so a sheet draws only its panel. */
+val LocalUseSmileIDSampleSheetHosted = staticCompositionLocalOf { false }
+
 /** The partial sheet: a grab handle over a scrim, sized to its content. Presence is the caller's route, not a remembered boolean. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,6 +46,13 @@ fun UseSmileIDSampleBottomSheet(
     testId: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    if (LocalUseSmileIDSampleSheetHosted.current) {
+        HostedSheetPanel(modifier.publishTestTags().tagged(testId)) {
+            GrabHandle()
+            PartialSheetBody(title, content)
+        }
+        return
+    }
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier.publishTestTags().tagged(testId),
@@ -52,25 +64,31 @@ fun UseSmileIDSampleBottomSheet(
         scrimColor = UseSmileIDSampleTheme.colors.overlayScrim,
         dragHandle = { GrabHandle() },
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = SHEET_MARGIN)
-                .padding(bottom = SmileDimens.spacingLg),
-            verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
-        ) {
-            if (title != null) {
-                Text(
-                    text = title,
-                    style = UseSmileIDSampleTheme.type.textStyleHeadingSection.copy(fontWeight = FontWeight.Bold),
-                    color = UseSmileIDSampleTheme.colors.textTitle,
-                    modifier = Modifier.fillMaxWidth(),
-                )
-            }
-            content()
+        PartialSheetBody(title, content)
+    }
+}
+
+/** The partial sheet's title and content, scrolling rather than clipping. */
+@Composable
+private fun PartialSheetBody(title: String?, content: @Composable ColumnScope.() -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = SHEET_MARGIN)
+            .padding(bottom = SmileDimens.spacingLg),
+        verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+    ) {
+        if (title != null) {
+            Text(
+                text = title,
+                style = UseSmileIDSampleTheme.type.textStyleHeadingSection.copy(fontWeight = FontWeight.Bold),
+                color = UseSmileIDSampleTheme.colors.textTitle,
+                modifier = Modifier.fillMaxWidth(),
+            )
         }
+        content()
     }
 }
 
@@ -84,6 +102,12 @@ fun UseSmileIDSampleFullHeightBottomSheet(
     testId: String? = null,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    if (LocalUseSmileIDSampleSheetHosted.current) {
+        HostedSheetPanel(modifier.fillMaxHeight().publishTestTags().tagged(testId)) {
+            FullHeightSheetBody(title, onDismissRequest, content)
+        }
+        return
+    }
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
         modifier = modifier.fillMaxHeight().publishTestTags().tagged(testId),
@@ -96,36 +120,55 @@ fun UseSmileIDSampleFullHeightBottomSheet(
         // The sheet reaches the top of the screen, so it owns its status-bar inset.
         contentWindowInsets = { WindowInsets.statusBars },
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Row(
-                // A sheet header is its own pattern: wider margins, and the title left of the back control.
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = SHEET_MARGIN, vertical = SmileDimens.spacingXs),
-                horizontalArrangement = Arrangement.spacedBy(SHEET_HEADER_GAP),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                UseSmileIDSampleTopAppBarButton(
-                    contentDescription = UseSmileIDSampleStrings.commonCloseNamed(title),
-                    onClick = onDismissRequest,
-                    emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
-                ) { tint -> ArrowBackGlyph(tint = tint) }
-                Text(
-                    text = title,
-                    style = UseSmileIDSampleTheme.type.textStyleTitle,
-                    color = UseSmileIDSampleTheme.colors.textTitle,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = SHEET_MARGIN),
-                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
-                content = content,
+        FullHeightSheetBody(title, onDismissRequest, content)
+    }
+}
+
+/** The full-height sheet's back header over its content. */
+@Composable
+private fun FullHeightSheetBody(title: String, onDismissRequest: () -> Unit, content: @Composable ColumnScope.() -> Unit) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            // A sheet header is its own pattern: wider margins, and the title left of the back control.
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = SHEET_MARGIN, vertical = SmileDimens.spacingXs),
+            horizontalArrangement = Arrangement.spacedBy(SHEET_HEADER_GAP),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            UseSmileIDSampleTopAppBarButton(
+                contentDescription = UseSmileIDSampleStrings.commonCloseNamed(title),
+                onClick = onDismissRequest,
+                emphasis = UseSmileIDSampleTopAppBarEmphasis.Filled,
+            ) { tint -> ArrowBackGlyph(tint = tint) }
+            Text(
+                text = title,
+                style = UseSmileIDSampleTheme.type.textStyleTitle,
+                color = UseSmileIDSampleTheme.colors.textTitle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = SHEET_MARGIN),
+            verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
+            content = content,
+        )
+    }
+}
+
+/** The panel a hosted sheet draws in the host's own sheet window: the modal's shape and colours, no scrim. */
+@Composable
+private fun HostedSheetPanel(modifier: Modifier, content: @Composable ColumnScope.() -> Unit) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = UseSmileIDSampleTheme.shapes.sheet,
+        color = UseSmileIDSampleTheme.colors.surface,
+        contentColor = UseSmileIDSampleTheme.colors.textTitle,
+    ) {
+        Column(content = content)
     }
 }
 
