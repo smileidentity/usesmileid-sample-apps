@@ -100,6 +100,8 @@
     <string name="si_document_too_far">התקרב למסמך</string>
     <string name="si_document_too_close">התרחק מהמסמך</string>
     <string name="si_document_hold_still">שמור על יציבות</string>
+    <string name="si_document_blurry">החזק את המסמך יציב ושטוח</string>
+    <string name="si_document_glare">הטה את המסמך הרחק מהאור</string>
     <string name="si_doc_v_capture_directive_wrong_aspect_ratio">התאם את המסמך למתאר</string>
     <string name="si_document_initial_instruction">יישר את המסמך במסגרת</string>
     <string name="si_document_ready">יישר את המסמך במסגרת ולחץ על צילום כדי להמשיך</string>
@@ -111,6 +113,9 @@
     <string name="si_document_capture_back">צלם את גב התעודה</string>
     <string name="si_capture_button_document">צלם מסמך</string>
     <string name="si_document_flip_title">הפוך את {id_type} שלך</string>
+    <string name="si_document_type_passport">הדרכון</string>
+    <string name="si_document_type_green_book">הספר הירוק</string>
+    <string name="si_document_type_generic">המסמך</string>
     <string name="si_document_skip_back">דלג</string>
     <string name="si_instructions_emphasis_visa">אשרה</string>
     <string name="si_document_preview_title">אישור איכות התמונה</string>

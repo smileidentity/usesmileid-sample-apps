@@ -100,6 +100,8 @@
     <string name="si_document_too_far">Rapprochez-vous du document</string>
     <string name="si_document_too_close">Éloignez-vous du document</string>
     <string name="si_document_hold_still">Ne bougez plus</string>
+    <string name="si_document_blurry">Tenez le document immobile et à plat</string>
+    <string name="si_document_glare">Inclinez le document pour éviter les reflets</string>
     <string name="si_doc_v_capture_directive_wrong_aspect_ratio">Alignez le document sur le contour</string>
     <string name="si_document_initial_instruction">Alignez le document dans le cadre</string>
     <string name="si_document_ready">Alignez le document dans le cadre et appuyez sur capturer pour continuer</string>
@@ -111,6 +113,9 @@
     <string name="si_document_capture_back">Capturer le verso de la pièce d’identité</string>
     <string name="si_capture_button_document">Capturer le document</string>
     <string name="si_document_flip_title">Retournez votre {id_type}</string>
+    <string name="si_document_type_passport">passeport</string>
+    <string name="si_document_type_green_book">Green Book</string>
+    <string name="si_document_type_generic">document</string>
     <string name="si_document_skip_back">Passer</string>
     <string name="si_instructions_emphasis_visa">visa</string>
     <string name="si_document_preview_title">Confirmer la qualité de l’image</string>

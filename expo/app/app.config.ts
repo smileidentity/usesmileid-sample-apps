@@ -21,6 +21,18 @@ if (!applicationId || !bundleIdentifier || !displayName || !urlScheme) {
 // eslint-disable-next-line no-restricted-syntax -- the expoSplashBackground delta in spec/design-tokens.json
 export const splashBackground = { light: '#f9fafb', dark: '#1a1c23' };
 
+/// Config plugins an SDK repo's source build adds, as comma-separated paths; unset, the registry build is unchanged.
+export const sourceBuildPlugins = (value: string | undefined): string[] =>
+  (value ?? '')
+    .split(',')
+    .map((plugin) => plugin.trim())
+    .filter(Boolean);
+
+const addedPlugins = sourceBuildPlugins(process.env.USESMILEID_SAMPLE_PLUGINS);
+if (addedPlugins.length > 0) {
+  console.warn(`USESMILEID_SAMPLE_PLUGINS adds ${addedPlugins.join(', ')}: this is a source build, not the registry build.`);
+}
+
 /// Capture is the SDK's, but no @smileid package ships a purpose string, so the host declares it.
 const cameraUsage = 'Smile ID uses the camera to scan a session QR code and to capture your selfie and your ID document.';
 
@@ -108,6 +120,7 @@ const config: ExpoConfig = {
         dark: { backgroundColor: splashBackground.dark },
       },
     ],
+    ...addedPlugins,
   ],
   experiments: {
     typedRoutes: true,

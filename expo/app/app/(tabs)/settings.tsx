@@ -82,9 +82,7 @@ export default function Settings() {
         clearProfiles();
         router.navigate('/products');
       }}
-      debugRows={useSmileIDSampleShellExtension?.debugRows?.({
-        linkTokenSession: (session) => useSmileIDSampleSessionStore.getState().link(session),
-      })}
+      debugRows={useSmileIDSampleShellExtension?.debugRows?.()}
       bottomInset={bottomInset}
     />
   );

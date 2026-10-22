@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_sample_flutter/src/use_smileid_sample_launch.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 /// A link into a LIVE app, which is the entry `spec/routes.json` documents for a mid-run flow.
@@ -121,4 +122,54 @@ void main() {
 
     expect(byId(UseSmileIDSampleTestIds.settingsScreen), findsOne);
   });
+
+  testWidgets(
+    'the cold link pushed again after an autostart leaves the app where it opened',
+    (WidgetTester tester) async {
+      const String link = 'usesmileid-sample-flutter://?autostart=biometricKyc';
+      router = useSmileIDSampleRouter(
+        initialLocation: UseSmileIDSampleRoutes.settings,
+        autostartLink: Uri.parse(link),
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: UseSmileIDSampleTheme.light(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await deliver(tester, link);
+      expect(landedOn().path, UseSmileIDSampleRoutes.settings);
+
+      await deliver(tester, link);
+      expect(landedOn().path, UseSmileIDSampleRoutes.products);
+    },
+  );
+
+  testWidgets(
+    'the autostart link opened after the cold-link window is a new link',
+    (WidgetTester tester) async {
+      const String link = 'usesmileid-sample-flutter://?autostart=biometricKyc';
+      router = useSmileIDSampleRouter(
+        initialLocation: UseSmileIDSampleRoutes.settings,
+        autostartLink: Uri.parse(link),
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: UseSmileIDSampleTheme.light(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(useSmileIDSampleColdLinkWindow);
+
+      await deliver(tester, link);
+      expect(landedOn().path, UseSmileIDSampleRoutes.products);
+    },
+  );
 }

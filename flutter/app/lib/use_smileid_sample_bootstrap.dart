@@ -17,7 +17,7 @@ import 'src/use_smileid_sample_launch.dart';
 import 'src/use_smileid_sample_shell_extension.dart';
 
 export 'src/use_smileid_sample_shell_extension.dart'
-    show UseSmileIDSampleShellExtension, UseSmileIDSampleShellHost;
+    show UseSmileIDSampleShellExtension;
 
 /// Starts the app, with an SDK repo's [extension] in a source build; the store is read before the first frame.
 Future<void> useSmileIDSampleBootstrap({
@@ -38,8 +38,17 @@ Future<void> useSmileIDSampleBootstrap({
   final UseSmileIDSampleSettings stored = await settings.read();
   final UseSmileIDSampleSecureSessionRepository sessions =
       UseSmileIDSampleSecureSessionRepository();
+  final String route = PlatformDispatcher.instance.defaultRouteName;
   // Ahead of the read, so autostart finds the extension's session as if it had been scanned.
-  await useSmileIDSampleLinkLaunchSession(extension, sessions.link);
+  final Object? failure = await useSmileIDSampleLaunchExtension(
+    extension,
+    route,
+    sessions.link,
+  );
+  if (failure != null) {
+    runApp(ErrorWidget(failure));
+    return;
+  }
   // Before the first frame, or the session card flashes in late.
   final UseSmileIDSampleSessionRecord session = await _readSession(sessions);
   final UseSmileIDSamplePreferencesJobsRepository jobs =
@@ -47,12 +56,9 @@ Future<void> useSmileIDSampleBootstrap({
   final UseSmileIDSampleSecureProfilesRepository profiles =
       await UseSmileIDSampleSecureProfilesRepository.open();
   // Once, before the first frame: a link delivered to a live app must never re-seed the arguments.
-  final UseSmileIDSampleLaunch launch = UseSmileIDSampleLaunch(
-    PlatformDispatcher.instance.defaultRouteName,
-  );
+  final UseSmileIDSampleLaunch launch = UseSmileIDSampleLaunch(route);
   // Here, not in the provider, which re-seeded a just-removed row on every invalidation.
   await useSmileIDSampleApplyLaunch(launch.args, jobs);
-  await extension?.onLaunch(PlatformDispatcher.instance.defaultRouteName);
   final ProviderContainer container = ProviderContainer(
     overrides: [
       useSmileIDSampleShellExtensionProvider.overrideWithValue(extension),
@@ -67,9 +73,8 @@ Future<void> useSmileIDSampleBootstrap({
   );
   // Eager, so a lapsed session retires before any screen draws.
   container.read(useSmileIDSampleSessionProvider);
-  // iOS's scene lifecycle launches at '/' and pushes the link after the first frame; Android never does.
-  if (defaultTargetPlatform == TargetPlatform.iOS &&
-      PlatformDispatcher.instance.defaultRouteName == '/') {
+  // The runner's SceneDelegate seeds a cold link as the initial route, so on iOS this listens only after an icon launch.
+  if (defaultTargetPlatform == TargetPlatform.iOS && route == '/') {
     UseSmileIDSampleColdLink(
       onLink: (Uri link) async {
         final UseSmileIDSampleLaunchArgs args =
@@ -85,7 +90,14 @@ Future<void> useSmileIDSampleBootstrap({
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: UseSmileIDSampleApp(initialLocation: launch.location),
+      child: UseSmileIDSampleApp(
+        initialLocation: launch.startLocation,
+        autostartLink:
+            defaultTargetPlatform == TargetPlatform.iOS &&
+                launch.args.autostart != null
+            ? Uri.parse(route)
+            : null,
+      ),
     ),
   );
 }

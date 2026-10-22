@@ -80,7 +80,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
     XCTAssertEqual(allVerificationsCount(), rowsBefore, "a cancelled run must create no row")
     // The card is the only surface publishing the counters, and a finished run shows none on products.
-    open("verifications/job_missing")
+    app.useSmileIDSampleOpen("verifications/job_missing")
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertEqual(element("sample_result_result_count").label, "1", "the cancel did not arrive exactly once")
     XCTAssertEqual(element("sample_result_job_status").label, "cancelled")
@@ -107,7 +107,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   func testALinkIntoTheRunWithNothingTypedRedirectsToTheForm() {
     launch()
-    open("flow/biometricKyc/run")
+    app.useSmileIDSampleOpen("flow/biometricKyc/run")
     XCTAssertTrue(element("sample_user_details_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "an empty payload reached the SDK")
   }
@@ -225,14 +225,14 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   }
 
   private func linkASession() {
-    open("token/scan")
+    app.useSmileIDSampleOpen("token/scan")
     XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
     element("sample_token_simulate").tap()
     XCTAssertTrue(element("sample_session_card").waitForExistence(timeout: 10))
   }
 
   private func linkASessionThatBindsConsent() {
-    open("token/scan")
+    app.useSmileIDSampleOpen("token/scan")
     XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
     app.buttons["SIMULATED SCAN"].tap()
     XCTAssertTrue(app.buttons["Binds consent"].waitForExistence(timeout: 5))
@@ -242,7 +242,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   }
 
   private func linkAnExpiredSession() {
-    open("token/scan")
+    app.useSmileIDSampleOpen("token/scan")
     XCTAssertTrue(element("sample_token_simulate").waitForExistence(timeout: 10))
     app.buttons["SIMULATED SCAN"].tap()
     XCTAssertTrue(app.buttons["Expired"].waitForExistence(timeout: 5))
@@ -369,7 +369,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   /// The scene restores the last test's stack, and a pushed one covers the pill the cleanups need; healed, not assumed.
   private func atATabRoot() {
     guard !element("sample_nav_settings").waitForExistence(timeout: 10) else { return }
-    open("products")
+    app.useSmileIDSampleOpen("products")
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10), "no tab root to clean up from")
   }
 
@@ -401,18 +401,5 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
   private func element(_ id: String) -> XCUIElement {
     app.descendants(matching: .any).matching(identifier: id).firstMatch
-  }
-
-  private func open(_ path: String) {
-    XCUIDevice.shared.system.open(URL(string: "usesmileid-sample-ios://\(path)")!)
-    let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    let confirm = springboard.buttons["Open"]
-    if confirm.waitForExistence(timeout: 2) {
-      confirm.tap()
-    }
-    XCTAssertTrue(
-      app.wait(for: .runningForeground, timeout: 10),
-      "the link did not reach this app — another installed app may claim the scheme"
-    )
   }
 }

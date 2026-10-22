@@ -100,6 +100,8 @@
     <string name="si_document_too_far">اقترب أكثر من المستند</string>
     <string name="si_document_too_close">ابتعد قليلًا عن المستند</string>
     <string name="si_document_hold_still">حافظ على ثباتك</string>
+    <string name="si_document_blurry">أمسك المستند بثبات واجعله مستويًا</string>
+    <string name="si_document_glare">أمِل المستند بعيدًا عن الضوء</string>
     <string name="si_doc_v_capture_directive_wrong_aspect_ratio">طابق المستند مع المخطط التفصيلي</string>
     <string name="si_document_initial_instruction">قم بمحاذاة المستند داخل الإطار</string>
     <string name="si_document_ready">قم بمحاذاة المستند داخل الإطار واضغط على زر الالتقاط للمتابعة</string>
@@ -111,6 +113,9 @@
     <string name="si_document_capture_back">التقاط الوجه الخلفي للهوية</string>
     <string name="si_capture_button_document">التقاط المستند</string>
     <string name="si_document_flip_title">اقلب {id_type} الخاص بك</string>
+    <string name="si_document_type_passport">جواز السفر</string>
+    <string name="si_document_type_green_book">الكتاب الأخضر</string>
+    <string name="si_document_type_generic">المستند</string>
     <string name="si_document_skip_back">تخطي</string>
     <string name="si_instructions_emphasis_visa">التأشيرة</string>
     <string name="si_document_preview_title">تأكيد جودة الصورة</string>

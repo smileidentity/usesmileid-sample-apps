@@ -73,8 +73,9 @@ fun UseSmileIDFlowBuilder.applying(
         }
     }
     network {
-        // Debug builds only: logs the three document-capture keys of the submission metadata, nothing else.
-        wireProbe()?.let { probe -> interceptors { +probe } }
+        // Debug builds only: the document-capture key probe and Chucker's log; one block, since a second replaces the first.
+        val debugInterceptors = listOfNotNull(wireProbe(), UseSmileIDSampleNetworkLog.interceptor())
+        if (debugInterceptors.isNotEmpty()) interceptors { debugInterceptors.forEach { +it } }
         config {
             jobType = snapshot.product.jobType
             val scanned = snapshot.liveSession

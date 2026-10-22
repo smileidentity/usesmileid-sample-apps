@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.android.navigation
 
-import com.usesmileid.sampleapps.android.extension.UseSmileIDSampleShellHost
 import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import android.content.ActivityNotFoundException
@@ -37,13 +36,15 @@ import com.ramcosta.composedestinations.utils.startDestination
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.model.parseUseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -108,20 +109,16 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             }
         },
         debugRows = {
-            useSmileIDSampleShellExtension?.let { extension ->
-                val host = remember(app) {
-                    object : UseSmileIDSampleShellHost {
-                        override fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
-                            app.storeScope.launch { app.store.linkTokenSession(session) }
-                        }
-
-                        override fun openScenarioDrawer() {
-                            showScenarios = true
-                        }
-                    }
-                }
-                extension.DebugRows(host)
+            val context = LocalContext.current
+            UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
+                UseSmileIDSampleSettingRow(
+                    title = "Network logs",
+                    supportingText = "Requests from the last hour",
+                    onClick = { context.startActivity(intent) },
+                    trailing = { UseSmileIDSampleSettingRowChevron() },
+                )
             }
+            useSmileIDSampleShellExtension?.DebugRows()
         },
     )
     if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })

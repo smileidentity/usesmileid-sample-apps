@@ -34,4 +34,17 @@ describe('linkLaunchSession', () => {
     await expect(linkLaunchSession(failing, link)).resolves.toBeUndefined();
     expect(link).not.toHaveBeenCalled();
   });
+
+  it('awaits a session the extension offers asynchronously', async () => {
+    const link = jest.fn(() => Promise.resolve());
+    await linkLaunchSession({ launchSession: () => Promise.resolve(session) }, link);
+    expect(link).toHaveBeenCalledWith(session);
+  });
+
+  it('an offer that rejects only skips the launch session', async () => {
+    const link = jest.fn(() => Promise.resolve());
+    const rejecting = { launchSession: () => Promise.reject(new Error('the test server did not start')) };
+    await expect(linkLaunchSession(rejecting, link)).resolves.toBeUndefined();
+    expect(link).not.toHaveBeenCalled();
+  });
 });

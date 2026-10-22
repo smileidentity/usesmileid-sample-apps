@@ -264,7 +264,6 @@ class _UseSmileIDSampleSdkFlowTabState
         }
       case UseSmileIDFailure<JobSubmissionResponse>():
       case UseSmileIDCancelled<JobSubmissionResponse>():
-      // Only a flow that skips API submission hands its capture back, and the sample never asks for one.
       case UseSmileIDCaptured<JobSubmissionResponse>():
         _leave();
     }
@@ -288,12 +287,11 @@ class _UseSmileIDSampleSdkFlowTabState
         );
       case UseSmileIDCancelled<JobSubmissionResponse>():
         run.deliver(UseSmileIDSampleFlowStatus.cancelled);
-      // Unreachable unless the SDK regresses, so a test build reports it rather than passing.
+      // Never expected: this app does not set skipApiSubmission.
       case UseSmileIDCaptured<JobSubmissionResponse>():
         run.deliver(
           UseSmileIDSampleFlowStatus.failed,
-          error:
-              'The SDK handed back an unsent capture, which only a flow that skips API submission does, and the sample never asks for one',
+          error: _capturedNotSubmitted,
         );
     }
   }
@@ -325,6 +323,9 @@ class _UseSmileIDSampleSdkFlowTabState
   );
 
   static const int _acceptedCode = 202;
+
+  /// Recorded when the SDK hands back a captured job instead of submitting it.
+  static const String _capturedNotSubmitted = 'Captured, not submitted';
 }
 
 /// The SDK themes itself from the platform brightness, so this hands it the host theme's instead.

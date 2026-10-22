@@ -21,6 +21,8 @@ settings:
     SWIFT_VERSION: "6.0"
     MARKETING_VERSION: "1.0"
     CURRENT_PROJECT_VERSION: "1"
+    # Project-wide so the UI tests open links on the host's own scheme; a source build overrides it (spec/app-identity.json).
+    USESMILEID_SAMPLE_URL_SCHEME: usesmileid-sample-ios
 
 targets:
   UseSmileIDSample:
@@ -49,7 +51,6 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios
         INFOPLIST_FILE: Info.plist
         # The registry identity; an SDK repo's source build overrides these (spec/app-identity.json).
-        USESMILEID_SAMPLE_URL_SCHEME: usesmileid-sample-ios
         USESMILEID_SAMPLE_DISPLAY_NAME: Smile ID
         USESMILEID_SAMPLE_SOURCE_MODE: "NO"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
@@ -105,6 +106,11 @@ targets:
         # Only the runner's floor. `XCUISystem.open` is how a custom-scheme link is delivered
         # without the system prompt that swallows `simctl openurl`, and it needs 16.4.
         IPHONEOS_DEPLOYMENT_TARGET: "16.4"
+    info:
+      path: UITests/Info.plist
+      properties:
+        # Links open on the host's own scheme; an `INFOPLIST_KEY_` setting carries only Apple's keys.
+        UseSmileIDSampleURLScheme: $(USESMILEID_SAMPLE_URL_SCHEME)
 
   UseSmileIDSampleTests:
     type: bundle.unit-test

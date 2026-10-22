@@ -35,7 +35,8 @@ because that is where those defects show.
 `sample-ui` imports **only public SDK API**, and is identity-agnostic: nothing in it reads an
 application id, bundle id or URL scheme. Both rules let the same UI compile inside a second host, a
 development sample that builds the SDK from source, so a broken public API fails there before release.
-`sample-ui` is never published.
+`sample-ui` is never published. [Source builds](source-build.md) covers that second host: the shell's
+extension point, the identities and the `next` branch.
 
 ## 3. `spec/` is the contract
 
