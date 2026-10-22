@@ -92,7 +92,11 @@ Future<void> useSmileIDSampleBootstrap({
       container: container,
       child: UseSmileIDSampleApp(
         initialLocation: launch.startLocation,
-        autostartLink: launch.args.autostart == null ? null : Uri.parse(route),
+        autostartLink:
+            defaultTargetPlatform == TargetPlatform.iOS &&
+                launch.args.autostart != null
+            ? Uri.parse(route)
+            : null,
       ),
     ),
   );
