@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
@@ -140,12 +142,44 @@ String? useSmileIDSampleFoldPlatformLink(
   return state.uri.hasQuery ? '$path?${state.uri.query}' : path;
 }
 
+/// Folds platform links, except iOS's second push of the [autostartLink] that opened a run at [initialLocation].
+GoRouterRedirect useSmileIDSampleAutostartRedirect(
+  String? initialLocation,
+  Uri? autostartLink,
+) {
+  // The router hands an empty path back as '/', so the echo is matched in that form.
+  Uri? echo = autostartLink?.path == ''
+      ? autostartLink?.replace(path: '/')
+      : autostartLink;
+  Timer? expiry;
+  if (echo != null) {
+    // Bounded as the cold link is: a push later than the window after the first frame is a new link.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (echo != null) {
+        expiry = Timer(useSmileIDSampleColdLinkWindow, () => echo = null);
+      }
+    });
+  }
+  return (BuildContext context, GoRouterState state) {
+    // iOS pushes the cold link again after the first frame; folded, it would replace the run autostart opened.
+    if (echo != null && state.uri == echo) {
+      echo = null;
+      expiry?.cancel();
+      return initialLocation;
+    }
+    return useSmileIDSampleFoldPlatformLink(context, state);
+  };
+}
+
 /// The navigation host: one indexed stack of three branches, which is R7 without hand-rolling it.
-GoRouter useSmileIDSampleRouter({String? initialLocation}) => GoRouter(
+GoRouter useSmileIDSampleRouter({
+  String? initialLocation,
+  Uri? autostartLink,
+}) => GoRouter(
   initialLocation: initialLocation ?? UseSmileIDSampleRoutes.products,
   // Measured on a device: without this the platform's raw route WINS over initialLocation.
   overridePlatformDefaultLocation: true,
-  redirect: useSmileIDSampleFoldPlatformLink,
+  redirect: useSmileIDSampleAutostartRedirect(initialLocation, autostartLink),
   routes: <RouteBase>[
     StatefulShellRoute.indexedStack(
       builder:

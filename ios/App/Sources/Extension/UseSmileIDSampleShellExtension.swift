@@ -6,19 +6,19 @@ import UseSmileID
 @MainActor
 protocol UseSmileIDSampleShellExtending {
   /// Extra rows for the Settings DEBUG section, which debug builds show.
-  static func debugRows(host: UseSmileIDSampleShellHost) -> AnyView
+  static func debugRows() -> AnyView
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   static func customiseFlow(_ builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct)
   /// Runs last inside the shell's network block, so it may add to that configuration without replacing it.
   static func customiseNetwork(_ network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct)
-  /// Runs once at launch.
+  /// Runs once at launch, in `App.init`, before any other member.
   static func onLaunch()
-  /// A session the shell links once at launch, before autostart, as if its token had been scanned.
+  /// A session the shell links once, after `onLaunch` and before autostart, as if its token had been scanned.
   static func launchSession() -> UseSmileIDSampleTokenSession?
 }
 
 extension UseSmileIDSampleShellExtending {
-  static func debugRows(host _: UseSmileIDSampleShellHost) -> AnyView {
+  static func debugRows() -> AnyView {
     AnyView(EmptyView())
   }
 
@@ -39,13 +39,6 @@ func linkLaunchSession(
   if let session = `extension`?.launchSession() {
     link(session)
   }
-}
-
-/// What the shell lets an extension do.
-@MainActor
-struct UseSmileIDSampleShellHost {
-  let linkTokenSession: (UseSmileIDSampleTokenSession) -> Void
-  let openScenarioDrawer: () -> Void
 }
 
 /// The type an SDK repo's add-on extends to conform to `UseSmileIDSampleShellExtending`.
