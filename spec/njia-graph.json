@@ -1,0 +1,223 @@
+{
+  "version": 1,
+  "nodes": [
+    {
+      "tabs": "shell",
+      "stacks": true,
+      "home": "products",
+      "steps": [
+        {
+          "step": "products",
+          "kind": "products",
+          "link": "products",
+          "to": [
+            "profileSwitch",
+            "scanToken",
+            "consentDetailsForm"
+          ]
+        },
+        {
+          "step": "verifications",
+          "kind": "verifications",
+          "link": "verifications",
+          "to": [
+            "verificationDetails"
+          ]
+        },
+        {
+          "step": "settings",
+          "kind": "settings",
+          "link": "settings",
+          "to": [
+            "licenses",
+            "captureMode",
+            "appearance",
+            "language",
+            "profiles",
+            "scenarioDrawer"
+          ]
+        }
+      ]
+    },
+    {
+      "step": "licenses",
+      "kind": "licenses",
+      "reach": "go",
+      "link": "settings/licenses",
+      "tab": "settings"
+    },
+    {
+      "step": "captureMode",
+      "kind": "captureMode",
+      "reach": "go",
+      "link": "settings/capture-mode",
+      "tab": "settings",
+      "presentation": "sheet"
+    },
+    {
+      "step": "appearance",
+      "kind": "appearance",
+      "reach": "go",
+      "link": "settings/appearance",
+      "tab": "settings",
+      "presentation": "sheet"
+    },
+    {
+      "step": "language",
+      "kind": "language",
+      "reach": "go",
+      "link": "settings/language",
+      "tab": "settings",
+      "presentation": "sheet"
+    },
+    {
+      "step": "scenarioDrawer",
+      "kind": "scenarioDrawer",
+      "reach": "go",
+      "link": "debug/scenarios",
+      "tab": "settings",
+      "presentation": "sheet"
+    },
+    {
+      "step": "verificationDetails",
+      "kind": "verificationDetails",
+      "reach": "go",
+      "link": "verifications/:jobId",
+      "tab": "verifications"
+    },
+    {
+      "step": "profileSwitch",
+      "kind": "profileSwitch",
+      "reach": "go",
+      "link": "profiles/switch",
+      "tab": "products",
+      "to": [
+        "profiles"
+      ],
+      "presentation": "sheet"
+    },
+    {
+      "step": "profiles",
+      "kind": "profiles",
+      "reach": "go",
+      "link": "profiles",
+      "tab": "settings",
+      "to": [
+        "profileConfig",
+        "newProfile"
+      ]
+    },
+    {
+      "step": "newProfile",
+      "kind": "newProfile",
+      "reach": "go",
+      "link": "profiles/new",
+      "presentation": "sheet"
+    },
+    {
+      "step": "profileConfig",
+      "kind": "profileConfig",
+      "reach": "go",
+      "link": "profiles/:profileId"
+    },
+    {
+      "step": "scanToken",
+      "kind": "scanToken",
+      "reach": "go",
+      "link": "token/scan",
+      "tab": "products"
+    },
+    {
+      "step": "consentDetailsForm",
+      "kind": "userDetails",
+      "reach": "go",
+      "link": "flow/:productId/details",
+      "tab": "products"
+    },
+    {
+      "step": "authUserId",
+      "kind": "authUserId",
+      "reach": "go",
+      "link": "flow/:productId/user-id",
+      "skipWhen": {
+        "noneOf": [
+          "needsUserId"
+        ]
+      }
+    },
+    {
+      "step": "idDetailsForm",
+      "kind": "kycIdForm",
+      "reach": "go",
+      "link": "flow/:productId/id-details",
+      "to": [
+        "countryPicker",
+        "idTypePicker",
+        "documentPicker",
+        "captureAs"
+      ],
+      "skipWhen": {
+        "noneOf": [
+          "needsIdDetails"
+        ]
+      }
+    },
+    {
+      "step": "sdkFlow",
+      "kind": "sdkFlow",
+      "reach": "go",
+      "link": "flow/:productId/run",
+      "to": [
+        "verificationDetails"
+      ]
+    },
+    {
+      "step": "sdkFlowFullScreen",
+      "kind": "sdkFlow",
+      "reach": "go",
+      "link": "flow/:productId/run-fullscreen",
+      "to": [
+        "verificationDetails"
+      ],
+      "presentation": "fullScreen"
+    },
+    {
+      "step": "countryPicker",
+      "kind": "countryPicker",
+      "reach": "go",
+      "link": "flow/:productId/id-details/country",
+      "presentation": "sheet"
+    },
+    {
+      "step": "idTypePicker",
+      "kind": "idTypePicker",
+      "reach": "go",
+      "link": "flow/:productId/id-details/id-type",
+      "presentation": "sheet"
+    },
+    {
+      "step": "documentPicker",
+      "kind": "documentPicker",
+      "reach": "go",
+      "link": "flow/:productId/id-details/document",
+      "presentation": "sheet"
+    },
+    {
+      "step": "captureAs",
+      "kind": "captureAs",
+      "reach": "go",
+      "link": "flow/:productId/id-details/capture-as",
+      "to": [
+        "genericDocument"
+      ],
+      "presentation": "sheet"
+    },
+    {
+      "step": "genericDocument",
+      "kind": "genericDocument",
+      "reach": "go",
+      "link": "flow/:productId/id-details/generic-document",
+      "presentation": "sheet"
+    }
+  ]
+}
