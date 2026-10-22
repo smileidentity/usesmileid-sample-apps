@@ -1,7 +1,7 @@
 import type { UseSmileIDSampleTokenSession } from '@smileid/sample-ui';
 import { render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
-import { useEffect } from 'react';
+import { Component, type ReactNode, useEffect } from 'react';
 
 import RootLayout from '../app/_layout';
 import { useSmileIDSampleShellExtension } from '../src/extension';
@@ -9,10 +9,15 @@ import { smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch'
 
 /// Every extension member the shell reached, in order.
 const mockCalls: string[] = [];
+/// What onLaunch throws, if anything.
+let mockFailure: Error | null = null;
 
 jest.mock('../src/extension', () => ({
   useSmileIDSampleShellExtension: {
-    onLaunch: (url: string | null) => mockCalls.push(`onLaunch ${url}`),
+    onLaunch: (url: string | null) => {
+      if (mockFailure) throw mockFailure;
+      mockCalls.push(`onLaunch ${url}`);
+    },
     launchSession: async () => {
       mockCalls.push('launchSession');
       return null as UseSmileIDSampleTokenSession | null;
@@ -68,8 +73,26 @@ const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linkin
 
 beforeEach(() => {
   mockCalls.length = 0;
+  mockFailure = null;
   smileIDSampleResetLaunchArgs();
 });
+
+/// Keeps what the root threw while rendering.
+class Caught extends Component<{ children: ReactNode; onError: (error: Error) => void }, { failed: boolean }> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(error: Error) {
+    this.props.onError(error);
+  }
+
+  render() {
+    return this.state.failed ? null : this.props.children;
+  }
+}
 
 it('runs onLaunch before any screen reaches the extension, and the launch session after it', async () => {
   const link = 'usesmileid-sample-expo://settings?e2eScenario=x';
@@ -79,4 +102,19 @@ it('runs onLaunch before any screen reaches the extension, and the launch sessio
 
   expect(mockCalls[0]).toBe(`onLaunch ${link}`);
   expect(mockCalls.filter((call) => call.startsWith('onLaunch'))).toHaveLength(1);
+});
+
+it('raises a throw from onLaunch as a render error, before any screen reaches the extension', async () => {
+  mockFailure = new Error('not a bundled scenario');
+  const errors: Error[] = [];
+  jest.spyOn(console, 'error').mockImplementation(() => undefined);
+  getInitialURL.mockResolvedValue('usesmileid-sample-expo://?e2eScenario=typo');
+  await render(
+    <Caught onError={(error) => errors.push(error)}>
+      <RootLayout />
+    </Caught>,
+  );
+  await waitFor(() => expect(errors.map((error) => error.message)).toEqual(['not a bundled scenario']));
+
+  expect(mockCalls).toEqual([]);
 });

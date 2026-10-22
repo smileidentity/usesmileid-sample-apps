@@ -40,7 +40,15 @@ Future<void> useSmileIDSampleBootstrap({
       UseSmileIDSampleSecureSessionRepository();
   final String route = PlatformDispatcher.instance.defaultRouteName;
   // Ahead of the read, so autostart finds the extension's session as if it had been scanned.
-  await useSmileIDSampleLaunchExtension(extension, route, sessions.link);
+  final Object? failure = await useSmileIDSampleLaunchExtension(
+    extension,
+    route,
+    sessions.link,
+  );
+  if (failure != null) {
+    runApp(ErrorWidget(failure));
+    return;
+  }
   // Before the first frame, or the session card flashes in late.
   final UseSmileIDSampleSessionRecord session = await _readSession(sessions);
   final UseSmileIDSamplePreferencesJobsRepository jobs =

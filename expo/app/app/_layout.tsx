@@ -24,7 +24,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useSmileIDSampleShellExtension } from '../src/extension';
 import { linkLaunchSession } from '../src/use-smile-id-sample-shell-extension';
 import { useSmileIDSampleAppLanguage } from '../src/use-smile-id-sample-app-language';
-import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
+import { useLaunchArgs, useLaunchArgsLoaded, useLaunchFailure } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 import { useSmileIDSampleDeviceScheme } from '../src/use-smile-id-sample-device-scheme';
@@ -52,6 +52,7 @@ export default function RootLayout() {
   const colors = dark ? smileDarkColors : smileLightColors;
   const args = useLaunchArgs();
   const argsLoaded = useLaunchArgsLoaded();
+  const launchFailure = useLaunchFailure();
   const loadProfiles = useSmileIDSampleProfileStore((state) => state.load);
   const profilesLoaded = useSmileIDSampleProfileStore((state) => state.loaded);
   const seedFixtures = useSmileIDSampleJobStore((state) => state.seedFixtures);
@@ -127,6 +128,7 @@ export default function RootLayout() {
       });
   }, [ready, navigationReady, args.autostart]);
 
+  if (launchFailure) throw launchFailure;
   if (!ready) {
     return <View style={{ backgroundColor: colors.background, flex: 1 }} />;
   }

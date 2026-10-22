@@ -88,7 +88,14 @@ void main() {
     'runs onLaunch to completion before it asks for the launch session',
     () async {
       final _Recording extension = _Recording();
-      await useSmileIDSampleLaunchExtension(extension, '/?e2eScenario=x', link);
+      expect(
+        await useSmileIDSampleLaunchExtension(
+          extension,
+          '/?e2eScenario=x',
+          link,
+        ),
+        isNull,
+      );
       expect(extension.calls, <String>[
         'onLaunch /?e2eScenario=x',
         'launchSession',
@@ -102,12 +109,16 @@ void main() {
   });
 
   test(
-    'a throw from onLaunch fails the launch before the session is asked for',
+    'returns a throw from onLaunch as the failure, before the session is asked for',
     () async {
       final _Throwing extension = _Throwing();
-      await expectLater(
-        useSmileIDSampleLaunchExtension(extension, '/?e2eScenario=x', link),
-        throwsArgumentError,
+      expect(
+        await useSmileIDSampleLaunchExtension(
+          extension,
+          '/?e2eScenario=x',
+          link,
+        ),
+        isArgumentError,
       );
       expect(extension.asked, isFalse);
     },

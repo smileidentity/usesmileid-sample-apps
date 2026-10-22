@@ -7,6 +7,7 @@ import {
   smileIDSampleResetLaunchArgs,
   useLaunchArgs,
   useLaunchArgsLoaded,
+  useLaunchFailure,
 } from '../src/use-smile-id-sample-launch';
 import type { UseSmileIDSampleShellExtension } from '../src/use-smile-id-sample-shell-extension';
 
@@ -113,6 +114,10 @@ describe('the cold-start link launches the extension', () => {
       },
     };
     getInitialURL.mockResolvedValue(`${LAUNCH}?seedJobs=true`);
-    await expect(smileIDSampleLoadLaunchArgs()).rejects.toThrow('not a bundled scenario');
+    await smileIDSampleLoadLaunchArgs();
+    const { result } = await renderHook(() => ({ failure: useLaunchFailure(), loaded: useLaunchArgsLoaded() }));
+
+    expect(result.current.failure?.message).toBe('not a bundled scenario');
+    expect(result.current.loaded).toBe(false);
   });
 });

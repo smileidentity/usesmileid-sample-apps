@@ -27,14 +27,19 @@ abstract class UseSmileIDSampleShellExtension {
   UseSmileIDSampleTokenSession? launchSession() => null;
 }
 
-/// Runs the [extension]'s `onLaunch` with [route], then links its launch session through [link].
-Future<void> useSmileIDSampleLaunchExtension(
+/// Runs the [extension]'s `onLaunch` with [route], then links its launch session through [link]; returns what `onLaunch` threw.
+Future<Object?> useSmileIDSampleLaunchExtension(
   UseSmileIDSampleShellExtension? extension,
   String route,
   Future<void> Function(UseSmileIDSampleTokenSession session) link,
 ) async {
-  await extension?.onLaunch(route);
+  try {
+    await extension?.onLaunch(route);
+  } on Object catch (failure) {
+    return failure;
+  }
   await useSmileIDSampleLinkLaunchSession(extension, link);
+  return null;
 }
 
 /// Links the [extension]'s launch session through [link], if it offers one; a failed link only skips it.

@@ -14,9 +14,11 @@ type State = {
   readonly args: UseSmileIDSampleLaunchArgs;
   /// False until the cold-start link is read; the root waits on it.
   readonly loaded: boolean;
+  /// What the extension's `onLaunch` threw, which fails the launch.
+  readonly failure: Error | null;
 };
 
-const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaults, loaded: false }));
+const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaults, loaded: false, failure: null }));
 
 let reading: Promise<void> | null = null;
 
@@ -25,9 +27,15 @@ export const smileIDSampleLoadLaunchArgs = (): Promise<void> => {
   reading ??= Linking.getInitialURL()
     .catch(() => null)
     .then(async (url) => {
-      await useSmileIDSampleShellExtension?.onLaunch?.(url);
+      try {
+        await useSmileIDSampleShellExtension?.onLaunch?.(url);
+      } catch (error) {
+        useLaunchStore.setState({ failure: error instanceof Error ? error : new Error(String(error)) });
+        return;
+      }
       useLaunchStore.setState({ args: smileIDSampleLaunchArgsFromUrl(url), loaded: true });
-    });
+    })
+    .catch(() => useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: true }));
   return reading;
 };
 
@@ -42,8 +50,11 @@ export const useLaunchArgs = (): UseSmileIDSampleLaunchArgs => {
 /// Whether the cold-start link has been read.
 export const useLaunchArgsLoaded = (): boolean => useLaunchStore((state) => state.loaded);
 
+/// What the extension's `onLaunch` threw, or null while the launch stands.
+export const useLaunchFailure = (): Error | null => useLaunchStore((state) => state.failure);
+
 /// Forgets the read, for tests.
 export const smileIDSampleResetLaunchArgs = (): void => {
   reading = null;
-  useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: false });
+  useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: false, failure: null });
 };
