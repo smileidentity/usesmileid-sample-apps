@@ -23,7 +23,7 @@ Every member is optional and does nothing by default:
 
 | Member | The shell calls it |
 |---|---|
-| `onLaunch` | once per launch, before any other member (a recreation does not run it again), with what the app was launched by: the intent on Android, the launch route on Flutter, the cold-start link on Expo (iOS passes nothing; it runs in `App.init`); it may finish asynchronously on Flutter and Expo, and a throw fails the launch, so a mistyped scenario never falls back to the camera: Android crashes, Flutter shows the error in place of the app, and Expo raises it as a render error |
+| `onLaunch` | once per launch, before any other member (a recreation does not run it again), with what the app was launched by: the intent on Android, the launch route on Flutter, the cold-start link on Expo (iOS passes nothing; it runs in `App.init`); it may finish asynchronously on Flutter and Expo, and a throw fails the launch, so a mistyped scenario never falls back to the camera: Android crashes, Flutter shows the error in place of the app, and Expo raises it as a render error; the shell sets no time limit, so an add-on bounds its own waits |
 | `launchSession` | once, after `onLaunch` and before autostart; the shell links the session as if its token had been scanned, waits for it (Expo accepts a promise), and skips it if the call or the link fails |
 | `customiseFlow` | each time it configures an SDK flow, after its own configuration, so the extension can replace any of it |
 | `customiseNetwork` | last inside its network block, so the extension adds to that configuration |
@@ -45,7 +45,9 @@ keep the registry identity, so on one device it is one or the other.
 
 `main` builds against released SDK versions only. A change that needs SDK API that is not released
 yet lands on `next`, the one long-lived branch the SDK repositories pin, and is reviewed with the
-linked SDK pull request's source-build lane green. Everything else lands on `main`, which is merged
+linked SDK pull request's source-build lane green. This repo's own lanes build against the released
+SDK, so they run red on `next` while it carries such a change; the SDK repositories' source-build
+lanes are its gate. Everything else lands on `main`, which is merged
 into `next` by whoever next works on `next`, and at least weekly by whoever owns the current SDK
 release. `next` is only ever merged into, never rebased or force-pushed: released SDK versions pin
 its commits. When an SDK version ships, `next` is merged into `main` and each SDK repository moves
