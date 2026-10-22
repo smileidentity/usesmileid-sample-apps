@@ -20,25 +20,14 @@ const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaul
 
 let reading: Promise<void> | null = null;
 
-/// Runs the extension's `onLaunch` with the cold-start link; a throw only skips it.
-const launchShellExtension = (url: string | null): void => {
-  try {
-    useSmileIDSampleShellExtension?.onLaunch?.(url);
-  } catch {
-    // Nothing to recover: the app runs as it would without the extension.
-  }
-};
-
-/// Reads the cold-start link once per process, so a live link never re-seeds; the extension launches before the root renders.
+/// Reads the cold-start link once per process, so a live link never re-seeds; the extension launches on it before the root renders.
 export const smileIDSampleLoadLaunchArgs = (): Promise<void> => {
   reading ??= Linking.getInitialURL()
     .catch(() => null)
-    .then((url) => {
-      launchShellExtension(url);
-      return smileIDSampleLaunchArgsFromUrl(url);
-    })
-    .catch(() => smileIDSampleLaunchArgDefaults)
-    .then((args) => useLaunchStore.setState({ args, loaded: true }));
+    .then(async (url) => {
+      await useSmileIDSampleShellExtension?.onLaunch?.(url);
+      useLaunchStore.setState({ args: smileIDSampleLaunchArgsFromUrl(url), loaded: true });
+    });
   return reading;
 };
 

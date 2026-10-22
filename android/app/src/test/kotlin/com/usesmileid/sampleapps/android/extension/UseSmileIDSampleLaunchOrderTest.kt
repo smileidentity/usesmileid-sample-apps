@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.extension
 
 import android.content.Intent
+import android.os.Bundle
 import com.usesmileid.sampleapps.android.UseSmileIDSampleActivity
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import org.junit.After
@@ -21,6 +22,7 @@ class UseSmileIDSampleLaunchOrderTest {
 
     @Before
     fun record() {
+        useSmileIDSampleShellExtensionLaunched = false
         useSmileIDSampleShellExtension = object : UseSmileIDSampleShellExtension {
             override fun onLaunch(intent: Intent) {
                 calls += "onLaunch"
@@ -44,5 +46,21 @@ class UseSmileIDSampleLaunchOrderTest {
         ShadowLooper.idleMainLooper()
 
         assertEquals(listOf("onLaunch", "launchSession"), calls)
+    }
+
+    @Test
+    fun `a process restored from saved state still runs onLaunch`() {
+        Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup(Bundle())
+        ShadowLooper.idleMainLooper()
+
+        assertEquals("onLaunch", calls.first())
+    }
+
+    @Test
+    fun `a recreation in the same process does not run onLaunch again`() {
+        Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().recreate()
+        ShadowLooper.idleMainLooper()
+
+        assertEquals(1, calls.count { it == "onLaunch" })
     }
 }

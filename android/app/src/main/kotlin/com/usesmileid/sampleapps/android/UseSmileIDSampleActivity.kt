@@ -7,7 +7,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
-import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
+import com.usesmileid.sampleapps.android.extension.launchUseSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.launch.UseSmileIDSampleAppLocale
 import com.usesmileid.sampleapps.android.launch.useSmileIDSampleLaunchArgs
@@ -21,8 +21,7 @@ class UseSmileIDSampleActivity : ComponentActivity() {
         intent.foldUseSmileIDSampleSheetLink()
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
         UseSmileIDSampleNetworkLog.install(this)
-        // A recreation redelivers the launch intent, and the hook runs once per launch.
-        if (savedInstanceState == null) useSmileIDSampleShellExtension?.onLaunch(intent)
+        launchUseSmileIDSampleShellExtension(intent)
         setContent {
             // Read above every override, so these are the device's values, not the app's.
             val deviceLocales = LocalConfiguration.current.locales

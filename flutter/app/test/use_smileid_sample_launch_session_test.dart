@@ -37,6 +37,20 @@ class _Recording extends UseSmileIDSampleShellExtension {
   }
 }
 
+class _Throwing extends UseSmileIDSampleShellExtension {
+  bool asked = false;
+
+  @override
+  Future<void> onLaunch(String defaultRouteName) async =>
+      throw ArgumentError.value(defaultRouteName, 'e2eScenario');
+
+  @override
+  UseSmileIDSampleTokenSession? launchSession() {
+    asked = true;
+    return null;
+  }
+}
+
 void main() {
   final List<UseSmileIDSampleTokenSession> linked =
       <UseSmileIDSampleTokenSession>[];
@@ -86,4 +100,16 @@ void main() {
     await useSmileIDSampleLaunchExtension(null, '/', link);
     expect(linked, isEmpty);
   });
+
+  test(
+    'a throw from onLaunch fails the launch before the session is asked for',
+    () async {
+      final _Throwing extension = _Throwing();
+      await expectLater(
+        useSmileIDSampleLaunchExtension(extension, '/?e2eScenario=x', link),
+        throwsArgumentError,
+      );
+      expect(extension.asked, isFalse);
+    },
+  );
 }

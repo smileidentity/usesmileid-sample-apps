@@ -1,8 +1,13 @@
 import { smileIDSampleLaunchArgDefaults } from '@smileid/sample-ui';
-import { renderHook, waitFor } from '@testing-library/react-native';
+import { act, renderHook, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 
-import { smileIDSampleResetLaunchArgs, useLaunchArgs } from '../src/use-smile-id-sample-launch';
+import {
+  smileIDSampleLoadLaunchArgs,
+  smileIDSampleResetLaunchArgs,
+  useLaunchArgs,
+  useLaunchArgsLoaded,
+} from '../src/use-smile-id-sample-launch';
 import type { UseSmileIDSampleShellExtension } from '../src/use-smile-id-sample-shell-extension';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
@@ -83,13 +88,31 @@ describe('the cold-start link launches the extension', () => {
     await waitFor(() => expect(onLaunch).toHaveBeenCalledWith(null));
   });
 
-  it('still applies the arguments when onLaunch throws', async () => {
+  it('waits for an asynchronous onLaunch before the arguments load', async () => {
+    let finish: (() => void) | undefined;
+    mockExtension = {
+      onLaunch: () =>
+        new Promise<void>((resolve) => {
+          finish = resolve;
+        }),
+    };
+    getInitialURL.mockResolvedValue(`${LAUNCH}?seedJobs=true`);
+    const { result } = await renderHook(() => ({ args: useLaunchArgs(), loaded: useLaunchArgsLoaded() }));
+    await waitFor(() => expect(finish).toBeDefined());
+    expect(result.current.loaded).toBe(false);
+
+    await act(async () => finish?.());
+    await waitFor(() => expect(result.current.loaded).toBe(true));
+    expect(result.current.args.seedJobs).toBe(true);
+  });
+
+  it('fails the launch when onLaunch throws, so a mistyped run never starts', async () => {
     mockExtension = {
       onLaunch: () => {
         throw new Error('not a bundled scenario');
       },
     };
-    const { result } = await launch(`${LAUNCH}?seedJobs=true`);
-    await waitFor(() => expect(result.current.seedJobs).toBe(true));
+    getInitialURL.mockResolvedValue(`${LAUNCH}?seedJobs=true`);
+    await expect(smileIDSampleLoadLaunchArgs()).rejects.toThrow('not a bundled scenario');
   });
 });

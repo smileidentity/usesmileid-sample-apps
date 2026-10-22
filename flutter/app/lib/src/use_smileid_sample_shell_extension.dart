@@ -20,7 +20,7 @@ abstract class UseSmileIDSampleShellExtension {
     UseSmileIDSampleProduct product,
   ) {}
 
-  /// Runs once before the first frame and before any other member, with the route the app was launched on.
+  /// Runs once before the first frame and before any other member, with the launch route; a throw fails the launch.
   Future<void> onLaunch(String defaultRouteName) async {}
 
   /// A session the shell links once, after [onLaunch] and before autostart, as if its token had been scanned.

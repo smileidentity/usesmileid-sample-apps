@@ -10,8 +10,8 @@ export type UseSmileIDSampleShellExtension = {
   customiseFlow?: (builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) => void;
   /// Runs last inside the shell's network block, so it may add to that configuration without replacing it.
   customiseNetwork?: (network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) => void;
-  /// Runs once at launch and before any other member, with the link the app was opened by.
-  onLaunch?: (initialUrl: string | null) => void;
+  /// Runs once at launch and before any other member, with the link the app was opened by; a throw fails the launch.
+  onLaunch?: (initialUrl: string | null) => void | Promise<void>;
   /// A session the shell links once, after `onLaunch` and before autostart, as if its token had been scanned.
   launchSession?: () => UseSmileIDSampleTokenSession | null | Promise<UseSmileIDSampleTokenSession | null>;
 };
