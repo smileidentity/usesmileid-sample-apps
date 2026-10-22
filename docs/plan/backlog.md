@@ -101,6 +101,13 @@ do, run by `flutter/verify.sh` on the Mac.
 
 ## Spec and code health
 
+### Android: replace njia's pinned snapshot build with its first release
+
+`android/gradle/libs.versions.toml` pins njia to one snapshot build, `0.0.1-20261022.224439-5`. A bare
+`0.0.1-SNAPSHOT` lost Gradle's conflict resolution to the SDK snapshot's older build. Maven Central's
+snapshot repository deletes builds after about 90 days, so once this one goes, a clean build can't
+resolve njia. Done when the pin is njia's first release, or a newer build until then.
+
 ### Flutter iOS: retire the first-push launch listener
 
 `UseSmileIDSampleColdLink` takes a cold link from the first route push within two seconds of the first
