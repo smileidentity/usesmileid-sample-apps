@@ -55,9 +55,9 @@ its pin to the result.
 
 ## The reserved `e2eScenario` argument
 
-An SDK repository's add-on reads one launch argument, `e2eScenario`, naming a test scenario bundled
-with that SDK's testing kit (for example `selfie-happy-path`). It arrives the way each platform
-delivers launch arguments: an intent extra on Android, a launch argument on iOS, and a query
-parameter of the cold-start link on Flutter and Expo. No shell parses it and `spec/launch-args.json`
-does not list it, because the shells must not know the add-on exists; no shell argument may take
-the name.
+An SDK repository's add-on reads one launch argument, `e2eScenario`: the JSON name of one of the
+scenarios its testing kit's public `UseSmileIDTestScenario` type offers (for example
+`selfie-happy-path`), not every file the kit bundles. It arrives the way each platform delivers
+launch arguments: an intent extra on Android, a launch argument on iOS, and a query parameter of the
+cold-start link on Flutter and Expo. No shell parses it and `spec/launch-args.json` does not list
+it, because the shells must not know the add-on exists; no shell argument may take the name.
