@@ -340,7 +340,6 @@ dependencies {
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.mlkit.barcode.scanning)
 
-
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.kotlinx.serialization)
