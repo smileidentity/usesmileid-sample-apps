@@ -23,7 +23,7 @@ Every member is optional and does nothing by default:
 
 | Member | The shell calls it |
 |---|---|
-| `onLaunch` | once per launch, before any other member (a recreation does not run it again), with what the app was launched by: the intent on Android, the launch route on Flutter, the cold-start link on Expo (iOS passes nothing; it runs in `App.init`); it may finish asynchronously on Flutter and Expo, and a throw fails the launch, so a mistyped scenario never falls back to the camera: Android crashes, Flutter shows the error in place of the app, and Expo raises it as a render error; the shell sets no time limit, so an add-on bounds its own waits |
+| `onLaunch` | once per launch, before any other member (a recreation does not run it again; Expo, like its launch arguments, reads the cold-start link once per JavaScript process), with what the app was launched by: the intent on Android, the launch route on Flutter, the cold-start link on Expo (iOS passes nothing; it runs in `App.init`); it may finish asynchronously on Flutter and Expo, and a throw fails the launch, so a mistyped scenario never falls back to the camera: Android crashes, Flutter shows the error in place of the app, and Expo raises it as a render error; the shell sets no time limit, so an add-on bounds its own waits |
 | `launchSession` | once, after `onLaunch` and before autostart; the shell links the session as if its token had been scanned, waits for it (Expo accepts a promise), and skips it if the call or the link fails |
 | `customiseFlow` | each time it configures an SDK flow, after its own configuration, so the extension can replace any of it |
 | `customiseNetwork` | last inside its network block, so the extension adds to that configuration |
