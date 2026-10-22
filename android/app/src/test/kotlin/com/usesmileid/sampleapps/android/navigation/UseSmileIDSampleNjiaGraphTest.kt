@@ -6,7 +6,6 @@ import com.usesmileid.njia.steps
 import com.usesmileid.njia.validate
 import java.io.File
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Reads `spec/njia-graph.json` with the app's own kinds and facts, as the shell will. */
@@ -30,7 +29,8 @@ class UseSmileIDSampleNjiaGraphTest {
     }
 
     @Test
-    fun `every fact the app names is one the graph reads`() {
-        UseSmileIDSampleFact.entries.forEach { fact -> assertTrue(fact.wireName, text.contains("\"${fact.wireName}\"")) }
+    fun `every fact the app names is one a skipWhen reads`() {
+        val conditions = graph.nodes.mapNotNull { it.skipWhen } + graph.steps.mapNotNull { it.skipWhen }
+        assertEquals(UseSmileIDSampleFact.entries.toSet(), conditions.flatMap { it.allOf + it.noneOf }.toSet())
     }
 }
