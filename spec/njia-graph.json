@@ -245,7 +245,9 @@
         "countryPicker",
         "idTypePicker",
         "documentPicker",
-        "captureAs"
+        "captureAs",
+        "sdkFlow",
+        "sdkFlowFullScreen"
       ],
       "skipWhen": {
         "noneOf": [
