@@ -90,7 +90,10 @@ Future<void> useSmileIDSampleBootstrap({
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: UseSmileIDSampleApp(initialLocation: launch.startLocation),
+      child: UseSmileIDSampleApp(
+        initialLocation: launch.startLocation,
+        autostartLink: launch.args.autostart == null ? null : Uri.parse(route),
+      ),
     ),
   );
 }

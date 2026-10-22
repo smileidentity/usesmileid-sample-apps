@@ -121,4 +121,30 @@ void main() {
 
     expect(byId(UseSmileIDSampleTestIds.settingsScreen), findsOne);
   });
+
+  testWidgets(
+    'the cold link pushed again after an autostart leaves the app where it opened',
+    (WidgetTester tester) async {
+      const String link = 'usesmileid-sample-flutter://?autostart=biometricKyc';
+      router = useSmileIDSampleRouter(
+        initialLocation: UseSmileIDSampleRoutes.settings,
+        autostartLink: Uri.parse(link),
+      );
+      await tester.pumpWidget(
+        ProviderScope(
+          child: MaterialApp.router(
+            theme: UseSmileIDSampleTheme.light(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await deliver(tester, link);
+      expect(landedOn().path, UseSmileIDSampleRoutes.settings);
+
+      await deliver(tester, link);
+      expect(landedOn().path, UseSmileIDSampleRoutes.products);
+    },
+  );
 }
