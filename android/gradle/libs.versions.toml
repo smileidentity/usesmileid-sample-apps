@@ -6,6 +6,8 @@ usesmileid-mlkit-face = "12.3.0-SNAPSHOT"
 usesmileid-mlkit-document = "12.3.0-SNAPSHOT"
 usesmileid-huawei-face = "12.3.0-SNAPSHOT"
 usesmileid-huawei-document = "12.3.0-SNAPSHOT"
+# The four apps' navigation engine, from Maven Central's snapshots until its first release.
+njia = "0.0.1-SNAPSHOT"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.21"
@@ -36,6 +38,7 @@ robolectric = "4.17"
 roborazzi = "1.76.0"
 
 [libraries]
+njia = { module = "com.usesmileid:njia", version.ref = "njia" }
 usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid-bom" }
 usesmileid = { module = "com.usesmileid:usesmileid", version.ref = "usesmileid" }
 usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face", version.ref = "usesmileid-mlkit-face" }

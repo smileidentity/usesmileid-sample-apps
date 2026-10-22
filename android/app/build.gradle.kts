@@ -321,6 +321,7 @@ dependencies {
     implementation(libs.usesmileid)
     implementation(libs.usesmileid.mlkit.face)
     implementation(libs.usesmileid.mlkit.document)
+    implementation(libs.njia)
     "appgalleryImplementation"(libs.usesmileid.huawei.face)
     "appgalleryImplementation"(libs.usesmileid.huawei.document)
 
@@ -353,12 +354,12 @@ dependencies {
     testImplementation(libs.robolectric)
 }
 
-/** Bundles spec/catalogue-fixture.json, which the `catalogue=fixture` launch argument reads on every build type. */
-abstract class CatalogueFixtureAsset : DefaultTask() {
+/** Bundles the spec files the app reads at runtime, each under its own name. */
+abstract class SpecAssets : DefaultTask() {
 
-    @get:InputFile
+    @get:InputFiles
     @get:PathSensitive(PathSensitivity.RELATIVE)
-    abstract val fixture: RegularFileProperty
+    abstract val files: ConfigurableFileCollection
 
     @get:OutputDirectory
     abstract val assets: DirectoryProperty
@@ -368,18 +369,18 @@ abstract class CatalogueFixtureAsset : DefaultTask() {
         val out = assets.get().asFile
         out.deleteRecursively()
         out.mkdirs()
-        fixture.get().asFile.copyTo(out.resolve("catalogue-fixture.json"))
+        files.forEach { it.copyTo(out.resolve(it.name)) }
     }
 }
 
 // Release included: the device suite runs on the minified variant too, and it passes the argument.
-val catalogueFixtureAsset = tasks.register<CatalogueFixtureAsset>("catalogueFixtureAsset") {
-    fixture.set(layout.projectDirectory.file("../../spec/catalogue-fixture.json"))
-    assets.set(layout.buildDirectory.dir("generated/catalogue/assets"))
+val specAssets = tasks.register<SpecAssets>("specAssets") {
+    files.from("../../spec/catalogue-fixture.json", "../../spec/njia-graph.json")
+    assets.set(layout.buildDirectory.dir("generated/spec/assets"))
 }
 
 androidComponents {
     onVariants { variant ->
-        variant.sources.assets?.addGeneratedSourceDirectory(catalogueFixtureAsset, CatalogueFixtureAsset::assets)
+        variant.sources.assets?.addGeneratedSourceDirectory(specAssets, SpecAssets::assets)
     }
 }
