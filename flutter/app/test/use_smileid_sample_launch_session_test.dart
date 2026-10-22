@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_shell_extension.dart';
@@ -109,8 +110,12 @@ void main() {
   });
 
   test(
-    'returns a throw from onLaunch as the failure, before the session is asked for',
+    'reports and returns a throw from onLaunch, before the session is asked for',
     () async {
+      final List<FlutterErrorDetails> reported = <FlutterErrorDetails>[];
+      final FlutterExceptionHandler? onError = FlutterError.onError;
+      FlutterError.onError = reported.add;
+      addTearDown(() => FlutterError.onError = onError);
       final _Throwing extension = _Throwing();
       expect(
         await useSmileIDSampleLaunchExtension(
@@ -121,6 +126,8 @@ void main() {
         isArgumentError,
       );
       expect(extension.asked, isFalse);
+      expect(reported.single.exception, isArgumentError);
+      expect(reported.single.stack, isNotNull);
     },
   );
 }

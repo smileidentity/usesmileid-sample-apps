@@ -27,7 +27,7 @@ abstract class UseSmileIDSampleShellExtension {
   UseSmileIDSampleTokenSession? launchSession() => null;
 }
 
-/// Runs the [extension]'s `onLaunch` with [route], then links its launch session through [link]; returns what `onLaunch` threw.
+/// Runs the [extension]'s `onLaunch` with [route], then links its launch session through [link]; reports and returns what `onLaunch` threw.
 Future<Object?> useSmileIDSampleLaunchExtension(
   UseSmileIDSampleShellExtension? extension,
   String route,
@@ -35,7 +35,15 @@ Future<Object?> useSmileIDSampleLaunchExtension(
 ) async {
   try {
     await extension?.onLaunch(route);
-  } on Object catch (failure) {
+  } on Object catch (failure, stack) {
+    FlutterError.reportError(
+      FlutterErrorDetails(
+        exception: failure,
+        stack: stack,
+        library: 'usesmileid sample',
+        context: ErrorDescription("while the shell extension's onLaunch ran"),
+      ),
+    );
     return failure;
   }
   await useSmileIDSampleLinkLaunchSession(extension, link);
