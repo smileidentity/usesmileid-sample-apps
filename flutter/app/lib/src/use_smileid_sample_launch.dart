@@ -27,6 +27,14 @@ class UseSmileIDSampleLaunch {
         : trimmed;
   }
 
+  /// Where the app opens: the run of the product `autostart` names, else [location].
+  String get startLocation {
+    final UseSmileIDSampleProduct? product = args.autostart;
+    return product == null
+        ? location
+        : UseSmileIDSampleRoutes.sdkFlow(product.id);
+  }
+
   /// The arguments the link carried, defaulted where it carried none.
   UseSmileIDSampleLaunchArgs get args =>
       UseSmileIDSampleLaunchArgs.fromUri(_uri);

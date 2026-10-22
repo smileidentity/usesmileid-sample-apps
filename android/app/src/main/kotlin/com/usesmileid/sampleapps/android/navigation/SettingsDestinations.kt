@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.android.navigation
 
-import com.usesmileid.sampleapps.android.extension.UseSmileIDSampleShellHost
 import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
 import android.content.ActivityNotFoundException
@@ -46,7 +45,6 @@ import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.model.parseUseSmileIDSampleLicenses
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleSettingsState
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenSession
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -120,20 +118,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                     trailing = { UseSmileIDSampleSettingRowChevron() },
                 )
             }
-            useSmileIDSampleShellExtension?.let { extension ->
-                val host = remember(app) {
-                    object : UseSmileIDSampleShellHost {
-                        override fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
-                            app.storeScope.launch { app.store.linkTokenSession(session) }
-                        }
-
-                        override fun openScenarioDrawer() {
-                            showScenarios = true
-                        }
-                    }
-                }
-                extension.DebugRows(host)
-            }
+            useSmileIDSampleShellExtension?.DebugRows()
         },
     )
     if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })

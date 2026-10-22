@@ -139,16 +139,7 @@ class _UseSmileIDSampleSettingsTabState
       // Debug builds only; every flow reaches the drawer by its deep link instead.
       onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
       debugRows:
-          ref
-              .watch(useSmileIDSampleShellExtensionProvider)
-              ?.debugRows(
-                UseSmileIDSampleShellHost(
-                  linkTokenSession: ref
-                      .read(useSmileIDSampleSessionProvider.notifier)
-                      .link,
-                  openScenarioDrawer: _openScenarioDrawer,
-                ),
-              ) ??
+          ref.watch(useSmileIDSampleShellExtensionProvider)?.debugRows() ??
           const <Widget>[],
       onSignOut: () {
         unawaited(ref.read(useSmileIDSampleSessionProvider.notifier).clear());

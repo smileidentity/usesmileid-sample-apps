@@ -106,9 +106,11 @@ dependency for its local project. One UI source, two consumers:
 Neither is redundant, and `sample-ui` is **never published** as an artifact — source consumption in
 both places is what keeps them from drifting apart.
 
-**Unreleased SDK API.** `main` here must always build against released SDK versions. When SDK work
-needs new UI, branch here, let the SDK PR pin its submodule at that branch's SHA (its path shell
-compiles this UI against SDK HEAD), and merge to `main` only after the SDK release ships.
+**Unreleased SDK API.** `main` here must always build against released SDK versions. A change that
+needs unreleased SDK API lands on `next`, the one long-lived branch the SDK repos pin; everything else
+lands on `main` and is merged into `next`, which is never rebased or force-pushed. At an SDK release
+`next` is merged into `main`. `docs/source-build.md` has the rule, the shell's extension point and the
+`e2eScenario` name the SDK repos' add-ons reserve.
 
 ## `spec/` — the shared contract
 
