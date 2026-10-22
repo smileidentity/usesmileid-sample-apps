@@ -1,6 +1,7 @@
 package com.usesmileid.sampleapps.android.extension
 
 import android.content.Intent
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.Composable
 import com.usesmileid.data.dsl.UseSmileIDNetworkBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
@@ -13,7 +14,7 @@ import kotlin.coroutines.cancellation.CancellationException
 interface UseSmileIDSampleShellExtension {
     /** Extra rows for the Settings DEBUG section, which debug builds show. */
     @Composable
-    fun DebugRows(host: UseSmileIDSampleShellHost) {}
+    fun DebugRows() {}
 
     /** Runs after the shell has configured a flow, so it may replace any of that configuration. */
     fun customiseFlow(builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) {}
@@ -21,10 +22,10 @@ interface UseSmileIDSampleShellExtension {
     /** Runs last inside the shell's network block; an `interceptors {}` block here replaces the shell's debug interceptors. */
     fun customiseNetwork(network: UseSmileIDNetworkBuilder, product: UseSmileIDSampleProduct) {}
 
-    /** Runs once at launch, with the intent the app was started by. */
+    /** Runs once per launch and before any other member, with the intent the app was started by; a throw fails the launch. */
     fun onLaunch(intent: Intent) {}
 
-    /** A session the shell links once at launch, before autostart, as if its token had been scanned. */
+    /** A session the shell links once, after [onLaunch] and before autostart, as if its token had been scanned. */
     fun launchSession(): UseSmileIDSampleTokenSession? = null
 }
 
@@ -40,14 +41,18 @@ suspend fun linkLaunchSession(
     null
 }
 
-/** What the shell lets an extension do. */
-interface UseSmileIDSampleShellHost {
-    fun linkTokenSession(session: UseSmileIDSampleTokenSession)
-
-    fun openScenarioDrawer()
-}
-
 /** The extension on the classpath, found by ServiceLoader so the shell never names SDK-repo code. */
-val useSmileIDSampleShellExtension: UseSmileIDSampleShellExtension? by lazy {
+var useSmileIDSampleShellExtension: UseSmileIDSampleShellExtension? =
     ServiceLoader.load(UseSmileIDSampleShellExtension::class.java).firstOrNull()
+    @VisibleForTesting internal set
+
+/** Whether this process has run the extension's [UseSmileIDSampleShellExtension.onLaunch]. */
+@VisibleForTesting
+internal var useSmileIDSampleShellExtensionLaunched = false
+
+/** Runs the extension's `onLaunch` on a fresh launch and in a process restored from saved state, never on a recreation. */
+fun launchUseSmileIDSampleShellExtension(intent: Intent, restored: Boolean) {
+    if (restored && useSmileIDSampleShellExtensionLaunched) return
+    useSmileIDSampleShellExtensionLaunched = true
+    useSmileIDSampleShellExtension?.onLaunch(intent)
 }

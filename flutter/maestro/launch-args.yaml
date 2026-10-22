@@ -42,3 +42,18 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_scenario_item_normal"
     selected: false
+
+# autostart opens the run at launch; with no session it lands on the scanner, behind the camera prompt.
+- stopApp
+- retry:
+    maxRetries: 1
+    commands:
+      - openLink: "usesmileid-sample-flutter://?autostart=biometricKyc&catalogue=fixture"
+      - extendedWaitUntil:
+          visible:
+            id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          timeout: 60000
+- tapOn:
+    id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+- assertVisible:
+    id: "sample_scan_token_screen"
