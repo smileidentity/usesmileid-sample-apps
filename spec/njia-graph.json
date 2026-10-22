@@ -13,7 +13,11 @@
           "to": [
             "profileSwitch",
             "scanToken",
-            "consentDetailsForm"
+            "consentDetailsForm",
+            "authUserId",
+            "idDetailsForm",
+            "sdkFlow",
+            "sdkFlowFullScreen"
           ]
         },
         {
@@ -125,20 +129,106 @@
       "kind": "scanToken",
       "reach": "go",
       "link": "token/scan",
-      "tab": "products"
+      "tab": "products",
+      "to": [
+        "consentDetailsForm",
+        "authUserId",
+        "idDetailsForm",
+        "sdkFlow",
+        "sdkFlowFullScreen"
+      ]
+    },
+    {
+      "step": "countryPicker",
+      "kind": "countryPicker",
+      "reach": "go",
+      "link": "flow/:productId/id-details/country",
+      "presentation": "sheet",
+      "skipWhen": {
+        "noneOf": [
+          "needsIdDetails"
+        ]
+      }
+    },
+    {
+      "step": "idTypePicker",
+      "kind": "idTypePicker",
+      "reach": "go",
+      "link": "flow/:productId/id-details/id-type",
+      "presentation": "sheet",
+      "skipWhen": {
+        "noneOf": [
+          "needsIdDetails"
+        ]
+      }
+    },
+    {
+      "step": "documentPicker",
+      "kind": "documentPicker",
+      "reach": "go",
+      "link": "flow/:productId/id-details/document",
+      "presentation": "sheet",
+      "skipWhen": {
+        "noneOf": [
+          "needsIdDetails"
+        ]
+      }
+    },
+    {
+      "step": "captureAs",
+      "kind": "captureAs",
+      "reach": "go",
+      "link": "flow/:productId/id-details/capture-as",
+      "to": [
+        "genericDocument"
+      ],
+      "presentation": "sheet",
+      "skipWhen": {
+        "noneOf": [
+          "needsIdDetails"
+        ]
+      }
+    },
+    {
+      "step": "genericDocument",
+      "kind": "genericDocument",
+      "reach": "go",
+      "link": "flow/:productId/id-details/generic-document",
+      "presentation": "sheet",
+      "skipWhen": {
+        "noneOf": [
+          "needsIdDetails"
+        ]
+      }
     },
     {
       "step": "consentDetailsForm",
-      "kind": "userDetails",
+      "kind": "consentDetailsForm",
       "reach": "go",
       "link": "flow/:productId/details",
-      "tab": "products"
+      "tab": "products",
+      "to": [
+        "scanToken",
+        "consentDetailsForm",
+        "authUserId",
+        "idDetailsForm",
+        "sdkFlow",
+        "sdkFlowFullScreen"
+      ]
     },
     {
       "step": "authUserId",
       "kind": "authUserId",
       "reach": "go",
       "link": "flow/:productId/user-id",
+      "to": [
+        "scanToken",
+        "consentDetailsForm",
+        "authUserId",
+        "idDetailsForm",
+        "sdkFlow",
+        "sdkFlowFullScreen"
+      ],
       "skipWhen": {
         "noneOf": [
           "needsUserId"
@@ -147,10 +237,11 @@
     },
     {
       "step": "idDetailsForm",
-      "kind": "kycIdForm",
+      "kind": "idDetailsForm",
       "reach": "go",
       "link": "flow/:productId/id-details",
       "to": [
+        "scanToken",
         "countryPicker",
         "idTypePicker",
         "documentPicker",
@@ -168,56 +259,34 @@
       "reach": "go",
       "link": "flow/:productId/run",
       "to": [
-        "verificationDetails"
-      ]
+        "verificationDetails",
+        "scanToken",
+        "consentDetailsForm",
+        "authUserId"
+      ],
+      "skipWhen": {
+        "allOf": [
+          "fullScreenRun"
+        ]
+      }
     },
     {
       "step": "sdkFlowFullScreen",
-      "kind": "sdkFlow",
+      "kind": "sdkFlowFullScreen",
       "reach": "go",
       "link": "flow/:productId/run-fullscreen",
       "to": [
-        "verificationDetails"
+        "verificationDetails",
+        "scanToken",
+        "consentDetailsForm",
+        "authUserId"
       ],
+      "skipWhen": {
+        "noneOf": [
+          "fullScreenRun"
+        ]
+      },
       "presentation": "fullScreen"
-    },
-    {
-      "step": "countryPicker",
-      "kind": "countryPicker",
-      "reach": "go",
-      "link": "flow/:productId/id-details/country",
-      "presentation": "sheet"
-    },
-    {
-      "step": "idTypePicker",
-      "kind": "idTypePicker",
-      "reach": "go",
-      "link": "flow/:productId/id-details/id-type",
-      "presentation": "sheet"
-    },
-    {
-      "step": "documentPicker",
-      "kind": "documentPicker",
-      "reach": "go",
-      "link": "flow/:productId/id-details/document",
-      "presentation": "sheet"
-    },
-    {
-      "step": "captureAs",
-      "kind": "captureAs",
-      "reach": "go",
-      "link": "flow/:productId/id-details/capture-as",
-      "to": [
-        "genericDocument"
-      ],
-      "presentation": "sheet"
-    },
-    {
-      "step": "genericDocument",
-      "kind": "genericDocument",
-      "reach": "go",
-      "link": "flow/:productId/id-details/generic-document",
-      "presentation": "sheet"
     }
   ]
 }
