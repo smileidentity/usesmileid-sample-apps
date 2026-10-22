@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
@@ -149,10 +151,20 @@ GoRouterRedirect useSmileIDSampleAutostartRedirect(
   Uri? echo = autostartLink?.path == ''
       ? autostartLink?.replace(path: '/')
       : autostartLink;
+  Timer? expiry;
+  if (echo != null) {
+    // Bounded as the cold link is: a push later than the window after the first frame is a new link.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (echo != null) {
+        expiry = Timer(useSmileIDSampleColdLinkWindow, () => echo = null);
+      }
+    });
+  }
   return (BuildContext context, GoRouterState state) {
     // iOS pushes the cold link again after the first frame; folded, it would replace the run autostart opened.
     if (echo != null && state.uri == echo) {
       echo = null;
+      expiry?.cancel();
       return initialLocation;
     }
     return useSmileIDSampleFoldPlatformLink(context, state);
