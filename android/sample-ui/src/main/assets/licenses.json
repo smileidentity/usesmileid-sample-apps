@@ -1217,6 +1217,28 @@
       ]
     },
     {
+      "artifact": "androidx.lifecycle:lifecycle-viewmodel-navigation3-android",
+      "version": "2.10.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.lifecycle:lifecycle-viewmodel-navigation3",
+      "version": "2.10.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
       "artifact": "androidx.lifecycle:lifecycle-viewmodel-savedstate-android",
       "version": "2.10.0",
       "licenses": [
@@ -1305,6 +1327,50 @@
       ]
     },
     {
+      "artifact": "androidx.navigation3:navigation3-runtime-android",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.navigation3:navigation3-runtime",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.navigation3:navigation3-ui-android",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.navigation3:navigation3-ui",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
       "artifact": "androidx.navigation:navigation-common-android",
       "version": "2.9.8",
       "licenses": [
@@ -1372,7 +1438,7 @@
     },
     {
       "artifact": "androidx.navigationevent:navigationevent-android",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1383,7 +1449,7 @@
     },
     {
       "artifact": "androidx.navigationevent:navigationevent-compose-android",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1394,7 +1460,7 @@
     },
     {
       "artifact": "androidx.navigationevent:navigationevent-compose",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1405,7 +1471,7 @@
     },
     {
       "artifact": "androidx.navigationevent:navigationevent",
-      "version": "1.0.0",
+      "version": "1.2.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -2065,7 +2131,7 @@
     },
     {
       "artifact": "io.sentry:sentry-android-timber",
-      "version": "8.60.0",
+      "version": "8.61.0",
       "licenses": [
         {
           "id": "MIT",
@@ -2076,7 +2142,7 @@
     },
     {
       "artifact": "io.sentry:sentry",
-      "version": "8.60.0",
+      "version": "8.61.0",
       "licenses": [
         {
           "id": "MIT",

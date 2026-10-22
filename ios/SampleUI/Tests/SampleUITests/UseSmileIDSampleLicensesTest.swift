@@ -65,17 +65,22 @@ final class UseSmileIDSampleLicensesTest: XCTestCase {
     }
   }
 
-  /// Keyed per component, not per licence: sharing one copy would attribute one component's holder to another.
-  func testTheMitComponentsShareNeitherATextNorAHolder() {
-    let mit = licenses.components.filter { $0.licenseId == "MIT" }.compactMap(\.text)
+  /// A shared copy names one holder for all its components, so only one vendor's own packages share one.
+  func testOnlyOneVendorsMitComponentsShareAText() {
+    let mit = licenses.components.filter { $0.licenseId == "MIT" && $0.text != nil }
     XCTAssertGreaterThan(mit.count, 1, "expected more than one MIT component")
-    XCTAssertEqual(Set(mit).count, mit.count, "two MIT components share one text")
-    let holders = mit.compactMap { text in
-      text.split(separator: "\n").first { $0.lowercased().contains("copyright") }.map(String.init)
+    for notice in mit {
+      let text = notice.text?.lowercased() ?? ""
+      XCTAssertTrue(text.contains("copyright"), "\(notice.component) carries no copyright line")
     }
-    XCTAssertEqual(holders.count, mit.count, "an MIT text carries no copyright line")
-    XCTAssertEqual(Set(holders).count, holders.count, "two MIT components name one holder")
+    for group in Dictionary(grouping: mit, by: { $0.text ?? "" }).values where group.count > 1 {
+      let names = Set(group.map(\.component))
+      XCTAssertTrue(names.isSubset(of: Self.oneVendor), "\(names.sorted()) share one MIT text")
+    }
   }
+
+  /// Smile Identity's own packages, which ship one MIT text between them.
+  private static let oneVendor: Set<String> = ["kamera-spm", "njia-spm"]
 
   func testTheApacheTextShipsRatherThanBeingLinked() {
     let apache = licenses.components.filter { $0.licenseId == "Apache-2.0" }
