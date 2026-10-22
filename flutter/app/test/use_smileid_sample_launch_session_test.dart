@@ -21,6 +21,22 @@ class _Failing extends UseSmileIDSampleShellExtension {
       throw StateError('no session to offer');
 }
 
+class _Recording extends UseSmileIDSampleShellExtension {
+  final List<String> calls = <String>[];
+
+  @override
+  Future<void> onLaunch(String defaultRouteName) async {
+    await Future<void>.delayed(Duration.zero);
+    calls.add('onLaunch $defaultRouteName');
+  }
+
+  @override
+  UseSmileIDSampleTokenSession? launchSession() {
+    calls.add('launchSession');
+    return null;
+  }
+}
+
 void main() {
   final List<UseSmileIDSampleTokenSession> linked =
       <UseSmileIDSampleTokenSession>[];
@@ -51,6 +67,23 @@ void main() {
 
   test('an extension that fails to offer a session only skips it', () async {
     await useSmileIDSampleLinkLaunchSession(_Failing(), link);
+    expect(linked, isEmpty);
+  });
+
+  test(
+    'runs onLaunch to completion before it asks for the launch session',
+    () async {
+      final _Recording extension = _Recording();
+      await useSmileIDSampleLaunchExtension(extension, '/?e2eScenario=x', link);
+      expect(extension.calls, <String>[
+        'onLaunch /?e2eScenario=x',
+        'launchSession',
+      ]);
+    },
+  );
+
+  test('launches nothing without an extension', () async {
+    await useSmileIDSampleLaunchExtension(null, '/', link);
     expect(linked, isEmpty);
   });
 }

@@ -14,7 +14,6 @@ import {
   UseSmileIDSampleAppearance,
 } from '@smileid/sample-ui';
 import { useFonts } from 'expo-font';
-import * as Linking from 'expo-linking';
 import { NavigationBar } from 'expo-navigation-bar';
 import { Stack, router, useRootNavigationState } from 'expo-router';
 import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
@@ -23,9 +22,9 @@ import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useSmileIDSampleShellExtension } from '../src/extension';
-import { linkLaunchSession } from '../src/use-smile-id-sample-shell-extension';
+import { launchExtension } from '../src/use-smile-id-sample-shell-extension';
 import { useSmileIDSampleAppLanguage } from '../src/use-smile-id-sample-app-language';
-import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
+import { smileIDSampleLaunchUrl, useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 import { useSmileIDSampleDeviceScheme } from '../src/use-smile-id-sample-device-scheme';
@@ -66,15 +65,6 @@ export default function RootLayout() {
   useEffect(() => {
     void loadSettings();
   }, [loadSettings]);
-
-  useEffect(() => {
-    const onLaunch = useSmileIDSampleShellExtension?.onLaunch;
-    if (onLaunch) {
-      Linking.getInitialURL()
-        .then(onLaunch)
-        .catch(() => undefined);
-    }
-  }, []);
 
   const sessionLoaded = useSmileIDSampleSessionStore((state) => state.loaded);
   const loadSession = useSmileIDSampleSessionStore((state) => state.load);
@@ -128,7 +118,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!ready || !navigationReady || launched.current) return;
     launched.current = true;
-    void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
+    void launchExtension(useSmileIDSampleShellExtension, smileIDSampleLaunchUrl(), (session) =>
       useSmileIDSampleSessionStore.getState().link(session),
     )
       .catch(() => undefined)

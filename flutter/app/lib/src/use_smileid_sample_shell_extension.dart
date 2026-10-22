@@ -6,7 +6,7 @@ import 'package:usesmileid/usesmileid.dart';
 /// Developer tooling an SDK repo's source build adds to this app; a registry build has none.
 abstract class UseSmileIDSampleShellExtension {
   /// Extra rows for the Settings DEBUG section, which debug builds show.
-  List<Widget> debugRows(UseSmileIDSampleShellHost host) => const <Widget>[];
+  List<Widget> debugRows() => const <Widget>[];
 
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   void customiseFlow(
@@ -20,11 +20,21 @@ abstract class UseSmileIDSampleShellExtension {
     UseSmileIDSampleProduct product,
   ) {}
 
-  /// Runs once before the first frame, with the route the app was launched on.
+  /// Runs once before the first frame and before any other member, with the route the app was launched on.
   Future<void> onLaunch(String defaultRouteName) async {}
 
-  /// A session the shell links once at launch, before autostart, as if its token had been scanned.
+  /// A session the shell links once, after [onLaunch] and before autostart, as if its token had been scanned.
   UseSmileIDSampleTokenSession? launchSession() => null;
+}
+
+/// Runs the [extension]'s `onLaunch` with [route], then links its launch session through [link].
+Future<void> useSmileIDSampleLaunchExtension(
+  UseSmileIDSampleShellExtension? extension,
+  String route,
+  Future<void> Function(UseSmileIDSampleTokenSession session) link,
+) async {
+  await extension?.onLaunch(route);
+  await useSmileIDSampleLinkLaunchSession(extension, link);
 }
 
 /// Links the [extension]'s launch session through [link], if it offers one; a failed link only skips it.
@@ -38,21 +48,6 @@ Future<void> useSmileIDSampleLinkLaunchSession(
   } on Object {
     // Nothing to recover: the app starts without it, as it would without the extension.
   }
-}
-
-/// What the shell lets an extension do.
-class UseSmileIDSampleShellHost {
-  /// The two operations the shell grants.
-  const UseSmileIDSampleShellHost({
-    required this.linkTokenSession,
-    required this.openScenarioDrawer,
-  });
-
-  /// Links a session as a scanned token would.
-  final Future<void> Function(UseSmileIDSampleTokenSession) linkTokenSession;
-
-  /// Opens the scenario drawer.
-  final VoidCallback openScenarioDrawer;
 }
 
 /// The extension the app was bootstrapped with; null in a registry build.

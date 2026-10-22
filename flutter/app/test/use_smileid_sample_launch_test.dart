@@ -66,4 +66,27 @@ void main() {
       expect(at('/?seedJobs= true ').args.seedJobs, isTrue);
     });
   });
+
+  group('the start location', () {
+    test('is the autostart product\'s run, after the session links', () {
+      expect(
+        at('usesmileid-sample-flutter://?autostart=biometricKyc').startLocation,
+        '/flow/biometricKyc/run',
+      );
+      expect(
+        at(
+          'usesmileid-sample-flutter://verifications?autostart=biometricKyc',
+        ).startLocation,
+        '/flow/biometricKyc/run',
+      );
+    });
+
+    test('is the location when the link names no product', () {
+      expect(at('/').startLocation, '/products');
+      expect(
+        at('usesmileid-sample-flutter://settings?autostart=nope').startLocation,
+        '/settings',
+      );
+    });
+  });
 }
