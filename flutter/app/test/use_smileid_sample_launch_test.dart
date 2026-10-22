@@ -68,7 +68,7 @@ void main() {
   });
 
   group('the start location', () {
-    test('is the autostart product\'s run, after the session links', () {
+    test('is the run of the product autostart names', () {
       expect(
         at('usesmileid-sample-flutter://?autostart=biometricKyc').startLocation,
         '/flow/biometricKyc/run',

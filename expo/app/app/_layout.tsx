@@ -22,9 +22,9 @@ import { Appearance, Platform, useColorScheme, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useSmileIDSampleShellExtension } from '../src/extension';
-import { launchExtension } from '../src/use-smile-id-sample-shell-extension';
+import { linkLaunchSession } from '../src/use-smile-id-sample-shell-extension';
 import { useSmileIDSampleAppLanguage } from '../src/use-smile-id-sample-app-language';
-import { smileIDSampleLaunchUrl, useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
+import { useLaunchArgs, useLaunchArgsLoaded } from '../src/use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from '../src/use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from '../src/use-smile-id-sample-secure-session-storage';
 import { useSmileIDSampleDeviceScheme } from '../src/use-smile-id-sample-device-scheme';
@@ -118,7 +118,7 @@ export default function RootLayout() {
   useEffect(() => {
     if (!ready || !navigationReady || launched.current) return;
     launched.current = true;
-    void launchExtension(useSmileIDSampleShellExtension, smileIDSampleLaunchUrl(), (session) =>
+    void linkLaunchSession(useSmileIDSampleShellExtension, (session) =>
       useSmileIDSampleSessionStore.getState().link(session),
     )
       .catch(() => undefined)

@@ -28,13 +28,3 @@ export const linkLaunchSession = async (
     // Nothing to recover: the app runs without it, as it would without the extension.
   }
 };
-
-/// Runs the extension's `onLaunch` with the launch link, then links its launch session through `link`.
-export const launchExtension = async (
-  extension: UseSmileIDSampleShellExtension | null | undefined,
-  initialUrl: string | null,
-  link: (session: UseSmileIDSampleTokenSession) => Promise<void>,
-): Promise<void> => {
-  extension?.onLaunch?.(initialUrl);
-  await linkLaunchSession(extension, link);
-};

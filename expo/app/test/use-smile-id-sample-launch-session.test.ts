@@ -1,6 +1,6 @@
 import type { UseSmileIDSampleTokenSession } from '@smileid/sample-ui';
 
-import { launchExtension, linkLaunchSession } from '../src/use-smile-id-sample-shell-extension';
+import { linkLaunchSession } from '../src/use-smile-id-sample-shell-extension';
 
 const session = { id: 'launch-session' } as unknown as UseSmileIDSampleTokenSession;
 
@@ -45,33 +45,6 @@ describe('linkLaunchSession', () => {
     const link = jest.fn(() => Promise.resolve());
     const rejecting = { launchSession: () => Promise.reject(new Error('the test server did not start')) };
     await expect(linkLaunchSession(rejecting, link)).resolves.toBeUndefined();
-    expect(link).not.toHaveBeenCalled();
-  });
-});
-
-describe('launchExtension', () => {
-  it('runs onLaunch with the launch link before it asks for the session', async () => {
-    const calls: string[] = [];
-    const link = jest.fn(async () => {
-      calls.push('link');
-    });
-    await launchExtension(
-      {
-        onLaunch: (url) => calls.push(`onLaunch ${url}`),
-        launchSession: async () => {
-          calls.push('launchSession');
-          return session;
-        },
-      },
-      'usesmileid-sample-expo://?e2eScenario=x',
-      link,
-    );
-    expect(calls).toEqual(['onLaunch usesmileid-sample-expo://?e2eScenario=x', 'launchSession', 'link']);
-  });
-
-  it('launches nothing without an extension', async () => {
-    const link = jest.fn(() => Promise.resolve());
-    await launchExtension(null, null, link);
     expect(link).not.toHaveBeenCalled();
   });
 });

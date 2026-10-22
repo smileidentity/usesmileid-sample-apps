@@ -8,24 +8,37 @@ import {
   type UseSmileIDSampleLaunchArgs,
 } from '@smileid/sample-ui';
 
+import { useSmileIDSampleShellExtension } from './extension';
+
 type State = {
   readonly args: UseSmileIDSampleLaunchArgs;
-  /// The cold-start link the arguments were read from, or null when there was none.
-  readonly url: string | null;
   /// False until the cold-start link is read; the root waits on it.
   readonly loaded: boolean;
 };
 
-const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaults, url: null, loaded: false }));
+const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaults, loaded: false }));
 
 let reading: Promise<void> | null = null;
 
-/// Reads the cold-start link once per process, so a live link never re-seeds.
+/// Runs the extension's `onLaunch` with the cold-start link; a throw only skips it.
+const launchShellExtension = (url: string | null): void => {
+  try {
+    useSmileIDSampleShellExtension?.onLaunch?.(url);
+  } catch {
+    // Nothing to recover: the app runs as it would without the extension.
+  }
+};
+
+/// Reads the cold-start link once per process, so a live link never re-seeds; the extension launches before the root renders.
 export const smileIDSampleLoadLaunchArgs = (): Promise<void> => {
   reading ??= Linking.getInitialURL()
-    .then((url) => ({ args: smileIDSampleLaunchArgsFromUrl(url), url }))
-    .catch(() => ({ args: smileIDSampleLaunchArgDefaults, url: null }))
-    .then((read) => useLaunchStore.setState({ ...read, loaded: true }));
+    .catch(() => null)
+    .then((url) => {
+      launchShellExtension(url);
+      return smileIDSampleLaunchArgsFromUrl(url);
+    })
+    .catch(() => smileIDSampleLaunchArgDefaults)
+    .then((args) => useLaunchStore.setState({ args, loaded: true }));
   return reading;
 };
 
@@ -40,11 +53,8 @@ export const useLaunchArgs = (): UseSmileIDSampleLaunchArgs => {
 /// Whether the cold-start link has been read.
 export const useLaunchArgsLoaded = (): boolean => useLaunchStore((state) => state.loaded);
 
-/// The cold-start link, once read; null before then or when there was none.
-export const smileIDSampleLaunchUrl = (): string | null => useLaunchStore.getState().url;
-
 /// Forgets the read, for tests.
 export const smileIDSampleResetLaunchArgs = (): void => {
   reading = null;
-  useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, url: null, loaded: false });
+  useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: false });
 };
