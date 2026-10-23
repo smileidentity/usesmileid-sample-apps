@@ -36,15 +36,30 @@ jobs:
             echo "::error::'${RELEASE}' is not a release version such as 12.4.0"
             exit 1
           fi
-          tree() { gh api "repos/${REPO}/commits/$1" --jq .commit.tree.sha; }
-          if [ "$(tree main)" = "$(tree next)" ]; then
+          # Each read is assigned before it is compared, so a failed call stops the run instead of passing.
+          main_tree=$(gh api "repos/${REPO}/commits/main" --jq .commit.tree.sha)
+          next_tree=$(gh api "repos/${REPO}/commits/next" --jq .commit.tree.sha)
+          changed=$(gh api "repos/${REPO}/compare/main...next" --jq '.files | length')
+          if [ -z "${main_tree}" ] || [ -z "${next_tree}" ] || [ -z "${changed}" ]; then
+            echo "::error::could not read main and next"
+            exit 1
+          fi
+          if [ "${main_tree}" = "${next_tree}" ] || [ "${changed}" = 0 ]; then
             echo "::notice::main already holds everything on next, so there is nothing to promote"
             exit 0
           fi
           branch="sync/next-into-main-${version}"
+          heads=$(gh pr list -R "${REPO}" --base main --state open --json headRefName \
+            --jq '.[].headRefName | select(startswith("sync/next-into-main-"))')
+          others=$(grep -v -x -F "${branch}" <<<"${heads}" || true)
+          if [ -n "${others}" ]; then
+            echo "::error::another promotion is open from ${others}; close it, or run this with its version"
+            exit 1
+          fi
           sha=$(gh api "repos/${REPO}/git/ref/heads/next" --jq .object.sha)
           if gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
-            if [ "$(gh api "repos/${REPO}/compare/${branch}...next" --jq .behind_by)" != 0 ]; then
+            behind=$(gh api "repos/${REPO}/compare/${branch}...next" --jq .behind_by)
+            if [ "${behind}" != 0 ]; then
               echo "::error::${branch} has commits next doesn't; close its pull request and delete the branch, then run this again"
               exit 1
             fi
@@ -69,7 +84,7 @@ jobs:
 
           This branch is a copy of \`next\` at ${sha:0:8}, so the branch deletion that follows the merge leaves \`next\` as it is.
           EOF
-          if [ -n "$(gh pr list -R "${REPO}" --head "${branch}" --state open --json number --jq '.[].number')" ]; then
+          if grep -q -x -F "${branch}" <<<"${heads}"; then
             gh pr edit "${branch}" -R "${REPO}" --body-file "${RUNNER_TEMP}/body.md"
             echo "::notice::the pull request from ${branch} was already open; its branch and description now match next"
             exit 0
