@@ -27,46 +27,10 @@ Future<T?> showUseSmileIDSampleSheet<T>({
     backgroundColor: colors.surface,
     barrierColor: colors.overlayScrim,
     shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
-    builder: (BuildContext sheetContext) => UseSmileIDSampleTextMetrics(
-      child: Semantics(
-        identifier: testId,
-        container: true,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            const _GrabHandle(),
-            Flexible(
-              child: SingleChildScrollView(
-                // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
-                padding: EdgeInsets.only(
-                  left: _sheetMargin,
-                  right: _sheetMargin,
-                  bottom:
-                      SmileDimens.spacingLg + _navigationBarInset(sheetContext),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (title != null) ...<Widget>[
-                      Text(
-                        title,
-                        style: UseSmileIDSampleType.textStyleHeadingSection
-                            .copyWith(
-                              fontWeight: FontWeight.w700,
-                              color: colors.textTitle,
-                            ),
-                      ),
-                      const SizedBox(height: SmileDimens.spacingSm),
-                    ],
-                    builder(sheetContext),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+    builder: (BuildContext sheetContext) => UseSmileIDSamplePartialSheetBody(
+      title: title,
+      testId: testId,
+      child: builder(sheetContext),
     ),
   );
 }
@@ -88,24 +52,128 @@ Future<T?> showUseSmileIDSampleFullHeightSheet<T>({
     barrierColor: colors.overlayScrim,
     shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
     constraints: const BoxConstraints.expand(),
-    builder: (BuildContext sheetContext) => UseSmileIDSampleTextMetrics(
+    builder: (BuildContext sheetContext) => UseSmileIDSampleFullHeightSheetBody(
+      title: title,
+      testId: testId,
+      onClose: () => Navigator.of(sheetContext).pop(),
+      child: builder(sheetContext),
+    ),
+  );
+}
+
+/// A partial sheet's content on the sheet's surface, for a host that draws the sheet's window and scrim itself.
+class UseSmileIDSamplePartialSheetBody extends StatelessWidget {
+  /// [child] under the grab handle and the optional [title].
+  const UseSmileIDSamplePartialSheetBody({
+    required this.child,
+    this.title,
+    this.testId,
+    super.key,
+  });
+
+  /// The sheet's content.
+  final Widget child;
+
+  /// The heading over the content, if any.
+  final String? title;
+
+  /// The sheet's test id.
+  final String? testId;
+
+  @override
+  Widget build(BuildContext context) {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      context,
+    );
+    // A Material, not a bare colour: njia's sheet route has none, and text and ink need one above them.
+    return Material(
+      color: colors.surface,
+      child: UseSmileIDSampleTextMetrics(
+        child: Semantics(
+          identifier: testId,
+          container: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              const _GrabHandle(),
+              Flexible(
+                child: SingleChildScrollView(
+                  // Scrolls rather than clips, so enlarged type cannot push a CTA out of reach.
+                  padding: EdgeInsets.only(
+                    left: _sheetMargin,
+                    right: _sheetMargin,
+                    bottom:
+                        SmileDimens.spacingLg + _navigationBarInset(context),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      if (title != null) ...<Widget>[
+                        Text(
+                          title!,
+                          style: UseSmileIDSampleType.textStyleHeadingSection
+                              .copyWith(
+                                fontWeight: FontWeight.w700,
+                                color: colors.textTitle,
+                              ),
+                        ),
+                        const SizedBox(height: SmileDimens.spacingSm),
+                      ],
+                      child,
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A full-height sheet's content on the sheet's surface, for a host that draws the sheet's window and scrim itself.
+class UseSmileIDSampleFullHeightSheetBody extends StatelessWidget {
+  /// [child] under a header titled [title] whose back control calls [onClose].
+  const UseSmileIDSampleFullHeightSheetBody({
+    required this.title,
+    required this.onClose,
+    required this.child,
+    this.testId,
+    super.key,
+  });
+
+  /// The sheet's title.
+  final String title;
+
+  /// What the header's back control does.
+  final VoidCallback onClose;
+
+  /// The sheet's content.
+  final Widget child;
+
+  /// The sheet's test id.
+  final String? testId;
+
+  @override
+  Widget build(BuildContext context) => Material(
+    color: UseSmileIDSampleTheme.colorsOf(context).surface,
+    child: UseSmileIDSampleTextMetrics(
       child: Semantics(
         identifier: testId,
         container: true,
         child: Column(
           children: <Widget>[
-            UseSmileIDSampleSheetHeader(
-              title: title,
-              onClose: () => Navigator.of(sheetContext).pop(),
-            ),
+            UseSmileIDSampleSheetHeader(title: title, onClose: onClose),
             Expanded(
               child: Padding(
                 padding: EdgeInsets.only(
                   left: _sheetMargin,
                   right: _sheetMargin,
-                  bottom: _navigationBarInset(sheetContext),
+                  bottom: _navigationBarInset(context),
                 ),
-                child: builder(sheetContext),
+                child: child,
               ),
             ),
           ],
