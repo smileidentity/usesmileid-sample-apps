@@ -1,13 +1,14 @@
 [versions]
-# The SDK's latest snapshot, from Maven Central's snapshot repository.
-usesmileid = "12.3.0-SNAPSHOT"
-usesmileid-bom = "12.3.0-SNAPSHOT"
-usesmileid-mlkit-face = "12.3.0-SNAPSHOT"
-usesmileid-mlkit-document = "12.3.0-SNAPSHOT"
-usesmileid-huawei-face = "12.3.0-SNAPSHOT"
-usesmileid-huawei-document = "12.3.0-SNAPSHOT"
+# The SDK snapshot builds made against njia's pinned build; a bare -SNAPSHOT can resolve a build made against another njia.
+usesmileid = "12.3.0-20261023.083151-211"
+usesmileid-bom = "12.3.0-20261023.083151-211"
+usesmileid-mlkit-face = "12.3.0-20261023.083151-208"
+usesmileid-mlkit-document = "12.3.0-20261023.083151-209"
+usesmileid-huawei-face = "12.3.0-20261023.083151-210"
+usesmileid-huawei-document = "12.3.0-20261023.083151-210"
+usesmileid-bridge = "12.3.0-20261023.083151-210"
 # The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
-njia = "0.0.1-20261022.224439-5"
+njia = "0.0.1-20261023.003202-6"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.21"
@@ -19,11 +20,9 @@ androidx-browser = "1.9.0"
 androidx-compose-bom = "2026.06.01"
 androidx-core = "1.16.0"
 androidx-datastore = "1.2.1"
-androidx-navigation = "2.9.8"
 androidx-room = "2.8.4"
 # Debug builds only: the in-app network log, the Android twin of the iOS app's Loupe.
 chucker = "4.3.1"
-destinations = "2.3.0"
 # Pinned to what the SDK resolves at runtime; a divergence is a finding, never something Gradle reconciles in silence.
 camerax = "1.6.1"
 # The bundled model, never the play-services variant: the sample must run on GMS-free devices.
@@ -39,6 +38,7 @@ roborazzi = "1.76.0"
 
 [libraries]
 njia = { module = "com.usesmileid:njia", version.ref = "njia" }
+njia-compose = { module = "com.usesmileid:njia-compose", version.ref = "njia" }
 usesmileid-bom = { module = "com.usesmileid:usesmileid-bom", version.ref = "usesmileid-bom" }
 usesmileid = { module = "com.usesmileid:usesmileid", version.ref = "usesmileid" }
 usesmileid-mlkit-face = { module = "com.usesmileid:mlkit-face", version.ref = "usesmileid-mlkit-face" }
@@ -56,11 +56,11 @@ androidx-compose-ui-test-manifest = { module = "androidx.compose.ui:ui-test-mani
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "androidx-core" }
 androidx-datastore-preferences = { module = "androidx.datastore:datastore-preferences", version.ref = "androidx-datastore" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "androidx-room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "androidx-room" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 retrofit-converter-kotlinx-serialization = { module = "com.squareup.retrofit2:converter-kotlinx-serialization", version.ref = "retrofit" }
-androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 chucker = { module = "com.github.chuckerteam.chucker:library", version.ref = "chucker" }
 
 androidx-camera-camera2 = { module = "androidx.camera:camera-camera2", version.ref = "camerax" }
@@ -69,8 +69,6 @@ androidx-camera-core = { module = "androidx.camera:camera-core", version.ref = "
 androidx-camera-lifecycle = { module = "androidx.camera:camera-lifecycle", version.ref = "camerax" }
 mlkit-barcode-scanning = { module = "com.google.mlkit:barcode-scanning", version.ref = "mlkit-barcode" }
 
-destinations = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "destinations" }
-destinations-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "destinations" }
 
 junit = { module = "junit:junit", version.ref = "junit" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }

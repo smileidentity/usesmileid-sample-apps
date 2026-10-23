@@ -1,43 +1,41 @@
 package com.usesmileid.sampleapps.android.flow
 
-import com.ramcosta.composedestinations.generated.destinations.AuthUserIdScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ConsentDetailsFormScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.IdDetailsFormScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ScanTokenScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
-import com.ramcosta.composedestinations.spec.Direction
+import com.usesmileid.njia.NjiaGraph
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleFact
+import com.usesmileid.sampleapps.android.navigation.UseSmileIDSampleStep
+import com.usesmileid.sampleapps.android.navigation.njiaFactsFor
+import com.usesmileid.sampleapps.android.navigation.njiaFirstStepFor
+import com.usesmileid.sampleapps.android.navigation.useSmileIDSampleFacts
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleResumePoint
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 
-/** A product tap: the scanner first when no live session backs the run, since every run submits under a token. */
-internal fun UseSmileIDSampleAppState.entryFor(product: UseSmileIDSampleProduct): Direction {
+/** Where a run starts: the facts it runs under and the step a product tap goes to. */
+internal data class UseSmileIDSampleRunEntry(val facts: Set<UseSmileIDSampleFact>, val step: String)
+
+/** A product tap's run, or null when no live session backs it and the scanner comes first, since every run submits under a token. */
+internal fun UseSmileIDSampleAppState.entryFor(
+    graph: NjiaGraph<UseSmileIDSampleStep, UseSmileIDSampleFact>,
+    product: UseSmileIDSampleProduct,
+): UseSmileIDSampleRunEntry? {
     if (session?.hasExpired(System.currentTimeMillis()) != false) {
         interruptedRun.send(UseSmileIDSampleRunIntent(product.id, launchArgs.route, UseSmileIDSampleResumePoint.FirstStep))
-        return ScanTokenScreenDestination
+        return null
     }
-    return firstStepFor(product)
+    return runEntryFor(graph, product)
 }
 
-/** Where a product starts: a form is skipped only when the token already carries all of it. */
-internal fun UseSmileIDSampleAppState.firstStepFor(product: UseSmileIDSampleProduct): Direction =
-    if (!tokenBindsUserDetails) {
-        ConsentDetailsFormScreenDestination(productId = product.id)
-    } else {
-        stepAfterUserDetails(product)
-    }
+/** Where [product] starts under this launch and its token: a form is skipped only when the token already carries all of it. */
+internal fun UseSmileIDSampleAppState.runEntryFor(
+    graph: NjiaGraph<UseSmileIDSampleStep, UseSmileIDSampleFact>,
+    product: UseSmileIDSampleProduct,
+): UseSmileIDSampleRunEntry = UseSmileIDSampleRunEntry(njiaFactsFor(product), njiaFirstStepFor(graph, product))
 
-/** What follows user details, shared with that form's own Continue so the two routes cannot drift. */
-internal fun UseSmileIDSampleAppState.stepAfterUserDetails(product: UseSmileIDSampleProduct): Direction = when {
-    product == UseSmileIDSampleProduct.SmartSelfieAuth -> AuthUserIdScreenDestination(productId = product.id)
-    product.needsIdDetails && !tokenBindsIdDetails(product) -> IdDetailsFormScreenDestination(productId = product.id)
-    else -> sdkFlow(product.id)
-}
-
-/**
- * The wizard's last hop, carrying the launched presentation (R3). Without it the in-shell route is
- * unreachable with a payload: its other carriers are cold starts, where the forms are always empty.
- */
-internal fun UseSmileIDSampleAppState.sdkFlow(productId: String) =
-    SdkFlowScreenDestination(productId = productId, route = launchArgs.route)
+/** Straight into the run on [route], past every form, as an autostart or a resumed run goes. */
+internal fun UseSmileIDSampleAppState.runOnly(product: UseSmileIDSampleProduct, route: UseSmileIDSampleFlowRoute): UseSmileIDSampleRunEntry =
+    UseSmileIDSampleRunEntry(
+        useSmileIDSampleFacts(product, tokenBindsIdDetails(product), route),
+        (if (route == UseSmileIDSampleFlowRoute.Fullscreen) UseSmileIDSampleStep.SdkFlowFullScreen else UseSmileIDSampleStep.SdkFlow).wireName,
+    )

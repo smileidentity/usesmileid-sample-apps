@@ -2,13 +2,9 @@ package com.usesmileid.sampleapps.android.flow
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.SdkFlowScreenDestinationNavArgs
 
-/** Route-derived identity, so a buffered SDK result is never orphaned on recreation (R6). */
+/** Scoped to the run's njia entry, so a buffered SDK result is never orphaned on recreation (R6). */
 class SdkFlowViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel() {
-
-    val args: SdkFlowScreenDestinationNavArgs = SdkFlowScreenDestination.argsFrom(savedStateHandle)
 
     /** Read once at entry and never while the flow runs (§8.1). */
     var snapshot: FlowLaunchSnapshot? = null

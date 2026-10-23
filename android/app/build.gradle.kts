@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
-    alias(libs.plugins.ksp)
     alias(libs.plugins.kotlin.serialization)
 }
 
@@ -132,6 +131,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 tasks.withType<Test>().configureEach {
+    // Robolectric's trace shadow keeps every section Compose opens, so the default 512 MB fills and kills the recomposer for later tests.
+    maxHeapSize = "2g"
     // Robolectric 4.17 reaches into OpenJDK internals, which are closed by default from JDK 17 on.
     jvmArgs(
         "--add-opens=java.base/java.lang=ALL-UNNAMED",
@@ -322,6 +323,7 @@ dependencies {
     implementation(libs.usesmileid.mlkit.face)
     implementation(libs.usesmileid.mlkit.document)
     implementation(libs.njia)
+    implementation(libs.njia.compose)
     "appgalleryImplementation"(libs.usesmileid.huawei.face)
     "appgalleryImplementation"(libs.usesmileid.huawei.document)
 
@@ -332,16 +334,13 @@ dependencies {
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
-    implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     implementation(libs.androidx.camera.camera2)
     implementation(libs.androidx.camera.compose)
     implementation(libs.androidx.camera.core)
     implementation(libs.androidx.camera.lifecycle)
     implementation(libs.mlkit.barcode.scanning)
-
-    implementation(libs.destinations)
-    ksp(libs.destinations.ksp)
 
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.retrofit)

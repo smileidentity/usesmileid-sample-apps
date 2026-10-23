@@ -25,10 +25,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ClipEntry
 import androidx.compose.ui.platform.LocalClipboard
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.destinations.VerificationDetailsScreenDestination
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
@@ -47,11 +43,11 @@ import kotlinx.coroutines.launch
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen as VerificationDetailsContent
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen as VerificationsContent
 
-/** The verifications tab's routes. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
+/** The verifications tab's steps: its root and one verification's details. */
 
-@Destination<VerificationsGraph>(start = true, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.VERIFICATIONS)])
+/** The verifications tab's root. */
 @Composable
-fun VerificationsScreen(navigator: DestinationsNavigator) {
+internal fun VerificationsScreen(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
     val screen = rememberVerificationsScreenState()
     val notice = rememberTransientNotice()
@@ -106,7 +102,7 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
             onFilterChange = { screen.filter = it },
             onSelectModeChange = screen::changeSelectMode,
             onSelectionChange = screen::setSelection,
-            onJobClick = { navigator.navigate(VerificationDetailsScreenDestination(jobId = it.id)) },
+            onJobClick = { scope.navigator.go(UseSmileIDSampleStep.VerificationDetails, arg = it.id) },
             onRemove = removeJobs,
         )
         // Collected, not polled: the store emits each removal batch exactly once, so a removal made
@@ -138,12 +134,12 @@ fun VerificationsScreen(navigator: DestinationsNavigator) {
 }
 
 /** Also the post-submission landing route: on a result the flow and both forms are replaced. */
-@Destination<VerificationsGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.VERIFICATION_DETAILS)])
 @Composable
-fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
+internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
+    val jobId = scope.entry.arg.orEmpty()
     val app = LocalUseSmileIDSampleAppState.current
     val clipboard = LocalClipboard.current
-    val scope = rememberCoroutineScope()
+    val coroutines = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     val notice = rememberTransientNotice()
     val resources = LocalResources.current
@@ -155,17 +151,17 @@ fun VerificationDetailsScreen(jobId: String, navigator: DestinationsNavigator) {
             jobId = jobId,
             job = job,
             result = app.flowResult.snapshot,
-            onBack = { navigator.navigateUp() },
-            onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; navigator.navigateUp() },
+            onBack = scope.navigator::back,
+            onDelete = { app.storeScope.launch { app.jobStore.remove(setOf(jobId)) }; scope.navigator.back() },
             onCopy = { label, value ->
-                scope.launch {
+                coroutines.launch {
                     clipboard.setClipEntry(ClipEntry(ClipData.newPlainText(label, value)))
                     // Android 13 shows its own confirmation; below it there is none.
                     if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) notice.show(resources.getString(R.string.sample_details_copied, label))
                 }
             },
             onRefresh = {
-                scope.launch {
+                coroutines.launch {
                     refreshing = true
                     val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
                     refreshing = false

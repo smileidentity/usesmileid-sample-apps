@@ -1,43 +1,43 @@
 package com.usesmileid.sampleapps.android.navigation
 
 import com.usesmileid.sampleapps.android.BuildConfig
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 
-/**
- * The deep-link URI for every route. Paths are shared across the four sample apps; the scheme is
- * per app, which is why these live in the shell and never in the shared UI module.
- */
+/** A deep link as the graph reads it: the [path] it opens and, for the run, the [route] it asked for. */
+internal data class UseSmileIDSampleLink(val path: String, val route: UseSmileIDSampleFlowRoute?)
+
+/** The app's URIs: paths are shared across the four apps and are `spec/njia-graph.json`'s links; the scheme is per app. */
 internal object UseSmileIDSampleDeepLinks {
     const val SCHEME = BuildConfig.URL_SCHEME
+    private const val GALLERY = "debug/components"
 
-    const val PRODUCTS = "$SCHEME://products"
-    const val VERIFICATIONS = "$SCHEME://verifications"
-    const val VERIFICATION_DETAILS = "$SCHEME://verifications/{jobId}"
-    const val SETTINGS = "$SCHEME://settings"
+    /** Dev-only, so in neither `spec/routes.json` nor the graph; still linkable, because reaching it cold is how a flow drives it. */
+    const val COMPONENT_GALLERY = "$SCHEME://$GALLERY"
 
-    const val CONSENT_DETAILS_FORM = "$SCHEME://flow/{productId}/details"
-    const val AUTH_USER_ID = "$SCHEME://flow/{productId}/user-id"
-    const val ID_DETAILS_FORM = "$SCHEME://flow/{productId}/id-details"
-    const val COUNTRY_PICKER = "$SCHEME://flow/{productId}/id-details/country"
-    const val ID_TYPE_PICKER = "$SCHEME://flow/{productId}/id-details/id-type"
-    const val DOCUMENT_PICKER = "$SCHEME://flow/{productId}/id-details/document"
-    const val CAPTURE_AS = "$SCHEME://flow/{productId}/id-details/capture-as"
-    const val GENERIC_DOCUMENT = "$SCHEME://flow/{productId}/id-details/generic-document"
-    const val SDK_FLOW = "$SCHEME://flow/{productId}/run?route={route}"
+    /** The graph link [uri] opens, or null for one outside this app's scheme or the dev gallery. */
+    fun linkOf(uri: String, scheme: String = SCHEME): UseSmileIDSampleLink? {
+        val prefix = "$scheme://"
+        if (!uri.startsWith(prefix)) return null
+        val path = uri.removePrefix(prefix).substringBefore('#').substringBefore('?').trimEnd('/')
+        if (path.isEmpty() || path == GALLERY) return null
+        val segments = path.split('/')
+        if (segments.size != RUN_SEGMENTS || segments[0] != FLOW || segments[2] != RUN) return UseSmileIDSampleLink(path, route = null)
+        val asked = queryOf(uri)[ROUTE]
+        // One URI, two presentations: `spec/routes.json` defaults the run to full screen, which the graph names apart.
+        val route = UseSmileIDSampleFlowRoute.entries.firstOrNull { it.id == asked } ?: UseSmileIDSampleFlowRoute.Fullscreen
+        return UseSmileIDSampleLink(if (route == UseSmileIDSampleFlowRoute.Fullscreen) "$path$FULL_SCREEN" else path, route)
+    }
 
-    const val PROFILES = "$SCHEME://profiles"
-    // androidx ranks argument-free deep links first, so these beat /profiles/{profileId}.
-    const val PROFILE_SWITCH = "$SCHEME://profiles/switch"
-    const val NEW_PROFILE = "$SCHEME://profiles/new"
-    const val PROFILE_CONFIG = "$SCHEME://profiles/{profileId}"
+    /** The product a `flow/…` link runs, as its second segment names it. */
+    fun productIdOf(link: UseSmileIDSampleLink): String? =
+        link.path.split('/').takeIf { it.size >= 2 && it[0] == FLOW }?.get(1)
 
-    const val LICENSES = "$SCHEME://settings/licenses"
-    const val CAPTURE_MODE = "$SCHEME://settings/capture-mode"
-    const val APPEARANCE = "$SCHEME://settings/appearance"
-    const val LANGUAGE = "$SCHEME://settings/language"
+    private fun queryOf(uri: String): Map<String, String> =
+        uri.substringAfter('?', "").substringBefore('#').split('&').filter { '=' in it }.associate { it.substringBefore('=') to it.substringAfter('=') }
 
-    const val SCAN_TOKEN = "$SCHEME://token/scan"
-    const val SCENARIO_DRAWER = "$SCHEME://debug/scenarios"
-
-    // Dev-only, so not in spec/routes.json; still linkable because reaching it cold is how a flow drives it.
-    const val COMPONENT_GALLERY = "$SCHEME://debug/components"
+    private const val FLOW = "flow"
+    private const val RUN = "run"
+    private const val ROUTE = "route"
+    private const val RUN_SEGMENTS = 3
+    private const val FULL_SCREEN = "-fullscreen"
 }
