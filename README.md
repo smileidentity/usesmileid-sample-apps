@@ -63,7 +63,7 @@ takes once installed, these apps' own sizes for comparison, and how they are mea
 | Platform | Needs |
 |---|---|
 | Android | JDK 21 or newer, and an Android SDK with API 37 |
-| iOS | Xcode 26, and [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
+| iOS | Xcode 27.1, and [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
 | Flutter | The Flutter stable channel |
 | Expo | Node 20.19 or newer, and pnpm 9 |
 

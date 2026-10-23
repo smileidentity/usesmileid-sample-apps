@@ -32,7 +32,7 @@ permissions:
 
 jobs:
   publish:
-    runs-on: blacksmith-6vcpu-macos-26
+    runs-on: blacksmith-6vcpu-macos-27
     # Store credentials are scoped to this environment, and its reviewers approve every run.
     environment: release
     timeout-minutes: 90
@@ -83,8 +83,8 @@ jobs:
           fi
           xcodebuild -version
         env:
-          XCODE_VERSION: "26.6"
-          XCODE_BUILD: 17F113
+          XCODE_VERSION: "27.1"
+          XCODE_BUILD: 27A9275
 
       - name: Install XcodeGen
         run: brew install xcodegen
