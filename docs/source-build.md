@@ -56,11 +56,15 @@ its pin to the result.
 The **Promote next** workflow (`promote-next.yml`) opens that merge, named for the release: run it
 with the version that shipped. Its head is a copy of `next`, because merging a pull request deletes
 its head branch and `next` must never be deleted. Once it merges, merge `main` back into `next`, then
-run `bump_sample_apps.yaml` in each SDK repository to pin `main`. A promotion held open because `next`
-needs a newer SDK is replaced when Promote next runs for that version. A promotion with conflicts is
-resolved on `next`, by merging `main` into it, and Promote next is run again; never on the promotion branch. It runs in the `release`
-environment, whose `PROMOTE_NEXT_TOKEN` is a token for this repository alone, with contents and pull
-requests write: a pull request opened with the workflow's own token starts no checks.
+run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
+
+- A promotion held open because `next` needs a newer SDK is replaced when Promote next runs for that
+  version.
+- Conflicts are resolved on `next`, by merging `main` into it, and then Promote next runs again; never
+  on the promotion branch.
+- It runs in the `release` environment. Its `PROMOTE_NEXT_TOKEN` is a token for this repository alone,
+  because a pull request opened with the workflow's own token starts no checks. It needs contents,
+  pull requests and workflows write, the last because a promotion can carry workflow changes.
 
 ## The reserved `e2eScenario` argument
 

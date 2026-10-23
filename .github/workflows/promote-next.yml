@@ -50,13 +50,13 @@ jobs:
           fi
           branch="sync/next-into-main-${version}"
           # One promotion is open at a time, named for the latest release: an older one is replaced once this one is open.
-          heads=$(gh api "repos/${REPO}/pulls?base=main&state=open&per_page=100" --jq '.[] | select(.head.repo.full_name
+          heads=$(gh api --paginate "repos/${REPO}/pulls?base=main&state=open&per_page=100" --jq '.[] | select(.head.repo.full_name
             == .base.repo.full_name and (.head.ref | test("^sync/next-into-main-[0-9]+\\.[0-9]+\\.[0-9]+$"))) | .head.ref')
           older=()
           for open in $(grep -v -x -F "${branch}" <<<"${heads}" || true); do
             other="${open#sync/next-into-main-}"
             if [ "$(printf '%s\n%s\n' "${other}" "${version}" | sort -V | tail -1)" = "${other}" ]; then
-              echo "::error::the ${other} promotion is open, which is newer than ${version}; run this with ${other} or a later version"
+              echo "::error::the ${other} promotion is open, which is newer than ${version}; run this with ${other} or a later version, or close that pull request if it was opened by mistake"
               exit 1
             fi
             older+=("${open}")
