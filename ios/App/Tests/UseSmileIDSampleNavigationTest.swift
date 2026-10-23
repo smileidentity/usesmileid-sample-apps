@@ -42,6 +42,14 @@ final class UseSmileIDSampleNavigationTest: XCTestCase {
     XCTAssertEqual(model.state.top?.arg, "p-2")
   }
 
+  func testALinkToAnotherTabDropsARunRatherThanParkingIt() throws {
+    let model = try model()
+    _ = try startedRun(model)
+    model.open("settings", facts: [])
+    model.engine.select("products")
+    XCTAssertEqual(steps(model), ["products"])
+  }
+
   func testALinkIntoTheSameTabReplacesItsStack() throws {
     let model = try model()
     model.open("profiles/p-2", facts: [])
