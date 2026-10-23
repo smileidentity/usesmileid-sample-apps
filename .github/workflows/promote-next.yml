@@ -41,7 +41,9 @@ jobs:
           fi
           branch="sync/next-into-main-${version}"
           sha=$(gh api "repos/${REPO}/git/ref/heads/next" --jq .object.sha)
-          if ! gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
+          if gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
+            gh api -X PATCH "repos/${REPO}/git/refs/heads/${branch}" -f sha="${sha}" --silent
+          else
             gh api -X POST "repos/${REPO}/git/refs" -f ref="refs/heads/${branch}" -f sha="${sha}" --silent
           fi
           if [ -n "$(gh pr list -R "${REPO}" --head "${branch}" --state open --json number --jq '.[].number')" ]; then
