@@ -63,6 +63,13 @@
     <string name="si_preview_accessibility_image">התמונה שצולמה. בדוק אותה, ולאחר מכן הקש על אישור כדי להמשיך או על צלם שוב כדי לצלם מחדש.</string>
     <string name="si_processing_submitting">שולח…</string>
     <string name="si_processing_submitting_subtitle">זה עשוי לקחת רגע…\nאל תסגור או תרענן דף זה</string>
+    <string name="si_processing_still_working">עדיין עובדים. זה עשוי לקחת קצת יותר זמן בחיבור איטי.</string>
+    <string name="si_progress_step">שלב {current} מתוך {total}</string>
+    <string name="si_progress_done">כל השלבים הושלמו</string>
+    <string name="si_progress_stage_selfie">סלפי</string>
+    <string name="si_progress_stage_document_front">חזית התעודה</string>
+    <string name="si_progress_stage_document_back">גב התעודה</string>
+    <string name="si_progress_stage_visa">ויזה</string>
     <string name="si_processing_success_title">השליחה הושלמה</string>
     <string name="si_processing_success_message">תודה על השליחה. אנו מאמתים כעת את הפרטים שלך.</string>
     <string name="si_processing_failed_title">השליחה נכשלה</string>
