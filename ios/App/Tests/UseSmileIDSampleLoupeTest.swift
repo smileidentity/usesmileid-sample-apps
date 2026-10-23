@@ -382,11 +382,9 @@ final class UseSmileIDSampleLoupeTest: XCTestCase {
   func testASessionExportReadsOldestFirstBecauseTheStoreIsNewestFirst() throws {
     let text = LoupeExport.text(for: [Self.record(path: "/second"), Self.record(path: "/first")])
 
-    let first = try? XCTUnwrap(text.range(of: "/first"))
-    let second = try? XCTUnwrap(text.range(of: "/second"))
-    XCTAssertNotNil(first)
-    XCTAssertNotNil(second)
-    XCTAssertTrue(try XCTUnwrap(first?.lowerBound) < second!.lowerBound, "expected /first before /second")
+    let first = try XCTUnwrap(text.range(of: "/first"))
+    let second = try XCTUnwrap(text.range(of: "/second"))
+    XCTAssertTrue(first.lowerBound < second.lowerBound, "expected /first before /second")
   }
 
   func testTheProtocolTellsTheClientNotToCacheWhatItForwards() {
