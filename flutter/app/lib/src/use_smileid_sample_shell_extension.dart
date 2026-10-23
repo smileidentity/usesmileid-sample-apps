@@ -5,7 +5,10 @@ import 'package:usesmileid/usesmileid.dart';
 
 /// Developer tooling an SDK repo's source build adds to this app; a registry build has none.
 abstract class UseSmileIDSampleShellExtension {
-  /// Extra rows for the Settings DEBUG section, which debug builds show.
+  /// Rows for the Settings DEBUG section above the shell's own, such as an identity the rows below refer to.
+  List<Widget> leadingDebugRows() => const <Widget>[];
+
+  /// Extra rows for the Settings DEBUG section, below the shell's own, which debug builds show.
   List<Widget> debugRows() => const <Widget>[];
 
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
@@ -67,3 +70,8 @@ Future<void> useSmileIDSampleLinkLaunchSession(
 final Provider<UseSmileIDSampleShellExtension?>
 useSmileIDSampleShellExtensionProvider =
     Provider<UseSmileIDSampleShellExtension?>((Ref ref) => null);
+
+/// The DEBUG section's rows below Scenarios: the [extension]'s leading rows, then its others; this shell draws none of its own.
+List<Widget> useSmileIDSampleDebugRows(
+  UseSmileIDSampleShellExtension? extension,
+) => <Widget>[...?extension?.leadingDebugRows(), ...?extension?.debugRows()];

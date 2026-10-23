@@ -241,7 +241,7 @@ struct UseSmileIDSampleDestination: View {
         onLanguage: { navigator.go(.language) },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { navigator.go(.scenarioDrawer) } : nil,
-        debugRows: useSmileIDSampleShellExtension?.debugRows() ?? AnyView(EmptyView()),
+        debugRows: AnyView(UseSmileIDSampleDebugRows(extension: useSmileIDSampleShellExtension)),
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.signOut()
           // The bar's own cross-tab switch, so the stack lands where selecting Products would.
