@@ -56,7 +56,9 @@ its pin to the result.
 The **Promote next** workflow (`promote-next.yml`) opens that merge, named for the release: run it
 with the version that shipped. Its head is a copy of `next`, because merging a pull request deletes
 its head branch and `next` must never be deleted. Once it merges, merge `main` back into `next`, then
-run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
+run `bump_sample_apps.yaml` in each SDK repository to pin `main`. It runs in the `release`
+environment, whose `PROMOTE_NEXT_TOKEN` is a token for this repository alone, with contents and pull
+requests write: a pull request opened with the workflow's own token starts no checks.
 
 ## The reserved `e2eScenario` argument
 

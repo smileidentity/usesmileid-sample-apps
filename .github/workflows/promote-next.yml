@@ -14,7 +14,7 @@ concurrency:
   group: promote-next
   cancel-in-progress: false
 
-# The pull request is opened with GH_PAT so its checks run: one opened with GITHUB_TOKEN starts none.
+# The pull request is opened with a token so its checks run: one opened with GITHUB_TOKEN starts none.
 permissions:
   contents: read
 
@@ -22,8 +22,9 @@ jobs:
   promote:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    environment: release
     env:
-      GH_TOKEN: ${{ secrets.GH_PAT }}
+      GH_TOKEN: ${{ secrets.PROMOTE_NEXT_TOKEN }}
       REPO: ${{ github.repository }}
       # Read through env, so the input can't inject shell.
       RELEASE: ${{ inputs.release }}
@@ -31,24 +32,25 @@ jobs:
       - name: Open the next into main pull request
         run: |
           version="${RELEASE#v}"
-          if ! printf '%s' "${version}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+          if ! [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::'${RELEASE}' is not a release version such as 12.4.0"
             exit 1
           fi
-          if [ "$(gh api "repos/${REPO}/compare/main...next" --jq .ahead_by)" = 0 ]; then
-            echo "::notice::next has nothing main doesn't, so there is nothing to promote"
+          tree() { gh api "repos/${REPO}/commits/$1" --jq .commit.tree.sha; }
+          if [ "$(tree main)" = "$(tree next)" ]; then
+            echo "::notice::main already holds everything on next, so there is nothing to promote"
             exit 0
           fi
           branch="sync/next-into-main-${version}"
           sha=$(gh api "repos/${REPO}/git/ref/heads/next" --jq .object.sha)
           if gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
+            if [ "$(gh api "repos/${REPO}/compare/${branch}...next" --jq .behind_by)" != 0 ]; then
+              echo "::error::${branch} has commits next doesn't; close its pull request and delete the branch, then run this again"
+              exit 1
+            fi
             gh api -X PATCH "repos/${REPO}/git/refs/heads/${branch}" -f sha="${sha}" --silent
           else
             gh api -X POST "repos/${REPO}/git/refs" -f ref="refs/heads/${branch}" -f sha="${sha}" --silent
-          fi
-          if [ -n "$(gh pr list -R "${REPO}" --head "${branch}" --state open --json number --jq '.[].number')" ]; then
-            echo "::notice::the pull request from ${branch} is already open"
-            exit 0
           fi
           cat >"${RUNNER_TEMP}/body.md" <<EOF
           ## Why this change
@@ -67,5 +69,10 @@ jobs:
 
           This branch is a copy of \`next\` at ${sha:0:8}, so the branch deletion that follows the merge leaves \`next\` as it is.
           EOF
+          if [ -n "$(gh pr list -R "${REPO}" --head "${branch}" --state open --json number --jq '.[].number')" ]; then
+            gh pr edit "${branch}" -R "${REPO}" --body-file "${RUNNER_TEMP}/body.md"
+            echo "::notice::the pull request from ${branch} was already open; its branch and description now match next"
+            exit 0
+          fi
           gh pr create -R "${REPO}" --base main --head "${branch}" \
             --title "🔀 sync: next into main, now that ${version} has shipped" --body-file "${RUNNER_TEMP}/body.md"
