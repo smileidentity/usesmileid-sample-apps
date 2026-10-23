@@ -1,0 +1,69 @@
+name: Promote next
+
+# Opens the release's next-into-main pull request from a copy of next; docs/source-build.md says why.
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: The SDK version that shipped (e.g. 12.4.0)
+        required: true
+        type: string
+
+concurrency:
+  group: promote-next
+  cancel-in-progress: false
+
+# The pull request is opened with GH_PAT so its checks run: one opened with GITHUB_TOKEN starts none.
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT }}
+      REPO: ${{ github.repository }}
+      # Read through env, so the input can't inject shell.
+      RELEASE: ${{ inputs.release }}
+    steps:
+      - name: Open the next into main pull request
+        run: |
+          version="${RELEASE#v}"
+          if ! printf '%s' "${version}" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::'${RELEASE}' is not a release version such as 12.4.0"
+            exit 1
+          fi
+          if [ "$(gh api "repos/${REPO}/compare/main...next" --jq .ahead_by)" = 0 ]; then
+            echo "::notice::next has nothing main doesn't, so there is nothing to promote"
+            exit 0
+          fi
+          branch="sync/next-into-main-${version}"
+          sha=$(gh api "repos/${REPO}/git/ref/heads/next" --jq .object.sha)
+          if ! gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
+            gh api -X POST "repos/${REPO}/git/refs" -f ref="refs/heads/${branch}" -f sha="${sha}" --silent
+          fi
+          if [ -n "$(gh pr list -R "${REPO}" --head "${branch}" --state open --json number --jq '.[].number')" ]; then
+            echo "::notice::the pull request from ${branch} is already open"
+            exit 0
+          fi
+          cat >"${RUNNER_TEMP}/body.md" <<EOF
+          ## Why this change
+
+          ${version} has shipped, so \`main\` takes the changes \`next\` held for it, and the SDK repositories can pin \`main\` again.
+
+          ## Before merging
+
+          - [ ] This pull request's checks build every platform against the released ${version}, and they pass.
+          - [ ] Nothing on \`next\` needs an SDK newer than ${version}. If something does, leave this open until that version ships.
+
+          ## After merging
+
+          - Merge \`main\` back into \`next\`.
+          - Run \`bump_sample_apps.yaml\` in each SDK repository, to pin \`main\`.
+
+          This branch is a copy of \`next\` at ${sha:0:8}, so the branch deletion that follows the merge leaves \`next\` as it is.
+          EOF
+          gh pr create -R "${REPO}" --base main --head "${branch}" \
+            --title "🔀 sync: next into main, now that ${version} has shipped" --body-file "${RUNNER_TEMP}/body.md"
