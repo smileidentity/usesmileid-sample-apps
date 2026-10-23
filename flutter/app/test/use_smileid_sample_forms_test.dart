@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
+import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_flow_form_tabs.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
 import 'support/use_smileid_sample_catalogue_fixture.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 import 'support/use_smileid_sample_test_session.dart';
 
 /// The two pre-flow forms, their two picker sheets, and the order a product tap starts.
@@ -23,12 +24,13 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleFixtureCatalogueOverride(),
           ...useSmileIDSampleLinkedSessionOverrides(),
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(initialLocation: location),
+          routerConfig: useSmileIDSampleTestRouter(location),
         ),
       ),
     );
@@ -454,8 +456,7 @@ void main() {
       );
     });
 
-    // R12: the picker path is a layer over the form, so the form is behind the scrim rather than
-    // a grey void.
+    // The picker is a layer over the form, so the form is behind the scrim rather than a grey void.
     testWidgets('a picker link opens the form with the sheet over it', (
       WidgetTester tester,
     ) async {
@@ -464,7 +465,9 @@ void main() {
         UseSmileIDSampleRoutes.countryPicker('biometricKyc'),
       );
 
-      expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsOne);
+      // The form is drawn under the sheet, and a screen reader reads only the sheet.
+      expect(find.byType(UseSmileIDSampleKycFormTab), findsOne);
+      expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsNothing);
       expect(byId(UseSmileIDSampleTestIds.countrySheet), findsOne);
     });
 
@@ -475,21 +478,14 @@ void main() {
           tester,
           UseSmileIDSampleRoutes.countryPicker('biometricKyc'),
         );
-        final GoRouter router = GoRouter.of(
-          tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).first),
+        await Navigator.of(
+          tester.element(byId(UseSmileIDSampleTestIds.countrySheet)),
+        ).maybePop();
+        await tester.pumpAndSettle();
+        expect(
+          useSmileIDSampleTestTop(tester),
+          UseSmileIDSampleStep.idDetailsForm,
         );
-        while (byId(
-              UseSmileIDSampleTestIds.countrySheet,
-            ).evaluate().isNotEmpty ||
-            router.state.uri.path.endsWith('/country')) {
-          Navigator.of(
-            tester.element(byId(UseSmileIDSampleTestIds.kycFormScreen).last),
-            rootNavigator: byId(
-              UseSmileIDSampleTestIds.countrySheet,
-            ).evaluate().isNotEmpty,
-          ).pop();
-          await tester.pumpAndSettle();
-        }
 
         await tester.tap(byId(UseSmileIDSampleTestIds.countryTrigger));
         await tester.pumpAndSettle();

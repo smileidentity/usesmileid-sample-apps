@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_navigation.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
+import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
+
+import 'support/use_smileid_sample_test_njia.dart';
+import 'support/use_smileid_sample_test_session.dart';
 
 /// The shell's job is that all three tabs are reachable and the bar says which one you are on.
 void main() {
-  Future<void> pumpShell(WidgetTester tester, {String? at}) async {
+  Future<void> pumpShell(
+    WidgetTester tester, {
+    String? at,
+    List<Override> overrides = const <Override>[],
+  }) async {
     await tester.pumpWidget(
       ProviderScope(
+        overrides: <Override>[...useSmileIDSampleTestNjia(), ...overrides],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(initialLocation: at),
+          routerConfig: useSmileIDSampleTestRouter(at),
         ),
       ),
     );
@@ -137,8 +150,7 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.productsScreen), findsOne);
   });
 
-  // R13 on a real destination rather than on the predicate alone: the gallery sits outside the
-  // shell, so it is the one route today that proves the bar is absent where it should be.
+  // The gallery sits outside the graph, so it is the one page that proves the bar is absent where it should be.
   testWidgets('a route outside the shell carries no nav bar', (
     WidgetTester tester,
   ) async {
@@ -210,4 +222,110 @@ void main() {
       reason: 'sign out is $lastControl, the bar starts at $barTop',
     );
   });
+
+  testWidgets(
+    'system back at the products root leaves the app, which comes back on a fresh flow',
+    (WidgetTester tester) async {
+      final List<String> calls = <String>[];
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall call) async {
+          calls.add(call.method);
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      await pumpShell(tester);
+      await tester.pumpAndSettle();
+      final UseSmileIDSampleEngine before = useSmileIDSampleTestEngine(tester);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+
+      expect(calls, contains('SystemNavigator.pop'));
+      final UseSmileIDSampleEngine after = useSmileIDSampleTestEngine(tester);
+      expect(identical(after, before), isFalse);
+      expect(after.state.phase, isNot(isA<NjiaDonePhase>()));
+      expect(byId(UseSmileIDSampleTestIds.productsScreen), findsOne);
+    },
+  );
+
+  testWidgets('an autostart opens the run full screen, over products', (
+    WidgetTester tester,
+  ) async {
+    await pumpShell(
+      tester,
+      at: 'usesmileid-sample-flutter://?autostart=smartSelfieEnrollment',
+      overrides: <Override>[
+        ...useSmileIDSampleLinkedSessionOverrides(),
+        useSmileIDSampleLaunchArgsProvider.overrideWithValue(
+          const UseSmileIDSampleLaunchArgs(
+            autostart: UseSmileIDSampleProduct.smartSelfieEnrollment,
+          ),
+        ),
+      ],
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      useSmileIDSampleTestEngine(
+        tester,
+      ).state.entries.map((NjiaEntry entry) => entry.step),
+      <String>[
+        UseSmileIDSampleStep.products.name,
+        UseSmileIDSampleStep.sdkFlowFullScreen.name,
+      ],
+    );
+  });
+
+  testWidgets(
+    'a link that arrives before the flow has started opens once it has',
+    (WidgetTester tester) async {
+      final RouterConfig<Uri> router = useSmileIDSampleTestRouter();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: useSmileIDSampleTestNjia(),
+          child: MaterialApp.router(
+            theme: UseSmileIDSampleTheme.light(),
+            routerConfig: router,
+          ),
+        ),
+      );
+      await (router.routeInformationProvider!
+              as PlatformRouteInformationProvider)
+          .didPushRouteInformation(
+            RouteInformation(
+              uri: Uri.parse('usesmileid-sample-flutter://settings/licenses'),
+            ),
+          );
+      await tester.pumpAndSettle();
+
+      expect(byId(UseSmileIDSampleTestIds.licensesScreen), findsOne);
+    },
+  );
+
+  testWidgets(
+    'a product tap with no session opens the scanner, which keeps the run',
+    (WidgetTester tester) async {
+      await pumpShell(tester);
+      await tester.pumpAndSettle();
+
+      await tester.tap(
+        byId(
+          UseSmileIDSampleTestIds.productCard(
+            UseSmileIDSampleProduct.smartSelfieEnrollment.id,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.scanToken);
+      expect(byId(UseSmileIDSampleTestIds.scanTokenScreen), findsOne);
+    },
+  );
 }

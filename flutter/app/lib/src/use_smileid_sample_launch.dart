@@ -4,9 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-import 'use_smileid_sample_routes.dart';
-
-/// The link the platform launched this process at, or '/' when it was launched from the icon.
+/// The link the platform launched this process at, or none when it was launched from the icon.
 class UseSmileIDSampleLaunch {
   /// Takes the platform's raw route, which on Android is the launching intent's data.
   UseSmileIDSampleLaunch(String platformRoute)
@@ -14,26 +12,11 @@ class UseSmileIDSampleLaunch {
 
   final Uri _uri;
 
-  /// Where the router should open, with the scheme and host folded back into the path.
-  String get location {
-    final String path = _uri.hasAuthority
-        ? '/${_uri.authority}${_uri.path}'
-        : _uri.path;
-    final String trimmed = path.length > 1 && path.endsWith('/')
-        ? path.substring(0, path.length - 1)
-        : path;
-    return trimmed.isEmpty || trimmed == '/'
-        ? UseSmileIDSampleRoutes.products
-        : trimmed;
-  }
-
-  /// Where the app opens: the run of the product `autostart` names, else [location].
-  String get startLocation {
-    final UseSmileIDSampleProduct? product = args.autostart;
-    return product == null
-        ? location
-        : UseSmileIDSampleRoutes.sdkFlow(product.id);
-  }
+  /// The link the shell opens first, or null for a launch from the icon.
+  Uri? get link =>
+      _uri.hasAuthority || (_uri.path.isNotEmpty && _uri.path != '/')
+      ? _uri
+      : null;
 
   /// The arguments the link carried, defaulted where it carried none.
   UseSmileIDSampleLaunchArgs get args =>

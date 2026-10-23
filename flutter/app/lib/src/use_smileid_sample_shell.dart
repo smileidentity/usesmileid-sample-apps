@@ -1,113 +1,194 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
 
+import 'navigation/use_smileid_sample_deep_links.dart';
+import 'navigation/use_smileid_sample_navigation.dart';
+import 'navigation/use_smileid_sample_njia.dart';
+import 'navigation/use_smileid_sample_steps.dart';
 import 'state/use_smileid_sample_providers.dart';
-import 'state/use_smileid_sample_session_providers.dart';
-import 'use_smileid_sample_remove_jobs.dart';
-import 'use_smileid_sample_routes.dart';
+import 'use_smileid_sample_journey.dart';
+import 'use_smileid_sample_launch.dart';
 
-/// The three-tab host: the branch's content, with the nav bar floating over it.
-class UseSmileIDSampleShell extends ConsumerWidget {
-  /// [location] is the current destination, which alone decides whether the bar is drawn.
+/// The window's root: njia draws the three tabs' stacks from `spec/njia-graph.json`, and the shell opens links.
+class UseSmileIDSampleShell extends ConsumerStatefulWidget {
+  /// A shell that opens at [launchLink], then at each of [links], and hands the dev gallery to [onGallery].
   const UseSmileIDSampleShell({
-    required this.shell,
-    required this.location,
+    required this.links,
+    required this.onGallery,
+    this.launchLink,
     super.key,
   });
 
-  /// The indexed stack go_router owns, one navigator per tab.
-  final StatefulNavigationShell shell;
+  /// The link the app launched at, or null for a launch from the icon.
+  final Uri? launchLink;
 
-  /// The current path.
-  final String location;
+  /// Each link the platform delivers while the app runs.
+  final Stream<Uri> links;
+
+  /// Opens the dev-only component gallery, which is outside the graph.
+  final VoidCallback onGallery;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UseSmileIDSampleShell> createState() =>
+      _UseSmileIDSampleShellState();
+}
+
+class _UseSmileIDSampleShellState extends ConsumerState<UseSmileIDSampleShell> {
+  UseSmileIDSampleNavigationModel? _model;
+
+  /// The engine drawn, so a transition doesn't rebuild the host, only a replaced flow does.
+  UseSmileIDSampleEngine? _drawn;
+
+  StreamSubscription<Uri>? _links;
+
+  /// Links that arrived before the flow had started, opened once it has.
+  final List<Uri> _pending = <Uri>[];
+
+  /// iOS delivers its cold link again after the first frame; folded, it would replace the flow it opened.
+  Uri? _echo;
+
+  Timer? _echoExpiry;
+
+  @override
+  void initState() {
+    super.initState();
+    _echo = widget.launchLink;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_echo != null) {
+        _echoExpiry = Timer(useSmileIDSampleColdLinkWindow, () => _echo = null);
+      }
+    });
+    _links = widget.links.listen(_open);
+    unawaited(_start());
+  }
+
+  @override
+  void dispose() {
+    unawaited(_links?.cancel());
+    _echoExpiry?.cancel();
+    _model?.removeListener(_moved);
+    _model?.dispose();
+    super.dispose();
+  }
+
+  Future<void> _start() async {
+    final UseSmileIDSampleGraph graph = await ref.read(
+      useSmileIDSampleNjiaGraphProvider.future,
+    );
+    final UseSmileIDSampleNavigationModel model =
+        UseSmileIDSampleNavigationModel(
+          graph,
+          ref.read(useSmileIDSampleNjiaEnginesProvider),
+        );
+    final Uri? launch = widget.launchLink;
+    final UseSmileIDSampleProduct? autostart = ref
+        .read(useSmileIDSampleLaunchArgsProvider)
+        .autostart;
+    final UseSmileIDSampleLink? link = autostart != null || launch == null
+        ? null
+        : UseSmileIDSampleDeepLinks.linkOf(launch);
+    await model.start(
+      link: link?.path,
+      facts: link == null
+          ? const <UseSmileIDSampleFact>{}
+          : useSmileIDSampleLinkFacts(ref, link),
+    );
+    if (!mounted) {
+      model.dispose();
+      return;
+    }
+    model.addListener(_moved);
+    setState(() {
+      _model = model;
+      _drawn = model.engine;
+    });
+    if (autostart != null) {
+      final UseSmileIDSampleEngine engine = model.engine!;
+      unawaited(
+        engine.startRun(
+          engine.state.top!,
+          autostart,
+          useSmileIDSampleRunOnly(
+            ref,
+            autostart,
+            ref.read(useSmileIDSampleLaunchArgsProvider).route,
+          ),
+        ),
+      );
+    } else if (launch != null && UseSmileIDSampleDeepLinks.isGallery(launch)) {
+      widget.onGallery();
+    }
+    _pending.forEach(_open);
+    _pending.clear();
+  }
+
+  /// Opens a delivered link as a new flow, under the facts its product runs with, or the dev gallery.
+  void _open(Uri uri) {
+    if (_echo != null && uri == _echo) {
+      _echo = null;
+      _echoExpiry?.cancel();
+      return;
+    }
+    final UseSmileIDSampleNavigationModel? model = _model;
+    if (model == null) {
+      _pending.add(uri);
+      return;
+    }
+    if (UseSmileIDSampleDeepLinks.isGallery(uri)) {
+      widget.onGallery();
+      return;
+    }
+    final UseSmileIDSampleLink? link = UseSmileIDSampleDeepLinks.linkOf(uri);
+    if (link != null) {
+      unawaited(model.open(link.path, useSmileIDSampleLinkFacts(ref, link)));
+    }
+  }
+
+  void _moved() {
+    final UseSmileIDSampleNavigationModel model = _model!;
+    final UseSmileIDSampleEngine engine = model.engine!;
+    if (engine.state.phase is NjiaDonePhase) {
+      // Back from the products tab's root finishes the flow: the app goes to the background and comes back on a fresh one.
+      unawaited(SystemNavigator.pop());
+      unawaited(model.restart());
+      return;
+    }
+    if (!identical(engine, _drawn)) {
+      setState(() => _drawn = engine);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
-    final UseSmileIDSampleSelection selection = ref.watch(
-      useSmileIDSampleSelectionProvider,
-    );
-    final bool showsSelectionBar = _showsSelectionBar(selection);
-    final bool showsNavBar =
-        useSmileIDSampleShowsNavBar(location) && !showsSelectionBar;
-    // Back from a tab that is not the first returns to products rather than leaving the app.
-    return PopScope(
-      canPop: shell.currentIndex == _productsBranch,
-      onPopInvokedWithResult: (bool didPop, Object? result) {
-        if (!didPop) {
-          shell.goBranch(_productsBranch);
-        }
-      },
-      child: Scaffold(
-        backgroundColor: colors.background,
-        // What publishes the bar's measured height to the body as its bottom padding.
-        extendBody: showsNavBar,
-        bottomNavigationBar: _bottomBar(
-          context,
-          ref,
-          shell,
-          selection,
-          showsSelectionBar: showsSelectionBar,
-          showsNavBar: showsNavBar,
-        ),
-        // Top only: the bar insets the bottom itself, and doing it here too lifts it twice.
-        body: SafeArea(
-          bottom: false,
-          child: UseSmileIDSampleTextMetrics(child: shell),
+    final UseSmileIDSampleNavigationModel? model = _model;
+    final UseSmileIDSampleEngine? engine = _drawn;
+    if (model == null || engine == null) {
+      return ColoredBox(color: colors.background);
+    }
+    return UseSmileIDSampleNavigationScope(
+      model: model,
+      child: NjiaHost<UseSmileIDSampleStep, UseSmileIDSampleFact>.withSteps(
+        key: ObjectKey(engine),
+        engine: engine,
+        steps: useSmileIDSampleSteps,
+        // Each screen names itself `sample_*`, and a second identifier on its element would replace the first.
+        stepIds: false,
+        // The design's own scrim and corners, as the modal sheets drew them.
+        sheetStyle: NjiaSheetStyle(
+          scrim: colors.overlayScrim,
+          shape: RoundedRectangleBorder(
+            borderRadius: UseSmileIDSampleShapes.sheet,
+          ),
         ),
       ),
     );
   }
-
-  /// Whichever bar owns the bottom slot, which is what the body's padding is then measured from.
-  Widget? _bottomBar(
-    BuildContext context,
-    WidgetRef ref,
-    StatefulNavigationShell shell,
-    UseSmileIDSampleSelection selection, {
-    required bool showsSelectionBar,
-    required bool showsNavBar,
-  }) {
-    // The exception that proves R13's rule: this one is opaque, so content does stop above it.
-    if (showsSelectionBar) {
-      return UseSmileIDSampleSelectionBar(
-        selectedCount: selection.ids.length,
-        onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
-      );
-    }
-    if (!showsNavBar) {
-      return null;
-    }
-    // Its own Consumer, so the tick rebuilds only the bar.
-    return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) {
-        final UseSmileIDSampleTokenSession? live = ref
-            .watch(useSmileIDSampleSessionProvider)
-            .live;
-        return UseSmileIDSampleNavBar(
-          selected: UseSmileIDSampleNavItem.values[shell.currentIndex],
-          onSelect: (UseSmileIDSampleNavItem item) => _select(item.index),
-          onTokenTap: () => context.push(UseSmileIDSampleRoutes.scanToken),
-          sessionProgress: live?.progress(
-            ref.watch(useSmileIDSampleClockProvider),
-          ),
-        );
-      },
-    );
-  }
-
-  /// Whether select mode's bar stands in for the nav bar, which only the verifications tab has.
-  bool _showsSelectionBar(UseSmileIDSampleSelection selection) =>
-      selection.active && location == UseSmileIDSampleRoutes.verifications;
-
-  /// Switches tab, and pops the tab to its root when the active one is tapped again.
-  void _select(int index) =>
-      shell.goBranch(index, initialLocation: index == shell.currentIndex);
 }
-
-/// Products' branch, which is the start destination and so where back lands.
-const int _productsBranch = 0;

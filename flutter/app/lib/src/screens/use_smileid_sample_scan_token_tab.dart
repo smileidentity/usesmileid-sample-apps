@@ -3,21 +3,23 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_flow_tokens.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../navigation/use_smileid_sample_navigation.dart';
 import '../scan/use_smileid_sample_qr_scanner.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
-import '../use_smileid_sample_routes.dart';
 import 'use_smileid_sample_settings_tab.dart';
 
-/// The token-scanning route.
+/// The token scanner: links a session, then returns, or carries an interrupted run on in its own place.
 class UseSmileIDSampleScanTokenTab extends ConsumerStatefulWidget {
-  /// No route arguments: a pending run lives on app state.
-  const UseSmileIDSampleScanTokenTab({super.key});
+  /// The scanner for [scope]'s entry; a pending run lives on app state.
+  const UseSmileIDSampleScanTokenTab({required this.scope, super.key});
+
+  /// The scanner's entry, which a resumed run replaces.
+  final UseSmileIDSampleStepScope scope;
 
   @override
   ConsumerState<UseSmileIDSampleScanTokenTab> createState() =>
@@ -55,15 +57,15 @@ class _UseSmileIDSampleScanTokenTabState
   /// Guards a second link from a double tap.
   bool _linking = false;
 
-  void _back() =>
-      useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
+  void _back() => unawaited(widget.scope.navigator.back());
 
   Future<void> _link(UseSmileIDSampleTokenSession session) async {
     if (_linking) {
       return;
     }
     _linking = true;
-    final GoRouter router = GoRouter.of(context);
+    final UseSmileIDSampleEngine engine =
+        UseSmileIDSampleNavigationScope.engineOf(context);
     await ref.read(useSmileIDSampleSessionProvider.notifier).link(session);
     final UseSmileIDSampleRunIntent? resuming = _resuming;
     // An expired relink cannot start the run.
@@ -92,18 +94,21 @@ class _UseSmileIDSampleScanTokenTabState
     ref
         .read(useSmileIDSampleRunPartnerProvider.notifier)
         .record(session.partnerId);
-    if (!intoFlow && product != null) {
-      unawaited(
-        router.pushReplacement(
-          UseSmileIDSampleJourney.firstStepFor(
-            product,
-            useSmileIDSampleLiveBindings(ref),
-          ),
-        ),
-      );
+    if (product == null) {
+      _back();
       return;
     }
-    router.go(UseSmileIDSampleRoutes.sdkFlow(resuming.productId));
+    // In the scanner's place, so a second quick tap is stale against an entry that has gone.
+    unawaited(
+      engine.startRun(
+        widget.scope.entry,
+        product,
+        intoFlow
+            ? useSmileIDSampleRunOnly(ref, product, resuming.route)
+            : useSmileIDSampleRunEntryFor(ref, engine.graph, product),
+        replace: widget.scope.entry.id,
+      ),
+    );
   }
 
   /// The route's own enter animation, watched once for its end.
@@ -158,50 +163,42 @@ class _UseSmileIDSampleScanTokenTabState
       (await Clipboard.getData(Clipboard.kTextPlain))?.text;
 
   @override
-  Widget build(BuildContext context) => PopScope(
-    canPop: false,
-    onPopInvokedWithResult: (bool didPop, Object? result) {
-      if (!didPop) {
-        _back();
-      }
-    },
-    child: Scaffold(
-      backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
-      // Top only: the sheet insets its own bottom.
-      body: SafeArea(
-        bottom: false,
-        child: UseSmileIDSampleTextMetrics(
-          child: UseSmileIDSampleScanTokenScreen(
-            reason: _resuming == null
-                ? null
-                : _arrivedEnded
-                ? UseSmileIDSampleScanReason.sessionEnded
-                : UseSmileIDSampleScanReason.sessionNeeded,
-            acceptsTaps: _settled,
-            onOpenPortal: () => unawaited(
-              useSmileIDSampleOpenLink(
-                UseSmileIDSampleScanTokenScreen.portalUrl,
-                inApp: false,
-              ),
+  Widget build(BuildContext context) => Scaffold(
+    backgroundColor: UseSmileIDSampleTheme.colorsOf(context).background,
+    // Top only: the sheet insets its own bottom.
+    body: SafeArea(
+      bottom: false,
+      child: UseSmileIDSampleTextMetrics(
+        child: UseSmileIDSampleScanTokenScreen(
+          reason: _resuming == null
+              ? null
+              : _arrivedEnded
+              ? UseSmileIDSampleScanReason.sessionEnded
+              : UseSmileIDSampleScanReason.sessionNeeded,
+          acceptsTaps: _settled,
+          onOpenPortal: () => unawaited(
+            useSmileIDSampleOpenLink(
+              UseSmileIDSampleScanTokenScreen.portalUrl,
+              inApp: false,
             ),
-            onBack: _back,
-            onLink: (UseSmileIDSampleTokenSession session) =>
-                unawaited(_link(session)),
-            onSimulate: _simulate,
-            onPaste: _paste,
-            torchOn: _torchOn,
-            onTorchToggle: () => setState(() => _torchOn = !_torchOn),
-            viewfinder:
-                (
-                  BuildContext context, {
-                  required bool enabled,
-                  required ValueChanged<String> onCandidate,
-                }) => UseSmileIDSampleQrScanner(
-                  onCode: onCandidate,
-                  torchOn: _torchOn,
-                  enabled: enabled,
-                ),
           ),
+          onBack: _back,
+          onLink: (UseSmileIDSampleTokenSession session) =>
+              unawaited(_link(session)),
+          onSimulate: _simulate,
+          onPaste: _paste,
+          torchOn: _torchOn,
+          onTorchToggle: () => setState(() => _torchOn = !_torchOn),
+          viewfinder:
+              (
+                BuildContext context, {
+                required bool enabled,
+                required ValueChanged<String> onCandidate,
+              }) => UseSmileIDSampleQrScanner(
+                onCode: onCandidate,
+                torchOn: _torchOn,
+                enabled: enabled,
+              ),
         ),
       ),
     ),

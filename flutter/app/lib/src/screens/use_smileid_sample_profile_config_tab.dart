@@ -63,7 +63,6 @@ class _UseSmileIDSampleProfileConfigTabState
       useSmileIDSampleProfilesProvider.notifier,
     );
     return UseSmileIDSampleAboveShellPage(
-      onBack: widget.onBack,
       child: UseSmileIDSampleProfileConfigScreen(
         title: profile.title(context.strings),
         organisation: organisation,

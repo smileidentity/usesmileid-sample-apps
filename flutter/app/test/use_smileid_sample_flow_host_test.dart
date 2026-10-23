@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid/usesmileid.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_builder_config.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launch_snapshot.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_preflight.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_navigation.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 
 import 'support/use_smileid_sample_catalogue_fixture.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 import 'support/use_smileid_sample_test_session.dart';
 
 /// The flow host: what it hands the SDK, what it refuses to hand over, and where the wizard stacks.
@@ -302,29 +304,28 @@ void main() {
   });
 
   group('the wizard above the shell', () {
-    Future<GoRouter> pump(WidgetTester tester) async {
-      final GoRouter router = useSmileIDSampleRouter();
+    Future<void> pump(WidgetTester tester) async {
       await tester.pumpWidget(
         ProviderScope(
           // The form reads the session's configuration, so the catalogue decodes inline to settle.
           overrides: [
+            ...useSmileIDSampleTestNjia(),
             ...useSmileIDSampleLinkedSessionOverrides(),
             useSmileIDSampleFixtureCatalogueOverride(),
           ],
           child: MaterialApp.router(
             theme: UseSmileIDSampleTheme.light(),
-            routerConfig: router,
+            routerConfig: useSmileIDSampleTestRouter(),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      return router;
     }
 
     testWidgets('a product tap stacks its form over the shell', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = await pump(tester);
+      await pump(tester);
 
       await tester.tap(
         find.bySemanticsIdentifier(
@@ -339,11 +340,17 @@ void main() {
         find.bySemanticsIdentifier(UseSmileIDSampleTestIds.userDetailsScreen),
         findsOne,
       );
-      // An imperative push leaves `currentConfiguration.uri` on the base match, so assert the stack.
-      expect(router.routerDelegate.canPop(), isTrue);
+      expect(
+        useSmileIDSampleTestEngine(
+          tester,
+        ).state.entries.map((NjiaEntry entry) => entry.step),
+        <String>[
+          UseSmileIDSampleStep.products.name,
+          UseSmileIDSampleStep.consentDetailsForm.name,
+        ],
+      );
     });
 
-    // `go` left one page in the root stack, which made every back a hard-coded location.
     testWidgets('system back from a stacked form pops to the shell', (
       WidgetTester tester,
     ) async {
@@ -369,34 +376,36 @@ void main() {
     testWidgets('the run route exists and the gate turns an empty ID form back', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = await pump(tester);
+      await pump(tester);
 
-      router.go(
+      await useSmileIDSampleTestDeliver(
+        tester,
         UseSmileIDSampleRoutes.sdkFlow(UseSmileIDSampleProduct.biometricKyc.id),
       );
-      await tester.pumpAndSettle();
 
-      // Never mounted: a KYC run with no ID details cannot reach the SDK, so the gate redirects first.
+      // A KYC run with no ID details cannot reach the SDK, so the run hands over to the form.
+      final UseSmileIDSampleEngine engine = useSmileIDSampleTestEngine(tester);
       expect(
-        router.routerDelegate.currentConfiguration.uri.toString(),
-        UseSmileIDSampleRoutes.consentDetailsForm(
-          UseSmileIDSampleProduct.biometricKyc.id,
-        ),
+        useSmileIDSampleTestTop(tester),
+        UseSmileIDSampleStep.consentDetailsForm,
+      );
+      expect(
+        engine.state.entries.last.arg,
+        UseSmileIDSampleProduct.biometricKyc.id,
       );
     });
 
     testWidgets('a product id this build does not know leaves for the grid', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = await pump(tester);
+      await pump(tester);
 
-      router.go(UseSmileIDSampleRoutes.sdkFlow('nosuchproduct'));
-      await tester.pumpAndSettle();
-
-      expect(
-        router.routerDelegate.currentConfiguration.uri.toString(),
-        UseSmileIDSampleRoutes.products,
+      await useSmileIDSampleTestDeliver(
+        tester,
+        UseSmileIDSampleRoutes.sdkFlow('nosuchproduct'),
       );
+
+      expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.products);
     });
   });
 }

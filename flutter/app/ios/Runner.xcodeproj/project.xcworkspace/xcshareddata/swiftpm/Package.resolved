@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/ios-spm",
       "state" : {
-        "revision" : "a20a43d16de22bb4661eeb87187ccc3b2ecc660c",
-        "version" : "12.3.0-SNAPSHOT.20261023151758.39976406466"
+        "revision" : "5c56abc286a358023e75371e91ac6bd133393f6d",
+        "version" : "12.3.0-SNAPSHOT.20261023205140.40021887242"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/njia-spm",
       "state" : {
-        "revision" : "cc6bd0e7b570878c4d21419cec9a1fa6bc388bb4",
-        "version" : "0.0.1-SNAPSHOT.7"
+        "revision" : "d3151493be7c83b8d705b0b33f95166ce23e1d4d",
+        "version" : "0.0.1-SNAPSHOT.9"
       }
     },
     {

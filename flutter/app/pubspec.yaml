@@ -20,28 +20,25 @@ dependencies:
   # The SDK from pub.dev, pinned EXACT rather than with a caret. A bump arrives as a PR, which is
   # what makes every bump a free consumption test; a caret lets a fresh resolve move to a release
   # no PR ever exercised. Registry-only, permanently: no path dependency, no dependency_overrides.
-  usesmileid: 12.3.1-SNAPSHOT.14
+  usesmileid: 12.3.1-SNAPSHOT.16
 
   # The federated ML providers, pinned exactly for the same reason as the SDK above. A capture
   # screen with none of these registered falls back to a Pigeon call no plugin answers, so the flow
   # dies on the device; the four are what the Expo app and the SDK's own sample both carry.
-  usesmileid_mlkit_face: 12.3.1-SNAPSHOT.14
-  usesmileid_mlkit_document: 12.3.1-SNAPSHOT.14
-  usesmileid_huawei_face: 12.3.1-SNAPSHOT.14
-  usesmileid_huawei_document: 12.3.1-SNAPSHOT.14
-  usesmileid_vision_face: 12.3.1-SNAPSHOT.14
-  usesmileid_vision_document: 12.3.1-SNAPSHOT.14
+  usesmileid_mlkit_face: 12.3.1-SNAPSHOT.16
+  usesmileid_mlkit_document: 12.3.1-SNAPSHOT.16
+  usesmileid_huawei_face: 12.3.1-SNAPSHOT.16
+  usesmileid_huawei_document: 12.3.1-SNAPSHOT.16
+  usesmileid_vision_face: 12.3.1-SNAPSHOT.16
+  usesmileid_vision_document: 12.3.1-SNAPSHOT.16
 
   # The navigation engine the shell draws from spec/njia-graph.json, at the exact version the SDK pins, which pub unifies with it.
-  usesmileid_njia: 0.0.1-SNAPSHOT.7
+  usesmileid_njia: 0.0.1-SNAPSHOT.9
 
   # The shared journey, by path. Never published, and the SDK repo maps the same source into its
   # own development sample.
   sample_ui:
     path: ../sample_ui
-
-  # See docs/architecture.md §4: StatefulShellRoute gives per-tab back stacks.
-  go_router: ^17.5.0
 
   # See docs/architecture.md §4: ProviderScope overrides turn the launch arguments into
   # provider overrides at app start, so automation gets deterministic state with no test-only build.
@@ -68,7 +65,7 @@ dev_dependencies:
     sdk: flutter
 
   # njia's reducer in Dart, so the graph's routing runs in a test where no native core does.
-  usesmileid_njia_testing: 0.0.1-SNAPSHOT.7
+  usesmileid_njia_testing: 0.0.1-SNAPSHOT.9
 
   # The published lint set, so a partner reading this app sees the rules they already have.
   flutter_lints: ^6.0.0

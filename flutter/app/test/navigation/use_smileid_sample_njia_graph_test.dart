@@ -4,9 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:usesmileid_njia/usesmileid_njia.dart';
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 
-/// The spec's graph, read from the repository rather than the asset, so a stale copy can't pass.
-UseSmileIDSampleGraph useSmileIDSampleSpecGraph() => useSmileIDSampleNjiaCodec
-    .decodeGraph(File('../../spec/njia-graph.json').readAsStringSync());
+import '../support/use_smileid_sample_test_njia.dart';
 
 void main() {
   final UseSmileIDSampleGraph graph = useSmileIDSampleSpecGraph();

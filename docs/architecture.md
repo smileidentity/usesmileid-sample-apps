@@ -60,14 +60,15 @@ A change to `spec/` lands with all four app-side updates, or says in the PR whic
 
 | Platform | Navigation | State |
 |---|---|---|
-| Android | Compose Destinations 2.3.0 over androidx.navigation | ViewModel and `SavedStateHandle` |
-| iOS | `NavigationStack` with a typed path router | observable app state |
-| Flutter | `go_router` (`StatefulShellRoute` for per-tab back stacks) | Riverpod, whose `ProviderScope` overrides turn launch arguments into test state |
+| Android | njia's Compose host, drawing `spec/njia-graph.json` | ViewModel and `SavedStateHandle` |
+| iOS | njia's SwiftUI host, drawing `spec/njia-graph.json` | observable app state |
+| Flutter | njia's Flutter host under `MaterialApp.router`, drawing `spec/njia-graph.json`; the router only hands platform links to the shell | Riverpod, whose `ProviderScope` overrides turn launch arguments into test state |
 | Expo | `expo-router`, file routes mapping 1:1 to the route table | zustand |
 
 The rules all four follow:
 
-1. **Routes are data.** Every route in `spec/routes.json` exists on every platform.
+1. **Routes are data.** Every route in `spec/routes.json` exists on every platform, and on the njia apps
+   it is a step of `spec/njia-graph.json` linked at its path, which each app's routes test asserts.
 2. **The SDK flow is one opaque destination.** The SDK runs its own navigation. The host never models
    consent, capture or processing as its own routes, and lets the SDK consume a back gesture first.
 3. **That destination has two presentations**: full screen, and nested in the tab shell. The in-shell
@@ -80,8 +81,8 @@ The rules all four follow:
 8. **Cold start is the test that matters.** Every route must open with the app not already running. On
    Android, an intent sent to a live task rebuilds the Activity and resets launch arguments, so
    automation force-stops the app first.
-9. **A sheet is a layer over the current destination, never a replacement.** On Flutter it is
-   presented on the root navigator, so the scrim covers the nav bar and dismissing gives it back. Android
+9. **A sheet is a layer over the current destination, never a replacement.** On Flutter it is a njia
+   sheet step over the whole page, so the scrim covers the nav bar and dismissing gives it back. Android
    still replaces the destination (see the [backlog](plan/backlog.md)).
 10. **The nav bar floats over the tab roots only**, and screens measure its height rather than
     hard-coding it.

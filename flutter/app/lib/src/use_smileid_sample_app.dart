@@ -3,30 +3,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
 
 import 'catalogue/use_smileid_sample_catalogue_providers.dart';
+import 'navigation/use_smileid_sample_router.dart';
 import 'state/use_smileid_sample_providers.dart';
 import 'state/use_smileid_sample_session_providers.dart';
-import 'use_smileid_sample_routes.dart';
 import 'use_smileid_sample_system_bars.dart';
 
-/// The app: the shared theme, and the router that hosts every route the journey adds.
+/// The app: the shared theme, and the router that hands platform links to the njia shell.
 class UseSmileIDSampleApp extends ConsumerStatefulWidget {
-  /// [initialLocation] is where the launching link pointed, already folded into a path.
-  const UseSmileIDSampleApp({
-    this.initialLocation,
-    this.autostartLink,
-    super.key,
-  });
+  /// An app launched at [launchLink], or from the icon when it is null.
+  const UseSmileIDSampleApp({this.launchLink, super.key});
 
-  /// Where to open, or null to open at the start destination.
-  final String? initialLocation;
-
-  /// The cold link, when its `autostart` opened a run at [initialLocation].
-  final Uri? autostartLink;
+  /// The link the app launched at.
+  final Uri? launchLink;
 
   @override
   ConsumerState<UseSmileIDSampleApp> createState() =>
@@ -36,9 +28,8 @@ class UseSmileIDSampleApp extends ConsumerStatefulWidget {
 class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp>
     with WidgetsBindingObserver {
   // Built once: a router rebuilt on every frame loses its own navigation state.
-  late final GoRouter _router = useSmileIDSampleRouter(
-    initialLocation: widget.initialLocation,
-    autostartLink: widget.autostartLink,
+  late final RouterConfig<Uri> _router = useSmileIDSampleRouterConfig(
+    launchLink: widget.launchLink,
   );
 
   /// Re-reads the deadline on resume, since no timer fires while the device sleeps.
