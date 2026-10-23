@@ -11,12 +11,13 @@ a file absent from the package, or a keep rule that fails only under minificatio
 
 ## Try the apps
 
-The Android and iOS apps are on Google Play and the App Store as **Smile ID**.
+The Android and iOS apps are both published as **Smile ID**: iOS on the App Store, Android on Google Play and on
+[Huawei AppGallery](https://appgallery.huawei.com/app/C119374631) for Huawei phones.
 
 <a href="https://apps.apple.com/app/id6811672322"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="40"></a>
 <a href="https://play.google.com/store/apps/details?id=com.usesmileid.sample.android"><img src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg" alt="Get it on Google Play" height="40"></a>
 
-![The app's store screenshots: products, token scanning, verifications, a verification's details and settings](android/play/showcase.png)
+![The Android app's store screenshots: products, token scanning, verifications, a verification's details and settings](android/play/showcase.png)
 
 ## What each app shows
 
