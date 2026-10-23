@@ -7,7 +7,7 @@ usesmileid-mlkit-document = "12.3.0-SNAPSHOT"
 usesmileid-huawei-face = "12.3.0-SNAPSHOT"
 usesmileid-huawei-document = "12.3.0-SNAPSHOT"
 # The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
-njia = "0.0.1-20261022.224439-5"
+njia = "0.0.1-20261023.003202-6"
 
 android-gradle-plugin = "9.3.1"
 kotlin = "2.4.21"
