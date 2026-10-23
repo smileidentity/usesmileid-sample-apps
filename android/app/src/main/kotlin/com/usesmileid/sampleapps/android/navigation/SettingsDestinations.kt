@@ -112,6 +112,20 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         },
         debugRows = {
             val context = LocalContext.current
+            val extension = useSmileIDSampleShellExtension
+            val host = remember(app) {
+                object : UseSmileIDSampleShellHost {
+                    override fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
+                        app.storeScope.launch { app.store.linkTokenSession(session) }
+                    }
+
+                    override fun openScenarioDrawer() {
+                        showScenarios = true
+                    }
+                }
+            }
+            // An identity the extension leads with, then the shell's network log, then the extension's other rows.
+            extension?.LeadingDebugRows(host)
             UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
                 UseSmileIDSampleSettingRow(
                     title = "Network logs",
@@ -120,20 +134,7 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
                     trailing = { UseSmileIDSampleSettingRowChevron() },
                 )
             }
-            useSmileIDSampleShellExtension?.let { extension ->
-                val host = remember(app) {
-                    object : UseSmileIDSampleShellHost {
-                        override fun linkTokenSession(session: UseSmileIDSampleTokenSession) {
-                            app.storeScope.launch { app.store.linkTokenSession(session) }
-                        }
-
-                        override fun openScenarioDrawer() {
-                            showScenarios = true
-                        }
-                    }
-                }
-                extension.DebugRows(host)
-            }
+            extension?.DebugRows(host)
         },
     )
     if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })

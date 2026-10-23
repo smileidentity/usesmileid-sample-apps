@@ -5,7 +5,9 @@ import UseSmileID
 /// Developer tooling an SDK repo's source build adds to this app; a registry build has none.
 @MainActor
 protocol UseSmileIDSampleShellExtending {
-  /// Extra rows for the Settings DEBUG section, which debug builds show.
+  /// Rows for the Settings DEBUG section above the shell's own, such as an identity the rows below refer to.
+  static func leadingDebugRows(host: UseSmileIDSampleShellHost) -> AnyView
+  /// Extra rows for the Settings DEBUG section, below the shell's own, which debug builds show.
   static func debugRows(host: UseSmileIDSampleShellHost) -> AnyView
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   static func customiseFlow(_ builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct)
@@ -18,6 +20,10 @@ protocol UseSmileIDSampleShellExtending {
 }
 
 extension UseSmileIDSampleShellExtending {
+  static func leadingDebugRows(host _: UseSmileIDSampleShellHost) -> AnyView {
+    AnyView(EmptyView())
+  }
+
   static func debugRows(host _: UseSmileIDSampleShellHost) -> AnyView {
     AnyView(EmptyView())
   }

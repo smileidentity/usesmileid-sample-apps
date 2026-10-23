@@ -149,12 +149,13 @@ struct UseSmileIDSampleDestination: View {
         onLanguage: { router.sheet = .language },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
-        debugRows: useSmileIDSampleShellExtension.map { shellExtension in
-          shellExtension.debugRows(host: UseSmileIDSampleShellHost(
+        debugRows: AnyView(UseSmileIDSampleDebugRows(
+          extension: useSmileIDSampleShellExtension,
+          host: UseSmileIDSampleShellHost(
             linkTokenSession: { app.linkSession($0) },
             openScenarioDrawer: { router.sheet = .scenarioDrawer }
-          ))
-        } ?? AnyView(EmptyView()),
+          )
+        )),
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.signOut()
           // The pill's own cross-tab switch, so the stack lands where selecting Products would.

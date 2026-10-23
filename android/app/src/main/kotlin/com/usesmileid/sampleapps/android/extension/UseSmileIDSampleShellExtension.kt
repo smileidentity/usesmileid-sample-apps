@@ -11,6 +11,10 @@ import kotlin.coroutines.cancellation.CancellationException
 
 /** Developer tooling an SDK repo's source build adds to this app; a registry build has none. */
 interface UseSmileIDSampleShellExtension {
+    /** Rows for the Settings DEBUG section above the shell's own, such as an identity the rows below refer to. */
+    @Composable
+    fun LeadingDebugRows(host: UseSmileIDSampleShellHost) {}
+
     /** Extra rows for the Settings DEBUG section, which debug builds show. */
     @Composable
     fun DebugRows(host: UseSmileIDSampleShellHost) {}
