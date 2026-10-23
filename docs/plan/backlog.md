@@ -101,12 +101,14 @@ do, run by `flutter/verify.sh` on the Mac.
 
 ## Spec and code health
 
-### Android: replace njia's pinned snapshot build with its first release
+### Android: replace the pinned njia and SDK snapshot builds with releases
 
-`android/gradle/libs.versions.toml` pins njia to one snapshot build, `0.0.1-20261023.003202-6`. A bare
-`0.0.1-SNAPSHOT` lost Gradle's conflict resolution to the SDK snapshot's older build. Maven Central's
-snapshot repository deletes builds after about 90 days, so once this one goes, a clean build can't
-resolve njia. Done when the pin is njia's first release, or a newer build until then.
+`android/gradle/libs.versions.toml` pins njia to one snapshot build, `0.0.1-20261023.003202-6`, and the
+SDK artifacts to the builds made against it (`12.3.0-20261023.083151-*`). A bare `0.0.1-SNAPSHOT` lost
+Gradle's conflict resolution to the SDK snapshot's older njia, and an SDK built on another njia fails at
+run time with `NoSuchMethodError`. Maven Central's snapshot repository deletes builds after about 90 days,
+so once these go, a clean build can't resolve them. Done when both pins are releases, or newer matching
+builds until then.
 
 ### Flutter iOS: retire the first-push launch listener
 

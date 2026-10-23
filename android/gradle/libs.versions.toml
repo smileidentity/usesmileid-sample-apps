@@ -1,11 +1,12 @@
 [versions]
-# The SDK's latest snapshot, from Maven Central's snapshot repository.
-usesmileid = "12.3.0-SNAPSHOT"
-usesmileid-bom = "12.3.0-SNAPSHOT"
-usesmileid-mlkit-face = "12.3.0-SNAPSHOT"
-usesmileid-mlkit-document = "12.3.0-SNAPSHOT"
-usesmileid-huawei-face = "12.3.0-SNAPSHOT"
-usesmileid-huawei-document = "12.3.0-SNAPSHOT"
+# The SDK snapshot builds made against njia's pinned build; a bare -SNAPSHOT can resolve a build made against another njia.
+usesmileid = "12.3.0-20261023.083151-211"
+usesmileid-bom = "12.3.0-20261023.083151-211"
+usesmileid-mlkit-face = "12.3.0-20261023.083151-208"
+usesmileid-mlkit-document = "12.3.0-20261023.083151-209"
+usesmileid-huawei-face = "12.3.0-20261023.083151-210"
+usesmileid-huawei-document = "12.3.0-20261023.083151-210"
+usesmileid-bridge = "12.3.0-20261023.083151-210"
 # The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
 njia = "0.0.1-20261023.003202-6"
 
