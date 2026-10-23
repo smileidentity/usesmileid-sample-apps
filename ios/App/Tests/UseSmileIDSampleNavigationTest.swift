@@ -50,6 +50,18 @@ final class UseSmileIDSampleNavigationTest: XCTestCase {
     XCTAssertEqual(steps(model), ["products"])
   }
 
+  func testALinkToAnotherTabKeepsTheFormsUnderARun() throws {
+    let model = try model()
+    let engine = model.engine
+    let run = UseSmileIDSampleRunEntry(facts: [], step: UseSmileIDSampleStep.consentDetailsForm.rawValue)
+    try engine.startRun(from: XCTUnwrap(engine.top), product: .smartSelfieEnrollment, run: run)
+    try engine.next(XCTUnwrap(engine.top))
+    XCTAssertEqual(steps(model), ["products", "consentDetailsForm", "sdkFlow"])
+    model.open("settings", facts: [])
+    model.engine.select("products")
+    XCTAssertEqual(steps(model), ["products", "consentDetailsForm"])
+  }
+
   func testALinkIntoTheSameTabReplacesItsStack() throws {
     let model = try model()
     model.open("profiles/p-2", facts: [])

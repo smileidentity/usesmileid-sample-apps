@@ -44,11 +44,12 @@ final class UseSmileIDSampleNavigationModel: ObservableObject {
     var stacks = previous.parked
     stacks[previousTab] = Array(previous.entries.dropFirst())
     var merged = next.state
-    // A run isn't kept: parked, its entry takes a new id, so its result would find nothing to leave and a second run would start.
-    for (tab, stack) in stacks where tab != openedTab && merged.parked[tab] == nil && !stack.isEmpty
-      && !stack.contains(where: { [.sdkFlow, .sdkFlowFullScreen].contains(graph.stepOf($0).kind) }) {
+    for (tab, stack) in stacks where tab != openedTab && merged.parked[tab] == nil {
+      // Up to a run, not past it: parked, a run's entry takes a new id, so its result would find nothing to leave and a second run would start.
+      let kept = stack.prefix { ![.sdkFlow, .sdkFlowFullScreen].contains(graph.stepOf($0).kind) }
+      guard !kept.isEmpty else { continue }
       // Renumbered above the link's own entries, since ids are never reused within a flow.
-      merged.parked[tab] = stack.map { entry in
+      merged.parked[tab] = kept.map { entry in
         defer { merged.nextId += 1 }
         return NjiaEntry(id: merged.nextId, step: entry.step, visit: entry.visit, answer: entry.answer, arg: entry.arg)
       }
