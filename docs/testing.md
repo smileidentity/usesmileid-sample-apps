@@ -105,8 +105,8 @@ Enhanced Document Verification leaves out a country that Document Verification o
 `catalogue=unreachable` fails every list at once, which is how a flow reaches the error state and its
 Retry. The fixture holds about a dozen rows chosen for the UI's cases; it changes when the
 UI gains a case, never because the API changed. Android and iOS bundle it straight from `spec/`. Flutter's
-asset list and Metro cannot reach outside their app, so each ships a copy, and
-`scripts/sync_catalogue_fixture.py --check` fails `verify.sh` if a copy drifts.
+asset list and Metro cannot reach outside their app, so each ships a copy, as it does of `spec/njia-graph.json`,
+and `scripts/sync_spec_assets.py --check` fails `verify.sh` if a copy drifts.
 
 **Capture as matches the document by default.** Each platform's document-options flow asserts that Match
 document is the checked row of the Capture as sheet, that the Green Book row and a passport row each read

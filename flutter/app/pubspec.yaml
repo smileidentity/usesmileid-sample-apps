@@ -20,17 +20,20 @@ dependencies:
   # The SDK from pub.dev, pinned EXACT rather than with a caret. A bump arrives as a PR, which is
   # what makes every bump a free consumption test; a caret lets a fresh resolve move to a release
   # no PR ever exercised. Registry-only, permanently: no path dependency, no dependency_overrides.
-  usesmileid: 12.3.1-SNAPSHOT.12
+  usesmileid: 12.3.1-SNAPSHOT.14
 
   # The federated ML providers, pinned exactly for the same reason as the SDK above. A capture
   # screen with none of these registered falls back to a Pigeon call no plugin answers, so the flow
   # dies on the device; the four are what the Expo app and the SDK's own sample both carry.
-  usesmileid_mlkit_face: 12.3.1-SNAPSHOT.12
-  usesmileid_mlkit_document: 12.3.1-SNAPSHOT.12
-  usesmileid_huawei_face: 12.3.1-SNAPSHOT.12
-  usesmileid_huawei_document: 12.3.1-SNAPSHOT.12
-  usesmileid_vision_face: 12.3.1-SNAPSHOT.12
-  usesmileid_vision_document: 12.3.1-SNAPSHOT.12
+  usesmileid_mlkit_face: 12.3.1-SNAPSHOT.14
+  usesmileid_mlkit_document: 12.3.1-SNAPSHOT.14
+  usesmileid_huawei_face: 12.3.1-SNAPSHOT.14
+  usesmileid_huawei_document: 12.3.1-SNAPSHOT.14
+  usesmileid_vision_face: 12.3.1-SNAPSHOT.14
+  usesmileid_vision_document: 12.3.1-SNAPSHOT.14
+
+  # The navigation engine the shell draws from spec/njia-graph.json, at the exact version the SDK pins, which pub unifies with it.
+  usesmileid_njia: 0.0.1-SNAPSHOT.7
 
   # The shared journey, by path. Never published, and the SDK repo maps the same source into its
   # own development sample.
@@ -64,15 +67,19 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
+  # njia's reducer in Dart, so the graph's routing runs in a test where no native core does.
+  usesmileid_njia_testing: 0.0.1-SNAPSHOT.7
+
   # The published lint set, so a partner reading this app sees the rules they already have.
   flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
 
-  # A copy of spec/catalogue-fixture.json for `catalogue=fixture`; verify.sh fails if it drifts.
+  # Copies of spec/catalogue-fixture.json for `catalogue=fixture` and spec/njia-graph.json; verify.sh fails if either drifts.
   assets:
     - assets/catalogue-fixture.json
+    - assets/njia-graph.json
     # The SDK's strings by language, generated from spec/l10n/sdk.
     - lib/l10n/intl_fr.arb
     - lib/l10n/intl_ar.arb

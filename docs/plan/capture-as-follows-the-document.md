@@ -218,7 +218,7 @@ that request, and the PR says so.
   rows.
 - `spec/catalogue-fixture.json` already has `KE ALIEN_CARD`, `ZA IDENTITY_CARD green_book` and
   `KE PASSPORT`. Add a `SEAMANS_ID` row with `format 3` as the format-key trap, then run
-  `scripts/sync_catalogue_fixture.py` for the Flutter and Expo copies.
+  `scripts/sync_spec_assets.py` for the Flutter and Expo copies.
 
 **Unit tests.** Every platform's catalogue-rules spec test and document-capture mapping test run the new
 cases:

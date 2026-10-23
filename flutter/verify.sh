@@ -49,9 +49,9 @@ if [ "$PHASE" != android ]; then
   # Flutter collects package licences but not a font or icon a package bundles, so spec/ supplies them.
   python3 "$REPO_ROOT/scripts/generate_flutter_bundled_notices.py" --check
 
-  echo "==> catalogue fixture is current"
-  # Flutter's asset list cannot reach spec/, so the app ships a copy that must match it byte for byte.
-  python3 "$REPO_ROOT/scripts/sync_catalogue_fixture.py" --check
+  echo "==> bundled spec files are current"
+  # Flutter's asset list cannot reach spec/, so the app ships copies of the fixture and the njia graph that must match byte for byte.
+  python3 "$REPO_ROOT/scripts/sync_spec_assets.py" --check
 fi
 
 for package in "${PACKAGES[@]}"; do
