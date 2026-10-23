@@ -103,12 +103,18 @@ jobs:
           XCODE_VERSION: "27.1"
           XCODE_BUILD: 27A9275
 
+      # The image creates no iPhone 17 Pro on iOS 27.0, the runtime Xcode 27.1 ships, and the baselines need that one.
+      - name: Create the iPhone 17 Pro simulator
+        run: |
+          xcrun simctl list devices "iOS 27.0" | grep -q "iPhone 17 Pro (" || xcrun simctl create "iPhone 17 Pro" \
+            com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro com.apple.CoreSimulator.SimRuntime.iOS-27-0
+
       - name: Verify
         env:
           SMILE_DESIGN_SYSTEM: ${{ steps.design-system.outcome == 'success' && format('{0}/.design-system/smile-design-system', github.workspace) || '' }}
           SMILE_TOKENS_OPTIONAL: ${{ steps.design-system.outcome == 'skipped' && '1' || '' }}
-          # OS pinned because a runner image can also ship a newer iOS runtime; baselines are on 27.1.
-          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=27.1
+          # OS pinned because a runner image can also ship a newer iOS runtime; baselines are on 27.0.
+          DESTINATION: platform=iOS Simulator,name=iPhone 17 Pro,OS=27.0
         run: ios/verify.sh ${{ matrix.phase }} ${{ matrix.class }}
 
       - name: Upload the runner's rendering of failed goldens
