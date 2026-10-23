@@ -9,6 +9,7 @@ import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
+import java.util.concurrent.TimeUnit
 import org.junit.runner.RunWith
 import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
@@ -46,7 +47,7 @@ class UseSmileIDSampleLaunchOrderTest {
     @Test
     fun `onLaunch runs before the shell asks for the launch session`() {
         Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup()
-        ShadowLooper.idleMainLooper()
+        idleThroughFirstFrame()
 
         assertEquals(listOf("onLaunch", "launchSession"), calls)
     }
@@ -54,7 +55,7 @@ class UseSmileIDSampleLaunchOrderTest {
     @Test
     fun `a process restored from saved state still runs onLaunch`() {
         Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup(Bundle())
-        ShadowLooper.idleMainLooper()
+        idleThroughFirstFrame()
 
         assertEquals("onLaunch", calls.first())
     }
@@ -62,7 +63,7 @@ class UseSmileIDSampleLaunchOrderTest {
     @Test
     fun `a recreation in the same process does not run onLaunch again`() {
         Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().recreate()
-        ShadowLooper.idleMainLooper()
+        idleThroughFirstFrame()
 
         assertEquals(1, calls.count { it == "onLaunch" })
     }
@@ -72,9 +73,17 @@ class UseSmileIDSampleLaunchOrderTest {
         val second = Intent(Intent.ACTION_VIEW, Uri.parse("usesmileid-sample-android://?probes=true"))
         Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().pause().stop().destroy()
         Robolectric.buildActivity(UseSmileIDSampleActivity::class.java, second).setup()
-        ShadowLooper.idleMainLooper()
+        idleThroughFirstFrame()
 
         assertEquals(2, intents.size)
         assertEquals(second.data, intents.last().data)
+    }
+
+    /** The shell's effects start on its first frame, which an idle without time can leave unrun after another activity's test. */
+    private fun idleThroughFirstFrame() = ShadowLooper.idleMainLooper(FRAME_MILLIS, TimeUnit.MILLISECONDS)
+
+    private companion object {
+        /** Long enough for one frame. */
+        const val FRAME_MILLIS = 100L
     }
 }
