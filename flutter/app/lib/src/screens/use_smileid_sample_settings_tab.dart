@@ -138,9 +138,9 @@ class _UseSmileIDSampleSettingsTabState
       onLanguageTap: _showLanguage,
       // Debug builds only; every flow reaches the drawer by its deep link instead.
       onOpenScenarioDrawer: kDebugMode ? _openScenarioDrawer : null,
-      debugRows:
-          ref.watch(useSmileIDSampleShellExtensionProvider)?.debugRows() ??
-          const <Widget>[],
+      debugRows: useSmileIDSampleDebugRows(
+        ref.watch(useSmileIDSampleShellExtensionProvider),
+      ),
       onSignOut: () {
         unawaited(ref.read(useSmileIDSampleSessionProvider.notifier).clear());
         ref.read(useSmileIDSampleFormsProvider.notifier).clear();

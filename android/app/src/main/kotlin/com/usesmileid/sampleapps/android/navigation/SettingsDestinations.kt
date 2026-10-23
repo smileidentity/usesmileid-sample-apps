@@ -92,18 +92,29 @@ internal fun SettingsScreen(scope: UseSmileIDSampleStepScope) {
             engine.leaveToProducts()
         },
         debugRows = {
-            val context = LocalContext.current
-            UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
-                UseSmileIDSampleSettingRow(
-                    title = "Network logs",
-                    supportingText = "Requests from the last hour",
-                    onClick = { context.startActivity(intent) },
-                    trailing = { UseSmileIDSampleSettingRowChevron() },
-                )
+            useSmileIDSampleDebugRowOrder.forEach { group ->
+                when (group) {
+                    UseSmileIDSampleDebugRowGroup.ExtensionLeading -> useSmileIDSampleShellExtension?.LeadingDebugRows()
+                    UseSmileIDSampleDebugRowGroup.Shell -> NetworkLogsRow()
+                    UseSmileIDSampleDebugRowGroup.Extension -> useSmileIDSampleShellExtension?.DebugRows()
+                }
             }
-            useSmileIDSampleShellExtension?.DebugRows()
         },
     )
+}
+
+/** Opens the debug build's network log; a release build has none, so it draws nothing. */
+@Composable
+private fun NetworkLogsRow() {
+    val context = LocalContext.current
+    UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
+        UseSmileIDSampleSettingRow(
+            title = "Network logs",
+            supportingText = "Requests from the last hour",
+            onClick = { context.startActivity(intent) },
+            trailing = { UseSmileIDSampleSettingRowChevron() },
+        )
+    }
 }
 
 /** The capture-mode picker over Settings. */

@@ -8,4 +8,8 @@ final class UseSmileIDSampleShellExtensionTest: XCTestCase {
     try XCTSkipIf(sourceMode, "a source build carries its SDK repo's extension")
     XCTAssertNil(useSmileIDSampleShellExtension)
   }
+
+  func testTheExtensionsLeadingRowsComeBeforeNetworkLogsAndItsOthersAfter() {
+    XCTAssertEqual(UseSmileIDSampleDebugRowGroup.allCases, [.extensionLeading, .shell, .extension])
+  }
 }
