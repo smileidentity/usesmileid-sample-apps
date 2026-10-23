@@ -131,6 +131,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 }
 
 tasks.withType<Test>().configureEach {
+    // Robolectric's trace shadow keeps every section Compose opens, so the default 512 MB fills and kills the recomposer for later tests.
+    maxHeapSize = "2g"
     // Robolectric 4.17 reaches into OpenJDK internals, which are closed by default from JDK 17 on.
     jvmArgs(
         "--add-opens=java.base/java.lang=ALL-UNNAMED",
