@@ -2,26 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
 
-/// Back on a route ABOVE the shell. Each is entered with `go`, which leaves one page in the root
-/// stack: `pop` threw `GoError: There is nothing to pop` on three of them (the profile editor is a
-/// child route with a page under it), and a system back nothing handles leaves the app instead.
+import 'support/use_smileid_sample_test_njia.dart';
+
+/// Back from a screen a link opened, by its own back and by the system's: njia opens a link with the stack a user would have had, so back lands on the step under it.
 void main() {
-  for (final (String at, String lands) in <(String, String)>[
-    ('/profiles', '/settings'),
-    ('/profiles/p-1', '/profiles'),
-    ('/flow/biometric_kyc/details', '/products'),
-    ('/flow/biometric_kyc/id-details', '/flow/biometric_kyc/details'),
-  ]) {
-    Future<GoRouter> pump(WidgetTester tester) async {
-      final GoRouter router = useSmileIDSampleRouter(initialLocation: at);
+  for (final (String at, UseSmileIDSampleStep lands)
+      in <(String, UseSmileIDSampleStep)>[
+        ('/profiles', UseSmileIDSampleStep.settings),
+        ('/profiles/p-1', UseSmileIDSampleStep.profiles),
+        ('/flow/biometricKyc/details', UseSmileIDSampleStep.products),
+        // The shortest stack a user could have had: a product tap reaches the ID form when the token binds the user's details.
+        ('/flow/biometricKyc/id-details', UseSmileIDSampleStep.products),
+      ]) {
+    Future<void> pump(WidgetTester tester) async {
+      final RouterConfig<Uri> router = useSmileIDSampleTestRouter(at);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            ...useSmileIDSampleTestNjia(),
             useSmileIDSampleLaunchArgsProvider.overrideWithValue(
               const UseSmileIDSampleLaunchArgs(seedProfiles: true),
             ),
@@ -33,11 +35,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      return router;
     }
 
     testWidgets('back from $at lands on $lands', (WidgetTester tester) async {
-      final GoRouter router = await pump(tester);
+      await pump(tester);
 
       // The screen's own back, invoked as the app bar invokes it.
       tester
@@ -48,13 +49,13 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(tester.takeException(), isNull, reason: 'back threw from $at');
-      expect(router.routerDelegate.currentConfiguration.uri.toString(), lands);
+      expect(useSmileIDSampleTestTop(tester), lands);
     });
 
     testWidgets('system back from $at lands on $lands', (
       WidgetTester tester,
     ) async {
-      final GoRouter router = await pump(tester);
+      await pump(tester);
 
       // The engine's message for the hardware button, so the whole path from the binding down runs.
       await tester.binding.defaultBinaryMessenger.handlePlatformMessage(
@@ -71,7 +72,7 @@ void main() {
         isNull,
         reason: 'system back threw from $at',
       );
-      expect(router.routerDelegate.currentConfiguration.uri.toString(), lands);
+      expect(useSmileIDSampleTestTop(tester), lands);
     });
   }
 }

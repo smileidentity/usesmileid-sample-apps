@@ -5,7 +5,7 @@ import 'package:usesmileid_njia_testing/usesmileid_njia_testing.dart';
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia_facts.dart';
 
-import 'use_smileid_sample_njia_graph_test.dart';
+import '../support/use_smileid_sample_test_njia.dart';
 
 /// The wizard has five steps, so a longer walk is a loop.
 const int _runLength = 5;

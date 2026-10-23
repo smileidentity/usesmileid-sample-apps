@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// The four profile surfaces: reaching them, and the one act each of them performs.
 void main() {
@@ -22,13 +22,14 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleLaunchArgsProvider.overrideWithValue(
             UseSmileIDSampleLaunchArgs(seedProfiles: seedProfiles),
           ),
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(initialLocation: location),
+          routerConfig: useSmileIDSampleTestRouter(location),
         ),
       ),
     );

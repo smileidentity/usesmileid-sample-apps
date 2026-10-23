@@ -8,6 +8,8 @@ import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preference
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_settings_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_app.dart';
+
+import 'support/use_smileid_sample_test_njia.dart';
 import 'support/use_smileid_sample_test_session.dart';
 
 void main() {
@@ -33,6 +35,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           ...useSmileIDSampleLinkedSessionOverrides(),
           useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(
             settings,

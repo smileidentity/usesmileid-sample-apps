@@ -3,134 +3,222 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_deep_links.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_navigation.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_steps.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_version.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
-/// The route table is spec data, so it is asserted against `spec/`, not against itself.
+/// The app's links, asserted against `spec/routes.json` through `spec/njia-graph.json`: a renamed path or step otherwise kills a link silently.
 void main() {
+  const String run = 'sdkFlow';
+  final RegExp pathParam = RegExp(r':([A-Za-z][A-Za-z0-9]*)');
   late List<Map<String, Object?>> routes;
+  late UseSmileIDSampleGraph graph;
 
   setUpAll(() {
     final Map<String, Object?> table =
         jsonDecode(File('../../spec/routes.json').readAsStringSync())
             as Map<String, Object?>;
     routes = (table['routes']! as List<Object?>).cast<Map<String, Object?>>();
+    graph = useSmileIDSampleSpecGraph();
   });
 
-  List<String> pathsWhere(bool Function(Map<String, Object?>) predicate) =>
-      routes
-          .where(predicate)
-          .map((Map<String, Object?> route) => route['path']! as String)
-          .toList();
+  String idOf(Map<String, Object?> route) => route['id']! as String;
 
-  test('the three tab roots are the three the spec calls tabs', () {
-    expect(
-      UseSmileIDSampleRoutes.tabRoots,
-      pathsWhere(
-        (Map<String, Object?> route) => route['presentation'] == 'tab',
-      ),
-    );
+  String pathOf(Map<String, Object?> route) => route['path']! as String;
+
+  /// The route's path under this app's scheme, each parameter filled with a sample value.
+  Uri sampleUri(Map<String, Object?> route) => Uri.parse(
+    'usesmileid-sample-flutter://${pathOf(route).substring(1).replaceAllMapped(pathParam, (Match match) => 'sample-${match[1]}')}',
+  );
+
+  /// Every fact a link might need: the run's forms all shown, on [route].
+  Set<UseSmileIDSampleFact> factsFor(UseSmileIDSampleFlowRoute route) =>
+      <UseSmileIDSampleFact>{
+        UseSmileIDSampleFact.needsUserId,
+        UseSmileIDSampleFact.needsIdDetails,
+        if (route == UseSmileIDSampleFlowRoute.fullscreen)
+          UseSmileIDSampleFact.fullScreenRun,
+      };
+
+  test('the spec lists routes, so no assertion below passes on nothing', () {
+    expect(routes, isNotEmpty);
   });
 
-  test('every path this app names is the path the spec gives it', () {
-    String specPath(String id) =>
-        routes.firstWhere(
-              (Map<String, Object?> route) => route['id'] == id,
-            )['path']!
-            as String;
+  test(
+    'every spec route is the graph step the flutter column names, linked at its path',
+    () {
+      for (final Map<String, Object?> route in routes) {
+        final NjiaStep<UseSmileIDSampleStep, UseSmileIDSampleFact>? step = graph
+            .step(idOf(route));
+        expect(step, isNotNull, reason: '${idOf(route)}: no step');
+        expect(step!.link, pathOf(route).substring(1), reason: idOf(route));
+        final String flutter =
+            (route['platform']! as Map<String, Object?>)['flutter']! as String;
+        expect(
+          flutter.split(' | ').first,
+          'UseSmileIDSampleStep.${step.kind.name}',
+          reason: idOf(route),
+        );
+      }
+    },
+  );
 
-    expect(UseSmileIDSampleRoutes.products, specPath('products'));
-    expect(UseSmileIDSampleRoutes.verifications, specPath('verifications'));
-    expect(UseSmileIDSampleRoutes.settings, specPath('settings'));
-    expect(UseSmileIDSampleRoutes.licenses, specPath('licenses'));
-    expect(
-      UseSmileIDSampleRoutes.verificationDetails('job-1'),
-      specPath('verificationDetails').replaceAll(':jobId', 'job-1'),
-    );
-  });
-
-  test('the nav bar is drawn on the tab roots', () {
-    for (final String root in UseSmileIDSampleRoutes.tabRoots) {
-      expect(useSmileIDSampleShowsNavBar(root), isTrue, reason: root);
+  test('every step id is its kind\'s name', () {
+    for (final NjiaStep<UseSmileIDSampleStep, UseSmileIDSampleFact> step
+        in graph.steps) {
+      expect(step.id, step.kind.name);
     }
   });
 
-  // R13's defect: testing a tab's BRANCH rather than its destination put a bar on pushed screens.
-  test('the nav bar is drawn on no pushed route', () {
-    // Matched on a prefix, not equality: `push | fullScreen` is a pushed route too, and an
-    // equality test silently dropped it — the one route the flow opens.
-    final List<String> pushed = pathsWhere(
-      (Map<String, Object?> route) =>
-          (route['presentation']! as String).startsWith('push'),
-    );
-    // Named, not merely non-empty: the flow route is the one an equality match dropped, so a
-    // future narrowing fails here rather than passing on the seven that still matched.
-    expect(pushed, contains('/flow/:productId/run'));
-    for (final String path in pushed) {
-      expect(useSmileIDSampleShowsNavBar(path), isFalse, reason: path);
-    }
-  });
-
-  // A sheet is a layer over its owner, so the bar belongs to the page behind the scrim rather than to the sheet.
-  test('a sheet takes the bar of the page it is layered over', () {
-    // Every sheet, not just the modal ones: the pickers are `fullSheet`, so matching `modalSheet`
-    // alone left the two routes this test's own comment claims to cover unasserted.
-    final List<String> sheets = pathsWhere(
-      (Map<String, Object?> route) =>
-          (route['presentation']! as String).endsWith('Sheet'),
-    );
-    // Named for the same reason: both pickers are `fullSheet` and were the routes this test
-    // claimed to cover while matching only `modalSheet`.
-    expect(
-      sheets,
-      containsAll(<String>[
-        '/flow/:productId/id-details/country',
-        '/flow/:productId/id-details/id-type',
-        '/debug/scenarios',
-      ]),
-    );
-    for (final String path in sheets) {
+  test('a spec sheet is a sheet step and nothing else is', () {
+    for (final Map<String, Object?> route in routes) {
       expect(
-        useSmileIDSampleShowsNavBar(path),
-        UseSmileIDSampleRoutes.tabRoots.contains(
-          useSmileIDSamplePageBehind(path),
-        ),
-        reason: path,
+        graph.step(idOf(route))!.presentation == NjiaPresentation.sheet,
+        (route['presentation']! as String).endsWith('Sheet'),
+        reason: idOf(route),
       );
     }
-    expect(
-      useSmileIDSampleShowsNavBar(UseSmileIDSampleRoutes.scenarioDrawer),
-      isTrue,
+  });
+
+  test('every spec link opens at its own step', () async {
+    final UseSmileIDSampleReferenceNjia engines =
+        UseSmileIDSampleReferenceNjia();
+    for (final Map<String, Object?> route in routes) {
+      final UseSmileIDSampleLink? link = UseSmileIDSampleDeepLinks.linkOf(
+        sampleUri(route),
+      );
+      expect(link, isNotNull, reason: idOf(route));
+      final UseSmileIDSampleFlowRoute asked =
+          link!.route ?? UseSmileIDSampleFlowRoute.shell;
+      final UseSmileIDSampleEngine? engine = await engines.openLink(
+        graph,
+        link.path,
+        factsFor(asked),
+      );
+      expect(engine, isNotNull, reason: '${idOf(route)}: ${link.path}');
+      expect(
+        engine!.state.entries.last.step,
+        idOf(route) == run && asked == UseSmileIDSampleFlowRoute.fullscreen
+            ? UseSmileIDSampleStep.sdkFlowFullScreen.name
+            : idOf(route),
+        reason: idOf(route),
+      );
+    }
+  });
+
+  test('the run link opens full screen unless it asks for the shell', () async {
+    final Map<String, Object?> spec = routes.firstWhere(
+      (Map<String, Object?> route) => idOf(route) == run,
     );
     expect(
-      useSmileIDSampleShowsNavBar(
-        UseSmileIDSampleRoutes.countryPicker('biometric_kyc'),
+      UseSmileIDSampleDeepLinks.linkOf(sampleUri(spec))!.route,
+      UseSmileIDSampleFlowRoute.fullscreen,
+    );
+    final UseSmileIDSampleLink shell = UseSmileIDSampleDeepLinks.linkOf(
+      sampleUri(spec).replace(query: 'route=shell&probes=true'),
+    )!;
+    expect(shell.route, UseSmileIDSampleFlowRoute.shell);
+    final UseSmileIDSampleEngine? engine = await UseSmileIDSampleReferenceNjia()
+        .openLink(graph, shell.path, factsFor(UseSmileIDSampleFlowRoute.shell));
+    expect(
+      graph.stepOf(engine!.state.entries.last).kind,
+      UseSmileIDSampleStep.sdkFlow,
+    );
+  });
+
+  test('the flow route ids are the values the spec gives the run\'s route', () {
+    final Map<String, Object?> spec = routes.firstWhere(
+      (Map<String, Object?> route) => idOf(route) == run,
+    );
+    final Map<String, Object?> arg = (spec['args']! as List<Object?>)
+        .cast<Map<String, Object?>>()
+        .firstWhere((Map<String, Object?> it) => it['name'] == 'route');
+    final RegExpMatch values = RegExp(
+      r'enum\(([^)]*)\)',
+    ).firstMatch(arg['type']! as String)!;
+    expect(
+      UseSmileIDSampleFlowRoute.values.map(
+        (UseSmileIDSampleFlowRoute it) => it.id,
       ),
-      isFalse,
+      values[1]!.split(','),
+    );
+    expect(arg['default'], UseSmileIDSampleFlowRoute.fullscreen.id);
+  });
+
+  test(
+    'the only link outside the spec is the full-screen run, and the gallery is in neither',
+    () {
+      final Set<String> spec = routes
+          .map((Map<String, Object?> route) => pathOf(route).substring(1))
+          .toSet();
+      expect(
+        graph.steps
+            .map(
+              (NjiaStep<UseSmileIDSampleStep, UseSmileIDSampleFact> step) =>
+                  step.link,
+            )
+            .nonNulls
+            .where((String link) => !spec.contains(link)),
+        <String>['flow/:productId/run-fullscreen'],
+      );
+      final Uri gallery = Uri.parse(
+        'usesmileid-sample-flutter://debug/components',
+      );
+      expect(UseSmileIDSampleDeepLinks.linkOf(gallery), isNull);
+      expect(UseSmileIDSampleDeepLinks.isGallery(gallery), isTrue);
+    },
+  );
+
+  test('the nav items select the shell\'s tabs, in the graph\'s order', () {
+    final NjiaTabs<UseSmileIDSampleStep, UseSmileIDSampleFact> shell = graph
+        .nodes
+        .whereType<NjiaTabs<UseSmileIDSampleStep, UseSmileIDSampleFact>>()
+        .single;
+    expect(
+      UseSmileIDSampleNavItem.values.map(useSmileIDSampleStepOf),
+      shell.steps.map(
+        (NjiaStep<UseSmileIDSampleStep, UseSmileIDSampleFact> step) =>
+            step.kind,
+      ),
+    );
+    expect(
+      UseSmileIDSampleNavItem.values.map(
+        (UseSmileIDSampleNavItem item) => item.testId,
+      ),
+      <String>[
+        UseSmileIDSampleTestIds.navProducts,
+        UseSmileIDSampleTestIds.navVerifications,
+        UseSmileIDSampleTestIds.navSettings,
+      ],
+    );
+    expect(
+      shell.steps.map(
+        (NjiaStep<UseSmileIDSampleStep, UseSmileIDSampleFact> step) =>
+            '/${step.link}',
+      ),
+      routes
+          .where((Map<String, Object?> route) => route['presentation'] == 'tab')
+          .map(pathOf),
     );
   });
 
-  // The three rules above partition the table, so a presentation value none of them matches would
-  // otherwise escape unasserted — which is exactly how `push | fullScreen` and `fullSheet` did.
-  test('every route the spec lists is covered by one of the bar rules', () {
-    final List<String> uncovered = pathsWhere((Map<String, Object?> route) {
-      final String presentation = route['presentation']! as String;
-      return presentation != 'tab' &&
-          !presentation.startsWith('push') &&
-          !presentation.endsWith('Sheet');
-    });
-    expect(uncovered, isEmpty, reason: 'unclassified presentation');
-  });
-
-  test('the component gallery is a dev route the spec deliberately omits', () {
-    expect(
-      pathsWhere((_) => true),
-      isNot(contains(UseSmileIDSampleRoutes.components)),
-    );
-    expect(
-      useSmileIDSampleShowsNavBar(UseSmileIDSampleRoutes.components),
-      isFalse,
-    );
+  test('a nav item is found from its root, and from no other step', () {
+    for (final UseSmileIDSampleStep step in UseSmileIDSampleStep.values) {
+      final UseSmileIDSampleNavItem? item = useSmileIDSampleNavItemOf(step);
+      expect(
+        item == null ? null : useSmileIDSampleStepOf(item),
+        UseSmileIDSampleNavItem.values
+                .map(useSmileIDSampleStepOf)
+                .contains(step)
+            ? step
+            : null,
+        reason: step.name,
+      );
+    }
   });
 
   test('the settings footer names the version the pubspec declares', () {
@@ -141,37 +229,5 @@ void main() {
     ).firstMatch(File('pubspec.yaml').readAsStringSync());
     final String version = declared!.group(1)!;
     expect(useSmileIDSampleVersionLabel, endsWith(version));
-  });
-  _tabOrderIsOneContract();
-}
-
-/// The shell reads `UseSmileIDSampleNavItem.values[shell.currentIndex]` and navigates with `item.index`.
-void _tabOrderIsOneContract() {
-  test('the nav items are in the same order as the tab roots', () {
-    expect(
-      UseSmileIDSampleNavItem.values.length,
-      UseSmileIDSampleRoutes.tabRoots.length,
-    );
-    final List<String> expected = <String>[
-      UseSmileIDSampleTestIds.navProducts,
-      UseSmileIDSampleTestIds.navVerifications,
-      UseSmileIDSampleTestIds.navSettings,
-    ];
-    for (int i = 0; i < expected.length; i++) {
-      expect(
-        UseSmileIDSampleNavItem.values[i].testId,
-        expected[i],
-        reason: 'nav item $i',
-      );
-      expect(
-        UseSmileIDSampleRoutes.tabRoots[i],
-        <String>[
-          UseSmileIDSampleRoutes.products,
-          UseSmileIDSampleRoutes.verifications,
-          UseSmileIDSampleRoutes.settings,
-        ][i],
-        reason: 'tab root $i',
-      );
-    }
   });
 }

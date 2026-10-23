@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid/usesmileid.dart' show UseSmileIDBuilder;
@@ -11,7 +10,7 @@ import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preference
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_app.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 import 'support/use_smileid_sample_test_session.dart';
 
 /// Status-bar contrast in both presentations, whatever the device's brightness.
@@ -47,6 +46,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           ...useSmileIDSampleLinkedSessionOverrides(),
           useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(
             settings,
@@ -56,7 +56,9 @@ void main() {
           ),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(jobs),
         ],
-        child: UseSmileIDSampleApp(initialLocation: at),
+        child: UseSmileIDSampleApp(
+          launchLink: at == null ? null : Uri.parse(at),
+        ),
       ),
     );
     await tester.pumpAndSettle();
@@ -124,7 +126,10 @@ void main() {
       at: UseSmileIDSampleRoutes.scenarioDrawer,
     );
 
-    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(
+      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.scenarioDrawer),
+      findsOneWidget,
+    );
     expectBars(tester, dark: false);
   });
 
@@ -138,7 +143,10 @@ void main() {
       at: UseSmileIDSampleRoutes.scenarioDrawer,
     );
 
-    expect(find.byType(BottomSheet), findsOneWidget);
+    expect(
+      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.scenarioDrawer),
+      findsOneWidget,
+    );
     expectBars(tester, dark: true);
   });
 
@@ -160,12 +168,12 @@ void main() {
       ..setUserField(UseSmileIDSampleUserField.email, 'ada@example.com');
     // Forgotten after the products tab drew dark, so only the SDK route's frame can draw it again.
     await forgetBars(tester);
-    GoRouter.of(context).go(
+    await useSmileIDSampleTestDeliver(
+      tester,
       UseSmileIDSampleRoutes.sdkFlow(
         UseSmileIDSampleProduct.smartSelfieEnrollment.id,
       ),
     );
-    await tester.pumpAndSettle();
 
     // The SDK renders nothing under `flutter test`, so this asserts what it is handed.
     final BuildContext sdk = tester.element(find.byType(UseSmileIDBuilder));

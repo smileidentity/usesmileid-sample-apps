@@ -7,7 +7,7 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_session_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// Refreshing a processing row when its page opens.
 void main() {
@@ -25,6 +25,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
             UseSmileIDSampleMemoryJobsRepository(<UseSmileIDSampleJob>[_row]),
           ),
@@ -38,10 +39,8 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(
-            initialLocation: UseSmileIDSampleRoutes.verificationDetails(
-              _row.id,
-            ),
+          routerConfig: useSmileIDSampleTestRouter(
+            UseSmileIDSampleRoutes.verificationDetails(_row.id),
           ),
         ),
       ),
