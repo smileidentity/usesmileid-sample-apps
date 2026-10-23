@@ -68,6 +68,8 @@
 "si_progress_stage_document_front" = "חזית התעודה";
 "si_progress_stage_document_back" = "גב התעודה";
 "si_progress_stage_visa" = "ויזה";
+"si_progress_caption" = "{step} · {stage}";
+"si_progress_caption_spoken" = "{step}, {stage}";
 "si_processing_success_title" = "השליחה הושלמה";
 "si_processing_success_message" = "תודה על השליחה. אנו מאמתים כעת את הפרטים שלך.";
 "si_processing_failed_title" = "השליחה נכשלה";

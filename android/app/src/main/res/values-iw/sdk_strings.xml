@@ -70,6 +70,8 @@
     <string name="si_progress_stage_document_front">חזית התעודה</string>
     <string name="si_progress_stage_document_back">גב התעודה</string>
     <string name="si_progress_stage_visa">ויזה</string>
+    <string name="si_progress_caption">{step} · {stage}</string>
+    <string name="si_progress_caption_spoken">{step}, {stage}</string>
     <string name="si_processing_success_title">השליחה הושלמה</string>
     <string name="si_processing_success_message">תודה על השליחה. אנו מאמתים כעת את הפרטים שלך.</string>
     <string name="si_processing_failed_title">השליחה נכשלה</string>

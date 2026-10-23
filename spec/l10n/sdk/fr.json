@@ -68,6 +68,8 @@
   "si_progress_stage_document_front": "Recto de la pièce",
   "si_progress_stage_document_back": "Verso de la pièce",
   "si_progress_stage_visa": "Visa",
+  "si_progress_caption": "{step} · {stage}",
+  "si_progress_caption_spoken": "{step}, {stage}",
   "si_processing_success_title": "Envoi terminé",
   "si_processing_success_message": "Merci pour votre envoi. Nous vérifions actuellement vos informations.",
   "si_processing_failed_title": "Échec de l’envoi",
