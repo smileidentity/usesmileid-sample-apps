@@ -67,9 +67,9 @@ class _UseSmileIDSampleSettingsTabState
       onOpenScenarioDrawer: kDebugMode
           ? () => _go(UseSmileIDSampleStep.scenarioDrawer)
           : null,
-      debugRows:
-          ref.watch(useSmileIDSampleShellExtensionProvider)?.debugRows() ??
-          const <Widget>[],
+      debugRows: useSmileIDSampleDebugRows(
+        ref.watch(useSmileIDSampleShellExtensionProvider),
+      ),
       onSignOut: () {
         unawaited(ref.read(useSmileIDSampleSessionProvider.notifier).clear());
         ref.read(useSmileIDSampleFormsProvider.notifier).clear();

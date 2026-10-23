@@ -1,10 +1,12 @@
-import type { ReactNode } from 'react';
+import { createElement, Fragment, type ReactNode } from 'react';
 import type { UseSmileIDSampleProduct, UseSmileIDSampleTokenSession } from '@smileid/sample-ui';
 import type { UseSmileIDFlowBuilder, UseSmileIDNetworkBuilder } from '@smileid/usesmileid';
 
 /// Developer tooling an SDK repo's source build adds to this app; a registry build has none.
 export type UseSmileIDSampleShellExtension = {
-  /// Extra rows for the Settings DEBUG section.
+  /// Rows for the Settings DEBUG section above the shell's own, such as an identity the rows below refer to.
+  leadingDebugRows?: () => ReactNode;
+  /// Extra rows for the Settings DEBUG section, below the shell's own.
   debugRows?: () => ReactNode;
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   customiseFlow?: (builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) => void;
@@ -27,4 +29,13 @@ export const linkLaunchSession = async (
   } catch {
     // Nothing to recover: the app runs without it, as it would without the extension.
   }
+};
+
+/// The DEBUG section's rows below Scenarios: the extension's leading rows, then its others; none without an extension.
+export const smileIDSampleDebugRows = (extension: UseSmileIDSampleShellExtension | null | undefined): ReactNode => {
+  const rows = [extension?.leadingDebugRows?.(), extension?.debugRows?.()].filter(
+    (row) => row !== undefined && row !== null && row !== false,
+  );
+  // Undefined rather than an empty fragment, which the settings screen would read as rows to show.
+  return rows.length > 0 ? createElement(Fragment, null, ...rows) : undefined;
 };
