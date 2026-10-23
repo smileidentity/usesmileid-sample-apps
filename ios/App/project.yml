@@ -14,7 +14,11 @@ packages:
   # the two on package identity, so a drift here fails resolution instead of building two SDKs.
   UseSmileID:
     url: https://github.com/smileidentity/ios-spm.git
-    exactVersion: 12.3.0-SNAPSHOT.20261022222854.39864713367
+    exactVersion: 12.3.0-SNAPSHOT.20261023083653.39925292260
+  # The navigation engine the shell draws from spec/njia-graph.json; the exact version the SDK's package pins, which SwiftPM unifies with it.
+  Njia:
+    url: https://github.com/smileidentity/njia-spm
+    exactVersion: 0.0.1-SNAPSHOT.6
 
 settings:
   base:
@@ -35,6 +39,9 @@ targets:
       # The `catalogue=fixture` lists, bundled on every configuration: the device suite runs release too.
       - path: ../../spec/catalogue-fixture.json
         buildPhase: resources
+      # The four apps' one navigation graph, read at launch.
+      - path: ../../spec/njia-graph.json
+        buildPhase: resources
     dependencies:
       - package: SampleUI
         product: SampleUI
@@ -46,6 +53,10 @@ targets:
         product: UseSmileIDVisionFace
       - package: UseSmileID
         product: UseSmileIDVisionDocument
+      - package: Njia
+        product: Njia
+      - package: Njia
+        product: NjiaUI
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.usesmileid.sample.ios

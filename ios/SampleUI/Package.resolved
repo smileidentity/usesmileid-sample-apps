@@ -1,13 +1,13 @@
 {
-  "originHash" : "9b4f7aeb7a78f7fed965b61a1445279b51630c7f411cc5e4b5e2871aaff6e5d6",
+  "originHash" : "db62a1aa79fc9f152b703f971c2b3582c12a47c78c246f498d18e00184c28b2c",
   "pins" : [
     {
       "identity" : "ios-spm",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/ios-spm.git",
       "state" : {
-        "revision" : "0168eca2dcd179060ea94d346911d8b5fa994e97",
-        "version" : "12.3.0-SNAPSHOT.20261022222854.39864713367"
+        "revision" : "dda2d9f16e5bcbe4c1c495bb721b9814a211801e",
+        "version" : "12.3.0-SNAPSHOT.20261023083653.39925292260"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/njia-spm",
       "state" : {
-        "revision" : "411fd3d9e295fef93e9720536227982a5816a98a",
-        "version" : "0.0.1-SNAPSHOT.3"
+        "revision" : "041d578cbe3a7d6e78cb03f8e800e7df6dfd4ef3",
+        "version" : "0.0.1-SNAPSHOT.6"
       }
     },
     {
