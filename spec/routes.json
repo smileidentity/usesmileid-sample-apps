@@ -18,7 +18,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Products",
-        "ios": "Route.products",
+        "ios": "UseSmileIDSampleStep.products",
         "flutter": "/products",
         "expo": "app/(tabs)/products.tsx"
       }
@@ -31,7 +31,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Verifications",
-        "ios": "Route.verifications",
+        "ios": "UseSmileIDSampleStep.verifications",
         "flutter": "/verifications",
         "expo": "app/(tabs)/verifications.tsx"
       }
@@ -44,7 +44,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Settings",
-        "ios": "Route.settings",
+        "ios": "UseSmileIDSampleStep.settings",
         "flutter": "/settings",
         "expo": "app/(tabs)/settings.tsx"
       }
@@ -57,7 +57,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Licenses",
-        "ios": "Route.licenses",
+        "ios": "UseSmileIDSampleStep.licenses",
         "flutter": "/settings/licenses",
         "expo": "app/(tabs)/settings/licenses.tsx"
       },
@@ -71,7 +71,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.CaptureMode",
-        "ios": "Sheet.captureMode",
+        "ios": "UseSmileIDSampleStep.captureMode",
         "flutter": "/settings/capture-mode",
         "expo": "app/(settings)/settings/capture-mode.tsx"
       },
@@ -85,7 +85,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Appearance",
-        "ios": "Sheet.appearance",
+        "ios": "UseSmileIDSampleStep.appearance",
         "flutter": "/settings/appearance",
         "expo": "app/(settings)/settings/appearance.tsx"
       },
@@ -99,7 +99,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Language",
-        "ios": "Sheet.language",
+        "ios": "UseSmileIDSampleStep.language",
         "flutter": "/settings/language",
         "expo": "app/(settings)/settings/language.tsx"
       },
@@ -119,7 +119,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.VerificationDetails",
-        "ios": "Route.verificationDetails(jobId:)",
+        "ios": "UseSmileIDSampleStep.verificationDetails",
         "flutter": "/verifications/:jobId",
         "expo": "app/(tabs)/verifications/[jobId].tsx"
       },
@@ -139,7 +139,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.ConsentDetailsForm",
-        "ios": "Route.consentDetailsForm(productId:)",
+        "ios": "UseSmileIDSampleStep.consentDetailsForm",
         "flutter": "/flow/:productId/details",
         "expo": "app/flow/[productId]/details.tsx"
       },
@@ -159,7 +159,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.AuthUserId",
-        "ios": "Route.authUserId(productId:)",
+        "ios": "UseSmileIDSampleStep.authUserId",
         "flutter": "/flow/:productId/user-id",
         "expo": "app/flow/[productId]/user-id.tsx"
       },
@@ -179,7 +179,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.IdDetailsForm",
-        "ios": "Route.idDetailsForm(productId:)",
+        "ios": "UseSmileIDSampleStep.idDetailsForm",
         "flutter": "/flow/:productId/id-details",
         "expo": "app/flow/[productId]/id-details/index.tsx"
       },
@@ -205,7 +205,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.SdkFlow | UseSmileIDSampleStep.SdkFlowFullScreen",
-        "ios": "Route.sdkFlow(productId:presentation:)",
+        "ios": "UseSmileIDSampleStep.sdkFlow | UseSmileIDSampleStep.sdkFlowFullScreen",
         "flutter": "/flow/:productId/run",
         "expo": "app/flow/[productId]/run.tsx"
       },
@@ -225,7 +225,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.CountryPicker",
-        "ios": "Sheet.countryPicker",
+        "ios": "UseSmileIDSampleStep.countryPicker",
         "flutter": "/flow/:productId/id-details/country",
         "expo": "app/flow/[productId]/id-details/country.tsx"
       }
@@ -244,7 +244,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.IdTypePicker",
-        "ios": "Sheet.idTypePicker",
+        "ios": "UseSmileIDSampleStep.idTypePicker",
         "flutter": "/flow/:productId/id-details/id-type",
         "expo": "app/flow/[productId]/id-details/id-type.tsx"
       },
@@ -264,7 +264,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.DocumentPicker",
-        "ios": "Sheet.documentPicker",
+        "ios": "UseSmileIDSampleStep.documentPicker",
         "flutter": "/flow/:productId/id-details/document",
         "expo": "app/flow/[productId]/id-details/document.tsx"
       },
@@ -284,7 +284,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.CaptureAs",
-        "ios": "Sheet.captureAs",
+        "ios": "UseSmileIDSampleStep.captureAs",
         "flutter": "/flow/:productId/id-details/capture-as",
         "expo": "app/flow/[productId]/id-details/capture-as.tsx"
       },
@@ -304,7 +304,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.GenericDocument",
-        "ios": "Sheet.genericDocument",
+        "ios": "UseSmileIDSampleStep.genericDocument",
         "flutter": "/flow/:productId/id-details/generic-document",
         "expo": "app/flow/[productId]/id-details/generic-document.tsx"
       },
@@ -318,7 +318,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.ProfileSwitch",
-        "ios": "Sheet.profileSwitch",
+        "ios": "UseSmileIDSampleStep.profileSwitch",
         "flutter": "/profiles/switch",
         "expo": "app/(products)/profiles/switch.tsx"
       },
@@ -332,7 +332,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.Profiles",
-        "ios": "Route.profiles",
+        "ios": "UseSmileIDSampleStep.profiles",
         "flutter": "/profiles",
         "expo": "app/profiles/index.tsx"
       },
@@ -352,7 +352,7 @@
       ],
       "platform": {
         "android": "UseSmileIDSampleStep.ProfileConfig",
-        "ios": "Route.profileConfig(profileId:)",
+        "ios": "UseSmileIDSampleStep.profileConfig",
         "flutter": "/profiles/:profileId",
         "expo": "app/profiles/[profileId].tsx"
       },
@@ -366,7 +366,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.NewProfile",
-        "ios": "Sheet.newProfile",
+        "ios": "UseSmileIDSampleStep.newProfile",
         "flutter": "/profiles/new",
         "expo": "app/profiles/new.tsx"
       },
@@ -380,7 +380,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.ScanToken",
-        "ios": "Route.scanToken",
+        "ios": "UseSmileIDSampleStep.scanToken",
         "flutter": "/token/scan",
         "expo": "app/token/scan.tsx"
       }
@@ -393,7 +393,7 @@
       "args": [],
       "platform": {
         "android": "UseSmileIDSampleStep.ScenarioDrawer",
-        "ios": "Sheet.scenarioDrawer",
+        "ios": "UseSmileIDSampleStep.scenarioDrawer",
         "flutter": "/debug/scenarios",
         "expo": "app/debug/scenarios.tsx"
       },

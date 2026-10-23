@@ -1,18 +1,22 @@
+import Njia
 import SampleUI
 import SwiftUI
 import UseSmileID
 
-/// The single route hosting the SDK flow in both presentations, which differ only in insets; no host chrome inside it.
+/// The step hosting the SDK flow in both presentations, which differ only in insets; no host chrome inside it.
 struct SdkFlowScreen: View {
-  let productId: String
-  let presentation: UseSmileIDSampleFlowRoute
+  let scope: UseSmileIDSampleStepScope
 
-  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  @EnvironmentObject private var navigation: UseSmileIDSampleNavigationModel
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   /// Once per entry: the snapshot is read here and never again.
   @StateObject private var run = SdkFlowRun()
 
   @Environment(\.useSmileIDSampleColors) private var colors
+
+  private var presentation: UseSmileIDSampleFlowRoute {
+    scope.step.kind == .sdkFlowFullScreen ? .fullscreen : .shell
+  }
 
   var body: some View {
     // A stack, not a background: the content is empty until the gate runs, and SwiftUI drops an empty view's background.
@@ -37,39 +41,37 @@ struct SdkFlowScreen: View {
     }
   }
 
-  /// The gate, then the run. Every exit replaces the path rather than popping it (R4).
+  /// The gate, then the run. Every exit replaces the run rather than popping it (R4).
   private func enter() {
     guard run.claimEntry() else { return }
     // Hoisted: a teardown cancel arrives from the SDK's `deinit`, where an `@EnvironmentObject` read is invalid.
     let app = app
-    let router = router
-    let run = run
-    let flow = Route.sdkFlow(productId: productId, presentation: presentation)
+    let exit = SdkFlowExit(engine: navigation.engine, entry: scope.entry, run: run)
     guard let snapshot = buildSnapshot(
-      productId: productId,
+      productId: exit.engine.runProductId(scope.entry) ?? "",
       route: presentation,
       app: app
     ) else {
-      useSmileIDSampleLeaveFlow(router, run, flow)
+      exit.leave()
       return
     }
     switch useSmileIDSamplePreflight(snapshot) {
     case .needsDetails:
       // The flow goes from underneath it: a deep link seats no form below the run.
-      useSmileIDSampleLeaveFlow(router, run, flow, landing: .consentDetailsForm(productId: snapshot.product.id))
+      exit.leave(landing: .consentDetailsForm, arg: snapshot.product.id)
     case .needsUserId:
-      useSmileIDSampleLeaveFlow(router, run, flow, landing: .authUserId(productId: snapshot.product.id))
+      exit.leave(landing: .authUserId, arg: snapshot.product.id)
     case .needsSession:
       // The scanner, not a form: the run needs a token, and no form holds one.
       app.interruptedRun = UseSmileIDSampleRunIntent(productId: snapshot.product.id, route: snapshot.route)
-      useSmileIDSampleLeaveFlow(router, run, flow, landing: .scanToken)
+      exit.leave(landing: .scanToken)
     case .misconfigured(let issues):
       // Says why first: a silent return to the product list reads as a dead tap.
       app.flowResult.recordBlocked(reason: issues.joined(separator: "; "), environment: snapshot.environment)
-      useSmileIDSampleLeaveFlow(router, run, flow)
+      exit.leave()
     case .ready:
       app.flowResult.startFlow(environment: snapshot.environment)
-      let handler = SdkFlowResultHandler(app: app, router: router, run: run, flow: flow, snapshot: snapshot)
+      let handler = SdkFlowResultHandler(app: app, exit: exit, snapshot: snapshot)
       run.start(product: snapshot.product, builder: builder(snapshot, app: app, handler: handler))
     }
   }
@@ -93,9 +95,7 @@ struct SdkFlowScreen: View {
 @MainActor
 struct SdkFlowResultHandler {
   let app: UseSmileIDSampleAppState
-  let router: UseSmileIDSampleRouter
-  let run: SdkFlowRun
-  let flow: Route
+  let exit: SdkFlowExit
   let snapshot: FlowLaunchSnapshot
 
   func deliver(_ result: UseSmileIDResult<JobSubmissionResponse>) {
@@ -103,13 +103,13 @@ struct SdkFlowResultHandler {
     switch result {
     case .success(let response):
       app.addJob(processingJob(response), bindings: snapshot.liveSession?.bindings)
-      useSmileIDSampleLeaveFlow(router, run, flow, landing: .verificationDetails(jobId: response.jobId))
+      exit.leave(landing: .verificationDetails, arg: response.jobId)
     // Same destination: a failed run has no server-issued job id, so the route carries a non-id.
     case .failure, .captured:
-      useSmileIDSampleLeaveFlow(router, run, flow, landing: .verificationDetails(jobId: unsubmittedJobId))
+      exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
     // Popping the flow *is* the cancel, so the host fires none of its own.
     case .cancelled:
-      useSmileIDSampleLeaveFlow(router, run, flow)
+      exit.leave()
     }
   }
 
@@ -144,16 +144,27 @@ struct SdkFlowResultHandler {
   }
 }
 
-/// The one exit: the run mounts nothing more and the path is replaced (R4).
+/// The one exit: the run mounts nothing more, the products tab drops it, and the landing step opens from its own tab's root (R4).
 @MainActor
-func useSmileIDSampleLeaveFlow(
-  _ router: UseSmileIDSampleRouter,
-  _ run: SdkFlowRun,
-  _ flow: Route,
-  landing: Route? = nil
-) {
-  run.leave()
-  router.endFlow(flow, landing: landing)
+struct SdkFlowExit {
+  let engine: UseSmileIDSampleEngine
+  /// The run's entry: an exit once it has left the stack, such as a teardown cancel, is stale and moves nothing.
+  let entry: NjiaEntry
+  let run: SdkFlowRun
+
+  func leave(landing: UseSmileIDSampleStep? = nil, arg: String? = nil) {
+    run.leave()
+    guard engine.state.entries.contains(where: { $0.id == entry.id }) else { return }
+    engine.leaveToProducts()
+    guard let landing else { return }
+    let tab = engine.graph.steps.first { $0.kind == landing }?.tab ?? UseSmileIDSampleStep.products.rawValue
+    if tab != UseSmileIDSampleStep.products.rawValue {
+      // Twice: the first shows the tab as it was left, the second pops it to its root, as a link lands.
+      engine.select(tab)
+      engine.select(tab)
+    }
+    engine.top.map { engine.navigator($0).go(landing, arg: arg) }
+  }
 }
 
 extension Error {
