@@ -69,6 +69,8 @@
   "si_progress_stage_document_front": "الوجه الأمامي للهوية",
   "si_progress_stage_document_back": "الوجه الخلفي للهوية",
   "si_progress_stage_visa": "التأشيرة",
+  "si_progress_caption": "{step} · {stage}",
+  "si_progress_caption_spoken": "{step}، {stage}",
   "si_processing_success_title": "اكتمل الإرسال",
   "si_processing_success_message": "شكرًا لإرسالك. نحن نتحقق حاليًا من بياناتك.",
   "si_processing_failed_title": "فشل الإرسال",

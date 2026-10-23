@@ -70,6 +70,8 @@
     <string name="si_progress_stage_document_front">Recto de la pièce</string>
     <string name="si_progress_stage_document_back">Verso de la pièce</string>
     <string name="si_progress_stage_visa">Visa</string>
+    <string name="si_progress_caption">{step} · {stage}</string>
+    <string name="si_progress_caption_spoken">{step}, {stage}</string>
     <string name="si_processing_success_title">Envoi terminé</string>
     <string name="si_processing_success_message">Merci pour votre envoi. Nous vérifions actuellement vos informations.</string>
     <string name="si_processing_failed_title">Échec de l’envoi</string>

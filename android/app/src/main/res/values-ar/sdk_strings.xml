@@ -70,6 +70,8 @@
     <string name="si_progress_stage_document_front">الوجه الأمامي للهوية</string>
     <string name="si_progress_stage_document_back">الوجه الخلفي للهوية</string>
     <string name="si_progress_stage_visa">التأشيرة</string>
+    <string name="si_progress_caption">{step} · {stage}</string>
+    <string name="si_progress_caption_spoken">{step}، {stage}</string>
     <string name="si_processing_success_title">اكتمل الإرسال</string>
     <string name="si_processing_success_message">شكرًا لإرسالك. نحن نتحقق حاليًا من بياناتك.</string>
     <string name="si_processing_failed_title">فشل الإرسال</string>
