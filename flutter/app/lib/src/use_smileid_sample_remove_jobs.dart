@@ -15,20 +15,28 @@ Future<void> useSmileIDSampleRemoveJobs(WidgetRef ref, Set<String> ids) async {
   final UseSmileIDSampleJobFilter filter = ref.read(
     useSmileIDSampleJobFilterProvider,
   );
+  // Read first: a delete from a job's page leaves it, so its ref is gone before the write lands.
+  final UseSmileIDSampleSelectionNotifier selection = ref.read(
+    useSmileIDSampleSelectionProvider.notifier,
+  );
+  final UseSmileIDSampleRemovalNoticeNotifier notice = ref.read(
+    useSmileIDSampleRemovalNoticeProvider.notifier,
+  );
+  final UseSmileIDSampleJobFilterNotifier filters = ref.read(
+    useSmileIDSampleJobFilterProvider.notifier,
+  );
 
   final int taken = await ref
       .read(useSmileIDSampleJobsProvider.notifier)
       .removeJobs(ids);
-  ref.read(useSmileIDSampleSelectionProvider.notifier).setActive(false);
+  selection.setActive(false);
   if (taken == 0) {
     return;
   }
-  ref.read(useSmileIDSampleRemovalNoticeProvider.notifier).show(taken);
+  notice.show(taken);
   // Removing the last row of the ACTIVE filter falls back to All, or the reader is left staring at
   // an empty list under a chip they did not choose to be on.
   if (!remaining.any(filter.matches)) {
-    ref
-        .read(useSmileIDSampleJobFilterProvider.notifier)
-        .select(UseSmileIDSampleJobFilter.all);
+    filters.select(UseSmileIDSampleJobFilter.all);
   }
 }

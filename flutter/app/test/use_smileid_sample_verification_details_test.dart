@@ -200,6 +200,28 @@ void main() {
     expect(container.read(useSmileIDSampleJobsProvider).value, isEmpty);
   });
 
+  testWidgets('the list confirms a delete whose write outlasts the page', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(job.id),
+      repository: _SlowRemoveRepository(<UseSmileIDSampleJob>[job]),
+    );
+    await tester.tap(byId(UseSmileIDSampleTestIds.detailsDelete));
+    await tester.pumpAndSettle();
+    expect(
+      byId(UseSmileIDSampleTestIds.verificationDetailsScreen),
+      findsNothing,
+    );
+
+    await tester.pump(_SlowRemoveRepository.delay);
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 verification hidden from App list'), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.toastUndo), findsOne);
+  });
+
   testWidgets('a cold link claims no absence before the store has answered', (
     WidgetTester tester,
   ) async {
@@ -357,6 +379,18 @@ class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
   Future<List<UseSmileIDSampleJob>?> read() async {
     await Future<void>.delayed(delay);
     return super.read();
+  }
+}
+
+class _SlowRemoveRepository extends UseSmileIDSampleMemoryJobsRepository {
+  _SlowRemoveRepository(super.initial);
+
+  static const Duration delay = Duration(seconds: 2);
+
+  @override
+  Future<int> remove(Set<String> ids) async {
+    await Future<void>.delayed(delay);
+    return super.remove(ids);
   }
 }
 
