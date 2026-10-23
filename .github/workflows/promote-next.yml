@@ -49,13 +49,12 @@ jobs:
             exit 0
           fi
           branch="sync/next-into-main-${version}"
-          heads=$(gh pr list -R "${REPO}" --base main --state open --json headRefName \
-            --jq '.[].headRefName | select(startswith("sync/next-into-main-"))')
-          others=$(grep -v -x -F "${branch}" <<<"${heads}" || true)
-          if [ -n "${others}" ]; then
-            echo "::error::another promotion is open from ${others}; close it, or run this with its version"
-            exit 1
-          fi
+          # One promotion is open at a time, named for the latest release, so an older one is closed for this one.
+          heads=$(gh api "repos/${REPO}/pulls?base=main&state=open&per_page=100" --jq '.[] | select(.head.repo.full_name
+            == .base.repo.full_name and (.head.ref | startswith("sync/next-into-main-"))) | .head.ref')
+          for old in $(grep -v -x -F "${branch}" <<<"${heads}" || true); do
+            gh pr close "${old}" -R "${REPO}" --delete-branch --comment "Replaced by the ${version} promotion."
+          done
           sha=$(gh api "repos/${REPO}/git/ref/heads/next" --jq .object.sha)
           if gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
             behind=$(gh api "repos/${REPO}/compare/${branch}...next" --jq .behind_by)
@@ -75,7 +74,7 @@ jobs:
           ## Before merging
 
           - [ ] This pull request's checks build every platform against the released ${version}, and they pass.
-          - [ ] Nothing on \`next\` needs an SDK newer than ${version}. If something does, leave this open until that version ships.
+          - [ ] Nothing on \`next\` needs an SDK newer than ${version}. If something does, leave this open; when that version ships, run Promote next with it, which replaces this pull request.
 
           ## After merging
 
