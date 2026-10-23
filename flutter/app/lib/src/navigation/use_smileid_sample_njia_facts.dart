@@ -1,5 +1,5 @@
-import 'package:usesmileid_njia/usesmileid_njia.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
 
 import 'use_smileid_sample_njia.dart';
 
