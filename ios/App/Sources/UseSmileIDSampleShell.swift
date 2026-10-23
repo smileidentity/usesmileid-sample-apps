@@ -1,211 +1,109 @@
+import Njia
+import NjiaUI
 import SampleUI
 import SwiftUI
 
-/// The window's root. Everything identity-bound stays here — `SampleUI` runs under eight identities.
+/// The window's root: njia draws the three tabs' stacks from `spec/njia-graph.json`, and the shell opens links. Everything identity-bound stays here — `SampleUI` runs under eight identities.
 struct UseSmileIDSampleShell: View {
-  @StateObject private var router = UseSmileIDSampleRouter()
+  @StateObject private var navigation = UseSmileIDSampleNavigationModel()
   @StateObject private var app = UseSmileIDSampleAppState()
+  @StateObject private var chrome = UseSmileIDSampleChrome()
 
-  /// One value, so the tab and its stacks cannot restore out of step.
+  /// The engine's state as njia's JSON, so a relaunch restores the stacks.
   @SceneStorage("navigation") private var storedNavigation: String = ""
-
-  /// Consumed on sight and never saved, so a confirmation already spent cannot come back with you.
-  @State private var removalNotice: UseSmileIDSampleTransientNotice?
 
   /// Never in scene storage: a restored flag would swallow the run the launch asked for.
   @State private var autostarted = false
 
   var body: some View {
-    // One tab mounted at a time: a hidden stack still answers id queries, and no modifier suppresses that.
-    UseSmileIDSampleStack(tab: router.selectedTab) { bottomChrome }
-      .environmentObject(router)
+    // No njia step ids: each screen names itself `sample_*`, and a second id on its element replaces the first.
+    NjiaHost(engine: navigation.engine, steps: steps, stepIds: false)
+      .environmentObject(navigation)
       .environmentObject(app)
+      .environmentObject(chrome)
       .modifier(UseSmileIDSampleShellEnvironment(app: app))
       .modifier(UseSmileIDSampleDeviceScheme(app: app))
-      // At the root, over whichever route is showing; a link opens the owner first, so it layers.
-      .sheet(item: $router.sheet) { sheet in
-        // A sheet is its own presentation and inherits none of the environment set above it.
-        sheetContent(sheet).modifier(UseSmileIDSampleShellEnvironment(app: app))
-      }
-      .onOpenURL { url in
-        guard let link = UseSmileIDSampleLinks.resolve(url) else { return }
-        switch link {
-        case .route(let route):
-          router.open(route)
-        case .sheet(let sheet, let owner):
-          router.open(owner)
-          // Refused, as its trigger would be: a second-level list needs a country, Capture as a document.
-          switch sheet {
-          case .idTypePicker where app.idDetails.country == nil: return
-          case .documentPicker where app.idDetails.country == nil: return
-          case .captureAs where app.idDetails.document == nil: return
-          default: break
-          }
-          router.sheet = sheet
-        }
-      }
+      .onOpenURL(perform: open)
       // On dismissal, not on open: the one point every path goes through, including a swipe.
-      .onChange(of: router.sheet) { sheet in
-        if sheet == nil {
+      .onChange(of: topIsSheet) { isSheet in
+        if !isSheet {
           app.clearSheetState()
         }
       }
-      .onAppear { router.restore(from: storedNavigation)
-        autostart() }
-      .onChange(of: app.lastJobRemoval) { count in showRemoval(count) }
-      .onChange(of: router.selectedTab) { _ in
-        storedNavigation = router.encodedState()
+      .onAppear {
+        navigation.restore(from: storedNavigation)
+        autostart()
+      }
+      .onChange(of: app.lastJobRemoval) { count in chrome.showRemoval(count, app: app) }
+      .onChange(of: navigation.state.entries.first?.step) { _ in
         // Select mode and its confirmation belong to the list, so neither follows you to another tab.
         app.verifications.changeSelectMode(false)
-        removalNotice = nil
+        chrome.removalNotice = nil
       }
-      .onChange(of: router.paths) { _ in storedNavigation = router.encodedState() }
+      .onChange(of: navigation.state) { _ in storedNavigation = navigation.encodedState() }
       // Debug only: shake to read the app's own traffic.
       .modifier(UseSmileIDSampleLoupeAccess())
   }
 
-  /// The family of the form a picker layers over; a KYC form unless a document product's is on top.
-  private var formFamily: UseSmileIDSampleCatalogueFamily {
-    if case .idDetailsForm(let productId) = router.path(router.selectedTab).last {
-      return UseSmileIDSampleProduct(rawValue: productId)?.catalogueFamily ?? .kyc
-    }
-    return .kyc
-  }
-
-  /// The product whose ID form the sheets sit on, so the document list can leave out what the SDK refuses on it.
-  private var idFormProduct: UseSmileIDSampleProduct {
-    for route in router.path(router.selectedTab).reversed() {
-      if case .idDetailsForm(let productId) = route, let product = UseSmileIDSampleProduct(rawValue: productId) {
-        return product
+  /// Every step drawn by the one destination switch, with the shell's objects, the tab roots' bottom chrome and full-height sheets.
+  private var steps: NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampleFact> {
+    let navigation = navigation
+    let app = app
+    let chrome = chrome
+    return NjiaSteps { steps in
+      // A sheet is its own presentation and inherits none of the environment set above it.
+      steps.decorate { scope, content in
+        UseSmileIDSampleStepEnvironment(scope: scope, app: app) { content }
+          .environmentObject(navigation)
+          .environmentObject(app)
+          .environmentObject(chrome)
       }
-    }
-    return .documentVerification
-  }
-
-  @ViewBuilder
-  private func sheetContent(_ sheet: Sheet) -> some View {
-    switch sheet {
-    case .countryPicker:
-      CountryPickerSheet(
-        catalogue: app.catalogue.countries(formFamily, product: idFormProduct),
-        selected: app.idDetails.country,
-        query: $app.countryQuery,
-        onSelect: { app.selectCountry($0)
-          router.sheet = nil },
-        onRetry: { app.catalogue.retry() },
-        onClose: { router.sheet = nil }
-      )
-    case .idTypePicker:
-      IdTypePickerSheet(
-        country: app.idDetails.country,
-        catalogue: app.catalogue.idTypes(app.idDetails.country?.code ?? ""),
-        selected: app.idDetails.idType,
-        query: $app.idTypeQuery,
-        onSelect: { app.idDetails.idType = $0
-          router.sheet = nil },
-        onRetry: { app.catalogue.retry() },
-        onClose: { router.sheet = nil }
-      )
-    case .documentPicker:
-      DocumentPickerSheet(
-        country: app.idDetails.country,
-        catalogue: app.catalogue.documents(app.idDetails.country?.code ?? "", product: idFormProduct),
-        selected: app.idDetails.document,
-        query: $app.documentQuery,
-        onSelect: { app.idDetails.choose(document: $0)
-          router.sheet = nil },
-        onRetry: { app.catalogue.retry() },
-        onClose: { router.sheet = nil }
-      )
-    case .captureAs:
-      CaptureAsSheet(
-        selected: app.idDetails.captureAsOverride,
-        matched: useSmileIDSampleResolvedCaptureAs(
-          document: app.idDetails.document,
-          override: nil,
-          genericDocument: app.idDetails.genericDocument
-        )
-      ) { choice in
-        if choice == .genericDocument {
-          router.sheet = .genericDocument
-        } else {
-          app.idDetails.captureAsOverride = choice
-          router.sheet = nil
-        }
+      steps.decorate { scope, content in
+        UseSmileIDSampleTabRoot(scope: scope) { content }
       }
-    case .genericDocument:
-      GenericDocumentSheet(initial: app.idDetails.genericDocument) { genericDocument in
-        app.idDetails.genericDocument = genericDocument
-        app.idDetails.captureAsOverride = .genericDocument
-        router.sheet = nil
+      for kind in UseSmileIDSampleStep.allCases {
+        steps.step(kind) { UseSmileIDSampleDestination(scope: $0) }
       }
-    case .captureMode:
-      CaptureModeSheet(selected: app.settings.captureMode) { mode in
-        app.setCaptureMode(mode)
-        router.sheet = nil
-      }
-    case .appearance:
-      AppearanceSheet(selected: app.settings.appearance, deviceDark: app.deviceDark) { appearance in
-        app.setAppearance(appearance)
-        router.sheet = nil
-      }
-    case .language:
-      // Stays open after a pick, to say it applies at the next launch.
-      LanguageSheet(
-        selected: app.settings.language,
-        deviceLanguages: app.deviceLanguages,
-        pending: app.settings.language != app.runningLanguage
-      ) { app.setLanguage($0) }
-    case .profileSwitch:
-      ProfileSwitchSheet(
-        profiles: app.profiles.all,
-        activeId: app.profiles.activeId,
-        onSelect: { app.switchProfile(to: $0.id)
-          router.sheet = nil },
-        onCreate: {
-          app.beginProfileFromSwitch()
-          router.sheet = .newProfile
-        }
-      )
-    case .newProfile:
-      NewProfileSheet(
-        draft: $app.newProfile,
-        onSave: { app.createProfile()
-          router.sheet = nil }
-      )
-    case .scenarioDrawer:
-      // App-level, not sheet-local: the result card reports the same selection.
-      ScenarioDrawerSheet(
-        activeScenario: app.flowResult.scenario,
-        activeTheme: app.flowResult.theme,
-        onScenarioSelect: { app.flowResult.selectScenario($0) },
-        onThemeSelect: { app.flowResult.selectTheme($0) }
-      )
     }
   }
 
-  /// Select mode replaces the pill with the selection bar; the confirmation sits above whichever shows.
-  private var bottomChrome: some View {
-    VStack(spacing: SmileSpacing.spacingXs) {
-      UseSmileIDSampleTransientNoticeHost(
-        notice: router.selectedTab == .verifications ? removalNotice : nil,
-        onAction: { app.undoJobRemoval() },
-        onDismiss: { removalNotice = nil }
-      )
-      .padding(.horizontal, SmileSpacing.spacingMd)
-      if app.verifications.selectMode {
-        UseSmileIDSampleSelectionBar(
-          selectedCount: app.verifications.selected.count,
-          onRemove: { app.removeJobs(app.verifications.selected) }
-        )
-      } else {
-        navBar
-      }
-    }
+  private var topIsSheet: Bool {
+    navigation.state.top.map { navigation.engine.stepOf($0).presentation == .sheet } ?? false
   }
+
+  /// A link opens as a new flow, under the facts its product runs with.
+  private func open(_ url: URL) {
+    guard let link = UseSmileIDSampleDeepLinks.linkOf(url) else { return }
+    navigation.open(link.path, facts: facts(for: link))
+  }
+
+  /// The facts a link's run starts with: its product's, on the route it asked for, or the launch's.
+  private func facts(for link: UseSmileIDSampleLink) -> Set<UseSmileIDSampleFact> {
+    guard let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == UseSmileIDSampleDeepLinks.productId(of: link) }) else { return [] }
+    return useSmileIDSampleFacts(product, bindsIdDetails: app.tokenBindsIdDetails(product), route: link.route ?? app.launchArguments.route)
+  }
+
+  /// Starts the run after the restore, so the argument wins over what the last scene left.
+  private func autostart() {
+    guard !autostarted else { return }
+    autostarted = true
+    // Ahead of autostart, which reads the session the moment the flow step opens.
+    linkLaunchSession(useSmileIDSampleShellExtension, link: app.linkSession)
+    guard let product = app.launchArguments.autostart else { return }
+    navigation.restart()
+    let engine = navigation.engine
+    engine.top.map { engine.startRun(from: $0, product: product, run: app.runOnly(product, route: app.launchArguments.route)) }
+  }
+}
+
+/// The confirmation a removal leaves, kept by the shell so it outlives the list's redraws but not a tab switch.
+@MainActor
+final class UseSmileIDSampleChrome: ObservableObject {
+  /// Consumed on sight and never saved, so a confirmation already spent cannot come back with you.
+  @Published var removalNotice: UseSmileIDSampleTransientNotice?
 
   /// The same copy on every platform: the rows are hidden from this app's list, not deleted.
-  private func showRemoval(_ count: Int?) {
+  func showRemoval(_ count: Int?, app: UseSmileIDSampleAppState) {
     guard let count else { return }
     app.clearLastJobRemoval()
     removalNotice = UseSmileIDSampleTransientNotice(
@@ -215,34 +113,87 @@ struct UseSmileIDSampleShell: View {
       actionLabel: UseSmileIDSampleStrings.commonUndo
     )
   }
+}
 
-  /// The design's floating pill, ruled over `TabView`; it sits inside the host, so a push covers it.
-  private var navBar: some View {
-    UseSmileIDSampleNavBar(
-      selected: router.selectedTab.navItem,
-      sessionProgress: app.sessionProgress,
-      onSelect: { select(UseSmileIDSampleTab($0)) },
-      onToken: { router.pushOnce(.scanToken) }
-    )
-  }
+/// The shell's environment on every sheet at full height, as the shell's own sheets opened, and no system bar on a screen.
+private struct UseSmileIDSampleStepEnvironment<Content: View>: View {
+  let scope: UseSmileIDSampleStepScope
+  let app: UseSmileIDSampleAppState
+  @ViewBuilder let content: () -> Content
 
-  /// Lands on the flow route after the restore, so the argument wins over what the last scene left.
-  private func autostart() {
-    guard !autostarted else { return }
-    autostarted = true
-    // Ahead of autostart, which reads the session the moment the flow route opens.
-    linkLaunchSession(useSmileIDSampleShellExtension, link: app.linkSession)
-    guard let product = app.launchArguments.autostart else { return }
-    router.open(.sdkFlow(productId: product.id, presentation: app.launchArguments.route))
-  }
-
-  /// Re-selecting the showing tab pops it to its root, as the platform does.
-  private func select(_ tab: UseSmileIDSampleTab) {
-    if tab == router.selectedTab {
-      router.openTabRoot(tab)
+  var body: some View {
+    if scope.step.presentation == .sheet {
+      content().modifier(UseSmileIDSampleShellEnvironment(app: app)).presentationDetents([.large])
     } else {
-      router.selectedTab = tab
+      // Every screen draws its own header, and a stack shows an empty bar over a root it has pushed from.
+      content().toolbar(.hidden, for: .navigationBar)
     }
+  }
+}
+
+/// A tab's root, with the bottom chrome inset inside it, so a push covers the bar and a sheet over the root covers it too.
+private struct UseSmileIDSampleTabRoot<Content: View>: View {
+  let scope: UseSmileIDSampleStepScope
+  @ViewBuilder let content: () -> Content
+
+  var body: some View {
+    if let tab = UseSmileIDSampleNavItem(step: scope.step.kind) {
+      content().safeAreaInset(edge: .bottom) { UseSmileIDSampleBottomChrome(tab: tab, navigator: scope.navigator) }
+    } else {
+      content()
+    }
+  }
+}
+
+/// Select mode replaces the bar with the selection bar; the confirmation sits above whichever shows.
+private struct UseSmileIDSampleBottomChrome: View {
+  let tab: UseSmileIDSampleNavItem
+  let navigator: NjiaNavigator
+
+  @EnvironmentObject private var navigation: UseSmileIDSampleNavigationModel
+  @EnvironmentObject private var app: UseSmileIDSampleAppState
+  @EnvironmentObject private var chrome: UseSmileIDSampleChrome
+
+  var body: some View {
+    VStack(spacing: SmileSpacing.spacingXs) {
+      UseSmileIDSampleTransientNoticeHost(
+        notice: tab == .verifications ? chrome.removalNotice : nil,
+        onAction: { app.undoJobRemoval() },
+        onDismiss: { chrome.removalNotice = nil }
+      )
+      .padding(.horizontal, SmileSpacing.spacingMd)
+      if app.verifications.selectMode {
+        UseSmileIDSampleSelectionBar(
+          selectedCount: app.verifications.selected.count,
+          onRemove: { app.removeJobs(app.verifications.selected) }
+        )
+      } else {
+        // The design's floating pill; re-selecting the showing tab pops it to its root, as the platform does.
+        UseSmileIDSampleNavBar(
+          selected: tab,
+          sessionProgress: app.sessionProgress,
+          onSelect: { navigation.engine.select($0.step.rawValue) },
+          onToken: { navigator.go(.scanToken) }
+        )
+      }
+    }
+  }
+}
+
+extension UseSmileIDSampleNavItem {
+  /// The tab root each nav bar item selects.
+  var step: UseSmileIDSampleStep {
+    switch self {
+    case .products: .products
+    case .verifications: .verifications
+    case .settings: .settings
+    }
+  }
+
+  /// The item whose root `step` is, or nil for a step above a root.
+  init?(step: UseSmileIDSampleStep) {
+    guard let item = Self.allCases.first(where: { $0.step == step }) else { return nil }
+    self = item
   }
 }
 

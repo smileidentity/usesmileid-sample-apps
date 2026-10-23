@@ -1,3 +1,4 @@
+import Njia
 import SampleUI
 @testable import UseSmileIDSample
 import XCTest
@@ -12,44 +13,51 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     XCTAssertFalse(specRoutes.isEmpty, "extracted no routes from spec/routes.json")
   }
 
-  func testEverySpecRouteBindsToTheCaseTheSpecNames() throws {
-    for route in specRoutes where !route.isSheet {
-      let parsed = try XCTUnwrap(
-        try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: route.exampleUri))),
-        "\(route.id): \(route.exampleUri) resolves to no route"
-      )
-      guard case .route(let bound) = parsed else {
-        return XCTFail("\(route.id): resolved to a sheet, not a route")
-      }
-      XCTAssertEqual(route.ios, binding(for: bound), "\(route.id): iOS binding")
+  func testEverySpecRouteIsTheGraphStepTheIosColumnNamesLinkedAtItsPath() throws {
+    let graph = try UseSmileIDSampleNjiaSpec.graph()
+    for route in specRoutes {
+      let step = try XCTUnwrap(graph.steps.first { $0.id == route.id }, "\(route.id): no step in the graph")
+      XCTAssertEqual(step.link, String(route.path.dropFirst()), "\(route.id): link")
+      XCTAssertEqual(route.ios.components(separatedBy: " | ").first, "UseSmileIDSampleStep.\(step.kind.rawValue)", "\(route.id): iOS binding")
     }
   }
 
-  func testEverySheetRouteResolvesToItsOwnerAndNoRouteClaimsIt() throws {
-    let sheets = specRoutes.filter(\.isSheet)
-    XCTAssertFalse(sheets.isEmpty, "no sheet routes extracted from spec/routes.json")
-    for route in sheets {
-      let parsed = try XCTUnwrap(
-        try UseSmileIDSampleLinks.resolve(XCTUnwrap(URL(string: route.exampleUri))),
-        "\(route.id): \(route.exampleUri) resolves to nothing"
-      )
-      guard case .sheet(let sheet, let owner) = parsed else {
-        return XCTFail("\(route.id): a sheet path resolved to a destination, which R12 forbids")
-      }
-      XCTAssertEqual(route.ios, "Sheet." + sheet.rawValue, "\(route.id): iOS binding")
-      XCTAssertEqual(expectedOwners[sheet], owner, "\(route.id): owner")
+  func testEveryStepIdIsItsKindsWireName() throws {
+    for step in try UseSmileIDSampleNjiaSpec.graph().steps {
+      XCTAssertEqual(step.id, step.kind.rawValue)
     }
   }
 
-  func testTheSheetResolverLeavesEveryOtherRouteAlone() throws {
-    for route in specRoutes where !route.isSheet {
-      XCTAssertNil(
-        UseSmileIDSampleSheetLinks.resolve(route.exampleUri),
-        "\(route.id) is not a sheet"
-      )
+  func testASpecSheetIsASheetStepAndNothingElseIs() throws {
+    let graph = try UseSmileIDSampleNjiaSpec.graph()
+    for route in specRoutes {
+      let step = try XCTUnwrap(graph.steps.first { $0.id == route.id })
+      XCTAssertEqual(step.presentation == .sheet, route.isSheet, "\(route.id): sheet")
     }
-    let drawer = try XCTUnwrap(specRoutes.first { $0.id == "scenarioDrawer" })
-    XCTAssertNotNil(UseSmileIDSampleSheetLinks.resolve(drawer.exampleUri + "?probes=true"))
+  }
+
+  /// Every link opens at its own step, with the stack a user would have had, once its product's facts are set.
+  func testEverySpecLinkOpensAtItsStep() throws {
+    let graph = try UseSmileIDSampleNjiaSpec.graph()
+    for route in specRoutes {
+      let link = try XCTUnwrap(UseSmileIDSampleDeepLinks.linkOf(XCTUnwrap(URL(string: route.exampleUri))), "\(route.id): no link")
+      // A product whose run reaches the step: only Authentication asks for a user ID.
+      let product: UseSmileIDSampleProduct = route.id == "authUserId" ? .smartSelfieAuth : .biometricKyc
+      let facts = UseSmileIDSampleDeepLinks.productId(of: link) == nil
+        ? []
+        : useSmileIDSampleFacts(product, bindsIdDetails: false, route: link.route ?? .shell)
+      let engine = try XCTUnwrap(try NjiaKit.openLink(graph, link: link.path, facts: facts), "\(route.id): \(link.path) refused")
+      let top = try XCTUnwrap(engine.top)
+      let expected = route.id == "sdkFlow" && link.route == .fullscreen ? "sdkFlowFullScreen" : route.id
+      XCTAssertEqual(top.step, expected, "\(route.id): opened at")
+    }
+  }
+
+  func testAnUnknownLinkOpensNothing() throws {
+    let graph = try UseSmileIDSampleNjiaSpec.graph()
+    let nope = try XCTUnwrap(UseSmileIDSampleDeepLinks.linkOf(XCTUnwrap(URL(string: "\(UseSmileIDSampleDeepLinks.scheme)://nope"))))
+    XCTAssertNil(try NjiaKit.openLink(graph, link: nope.path))
+    XCTAssertNil(try UseSmileIDSampleDeepLinks.linkOf(XCTUnwrap(URL(string: "usesmileid-sample-android://products"))))
   }
 
   func testTheFlowRouteEnumMatchesTheSpecValuesAndDefault() throws {
@@ -65,13 +73,13 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleFlowRoute(id: nil), .fullscreen)
   }
 
-  func testTheFlowRouteQueryArgumentIsRead() throws {
+  func testTheFlowRouteQueryArgumentPicksTheRunStep() throws {
     let shell = try XCTUnwrap(URL(string: "\(UseSmileIDSampleDeepLinks.scheme)://flow/biometricKyc/run?route=shell"))
-    guard case .route(.sdkFlow(let productId, let presentation)) = UseSmileIDSampleLinks.resolve(shell) else {
-      return XCTFail("the flow link did not resolve")
-    }
-    XCTAssertEqual(productId, "biometricKyc")
-    XCTAssertEqual(presentation, .shell)
+    let shellLink = try XCTUnwrap(UseSmileIDSampleDeepLinks.linkOf(shell))
+    XCTAssertEqual(shellLink, UseSmileIDSampleLink(path: "flow/biometricKyc/run", route: .shell))
+    XCTAssertEqual(UseSmileIDSampleDeepLinks.productId(of: shellLink), "biometricKyc")
+    let plain = try XCTUnwrap(URL(string: "\(UseSmileIDSampleDeepLinks.scheme)://flow/biometricKyc/run"))
+    XCTAssertEqual(UseSmileIDSampleDeepLinks.linkOf(plain), UseSmileIDSampleLink(path: "flow/biometricKyc/run-fullscreen", route: .fullscreen))
   }
 
   func testTheSchemeIsTheIosEntryInAppIdentity() throws {
@@ -119,37 +127,6 @@ final class UseSmileIDSampleRoutesSpecTest: XCTestCase {
     let identity = try UseSmileIDSampleSpec.object("app-identity.json")
     let entries = try XCTUnwrap(identity[block] as? [[String: Any]], "no \(block) in spec/app-identity.json")
     return try XCTUnwrap(entries.first { $0["platform"] as? String == "ios" }, "no ios entry under \(block)")
-  }
-
-  private let expectedOwners: [Sheet: Route] = [
-    .profileSwitch: .products,
-    .newProfile: .profiles,
-    .scenarioDrawer: .settings,
-    .countryPicker: .idDetailsForm(productId: "sample-productId"),
-    .idTypePicker: .idDetailsForm(productId: "sample-productId"),
-    .documentPicker: .idDetailsForm(productId: "sample-productId"),
-    .captureAs: .idDetailsForm(productId: "sample-productId"),
-    .genericDocument: .idDetailsForm(productId: "sample-productId"),
-    .captureMode: .settings,
-    .appearance: .settings,
-    .language: .settings
-  ]
-
-  private func binding(for route: Route) -> String {
-    switch route {
-    case .products: "Route.products"
-    case .verifications: "Route.verifications"
-    case .settings: "Route.settings"
-    case .licenses: "Route.licenses"
-    case .verificationDetails: "Route.verificationDetails(jobId:)"
-    case .consentDetailsForm: "Route.consentDetailsForm(productId:)"
-    case .authUserId: "Route.authUserId(productId:)"
-    case .idDetailsForm: "Route.idDetailsForm(productId:)"
-    case .sdkFlow: "Route.sdkFlow(productId:presentation:)"
-    case .profiles: "Route.profiles"
-    case .profileConfig: "Route.profileConfig(profileId:)"
-    case .scanToken: "Route.scanToken"
-    }
   }
 }
 
