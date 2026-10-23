@@ -41,6 +41,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.usesmileid.njia.NjiaPresentation
 import com.usesmileid.njia.NjiaState
 import com.usesmileid.njia.compose.NjiaDisplay
+import com.usesmileid.njia.compose.NjiaSheetStyle
+import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import com.usesmileid.njia.compose.rememberNjiaState
 import com.usesmileid.njia.select
 import com.usesmileid.njia.stepOf
@@ -70,12 +72,12 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
-import com.usesmileid.njia.navigator
+import com.usesmileid.njia.NjiaNavigator
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withTimeoutOrNull
 
-/** njia draws the three tabs' stacks from `spec/njia-graph.json`; the shell floats the nav bar over each tab's root and opens links. */
+/** njia draws the three tabs' stacks from `spec/njia-graph.json`; each tab's root floats the nav bar over itself, and the shell opens links. */
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun UseSmileIDSampleShell() {
@@ -99,7 +101,6 @@ fun UseSmileIDSampleShell() {
     val top = state.entries.lastOrNull()?.let(engine::stepOf)
     // The fullscreen flow handles its own insets, so the host contributes none (R3).
     val fullscreenFlow = top?.kind == UseSmileIDSampleStep.SdkFlowFullScreen
-    val tab = selectedTabRoot(engine, state)
 
     Scaffold(
         // UI automation only sees Compose test tags once they are published as resource ids.
@@ -112,7 +113,6 @@ fun UseSmileIDSampleShell() {
             }
         },
     ) { contentPadding ->
-        val density = LocalDensity.current
         Box(modifier = Modifier.fillMaxSize()) {
             CompositionLocalProvider(
                 LocalUseSmileIDSampleChrome provides chrome,
@@ -128,42 +128,37 @@ fun UseSmileIDSampleShell() {
                         NjiaDisplay(
                             engine = engine,
                             steps = UseSmileIDSampleSteps,
+                            // The design's own scrim and corners, as the modal sheets drew them.
+                            sheetStyle = NjiaSheetStyle(UseSmileIDSampleTheme.colors.overlayScrim, UseSmileIDSampleTheme.shapes.sheet),
                             // Consumed, or every screen and the SDK under the shell pad the same inset again.
                             modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
                         )
                     }
                 }
             }
-            // Over the content: reserving a row drew a seam with the last row clipped against it.
-            AnimatedVisibility(
-                visible = tab != null && !galleryOpen,
-                modifier = Modifier.align(Alignment.BottomCenter),
-                enter = slideInVertically(NAV_BAR_SPEC) { it } + fadeIn(),
-                exit = slideOutVertically(NAV_BAR_SPEC) { it } + fadeOut(),
-            ) {
-                val app = LocalUseSmileIDSampleAppState.current
-                UseSmileIDSampleNavBar(
-                    sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
-                    selected = tab ?: UseSmileIDSampleNavItem.Products,
-                    onSelect = { item -> engine.select(item.step.wireName) },
-                    onTokenClick = { engine.navigator(state.entries.last()).go(UseSmileIDSampleStep.ScanToken) },
-                    // Published so a screen can clear a bar it is not inset by.
-                    modifier = Modifier.onSizeChanged { chrome.navBarHeight = with(density) { it.height.toDp() } },
-                )
-            }
         }
     }
 }
 
-/** The tab whose root is under everything on top, sheets set aside; null once a screen is pushed over the root. */
-private fun selectedTabRoot(engine: UseSmileIDSampleEngine, state: NjiaState<UseSmileIDSampleFact>): UseSmileIDSampleNavItem? {
-    val shown = state.entries.lastOrNull { engine.stepOf(it).presentation != NjiaPresentation.Sheet } ?: return null
-    val selected = engine.graph.tabBar(state)?.selected ?: return null
-    return UseSmileIDSampleNavItem.entries.firstOrNull { it.step.wireName == selected && it.step.wireName == shown.step }
+/** The floating nav bar a tab's root draws over itself, so a sheet over the root covers the bar as it covers the root. */
+@Composable
+internal fun UseSmileIDSampleTabRootBar(tab: UseSmileIDSampleNavItem, navigator: NjiaNavigator, modifier: Modifier) {
+    val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
+    val chrome = LocalUseSmileIDSampleChrome.current
+    val density = LocalDensity.current
+    UseSmileIDSampleNavBar(
+        sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
+        selected = tab,
+        onSelect = { item -> engine.select(item.step.wireName) },
+        onTokenClick = { navigator.go(UseSmileIDSampleStep.ScanToken) },
+        // Published so a screen can clear a bar it is not inset by.
+        modifier = modifier.onSizeChanged { chrome.navBarHeight = with(density) { it.height.toDp() } },
+    )
 }
 
-/** The step each nav bar item selects. */
-private val UseSmileIDSampleNavItem.step: UseSmileIDSampleStep
+/** The tab root each nav bar item selects. */
+internal val UseSmileIDSampleNavItem.step: UseSmileIDSampleStep
     get() = when (this) {
         UseSmileIDSampleNavItem.Products -> UseSmileIDSampleStep.Products
         UseSmileIDSampleNavItem.Verifications -> UseSmileIDSampleStep.Verifications
@@ -246,9 +241,6 @@ private fun AutostartFlowOnce(engine: UseSmileIDSampleEngine) {
         engine.startRun(engine.state.entries.last(), product, app.runOnly(product, app.launchArgs.route))
     }
 }
-
-/** Matches the step transition, so the bar and the screen move together. */
-private val NAV_BAR_SPEC = tween<IntOffset>(durationMillis = 280)
 
 private val LAUNCH_SESSION_WAIT = 5.seconds
 
