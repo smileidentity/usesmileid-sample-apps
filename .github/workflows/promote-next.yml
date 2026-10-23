@@ -49,17 +49,23 @@ jobs:
             exit 0
           fi
           branch="sync/next-into-main-${version}"
-          # One promotion is open at a time, named for the latest release, so an older one is closed for this one.
+          # One promotion is open at a time, named for the latest release: an older one is replaced once this one is open.
           heads=$(gh api "repos/${REPO}/pulls?base=main&state=open&per_page=100" --jq '.[] | select(.head.repo.full_name
-            == .base.repo.full_name and (.head.ref | startswith("sync/next-into-main-"))) | .head.ref')
-          for old in $(grep -v -x -F "${branch}" <<<"${heads}" || true); do
-            gh pr close "${old}" -R "${REPO}" --delete-branch --comment "Replaced by the ${version} promotion."
+            == .base.repo.full_name and (.head.ref | test("^sync/next-into-main-[0-9]+\\.[0-9]+\\.[0-9]+$"))) | .head.ref')
+          older=()
+          for open in $(grep -v -x -F "${branch}" <<<"${heads}" || true); do
+            other="${open#sync/next-into-main-}"
+            if [ "$(printf '%s\n%s\n' "${other}" "${version}" | sort -V | tail -1)" = "${other}" ]; then
+              echo "::error::the ${other} promotion is open, which is newer than ${version}; run this with ${other} or a later version"
+              exit 1
+            fi
+            older+=("${open}")
           done
           sha=$(gh api "repos/${REPO}/git/ref/heads/next" --jq .object.sha)
           if gh api "repos/${REPO}/git/ref/heads/${branch}" --silent 2>/dev/null; then
             behind=$(gh api "repos/${REPO}/compare/${branch}...next" --jq .behind_by)
             if [ "${behind}" != 0 ]; then
-              echo "::error::${branch} has commits next doesn't; close its pull request and delete the branch, then run this again"
+              echo "::error::${branch} has commits next doesn't, such as a conflict resolution; close its pull request, delete the branch, resolve any conflict by merging main into next, then run this again"
               exit 1
             fi
             gh api -X PATCH "repos/${REPO}/git/refs/heads/${branch}" -f sha="${sha}" --silent
@@ -75,6 +81,7 @@ jobs:
 
           - [ ] This pull request's checks build every platform against the released ${version}, and they pass.
           - [ ] Nothing on \`next\` needs an SDK newer than ${version}. If something does, leave this open; when that version ships, run Promote next with it, which replaces this pull request.
+          - [ ] No conflicts. If there are, merge \`main\` into \`next\` and run Promote next again; never resolve them on this branch.
 
           ## After merging
 
@@ -86,7 +93,14 @@ jobs:
           if grep -q -x -F "${branch}" <<<"${heads}"; then
             gh pr edit "${branch}" -R "${REPO}" --body-file "${RUNNER_TEMP}/body.md"
             echo "::notice::the pull request from ${branch} was already open; its branch and description now match next"
-            exit 0
+          else
+            gh pr create -R "${REPO}" --base main --head "${branch}" \
+              --title "🔀 sync: next into main, now that ${version} has shipped" --body-file "${RUNNER_TEMP}/body.md"
           fi
-          gh pr create -R "${REPO}" --base main --head "${branch}" \
-            --title "🔀 sync: next into main, now that ${version} has shipped" --body-file "${RUNNER_TEMP}/body.md"
+          for old in "${older[@]}"; do
+            if [ "$(gh api "repos/${REPO}/compare/${old}...next" --jq .behind_by)" = 0 ]; then
+              gh pr close "${old}" -R "${REPO}" --delete-branch --comment "Replaced by the ${version} promotion."
+            else
+              gh pr close "${old}" -R "${REPO}" --comment "Replaced by the ${version} promotion. Its branch has commits next doesn't, so it stays."
+            fi
+          done

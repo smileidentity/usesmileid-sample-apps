@@ -57,7 +57,8 @@ The **Promote next** workflow (`promote-next.yml`) opens that merge, named for t
 with the version that shipped. Its head is a copy of `next`, because merging a pull request deletes
 its head branch and `next` must never be deleted. Once it merges, merge `main` back into `next`, then
 run `bump_sample_apps.yaml` in each SDK repository to pin `main`. A promotion held open because `next`
-needs a newer SDK is replaced when Promote next runs for that version. It runs in the `release`
+needs a newer SDK is replaced when Promote next runs for that version. A promotion with conflicts is
+resolved on `next`, by merging `main` into it, and Promote next is run again; never on the promotion branch. It runs in the `release`
 environment, whose `PROMOTE_NEXT_TOKEN` is a token for this repository alone, with contents and pull
 requests write: a pull request opened with the workflow's own token starts no checks.
 
