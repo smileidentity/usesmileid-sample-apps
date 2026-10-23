@@ -31,7 +31,7 @@ jobs:
     steps:
       - name: Open the next into main pull request
         run: |
-          version="${RELEASE#v}"
+          version="${RELEASE}"
           if ! [[ "${version}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "::error::'${RELEASE}' is not a release version such as 12.4.0"
             exit 1
