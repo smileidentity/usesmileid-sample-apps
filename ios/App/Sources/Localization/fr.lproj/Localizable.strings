@@ -61,6 +61,13 @@
 "si_preview_accessibility_image" = "Image capturée. Vérifiez-la, puis appuyez sur Confirmer pour continuer ou sur Reprendre pour la capturer à nouveau.";
 "si_processing_submitting" = "Envoi en cours…";
 "si_processing_submitting_subtitle" = "Cela peut prendre un moment…\nNe fermez pas et n’actualisez pas cette page";
+"si_processing_still_working" = "Toujours en cours. Cela peut prendre un peu plus de temps sur une connexion lente.";
+"si_progress_step" = "Étape {current} sur {total}";
+"si_progress_done" = "Toutes les étapes sont terminées";
+"si_progress_stage_selfie" = "Selfie";
+"si_progress_stage_document_front" = "Recto de la pièce";
+"si_progress_stage_document_back" = "Verso de la pièce";
+"si_progress_stage_visa" = "Visa";
 "si_processing_success_title" = "Envoi terminé";
 "si_processing_success_message" = "Merci pour votre envoi. Nous vérifions actuellement vos informations.";
 "si_processing_failed_title" = "Échec de l’envoi";

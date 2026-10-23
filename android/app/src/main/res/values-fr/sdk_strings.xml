@@ -63,6 +63,13 @@
     <string name="si_preview_accessibility_image">Image capturée. Vérifiez-la, puis appuyez sur Confirmer pour continuer ou sur Reprendre pour la capturer à nouveau.</string>
     <string name="si_processing_submitting">Envoi en cours…</string>
     <string name="si_processing_submitting_subtitle">Cela peut prendre un moment…\nNe fermez pas et n’actualisez pas cette page</string>
+    <string name="si_processing_still_working">Toujours en cours. Cela peut prendre un peu plus de temps sur une connexion lente.</string>
+    <string name="si_progress_step">Étape {current} sur {total}</string>
+    <string name="si_progress_done">Toutes les étapes sont terminées</string>
+    <string name="si_progress_stage_selfie">Selfie</string>
+    <string name="si_progress_stage_document_front">Recto de la pièce</string>
+    <string name="si_progress_stage_document_back">Verso de la pièce</string>
+    <string name="si_progress_stage_visa">Visa</string>
     <string name="si_processing_success_title">Envoi terminé</string>
     <string name="si_processing_success_message">Merci pour votre envoi. Nous vérifions actuellement vos informations.</string>
     <string name="si_processing_failed_title">Échec de l’envoi</string>

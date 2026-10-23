@@ -61,6 +61,13 @@
 "si_preview_accessibility_image" = "התמונה שצולמה. בדוק אותה, ולאחר מכן הקש על אישור כדי להמשיך או על צלם שוב כדי לצלם מחדש.";
 "si_processing_submitting" = "שולח…";
 "si_processing_submitting_subtitle" = "זה עשוי לקחת רגע…\nאל תסגור או תרענן דף זה";
+"si_processing_still_working" = "עדיין עובדים. זה עשוי לקחת קצת יותר זמן בחיבור איטי.";
+"si_progress_step" = "שלב {current} מתוך {total}";
+"si_progress_done" = "כל השלבים הושלמו";
+"si_progress_stage_selfie" = "סלפי";
+"si_progress_stage_document_front" = "חזית התעודה";
+"si_progress_stage_document_back" = "גב התעודה";
+"si_progress_stage_visa" = "ויזה";
 "si_processing_success_title" = "השליחה הושלמה";
 "si_processing_success_message" = "תודה על השליחה. אנו מאמתים כעת את הפרטים שלך.";
 "si_processing_failed_title" = "השליחה נכשלה";
