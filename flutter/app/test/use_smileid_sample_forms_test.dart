@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
+import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_flow_form_tabs.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 
 import 'support/use_smileid_sample_catalogue_fixture.dart';
@@ -464,7 +465,9 @@ void main() {
         UseSmileIDSampleRoutes.countryPicker('biometricKyc'),
       );
 
-      expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsOne);
+      // The form is drawn under the sheet, and a screen reader reads only the sheet.
+      expect(find.byType(UseSmileIDSampleKycFormTab), findsOne);
+      expect(byId(UseSmileIDSampleTestIds.kycFormScreen), findsNothing);
       expect(byId(UseSmileIDSampleTestIds.countrySheet), findsOne);
     });
 
