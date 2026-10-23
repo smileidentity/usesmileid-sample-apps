@@ -1,24 +1,45 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
+
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../navigation/use_smileid_sample_navigation.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 
 /// The switch sheet over Products or the form; a pick refills the form, and "New profile" is active at once.
-Future<void> showUseSmileIDSampleProfileSwitch(
-  BuildContext context,
-  WidgetRef ref,
-) async {
-  bool creating = false;
-  await showUseSmileIDSampleSheet<void>(
-    context: context,
-    testId: UseSmileIDSampleTestIds.profileSwitchSheet,
-    builder: (BuildContext sheetContext) {
-      final UseSmileIDSampleProfiles profiles = ref.read(
-        useSmileIDSampleProfilesProvider,
+class UseSmileIDSampleProfileSwitchStep extends ConsumerStatefulWidget {
+  /// The sheet for [scope]'s entry.
+  const UseSmileIDSampleProfileSwitchStep({required this.scope, super.key});
+
+  /// The sheet's entry, which a pick goes back from.
+  final UseSmileIDSampleStepScope scope;
+
+  @override
+  ConsumerState<UseSmileIDSampleProfileSwitchStep> createState() =>
+      _UseSmileIDSampleProfileSwitchStepState();
+}
+
+class _UseSmileIDSampleProfileSwitchStepState
+    extends ConsumerState<UseSmileIDSampleProfileSwitchStep> {
+  /// Whether "New profile" swapped the list for the new-profile form, in this sheet's place.
+  bool _creating = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_creating) {
+      return UseSmileIDSampleNewProfileStep(
+        activate: true,
+        onDone: widget.scope.navigator.back,
       );
-      return UseSmileIDSampleProfileSwitchSheet(
+    }
+    final UseSmileIDSampleProfiles profiles = ref.watch(
+      useSmileIDSampleProfilesProvider,
+    );
+    return UseSmileIDSamplePartialSheetBody(
+      testId: UseSmileIDSampleTestIds.profileSwitchSheet,
+      child: UseSmileIDSampleProfileSwitchSheet(
         profiles: profiles.all,
         activeId: profiles.activeId,
         onSelect: (UseSmileIDSampleProfile profile) {
@@ -26,29 +47,49 @@ Future<void> showUseSmileIDSampleProfileSwitch(
               .read(useSmileIDSampleProfilesProvider.notifier)
               .setActive(profile.id);
           ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(profile);
-          Navigator.of(sheetContext).pop();
+          unawaited(widget.scope.navigator.back());
         },
-        onCreate: () {
-          creating = true;
-          Navigator.of(sheetContext).pop();
-        },
-      );
-    },
-  );
-  if (!creating || !context.mounted) {
-    return;
+        onCreate: () => setState(() => _creating = true),
+      ),
+    );
   }
-  await showUseSmileIDSampleSheet<void>(
-    context: context,
-    testId: UseSmileIDSampleTestIds.newProfileSheet,
-    builder: (BuildContext sheetContext) => UseSmileIDSampleNewProfileSheet(
-      onCreate: (String organisation, UseSmileIDSampleUserDetails details) {
-        final UseSmileIDSampleProfile created = ref
-            .read(useSmileIDSampleProfilesProvider.notifier)
-            .add(organisation: organisation, defaults: details, activate: true);
-        ref.read(useSmileIDSampleFormsProvider.notifier).fillFrom(created);
-        Navigator.of(sheetContext).pop();
-      },
-    ),
-  );
+}
+
+/// The new-profile sheet, over the profiles list or in the switch sheet's place.
+class UseSmileIDSampleNewProfileStep extends ConsumerWidget {
+  /// A form that closes with [onDone] once it has created a profile, making it active when [activate].
+  const UseSmileIDSampleNewProfileStep({
+    required this.onDone,
+    this.activate = false,
+    super.key,
+  });
+
+  /// Closes the sheet.
+  final Future<void> Function() onDone;
+
+  /// Whether the profile created is made active and fills the form, as one created from the switch is.
+  final bool activate;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      UseSmileIDSamplePartialSheetBody(
+        testId: UseSmileIDSampleTestIds.newProfileSheet,
+        child: UseSmileIDSampleNewProfileSheet(
+          onCreate: (String organisation, UseSmileIDSampleUserDetails details) {
+            final UseSmileIDSampleProfile created = ref
+                .read(useSmileIDSampleProfilesProvider.notifier)
+                .add(
+                  organisation: organisation,
+                  defaults: details,
+                  activate: activate,
+                );
+            if (activate) {
+              ref
+                  .read(useSmileIDSampleFormsProvider.notifier)
+                  .fillFrom(created);
+            }
+            unawaited(onDone());
+          },
+        ),
+      );
 }

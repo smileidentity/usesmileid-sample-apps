@@ -2,19 +2,22 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../navigation/use_smileid_sample_navigation.dart';
+import '../navigation/use_smileid_sample_njia.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_remove_jobs.dart';
-import '../use_smileid_sample_routes.dart';
 
 /// The verifications tab: the stored jobs, grouped by day, under the chips.
 class UseSmileIDSampleVerificationsTab extends ConsumerStatefulWidget {
-  /// Takes nothing; the jobs, the chip and the selection all come from their providers.
-  const UseSmileIDSampleVerificationsTab({super.key});
+  /// The tab's root, for [scope]'s entry; the jobs, the chip and the selection come from their providers.
+  const UseSmileIDSampleVerificationsTab({required this.scope, super.key});
+
+  /// The tab root's entry, which a row opens its details from.
+  final UseSmileIDSampleStepScope scope;
 
   @override
   ConsumerState<UseSmileIDSampleVerificationsTab> createState() =>
@@ -120,8 +123,12 @@ class _UseSmileIDSampleVerificationsTabState
       onFilterChanged: ref
           .read(useSmileIDSampleJobFilterProvider.notifier)
           .select,
-      onJobTap: (UseSmileIDSampleJob job) =>
-          context.go(UseSmileIDSampleRoutes.verificationDetails(job.id)),
+      onJobTap: (UseSmileIDSampleJob job) => unawaited(
+        widget.scope.navigator.goStep(
+          UseSmileIDSampleStep.verificationDetails,
+          arg: job.id,
+        ),
+      ),
       onSelectModeChanged: ref
           .read(useSmileIDSampleSelectionProvider.notifier)
           .setActive,
