@@ -147,6 +147,8 @@ internal fun UseSmileIDSampleTabRootBar(tab: UseSmileIDSampleNavItem, navigator:
     val engine = LocalUseSmileIDSampleEngine.current
     val chrome = LocalUseSmileIDSampleChrome.current
     val density = LocalDensity.current
+    // Select mode replaces the bottom chrome: the design has no nav bar behind the selection bar.
+    if (chrome.selection != null) return
     UseSmileIDSampleNavBar(
         sessionProgress = app.session?.takeIf { app.sessionActive }?.progress(app.nowMillis),
         selected = tab,
