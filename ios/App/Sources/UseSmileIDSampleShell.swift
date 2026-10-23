@@ -18,6 +18,8 @@ struct UseSmileIDSampleShell: View {
   var body: some View {
     // No njia step ids: each screen names itself `sample_*`, and a second id on its element replaces the first.
     NjiaHost(engine: navigation.engine, steps: steps, stepIds: false)
+      // Full height, as the shell's own sheets opened, where njia's default rests a sheet at half first.
+      .njiaSheetStyle(NjiaSheetStyle(heights: [.full]))
       .environmentObject(navigation)
       .environmentObject(app)
       .environmentObject(chrome)
@@ -115,7 +117,7 @@ final class UseSmileIDSampleChrome: ObservableObject {
   }
 }
 
-/// The shell's environment on every sheet at full height, as the shell's own sheets opened, and no system bar on a screen.
+/// The shell's environment on every sheet, and no system bar on a screen.
 private struct UseSmileIDSampleStepEnvironment<Content: View>: View {
   let scope: UseSmileIDSampleStepScope
   let app: UseSmileIDSampleAppState
@@ -123,7 +125,7 @@ private struct UseSmileIDSampleStepEnvironment<Content: View>: View {
 
   var body: some View {
     if scope.step.presentation == .sheet {
-      content().modifier(UseSmileIDSampleShellEnvironment(app: app)).presentationDetents([.large])
+      content().modifier(UseSmileIDSampleShellEnvironment(app: app))
     } else {
       // Every screen draws its own header, and a stack shows an empty bar over a root it has pushed from.
       content().toolbar(.hidden, for: .navigationBar)
