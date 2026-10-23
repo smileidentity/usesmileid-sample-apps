@@ -96,7 +96,7 @@ fun UseSmileIDSampleShell() {
     OpenLaunchLinkOnce(model, openLink)
     LeaveOnRootBack(model, state.isDone)
     ForwardNewIntentsTo(openLink)
-    AutostartFlowOnce(engine)
+    AutostartFlowOnce(model)
 
     val top = state.entries.lastOrNull()?.let(engine::stepOf)
     // The fullscreen flow handles its own insets, so the host contributes none (R3).
@@ -227,7 +227,7 @@ private fun ForwardNewIntentsTo(openLink: (String) -> Unit) {
 
 /** Saveable rather than keyed on the argument: the intent is re-read on recreation, and starting again would drag a rotated device out of where the run had reached. */
 @Composable
-private fun AutostartFlowOnce(engine: UseSmileIDSampleEngine) {
+private fun AutostartFlowOnce(model: UseSmileIDSampleNavigationModel) {
     val app = LocalUseSmileIDSampleAppState.current
     var started by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
@@ -240,6 +240,8 @@ private fun AutostartFlowOnce(engine: UseSmileIDSampleEngine) {
         started = true
         val product = app.launchArgs.autostart ?: return@LaunchedEffect
         withTimeoutOrNull(LAUNCH_SESSION_WAIT) { snapshotFlow { app.sessionLoaded }.first { it } }
+        // Read now, not at composition: a launch link opened during the waits swaps the engine.
+        val engine = model.engine
         engine.startRun(engine.state.entries.last(), product, app.runOnly(product, app.launchArgs.route))
     }
 }
