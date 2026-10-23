@@ -53,10 +53,14 @@ let useSmileIDSampleNjiaGraphFile = "njia-graph.json"
 extension Bundle {
   /// The four apps' one navigation graph, as this build bundles it; a missing or unreadable graph is a broken build.
   func useSmileIDSampleNjiaGraph() -> UseSmileIDSampleGraph {
-    guard let url = url(forResource: useSmileIDSampleNjiaGraphFile, withExtension: nil),
-          let text = try? String(contentsOf: url, encoding: .utf8),
-          let graph = try? useSmileIDSampleNjiaCodec.decodeGraph(text)
-    else { preconditionFailure("the build bundles no readable \(useSmileIDSampleNjiaGraphFile)") }
-    return graph
+    guard let url = url(forResource: useSmileIDSampleNjiaGraphFile, withExtension: nil) else {
+      preconditionFailure("the build bundles no \(useSmileIDSampleNjiaGraphFile)")
+    }
+    do {
+      return try useSmileIDSampleNjiaCodec.decodeGraph(String(contentsOf: url, encoding: .utf8))
+    } catch {
+      // The error says which: an unreadable file, or a kind or fact the app's enums don't name.
+      preconditionFailure("the bundled \(useSmileIDSampleNjiaGraphFile) doesn't read: \(error)")
+    }
   }
 }
