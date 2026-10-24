@@ -12,10 +12,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.union
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
@@ -170,8 +172,8 @@ private fun HostedSheetPanel(modifier: Modifier, content: @Composable ColumnScop
         color = UseSmileIDSampleTheme.colors.surface,
         contentColor = UseSmileIDSampleTheme.colors.textTitle,
     ) {
-        // Edge to edge, as the modal's own window insets its content past the system navigation bar.
-        Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars), content = content)
+        // Edge to edge, as the modal's own window insets its content past the system navigation bar and the keyboard.
+        Column(modifier = Modifier.windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.ime)), content = content)
     }
 }
 
