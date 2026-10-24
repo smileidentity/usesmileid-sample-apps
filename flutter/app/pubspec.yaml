@@ -24,7 +24,7 @@ dependencies:
 
   # The federated ML providers, pinned exactly for the same reason as the SDK above. A capture
   # screen with none of these registered falls back to a Pigeon call no plugin answers, so the flow
-  # dies on the device; these are what the Expo app and the SDK's own sample both carry.
+  # dies on the device. The Expo app carries the same six.
   usesmileid_mlkit_face: 12.3.1-SNAPSHOT.19
   usesmileid_mlkit_document: 12.3.1-SNAPSHOT.19
   usesmileid_huawei_face: 12.3.1-SNAPSHOT.19
