@@ -1,7 +1,7 @@
 appId: ${APP_ID}
 ---
-# `spec/routes.json` requires every route to open cold AND warm; the warm half served go_router's
-# error page until the router learned to fold a whole link. APP_ID — see ../README.md "Traps".
+# `spec/routes.json` requires every route to open cold AND warm; the warm half is where a link must
+# rebuild the stack under a running app rather than reopen it at the root. APP_ID — see ../README.md "Traps".
 
 - runFlow:
     file: subflows/cold-start.yaml
