@@ -105,16 +105,13 @@ class ScreenGoldenTest : GoldenTest() {
 
     /** Products presents it, not Profiles: the sheet's own link resolves to the products route. */
     @Test
-    fun profile_switch_sheet() = sheetGoldens("sheet_profile_switch") {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Products(TOKEN_LINKED)
-            ProfileSwitchSheet(
-                profiles = ProfileFixtures.Seeded.all,
-                activeId = ProfileFixtures.Seeded.activeId,
-                onSelect = {},
-                onDismissRequest = {},
-            )
-        }
+    fun profile_switch_sheet() = sheetGoldens("sheet_profile_switch", behind = { Products(TOKEN_LINKED) }) {
+        ProfileSwitchSheet(
+            profiles = ProfileFixtures.Seeded.all,
+            activeId = ProfileFixtures.Seeded.activeId,
+            onSelect = {},
+            onDismissRequest = {},
+        )
     }
 
     @Test

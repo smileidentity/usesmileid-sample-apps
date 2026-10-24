@@ -60,18 +60,21 @@ abstract class GoldenTest {
     /** [goldens] for a sheet, drawn as njia hosts a sheet step: its panel at the bottom of the window, over the host's scrim. */
     protected fun sheetGoldens(
         name: String,
+        behind: @Composable () -> Unit = {},
         interact: GoldenInteractions.() -> Unit = {},
         content: @Composable () -> Unit,
-    ) = goldens(name, fullWindow = true, interact) { SheetFrame(content) }
+    ) = goldens(name, fullWindow = true, interact) { SheetFrame(behind, content) }
 
     /** [sheetGoldens] for a sheet that names the device's theme. */
     protected fun sheetGoldensOnDevice(name: String, content: @Composable (deviceDark: Boolean) -> Unit) =
-        goldensOnDevice(name, fullWindow = true) { deviceDark -> SheetFrame { content(deviceDark) } }
+        goldensOnDevice(name, fullWindow = true) { deviceDark -> SheetFrame({}) { content(deviceDark) } }
 
-    /** The host's frame for a sheet step: its scrim over the window, and the sheet's panel at the bottom. */
+    /** The host's frame for a sheet step: the page beneath, its scrim over the window, and the sheet's panel at the bottom. */
     @Composable
-    private fun SheetFrame(sheet: @Composable () -> Unit) =
-        Box(Modifier.fillMaxSize().background(UseSmileIDSampleTheme.colors.overlayScrim)) {
+    private fun SheetFrame(behind: @Composable () -> Unit, sheet: @Composable () -> Unit) =
+        Box(Modifier.fillMaxSize()) {
+            behind()
+            Box(Modifier.fillMaxSize().background(UseSmileIDSampleTheme.colors.overlayScrim))
             Box(Modifier.align(Alignment.BottomCenter)) { sheet() }
         }
 
