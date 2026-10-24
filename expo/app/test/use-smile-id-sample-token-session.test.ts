@@ -13,7 +13,8 @@ import {
   smileIDSampleApplying,
   smileIDSampleJourneyStepsFor,
 } from '../src/flow/use-smile-id-sample-flow-builder-config';
-import { smileIDSampleFirstStepFor, smileIDSampleStepAfterUserDetails } from '../src/flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleRunEntryFor } from '../src/flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleTestGraph } from './support/use-smile-id-sample-test-njia';
 import type { UseSmileIDSampleFlowLaunchSnapshot } from '../src/flow/use-smile-id-sample-flow-launch-snapshot';
 import { smileIDSamplePreflight } from '../src/flow/use-smile-id-sample-flow-preflight';
 import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flow-tokens';
@@ -219,25 +220,34 @@ describe('the gate under a session', () => {
 });
 
 describe('the journey', () => {
+  /// The step a tap on `id` opens under `bindings`, on the in-shell route.
+  const firstStep = (id: string, bindings: Parameters<typeof smileIDSampleRunEntryFor>[3]) =>
+    smileIDSampleRunEntryFor(smileIDSampleTestGraph, productFor(id), 'shell', bindings).step;
+
   it('skips both forms when the token binds everything they would collect', () => {
     const bindings = minted({ userDetails: true }).bindings;
-    expect(smileIDSampleFirstStepFor(productFor('biometricKyc'), bindings)).toBe('/flow/biometricKyc/run');
-    expect(smileIDSampleFirstStepFor(productFor('enhancedDocumentVerification'), bindings)).toBe(
-      '/flow/enhancedDocumentVerification/run',
-    );
+    expect(firstStep('biometricKyc', bindings)).toBe('sdkFlow');
+    expect(firstStep('enhancedDocumentVerification', bindings)).toBe('sdkFlow');
   });
 
   it('keeps both forms with no token', () => {
-    expect(smileIDSampleFirstStepFor(productFor('biometricKyc'), null)).toBe('/flow/biometricKyc/details');
-    expect(smileIDSampleStepAfterUserDetails(productFor('biometricKyc'), null)).toBe('/flow/biometricKyc/id-details');
-    expect(smileIDSampleStepAfterUserDetails(productFor('smartSelfieEnrollment'), null)).toBe(
-      '/flow/smartSelfieEnrollment/run',
+    expect(firstStep('biometricKyc', null)).toBe('consentDetailsForm');
+    expect([...smileIDSampleRunEntryFor(smileIDSampleTestGraph, productFor('biometricKyc'), 'shell', null).facts]).toEqual([
+      'needsIdDetails',
+    ]);
+    expect([...smileIDSampleRunEntryFor(smileIDSampleTestGraph, productFor('smartSelfieEnrollment'), 'shell', null).facts]).toEqual(
+      [],
     );
   });
 
   it('shows the form on a partial binding rather than skipping it', () => {
-    expect(smileIDSampleFirstStepFor(productFor('biometricKyc'), { givenNames: true, lastName: true })).toBe(
-      '/flow/biometricKyc/details',
+    expect(firstStep('biometricKyc', { givenNames: true, lastName: true })).toBe('consentDetailsForm');
+  });
+
+  it('runs over the whole shell on the full-screen route', () => {
+    const bindings = minted({ userDetails: true }).bindings;
+    expect(smileIDSampleRunEntryFor(smileIDSampleTestGraph, productFor('biometricKyc'), 'fullscreen', bindings).step).toBe(
+      'sdkFlowFullScreen',
     );
   });
 });

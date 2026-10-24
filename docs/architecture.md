@@ -63,7 +63,7 @@ A change to `spec/` lands with all four app-side updates, or says in the PR whic
 | Android | njia's Compose host, drawing `spec/njia-graph.json` | ViewModel and `SavedStateHandle` |
 | iOS | njia's SwiftUI host, drawing `spec/njia-graph.json` | observable app state |
 | Flutter | njia's Flutter host under `MaterialApp.router`, drawing `spec/njia-graph.json`; the router only hands platform links to the shell | Riverpod, whose `ProviderScope` overrides turn launch arguments into test state |
-| Expo | `expo-router`, file routes mapping 1:1 to the route table | zustand |
+| Expo | njia's React Native host, drawing `spec/njia-graph.json`; `expo-linking` hands platform links to the shell | zustand |
 
 The rules all four follow:
 
@@ -81,8 +81,8 @@ The rules all four follow:
 8. **Cold start is the test that matters.** Every route must open with the app not already running. On
    Android, an intent sent to a live task rebuilds the Activity and resets launch arguments, so
    automation force-stops the app first.
-9. **A sheet is a layer over the current destination, never a replacement.** On Flutter it is a njia
-   sheet step over the whole page, so the scrim covers the nav bar and dismissing gives it back. Android
+9. **A sheet is a layer over the current destination, never a replacement.** On Flutter and Expo it is
+   a njia sheet step over the whole page, so the scrim covers the nav bar and dismissing gives it back. Android
    still replaces the destination (see the [backlog](plan/backlog.md)).
 10. **The nav bar floats over the tab roots only**, and screens measure its height rather than
     hard-coding it.
