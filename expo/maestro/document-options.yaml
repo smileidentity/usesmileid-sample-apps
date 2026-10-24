@@ -3,12 +3,16 @@ appId: ${APP_ID}
 # The document form on fixture lists, then the list failing, then Enhanced Document Verification's partner list; entered by link and never typed into (./README.md "Traps").
 
 - clearState
-- stopApp
-- openLink: "usesmileid-sample-expo:///flow/documentVerification/id-details?catalogue=fixture"
-- extendedWaitUntil:
-    visible:
-      id: "sample_kyc_form_screen"
-    timeout: 60000
+# Retried: Android can kill the process this link starts while it still tears down the cleared one (./README.md "Traps").
+- retry:
+    maxRetries: 1
+    commands:
+      - stopApp
+      - openLink: "usesmileid-sample-expo:///flow/documentVerification/id-details?catalogue=fixture"
+      - extendedWaitUntil:
+          visible:
+            id: "sample_kyc_form_screen"
+          timeout: 60000
 
 # The document products ask for a document and how to capture it, never an ID number.
 - assertNotVisible:
