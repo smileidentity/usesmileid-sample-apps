@@ -7,9 +7,6 @@ const DECLARATIONS = join(__dirname, '../src/use-smile-id-sample-test-ids.ts');
 
 /// Declared for parity and attached to nothing on Expo, each with its reason; a stale entry fails.
 const EXCUSED: Record<string, string> = {
-  SCENARIO_DRAWER: 'no Expo shell presents the scenario drawer yet',
-  SCENARIO_ITEM: 'no Expo shell presents the scenario drawer yet',
-  THEME_ITEM: 'no Expo shell presents the scenario drawer yet',
   ENV_CHIP: 'the chip is hidden on every shipped screen',
   LICENSE_LINK: 'every licence ships its text, so none opens a page',
   SIGN_OUT_CONFIRM: 'a native Alert button takes no test id',

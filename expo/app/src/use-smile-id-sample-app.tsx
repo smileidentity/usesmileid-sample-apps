@@ -30,7 +30,7 @@ import {
 } from './navigation/use-smile-id-sample-shell';
 import { useSmileIDSampleAppLanguage } from './use-smile-id-sample-app-language';
 import { useSmileIDSampleDeviceScheme } from './use-smile-id-sample-device-scheme';
-import { useLaunchArgs, useLaunchArgsLoaded, useLaunchFailure, useLaunchUrl } from './use-smile-id-sample-launch';
+import { useLaunchArgsAsLaunched, useLaunchArgsLoaded, useLaunchFailure, useLaunchUrl } from './use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from './use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from './use-smile-id-sample-secure-session-storage';
 import { UseSmileIDSampleSelectModeProvider } from './use-smile-id-sample-select-mode';
@@ -54,7 +54,7 @@ export const UseSmileIDSampleApp = () => {
   // Before settings load the device decides, which is right for the default and avoids a flash.
   const dark = following ? scheme === 'dark' : appearance === UseSmileIDSampleAppearance.Dark;
   const colors = dark ? smileDarkColors : smileLightColors;
-  const args = useLaunchArgs();
+  const args = useLaunchArgsAsLaunched();
   const launchUrl = useLaunchUrl();
   const argsLoaded = useLaunchArgsLoaded();
   const launchFailure = useLaunchFailure();

@@ -380,6 +380,7 @@ export { IdTypePickerSheet } from './screens/id-type-picker-sheet';
 export { DocumentPickerSheet } from './screens/document-picker-sheet';
 export { CaptureAsSheet } from './screens/capture-as-sheet';
 export { AppearanceSheet } from './screens/appearance-sheet';
+export { ScenarioDrawerSheet } from './screens/scenario-drawer-sheet';
 export { LanguageSheet } from './screens/language-sheet';
 export { CaptureModeSheet } from './screens/capture-mode-sheet';
 export { GenericDocumentSheet } from './screens/generic-document-sheet';

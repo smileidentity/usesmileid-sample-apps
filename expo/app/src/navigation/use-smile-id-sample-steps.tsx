@@ -24,12 +24,12 @@ import {
   UseSmileIDSampleAppearanceStep,
   UseSmileIDSampleCaptureModeStep,
   UseSmileIDSampleLanguageStep,
+  UseSmileIDSampleScenarioDrawerStep,
 } from '../steps/use-smile-id-sample-settings-sheets';
 import { UseSmileIDSampleSettingsStep } from '../steps/use-smile-id-sample-settings-step';
 import { UseSmileIDSampleVerificationDetailsStep } from '../steps/use-smile-id-sample-verification-details-step';
 import { UseSmileIDSampleVerificationsStep } from '../steps/use-smile-id-sample-verifications-step';
 import { UseSmileIDSampleNavBarHost } from '../use-smile-id-sample-nav-bar-host';
-import { UseSmileIDSampleLeave } from './use-smile-id-sample-leave';
 import { useSmileIDSampleEngine, type UseSmileIDSampleStepScope } from './use-smile-id-sample-navigation';
 import type { UseSmileIDSampleFact, UseSmileIDSampleStep } from './use-smile-id-sample-njia';
 
@@ -73,8 +73,7 @@ export const smileIDSampleSteps: NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampl
   steps.step('captureMode', (scope) => <UseSmileIDSampleCaptureModeStep scope={scope} />);
   steps.step('appearance', (scope) => <UseSmileIDSampleAppearanceStep scope={scope} />);
   steps.step('language', (scope) => <UseSmileIDSampleLanguageStep scope={scope} />);
-  // The drawer isn't built on this platform yet (docs/plan/backlog.md), so a link to it lands on Settings.
-  steps.step('scenarioDrawer', (scope) => <UseSmileIDSampleLeave onLeave={() => scope.navigator.back()} />);
+  steps.step('scenarioDrawer', (scope) => <UseSmileIDSampleScenarioDrawerStep scope={scope} />);
   steps.step('verificationDetails', (scope) => <UseSmileIDSampleVerificationDetailsStep scope={scope} />);
   steps.step('profileSwitch', (scope) => <UseSmileIDSampleProfileSwitchStep scope={scope} />);
   steps.step('profiles', (scope) => <UseSmileIDSampleProfilesStep scope={scope} />);
