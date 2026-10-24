@@ -10,8 +10,7 @@ import {
   smileIDSampleTokenSession,
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
-import { DocumentCaptureConfigBuilder, UseSmileIDFlowBuilder } from '@smileid/usesmileid';
-import { UseSmileIDMobileServicesProvider } from '@smileid/usesmileid_bridge';
+import { DocumentCaptureConfigBuilder, UseSmileIDFlowBuilder, UseSmileIDMobileServicesProvider } from '@smileid/usesmileid';
 
 import {
   smileIDSampleApplyDocumentOptions,

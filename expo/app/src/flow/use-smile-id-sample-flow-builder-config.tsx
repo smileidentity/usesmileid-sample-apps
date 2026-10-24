@@ -11,13 +11,14 @@ import {
   useSmileIDSampleTheme,
   smileIDSampleContactSubmitted,
 } from '@smileid/sample-ui';
-import { UseSmileIDMobileServices, UseSmileIDMobileServicesProvider } from '@smileid/usesmileid_bridge';
 import {
   CaptureType,
   DocumentCaptureMode,
   DocumentType,
   JobType,
   LogLevel,
+  UseSmileIDMobileServices,
+  UseSmileIDMobileServicesProvider,
   type AnalyzerRegistryBuilder,
   type CaptureConfigBuilder,
   type ConfigBuilder,
