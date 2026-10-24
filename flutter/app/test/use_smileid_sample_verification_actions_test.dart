@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_jobs_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_launch.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// Hiding a row: the two affordances that do it, and the four things a removal must also do.
 void main() {
@@ -33,6 +33,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
             UseSmileIDSampleMemoryJobsRepository(jobs),
           ),
@@ -43,8 +44,8 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(
-            initialLocation: UseSmileIDSampleRoutes.verifications,
+          routerConfig: useSmileIDSampleTestRouter(
+            UseSmileIDSampleRoutes.verifications,
           ),
         ),
       ),
@@ -328,6 +329,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(store),
           useSmileIDSampleLaunchArgsProvider.overrideWithValue(
             const UseSmileIDSampleLaunchArgs(seedJobs: true),
@@ -335,8 +337,8 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(
-            initialLocation: UseSmileIDSampleRoutes.verifications,
+          routerConfig: useSmileIDSampleTestRouter(
+            UseSmileIDSampleRoutes.verifications,
           ),
         ),
       ),

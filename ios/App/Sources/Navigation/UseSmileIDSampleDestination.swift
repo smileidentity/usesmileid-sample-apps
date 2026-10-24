@@ -1,16 +1,37 @@
+import Njia
+import NjiaUI
 import SampleUI
 import SwiftUI
 
-/// Binds a route to its screen; the mapping is the shell's because only it knows the route table.
+/// Binds a step of the graph to its screen; the mapping is the shell's because only it knows the graph.
 struct UseSmileIDSampleDestination: View {
-  let route: Route
+  let scope: UseSmileIDSampleStepScope
 
-  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  @EnvironmentObject private var navigation: UseSmileIDSampleNavigationModel
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var inAppLink: UseSmileIDSampleInAppLink?
+  /// The switch sheet's "New profile" swaps its content for the form, in the same sheet.
+  @State private var creatingProfile = false
+
+  private var navigator: NjiaNavigator {
+    scope.navigator
+  }
+
+  private var engine: UseSmileIDSampleEngine {
+    navigation.engine
+  }
+
+  /// The product of the run this step belongs to, read from the run's first entry.
+  private var productId: String {
+    engine.runProductId(scope.entry) ?? ""
+  }
+
+  private var product: UseSmileIDSampleProduct? {
+    UseSmileIDSampleProduct(rawValue: productId)
+  }
 
   var body: some View {
-    switch route {
+    switch scope.step.kind {
     case .products:
       ProductsScreen(
         state: .init(
@@ -21,50 +42,43 @@ struct UseSmileIDSampleDestination: View {
           sessionEnded: app.sessionExpired,
           result: app.flowResult.snapshot
         ),
-        onProduct: { product in
-          app.fillFormForRun(product)
-          let entry = app.entry(for: product)
-          app.runPartnerId = entry == .scanToken ? nil : app.session?.partnerId
-          router.open(entry)
-        },
-        onProfile: { router.sheet = .profileSwitch },
-        // Pushed, not opened: linking pops back to where the scan started.
-        onScan: { router.pushOnce(.scanToken) }
+        onProduct: startRun,
+        onProfile: { navigator.go(.profileSwitch) },
+        onScan: { navigator.go(.scanToken) }
       )
       // Back on the grid means the run's form is gone, so a list still arriving for it is cancelled.
       .onAppear { app.catalogue.stop() }
     case .verifications:
-      UseSmileIDSampleVerificationsHost()
-    case .consentDetailsForm(let productId):
+      UseSmileIDSampleVerificationsHost(navigator: navigator)
+    case .consentDetailsForm:
       UserDetailsScreen(
         state: .init(
-          productLabel: Self.product(productId)?.label ?? productId,
+          productLabel: product?.label ?? productId,
           details: app.userDetails,
           profile: app.profiles.active,
           profileIndex: app.profiles.activeIndex,
           saveToProfile: app.saveToProfile,
           organisation: app.organisationDraft,
-          requirement: app.userDetailsRequirement(for: Self.product(productId))
+          requirement: app.userDetailsRequirement(for: product)
         ),
         onFieldChange: { field, value in app.setUserField(field, to: value) },
         onSaveToProfileChange: { app.saveToProfile = $0 },
         onOrganisationChange: { app.organisationDraft = $0 },
-        onProfileTap: { router.sheet = .profileSwitch },
-        onBack: { router.pop() },
-        // Pushed once: two quick taps would stack two flow levels, and so two runs.
+        onProfileTap: { navigator.go(.profileSwitch) },
+        onBack: navigator.back,
+        // `next` from this entry only, so a second quick tap is stale and starts no second run.
         onContinue: {
-          guard let product = Self.product(productId) else { return }
-          app.keepUserDetails(for: Self.product(productId))
-          router.pushOnce(app.stepAfterUserDetails(product))
+          app.keepUserDetails(for: product)
+          navigator.next()
         }
       )
       .navigationBarHidden(true)
       .onAppear {
         app.fillFormOnEntry()
         // A deep link to this form skips the product tap, so the lists start here if nothing has.
-        app.ensureCatalogue(Self.product(productId))
+        app.ensureCatalogue(product)
       }
-    case .authUserId(let productId):
+    case .authUserId:
       AuthUserIdScreen(
         userId: app.authUserId,
         // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
@@ -74,59 +88,137 @@ struct UseSmileIDSampleDestination: View {
           sandbox: app.useSandbox
         ),
         onUserIdChange: { app.authUserId = $0 },
-        onRegister: {
-          app.fillFormForRun(.smartSelfieEnrollment)
-          router.open(app.entry(for: .smartSelfieEnrollment))
-        },
-        onBack: { router.pop() },
-        // Pushed once: two quick taps would stack two flow levels, and so two runs.
-        onContinue: { Self.product(productId).map { router.pushOnce(app.sdkFlow($0)) } }
+        onRegister: registerInstead,
+        onBack: navigator.back,
+        onContinue: navigator.next
       )
       .navigationBarHidden(true)
-    case .idDetailsForm(let productId):
+    case .idDetailsForm:
       KycIdFormScreen(
-        state: idFormState(productId),
-        onCountryTap: { router.sheet = .countryPicker },
-        onIdTypeTap: { router.sheet = .idTypePicker },
-        onDocumentTap: { router.sheet = .documentPicker },
-        onCaptureAsTap: { router.sheet = .captureAs },
+        state: idFormState,
+        onCountryTap: { navigator.go(.countryPicker) },
+        onIdTypeTap: { navigator.go(.idTypePicker) },
+        onDocumentTap: { navigator.go(.documentPicker) },
+        onCaptureAsTap: { navigator.go(.captureAs) },
         onIdNumberChange: { app.idDetails.idNumber = $0 },
-        onBack: { router.pop() },
-        onContinue: { Self.product(productId).map { router.pushOnce(app.sdkFlow($0)) } },
-        onToken: { router.pushOnce(.scanToken) }
+        onBack: navigator.back,
+        onContinue: navigator.next,
+        onToken: { navigator.go(.scanToken) }
       )
       .navigationBarHidden(true)
       .onAppear {
-        app.ensureCatalogue(Self.product(productId))
-        Self.product(productId).map { app.idDetails.keepDocumentListed(on: $0) }
-        keepOnlyEnabled(productId)
+        app.ensureCatalogue(product)
+        product.map { app.idDetails.keepDocumentListed(on: $0) }
+        keepOnlyEnabled()
       }
       .onChange(of: app.session?.id) { _ in
-        app.ensureCatalogue(Self.product(productId))
+        app.ensureCatalogue(product)
       }
-      .onChange(of: enabledLists(productId)) { _ in
-        keepOnlyEnabled(productId)
+      .onChange(of: enabledLists) { _ in
+        keepOnlyEnabled()
       }
-    case .verificationDetails(let jobId):
-      UseSmileIDSampleVerificationDetailsHost(jobId: jobId)
-        .navigationBarHidden(true)
-    case .profiles:
-      UseSmileIDSampleProfilesHost()
-        .navigationBarHidden(true)
-    case .profileConfig(let profileId):
-      if let profile = app.profiles.find(profileId) {
-        profileConfig(profile)
+    case .countryPicker:
+      CountryPickerSheet(
+        catalogue: app.catalogue.countries(formFamily, product: pickerProduct),
+        selected: app.idDetails.country,
+        query: $app.countryQuery,
+        onSelect: { app.selectCountry($0)
+          navigator.back() },
+        onRetry: { app.catalogue.retry() },
+        onClose: navigator.back
+      )
+    case .idTypePicker:
+      // Refused without a country, as its trigger is: a link can arrive before one is picked.
+      if let country = app.idDetails.country {
+        IdTypePickerSheet(
+          country: country,
+          catalogue: app.catalogue.idTypes(country.code),
+          selected: app.idDetails.idType,
+          query: $app.idTypeQuery,
+          onSelect: { app.idDetails.idType = $0
+            navigator.back() },
+          onRetry: { app.catalogue.retry() },
+          onClose: navigator.back
+        )
       } else {
-        Color.clear.onAppear {
-          if router.path(router.selectedTab).last == route {
-            router.pop()
+        Color.clear.onAppear(perform: navigator.back)
+      }
+    case .documentPicker:
+      if let country = app.idDetails.country {
+        DocumentPickerSheet(
+          country: country,
+          catalogue: app.catalogue.documents(country.code, product: pickerProduct),
+          selected: app.idDetails.document,
+          query: $app.documentQuery,
+          onSelect: { app.idDetails.choose(document: $0)
+            navigator.back() },
+          onRetry: { app.catalogue.retry() },
+          onClose: navigator.back
+        )
+      } else {
+        Color.clear.onAppear(perform: navigator.back)
+      }
+    case .captureAs:
+      if app.idDetails.document != nil {
+        CaptureAsSheet(
+          selected: app.idDetails.captureAsOverride,
+          matched: useSmileIDSampleResolvedCaptureAs(
+            document: app.idDetails.document,
+            override: nil,
+            genericDocument: app.idDetails.genericDocument
+          )
+        ) { choice in
+          if choice == .genericDocument {
+            // In this sheet's place, so closing the builder lands on the form.
+            navigator.go(UseSmileIDSampleStep.genericDocument.rawValue, arg: nil, replace: scope.entry.id)
+          } else {
+            app.idDetails.captureAsOverride = choice
+            navigator.back()
           }
         }
+      } else {
+        Color.clear.onAppear(perform: navigator.back)
       }
-    case .sdkFlow(let productId, let presentation):
-      SdkFlowScreen(productId: productId, presentation: presentation)
+    case .genericDocument:
+      GenericDocumentSheet(initial: app.idDetails.genericDocument) { genericDocument in
+        app.idDetails.genericDocument = genericDocument
+        app.idDetails.captureAsOverride = .genericDocument
+        navigator.back()
+      }
+    case .verificationDetails:
+      UseSmileIDSampleVerificationDetailsHost(jobId: scope.entry.arg ?? "", navigator: navigator)
+        .navigationBarHidden(true)
+    case .profiles:
+      UseSmileIDSampleProfilesHost(navigator: navigator)
+        .navigationBarHidden(true)
+    case .profileConfig:
+      if let profile = app.profiles.find(scope.entry.arg ?? "") {
+        profileConfig(profile)
+      } else {
+        // Deleted, or never there: a link to a stale id leaves rather than drawing an empty form.
+        Color.clear.onAppear(perform: navigator.back)
+      }
+    case .profileSwitch:
+      if creatingProfile {
+        newProfile
+      } else {
+        ProfileSwitchSheet(
+          profiles: app.profiles.all,
+          activeId: app.profiles.activeId,
+          onSelect: { app.switchProfile(to: $0.id)
+            navigator.back() },
+          onCreate: {
+            app.beginProfileFromSwitch()
+            creatingProfile = true
+          }
+        )
+      }
+    case .newProfile:
+      newProfile
+    case .sdkFlow, .sdkFlowFullScreen:
+      SdkFlowScreen(scope: scope)
     case .scanToken:
-      UseSmileIDSampleScanTokenHost()
+      UseSmileIDSampleScanTokenHost(scope: scope)
         .navigationBarHidden(true)
     case .settings:
       browser(SettingsScreen(
@@ -142,30 +234,84 @@ struct UseSmileIDSampleDestination: View {
           runningLanguage: app.runningLanguage
         ),
         onSettingChange: { setting, enabled in app.change(setting, to: enabled) },
-        onProfile: { router.open(.profiles) },
+        onProfile: { navigator.go(.profiles) },
         onNavRow: { row in open(row) },
-        onCaptureMode: { router.sheet = .captureMode },
-        onAppearance: { router.sheet = .appearance },
-        onLanguage: { router.sheet = .language },
+        onCaptureMode: { navigator.go(.captureMode) },
+        onAppearance: { navigator.go(.appearance) },
+        onLanguage: { navigator.go(.language) },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
-        onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { router.sheet = .scenarioDrawer } : nil,
-        debugRows: useSmileIDSampleShellExtension?.debugRows() ?? AnyView(EmptyView()),
+        onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { navigator.go(.scenarioDrawer) } : nil,
+        debugRows: AnyView(UseSmileIDSampleDebugRows(extension: useSmileIDSampleShellExtension)),
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.signOut()
-          // The pill's own cross-tab switch, so the stack lands where selecting Products would.
-          router.selectedTab = .products }
+          // The bar's own cross-tab switch, so the stack lands where selecting Products would.
+          engine.leaveToProducts() }
       ))
     case .licenses:
       LicensesScreen(
         licenses: Self.notices,
-        onBack: { router.pop() },
+        onBack: navigator.back,
         // Ejects, as the legal rows above it do; no shipped component takes this path today.
         onOpenUrl: { link in URL(string: link).map { UIApplication.shared.open($0) } }
       )
       .navigationBarHidden(true)
-    default:
-      UseSmileIDSampleSeat(name: String(describing: route))
+    case .captureMode:
+      CaptureModeSheet(selected: app.settings.captureMode) { mode in
+        app.setCaptureMode(mode)
+        navigator.back()
+      }
+    case .appearance:
+      AppearanceSheet(selected: app.settings.appearance, deviceDark: app.deviceDark) { appearance in
+        app.setAppearance(appearance)
+        navigator.back()
+      }
+    case .language:
+      // Stays open after a pick, to say it applies at the next launch.
+      LanguageSheet(
+        selected: app.settings.language,
+        deviceLanguages: app.deviceLanguages,
+        pending: app.settings.language != app.runningLanguage
+      ) { app.setLanguage($0) }
+    case .scenarioDrawer:
+      // App-level, not sheet-local: the result card reports the same selection.
+      ScenarioDrawerSheet(
+        activeScenario: app.flowResult.scenario,
+        activeTheme: app.flowResult.theme,
+        onScenarioSelect: { app.flowResult.selectScenario($0) },
+        onThemeSelect: { app.flowResult.selectTheme($0) }
+      )
     }
+  }
+
+  /// A product tap: the run's first form, or the scanner first when no live session backs it.
+  private func startRun(_ product: UseSmileIDSampleProduct) {
+    app.fillFormForRun(product)
+    let run = app.entry(in: engine.graph, for: product)
+    app.runPartnerId = run == nil ? nil : app.session?.partnerId
+    if let run {
+      engine.startRun(from: scope.entry, product: product, run: run)
+    } else {
+      navigator.go(.scanToken)
+    }
+  }
+
+  /// SmartSelfie Registration in this run's place, for a user with no enrolment to authenticate.
+  private func registerInstead() {
+    app.fillFormForRun(.smartSelfieEnrollment)
+    let start = engine.runStart(scope.entry)?.id
+    if let run = app.entry(in: engine.graph, for: .smartSelfieEnrollment) {
+      engine.startRun(from: scope.entry, product: .smartSelfieEnrollment, run: run, replace: start)
+    } else {
+      navigator.go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: start)
+    }
+  }
+
+  private var newProfile: some View {
+    NewProfileSheet(
+      draft: $app.newProfile,
+      onSave: { app.createProfile()
+        navigator.back() }
+    )
   }
 
   private func profileConfig(_ profile: UseSmileIDSampleProfile) -> some View {
@@ -184,26 +330,36 @@ struct UseSmileIDSampleDestination: View {
       onOrganisationChange: { app.editProfileOrganisationDraft(id, to: $0) },
       onCallbackUrlChange: { value in app.editProfileCallbackDraft(id, to: value) },
       onBack: { app.discardProfileDraft(id)
-        router.pop() },
+        navigator.back() },
       onSave: { app.saveProfile(id)
-        router.pop() },
-      onDelete: { router.pop()
+        navigator.back() },
+      onDelete: { navigator.back()
         app.deleteProfile(id) }
     )
     .navigationBarHidden(true)
   }
 
+  /// The family of the form a picker layers over; a KYC form unless a document product's is on top.
+  private var formFamily: UseSmileIDSampleCatalogueFamily {
+    product?.catalogueFamily ?? .kyc
+  }
+
+  /// The product whose ID form the sheets sit on, so the document list can leave out what the SDK refuses on it.
+  private var pickerProduct: UseSmileIDSampleProduct {
+    product ?? .documentVerification
+  }
+
   /// The form's state, with the chosen country's list deciding the second trigger's placeholder.
-  private func idFormState(_ productId: String) -> UseSmileIDSampleKycIdFormState {
-    let family = Self.product(productId)?.catalogueFamily ?? .kyc
+  private var idFormState: UseSmileIDSampleKycIdFormState {
+    let family = product?.catalogueFamily ?? .kyc
     let loading: Bool = switch (app.idDetails.country?.code, family) {
     case (nil, _): false
     case (let code?, .kyc): app.catalogue.idTypes(code).isLoading
-    case (let code?, .document): app.catalogue.documents(code, product: Self.product(productId) ?? .documentVerification).isLoading
+    case (let code?, .document): app.catalogue.documents(code, product: pickerProduct).isLoading
     case (_?, .passport): false
     }
     return .init(
-      productLabel: Self.product(productId)?.label ?? productId,
+      productLabel: product?.label ?? productId,
       family: family,
       details: app.idDetails,
       countryListLoading: loading
@@ -211,15 +367,15 @@ struct UseSmileIDSampleDestination: View {
   }
 
   /// Enhanced Document Verification's settled lists; nil for any other product or a list not yet settled.
-  private func enabledLists(_ productId: String) -> EnabledLists? {
-    guard Self.product(productId) == .enhancedDocumentVerification else { return nil }
+  private var enabledLists: EnabledLists? {
+    guard product == .enhancedDocumentVerification else { return nil }
     let countries = app.catalogue.countries(.document, product: .enhancedDocumentVerification).settledItems
     let documents = app.idDetails.country.flatMap { app.catalogue.documents($0.code, product: .enhancedDocumentVerification).settledItems }
     return EnabledLists(countries: countries, documents: documents)
   }
 
-  private func keepOnlyEnabled(_ productId: String) {
-    guard let lists = enabledLists(productId) else { return }
+  private func keepOnlyEnabled() {
+    guard let lists = enabledLists else { return }
     app.idDetails.keepOnlyEnabled(countries: lists.countries, documents: lists.documents)
   }
 
@@ -228,19 +384,10 @@ struct UseSmileIDSampleDestination: View {
     let documents: [UseSmileIDSampleDocument]?
   }
 
-  private static func product(_ id: String) -> UseSmileIDSampleProduct? {
-    UseSmileIDSampleProduct(rawValue: id)
-  }
-
   /// Read once: the asset is generated into the binary, so it cannot change while the app runs.
   private static let notices = UseSmileIDSampleLicenses.bundled()
 
-  /// `UIPasteboard` has no clip label, so only the value crosses.
-  private func copy(_: String, _ value: String) {
-    UIPasteboard.general.string = value
-  }
-
-  /// A layer over the screen that opened it, never a destination.
+  /// A layer over the screen that opened it, never a step.
   private func browser(_ content: some View) -> some View {
     content.sheet(item: $inAppLink) { UseSmileIDSampleBrowser(url: $0.url) }
   }
@@ -248,7 +395,7 @@ struct UseSmileIDSampleDestination: View {
   /// No url is this app's own screen, `opensInApp` stays in a sheet, and the legal pages eject because both serve a PDF.
   private func open(_ row: UseSmileIDSampleNavRow) {
     guard let url = row.url else {
-      router.open(.licenses)
+      navigator.go(.licenses)
       return
     }
     if row.opensInApp {
@@ -262,8 +409,8 @@ struct UseSmileIDSampleDestination: View {
 /// One verification, the refresh it can ask for and the outcome that has to be said out loud.
 private struct UseSmileIDSampleVerificationDetailsHost: View {
   let jobId: String
+  let navigator: NjiaNavigator
 
-  @EnvironmentObject private var router: UseSmileIDSampleRouter
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var notice: UseSmileIDSampleTransientNotice?
 
@@ -276,10 +423,10 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
         showProbes: app.showProbes
       ),
       resultExpanded: $app.resultCardExpanded,
-      onBack: { router.pop() },
+      onBack: navigator.back,
       // Hidden from this app's list, not deleted at the API: the store's own word for it.
       onDelete: { app.removeJobs([jobId])
-        router.pop() },
+        navigator.back() },
       onCopy: { label, value in copy(label, value) },
       onRefresh: { await refresh(silentWhenUnchanged: false) }
     )
@@ -337,7 +484,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
 
 /// The list, the clock it reads coarsely, and the row a tap opens.
 private struct UseSmileIDSampleVerificationsHost: View {
-  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  let navigator: NjiaNavigator
+
   @EnvironmentObject private var app: UseSmileIDSampleAppState
 
   var body: some View {
@@ -354,7 +502,7 @@ private struct UseSmileIDSampleVerificationsHost: View {
       onFilterChange: { app.verifications.filter = $0 },
       onSelectModeChange: { app.verifications.changeSelectMode($0) },
       onSelectionChange: { id, checked in app.verifications.setSelection(id, checked) },
-      onJobTap: { router.push(.verificationDetails(jobId: $0.id)) },
+      onJobTap: { navigator.go(.verificationDetails, arg: $0.id) },
       onRemove: { app.removeJobs($0) }
     )
     // No endpoint lists a partner's jobs, so the list asks about each processing row, and again while one still is.
@@ -374,7 +522,8 @@ private struct UseSmileIDSampleVerificationsHost: View {
 
 /// The profiles list and its created confirmation; the id is consumed on sight, so returning cannot re-show it.
 private struct UseSmileIDSampleProfilesHost: View {
-  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  let navigator: NjiaNavigator
+
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var created: UseSmileIDSampleProfile?
 
@@ -385,9 +534,9 @@ private struct UseSmileIDSampleProfilesHost: View {
         activeId: app.profiles.activeId,
         notice: created.map { .init(message: UseSmileIDSampleStrings.profilesCreated(profile: $0.title), actionLabel: UseSmileIDSampleStrings.profilesMakeActive) }
       ),
-      onProfileTap: { router.push(.profileConfig(profileId: $0.id)) },
-      onCreate: { router.sheet = .newProfile },
-      onBack: { router.pop() },
+      onProfileTap: { navigator.go(.profileConfig, arg: $0.id) },
+      onCreate: { navigator.go(.newProfile) },
+      onBack: navigator.back,
       // A new profile is not made active by creating it, so the confirmation carries the offer.
       onNoticeAction: { created.map { app.profiles.setActive($0.id) } },
       onNoticeDismiss: { created = nil }
@@ -400,14 +549,5 @@ private struct UseSmileIDSampleProfilesHost: View {
     guard let id = app.profiles.lastCreatedId else { return }
     app.profiles.clearLastCreated()
     created = app.profiles.find(id)
-  }
-}
-
-/// A named seat for a screen U3 has not built yet.
-struct UseSmileIDSampleSeat: View {
-  let name: String
-
-  var body: some View {
-    Text(name)
   }
 }

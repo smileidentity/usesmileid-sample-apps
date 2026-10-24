@@ -1371,72 +1371,6 @@
       ]
     },
     {
-      "artifact": "androidx.navigation:navigation-common-android",
-      "version": "2.9.8",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
-      "artifact": "androidx.navigation:navigation-common",
-      "version": "2.9.8",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
-      "artifact": "androidx.navigation:navigation-compose-android",
-      "version": "2.9.8",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
-      "artifact": "androidx.navigation:navigation-compose",
-      "version": "2.9.8",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
-      "artifact": "androidx.navigation:navigation-runtime-android",
-      "version": "2.9.8",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
-      "artifact": "androidx.navigation:navigation-runtime",
-      "version": "2.9.8",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
       "artifact": "androidx.navigationevent:navigationevent-android",
       "version": "1.2.0",
       "licenses": [
@@ -2115,17 +2049,6 @@
           "id": "Apache-2.0",
           "name": "The Apache License, Version 2.0",
           "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
-        }
-      ]
-    },
-    {
-      "artifact": "io.github.raamcosta.compose-destinations:core",
-      "version": "2.3.0",
-      "licenses": [
-        {
-          "id": "Apache-2.0",
-          "name": "The Apache Software License, Version 2.0",
-          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
         }
       ]
     },

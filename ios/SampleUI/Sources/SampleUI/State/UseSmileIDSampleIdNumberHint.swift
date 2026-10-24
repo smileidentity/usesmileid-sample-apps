@@ -21,8 +21,7 @@ public enum UseSmileIDSampleIdNumberHint {
   public static func accepts(_ regex: String, _ number: String) -> Bool {
     let trimmed = number.trimmingCharacters(in: .whitespacesAndNewlines)
     guard !trimmed.isEmpty else { return false }
-    guard !regex.isBlank else { return true }
-    guard compiled(regex) != nil, let whole = compiled("^(?:\(regex))$") else { return true }
+    guard !regex.isBlank, compiled(regex) != nil, let whole = compiled("^(?:\(regex))$") else { return true }
     return whole.firstMatch(in: trimmed, range: NSRange(trimmed.startIndex..., in: trimmed)) != nil
   }
 

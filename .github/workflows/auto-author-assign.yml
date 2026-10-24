@@ -1,6 +1,5 @@
-name: Auto Author Assign
+name: Auto author assign
 
-# The same workflow the SDK repos run, so a PR here has an owner from the moment it opens.
 on:
   pull_request_target:
     types: [opened, reopened]
@@ -9,9 +8,5 @@ permissions:
   pull-requests: write
 
 jobs:
-  assign-author:
-    if: ${{ join(github.event.pull_request.assignees.*.login, '') == '' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    steps:
-      - uses: toshimaru/auto-author-assign@a78a94b219445cece8ccf0d45fec60af449f212a # v3.1.0
+  assign:
+    uses: smileidentity/central-workflows/.github/workflows/auto-author-assign.yml@e04941c6757ab31f0e5de5195a264530e8c373d0 # v1

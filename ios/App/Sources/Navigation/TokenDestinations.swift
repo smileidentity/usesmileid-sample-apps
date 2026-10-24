@@ -1,10 +1,13 @@
 import AVFoundation
+import Njia
 import SampleUI
 import SwiftUI
 
-/// The token-scanning route: the shared screen, given the shell's camera, clipboard and minter.
+/// The token-scanning step: the shared screen, given the shell's camera, clipboard and minter.
 struct UseSmileIDSampleScanTokenHost: View {
-  @EnvironmentObject private var router: UseSmileIDSampleRouter
+  let scope: UseSmileIDSampleStepScope
+
+  @EnvironmentObject private var navigation: UseSmileIDSampleNavigationModel
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var torchOn = false
 
@@ -23,7 +26,7 @@ struct UseSmileIDSampleScanTokenHost: View {
       // The redirect's message belongs to the screen it arrives at.
       reason: resuming == nil ? nil : (arrivedEnded ? .sessionEnded : .sessionNeeded),
       torchOn: torchOn,
-      onBack: { router.pop() },
+      onBack: scope.navigator.back,
       onLink: link,
       onSimulate: { span, bindings, environment in
         let minted = UseSmileIDSampleFlowTokens.session(span: span, bindings: bindings, environment: environment, now: Date())
@@ -67,7 +70,7 @@ struct UseSmileIDSampleScanTokenHost: View {
     // A resumed run leaves on the change below, once the write has reached the app state.
     if resuming == nil {
       app.runPartnerId = session.partnerId
-      router.pop()
+      scope.navigator.back()
     }
   }
 
@@ -77,16 +80,18 @@ struct UseSmileIDSampleScanTokenHost: View {
     resumeHandled = true
     guard !linked.hasExpired(at: Date()) else {
       // An expired relink cannot start the run, and freezing on "linked" says nothing.
-      router.pop()
+      scope.navigator.back()
       return
     }
-    // Opened, not pushed: the path is assigned, so two quick links cannot stack two runs.
     let intoFlow = resuming.resumesInFlow(runPartnerId: app.runPartnerId, linkedPartnerId: linked.partnerId)
     app.runPartnerId = linked.partnerId
-    if !intoFlow, let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == resuming.productId }) {
-      router.open(app.firstStep(for: product))
-    } else {
-      router.open(.sdkFlow(productId: resuming.productId, presentation: resuming.route))
+    guard let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == resuming.productId }) else {
+      scope.navigator.back()
+      return
     }
+    let engine = navigation.engine
+    let run = intoFlow ? app.runOnly(product, route: resuming.route) : app.runEntry(in: engine.graph, for: product)
+    // In the scanner's place, so a second quick link is stale against an entry that has gone.
+    engine.startRun(from: scope.entry, product: product, run: run, replace: scope.entry.id)
   }
 }

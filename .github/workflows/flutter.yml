@@ -23,10 +23,25 @@ jobs:
     # macOS, not ubuntu: a Flutter golden is host-rasterised, so a baseline recorded on a Mac and
     # verified on Linux reds the lane for reasons that have nothing to do with the UI. The same
     # runner also builds the iOS release, which verify.sh skips loudly anywhere else.
-    runs-on: blacksmith-6vcpu-macos-26
+    runs-on: blacksmith-6vcpu-macos-27
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
+
+      # The iOS release build compiles the SDK's Swift with this Xcode, so it is the one the team builds with.
+      - name: Select Xcode
+        run: |
+          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
+            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
+          done
+          BUILD="$(xcodebuild -version | tail -1)"
+          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
+            echo "::warning title=Xcode build drifted::This runner has $BUILD rather than the pinned $XCODE_BUILD."
+          fi
+          xcodebuild -version
+        env:
+          XCODE_VERSION: "27.1"
+          XCODE_BUILD: 27A9275
 
       # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
       - name: Check out the design system

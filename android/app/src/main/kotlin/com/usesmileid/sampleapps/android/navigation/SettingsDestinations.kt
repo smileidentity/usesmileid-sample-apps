@@ -25,14 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.annotation.parameters.DeepLink
-import com.ramcosta.composedestinations.generated.NavGraphs
-import com.ramcosta.composedestinations.generated.destinations.LicensesScreenDestination
-import com.ramcosta.composedestinations.generated.destinations.ProfilesScreenDestination
-import com.ramcosta.composedestinations.generated.navgraphs.ProductsNavGraph
-import com.ramcosta.composedestinations.navigation.DestinationsNavigator
-import com.ramcosta.composedestinations.utils.startDestination
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
@@ -55,18 +47,13 @@ import com.usesmileid.sampleapps.ui.screens.LanguageSheet as LanguageContent
 import com.usesmileid.sampleapps.ui.screens.LicensesScreen as LicensesContent
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
 
-/** The settings tab's route. Function names are load-bearing: KSP names each generated `…Destination` after the function. */
-
-@Destination<SettingsGraph>(start = true, deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.SETTINGS)])
+/** The settings tab's root; its pickers and the scenario drawer are sheet steps over it. */
 @Composable
-fun SettingsScreen(navigator: DestinationsNavigator) {
+internal fun SettingsScreen(scope: UseSmileIDSampleStepScope) {
     val app = LocalUseSmileIDSampleAppState.current
+    val engine = LocalUseSmileIDSampleEngine.current
     val chrome = LocalUseSmileIDSampleChrome.current
     val openUrl = LocalUseSmileIDSampleUrlOpener.current
-    var showScenarios by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.ScenarioDrawer)
-    var pickingCaptureMode by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.CaptureMode)
-    var pickingAppearance by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.Appearance)
-    var pickingLanguage by rememberUseSmileIDSampleSheetState(UseSmileIDSampleSheet.Language)
     SettingsContent(
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
         state = UseSmileIDSampleSettingsState(
@@ -82,17 +69,17 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
         ),
         onSettingChange = { setting, enabled -> app.storeScope.launch { app.store.setSetting(setting, enabled) } },
         // The row opens the list: configuring any profile and creating one are both reached from there.
-        onProfileClick = { navigator.navigate(ProfilesScreenDestination) },
-        onCaptureModeClick = { pickingCaptureMode = true },
-        onAppearanceClick = { pickingAppearance = true },
-        onLanguageClick = { pickingLanguage = true },
+        onProfileClick = { scope.navigator.go(UseSmileIDSampleStep.Profiles) },
+        onCaptureModeClick = { scope.navigator.go(UseSmileIDSampleStep.CaptureMode) },
+        onAppearanceClick = { scope.navigator.go(UseSmileIDSampleStep.Appearance) },
+        onLanguageClick = { scope.navigator.go(UseSmileIDSampleStep.Language) },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
         onNavRowClick = { row ->
-            row.url?.let { openUrl(it, row.id, row.opensInApp) } ?: navigator.navigate(LicensesScreenDestination)
+            row.url?.let { openUrl(it, row.id, row.opensInApp) } ?: scope.navigator.go(UseSmileIDSampleStep.Licenses)
         },
         // Debug builds only, and no launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer = if (BuildConfig.DEBUG) {
-            { showScenarios = true }
+            { scope.navigator.go(UseSmileIDSampleStep.ScenarioDrawer) }
         } else {
             null
         },
@@ -102,64 +89,81 @@ fun SettingsScreen(navigator: DestinationsNavigator) {
             app.profiles.clear()
             app.storeScope.launch { app.store.setProfiles(UseSmileIDSampleProfilesRecord()) }
             // The nav bar's own tab switch, so the stack lands where selecting Products would.
-            navigator.navigate(ProductsNavGraph) {
-                popUpTo(NavGraphs.root.startDestination) { saveState = true }
-                launchSingleTop = true
-                restoreState = true
-            }
+            engine.leaveToProducts()
         },
         debugRows = {
-            val context = LocalContext.current
-            UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
-                UseSmileIDSampleSettingRow(
-                    title = "Network logs",
-                    supportingText = "Requests from the last hour",
-                    onClick = { context.startActivity(intent) },
-                    trailing = { UseSmileIDSampleSettingRowChevron() },
-                )
+            useSmileIDSampleDebugRowOrder.forEach { group ->
+                when (group) {
+                    UseSmileIDSampleDebugRowGroup.ExtensionLeading -> useSmileIDSampleShellExtension?.LeadingDebugRows()
+                    UseSmileIDSampleDebugRowGroup.Shell -> NetworkLogsRow()
+                    UseSmileIDSampleDebugRowGroup.Extension -> useSmileIDSampleShellExtension?.DebugRows()
+                }
             }
-            useSmileIDSampleShellExtension?.DebugRows()
         },
     )
-    if (showScenarios) ScenarioDrawerSheet(onDismissRequest = { showScenarios = false })
-    if (pickingCaptureMode) {
-        CaptureModeContent(
-            selected = app.settings.captureMode,
-            onSelect = { mode ->
-                app.storeScope.launch { app.store.setCaptureMode(mode) }
-                pickingCaptureMode = false
-            },
-            onDismissRequest = { pickingCaptureMode = false },
-        )
-    }
-    if (pickingAppearance) {
-        AppearanceContent(
-            selected = app.settings.appearance,
-            deviceDark = app.deviceDark,
-            onSelect = { appearance ->
-                app.storeScope.launch { app.store.setAppearance(appearance) }
-                pickingAppearance = false
-            },
-            onDismissRequest = { pickingAppearance = false },
-        )
-    }
-    if (pickingLanguage) {
-        LanguageContent(
-            selected = app.settings.language,
-            deviceLanguages = app.deviceLanguages,
-            onSelect = { language ->
-                app.storeScope.launch { app.store.setLanguage(language) }
-                pickingLanguage = false
-            },
-            onDismissRequest = { pickingLanguage = false },
+}
+
+/** Opens the debug build's network log; a release build has none, so it draws nothing. */
+@Composable
+private fun NetworkLogsRow() {
+    val context = LocalContext.current
+    UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
+        UseSmileIDSampleSettingRow(
+            title = "Network logs",
+            supportingText = "Requests from the last hour",
+            onClick = { context.startActivity(intent) },
+            trailing = { UseSmileIDSampleSettingRowChevron() },
         )
     }
 }
 
-/** The notices screen. Its asset is read here and handed in, so the screen stays a function of its arguments. */
-@Destination<SettingsGraph>(deepLinks = [DeepLink(uriPattern = UseSmileIDSampleDeepLinks.LICENSES)])
+/** The capture-mode picker over Settings. */
 @Composable
-fun LicensesScreen(navigator: DestinationsNavigator) {
+internal fun CaptureModeSheet(scope: UseSmileIDSampleStepScope) {
+    val app = LocalUseSmileIDSampleAppState.current
+    CaptureModeContent(
+        selected = app.settings.captureMode,
+        onSelect = { mode ->
+            app.storeScope.launch { app.store.setCaptureMode(mode) }
+            scope.navigator.back()
+        },
+        onDismissRequest = scope.navigator::back,
+    )
+}
+
+/** The appearance picker over Settings. */
+@Composable
+internal fun AppearanceSheet(scope: UseSmileIDSampleStepScope) {
+    val app = LocalUseSmileIDSampleAppState.current
+    AppearanceContent(
+        selected = app.settings.appearance,
+        deviceDark = app.deviceDark,
+        onSelect = { appearance ->
+            app.storeScope.launch { app.store.setAppearance(appearance) }
+            scope.navigator.back()
+        },
+        onDismissRequest = scope.navigator::back,
+    )
+}
+
+/** The language picker over Settings. */
+@Composable
+internal fun LanguageSheet(scope: UseSmileIDSampleStepScope) {
+    val app = LocalUseSmileIDSampleAppState.current
+    LanguageContent(
+        selected = app.settings.language,
+        deviceLanguages = app.deviceLanguages,
+        onSelect = { language ->
+            app.storeScope.launch { app.store.setLanguage(language) }
+            scope.navigator.back()
+        },
+        onDismissRequest = scope.navigator::back,
+    )
+}
+
+/** The notices screen. Its asset is read here and handed in, so the screen stays a function of its arguments. */
+@Composable
+internal fun LicensesScreen(scope: UseSmileIDSampleStepScope) {
     val context = LocalContext.current
     val chrome = LocalUseSmileIDSampleChrome.current
     val openUrl = LocalUseSmileIDSampleUrlOpener.current
@@ -174,7 +178,7 @@ fun LicensesScreen(navigator: DestinationsNavigator) {
     LicensesContent(
         licenses = licenses,
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
-        onBack = { navigator.navigateUp() },
+        onBack = scope.navigator::back,
         onOpenUrl = { url -> openUrl(url, "licenses", true) },
     )
 }

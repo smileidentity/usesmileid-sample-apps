@@ -18,9 +18,10 @@ import '../use_smileid_sample_shell_extension.dart';
 
 /// The single route hosting the SDK flow. The SDK owns everything inside it: no host chrome, no host back.
 class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
-  /// [productId] comes from the route and decides the whole journey.
+  /// [productId] comes from the run's first entry and decides the whole journey.
   const UseSmileIDSampleSdkFlowTab({
     required this.productId,
+    required this.route,
     required this.onLeave,
     required this.onNeedsDetails,
     required this.onNeedsSession,
@@ -31,6 +32,9 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
 
   /// The product this run submits.
   final String productId;
+
+  /// Whether the run covers the shell or sits inside it, which its step decides.
+  final UseSmileIDSampleFlowRoute route;
 
   /// Where a cancelled, failed or never-started run lands.
   final VoidCallback onLeave;
@@ -167,7 +171,7 @@ class _UseSmileIDSampleSdkFlowTabState
     );
     return UseSmileIDSampleFlowLaunchSnapshot(
       product: product,
-      route: ref.read(useSmileIDSampleLaunchArgsProvider).route,
+      route: widget.route,
       userDetails: forms.userDetails.withoutHiddenNames(
         useSmileIDSampleUserDetailsRequirementFor(
           session?.bindings,

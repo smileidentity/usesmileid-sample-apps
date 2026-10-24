@@ -1,22 +1,22 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid/usesmileid.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_builder_config.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launch_snapshot.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_plan.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_preflight.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_tokens.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_token_binding_rules.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_navigation.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia_facts.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_session_providers.dart';
 import 'package:usesmileid_sample_flutter/src/status/use_smileid_sample_http_job_status_source.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_journey.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// The token session on the host side.
 void main() {
@@ -367,33 +367,42 @@ void main() {
   });
 
   group('where a product tap goes', () {
+    /// The step a tap on [product] opens at, under a token with [bindings].
+    String firstStepFor(
+      UseSmileIDSampleProduct product,
+      UseSmileIDSampleTokenBindings? bindings, {
+      bool afterUserDetails = false,
+    }) => useSmileIDSampleSpecGraph().firstStep(
+      useSmileIDSampleFacts(
+        product,
+        bindsIdDetails: bindings?.bindsIdDetails(product) ?? false,
+        route: UseSmileIDSampleFlowRoute.shell,
+      ),
+      bindsUserDetails:
+          afterUserDetails || (bindings?.bindsRequiredUserDetails ?? false),
+    );
+
     test('no token starts at the details form', () {
       expect(
-        UseSmileIDSampleJourney.firstStepFor(
-          UseSmileIDSampleProduct.biometricKyc,
-          null,
-        ),
-        UseSmileIDSampleRoutes.consentDetailsForm(
-          UseSmileIDSampleProduct.biometricKyc.id,
-        ),
+        firstStepFor(UseSmileIDSampleProduct.biometricKyc, null),
+        UseSmileIDSampleStep.consentDetailsForm.name,
       );
     });
 
     test('authentication asks for its user ID after the details form', () {
       expect(
-        UseSmileIDSampleJourney.afterUserDetails(
+        firstStepFor(
           UseSmileIDSampleProduct.smartSelfieAuth,
           null,
+          afterUserDetails: true,
         ),
-        UseSmileIDSampleRoutes.authUserId(
-          UseSmileIDSampleProduct.smartSelfieAuth.id,
-        ),
+        UseSmileIDSampleStep.authUserId.name,
       );
     });
 
     test('bound details skip both forms', () {
       expect(
-        UseSmileIDSampleJourney.firstStepFor(
+        firstStepFor(
           UseSmileIDSampleProduct.biometricKyc,
           _mint(
             bindings: const UseSmileIDSampleSimulatedBindings(
@@ -401,19 +410,17 @@ void main() {
             ),
           ).bindings,
         ),
-        UseSmileIDSampleRoutes.sdkFlow(UseSmileIDSampleProduct.biometricKyc.id),
+        UseSmileIDSampleStep.sdkFlow.name,
       );
     });
 
     test('bound names alone still show the details form', () {
       expect(
-        UseSmileIDSampleJourney.firstStepFor(
+        firstStepFor(
           UseSmileIDSampleProduct.smartSelfieEnrollment,
           const UseSmileIDSampleTokenBindings(givenNames: true, lastName: true),
         ),
-        UseSmileIDSampleRoutes.consentDetailsForm(
-          UseSmileIDSampleProduct.smartSelfieEnrollment.id,
-        ),
+        UseSmileIDSampleStep.consentDetailsForm.name,
       );
     });
   });
@@ -484,17 +491,17 @@ void main() {
   });
 
   group('the session on screen', () {
-    Future<(GoRouter, ProviderContainer)> pump(
+    Future<ProviderContainer> pump(
       WidgetTester tester, {
       UseSmileIDSampleSessionRecord stored =
           const UseSmileIDSampleSessionRecord(),
       String? at,
       int Function()? clock,
     }) async {
-      final GoRouter router = useSmileIDSampleRouter(initialLocation: at);
       await tester.pumpWidget(
         ProviderScope(
           overrides: [
+            ...useSmileIDSampleTestNjia(),
             useSmileIDSampleSessionRepositoryProvider.overrideWithValue(
               UseSmileIDSampleMemorySessionRepository(stored),
             ),
@@ -504,15 +511,14 @@ void main() {
           ],
           child: MaterialApp.router(
             theme: UseSmileIDSampleTheme.light(),
-            routerConfig: router,
+            routerConfig: useSmileIDSampleTestRouter(at),
           ),
         ),
       );
       await tester.pump();
       addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
-      return (
-        router,
-        ProviderScope.containerOf(tester.element(find.byType(MaterialApp))),
+      return ProviderScope.containerOf(
+        tester.element(find.byType(MaterialApp)),
       );
     }
 
@@ -521,7 +527,7 @@ void main() {
     testWidgets(
       'the nav bar reaches the scanner, and Simulate links a live session',
       (WidgetTester tester) async {
-        final (GoRouter _, ProviderContainer container) = await pump(tester);
+        final ProviderContainer container = await pump(tester);
         expect(byId(UseSmileIDSampleTestIds.sessionCard), findsNothing);
 
         await tester.tap(byId(UseSmileIDSampleTestIds.navToken));
@@ -646,7 +652,7 @@ void main() {
         final UseSmileIDSampleTokenSession lapsed = _mint(
           span: UseSmileIDSampleSimulatedSpan.ended,
         );
-        final (GoRouter _, ProviderContainer container) = await pump(
+        final ProviderContainer container = await pump(
           tester,
           stored: UseSmileIDSampleSessionRecord(live: lapsed),
         );
@@ -664,7 +670,7 @@ void main() {
     testWidgets('an ended session sends a run to the scanner, which says why', (
       WidgetTester tester,
     ) async {
-      final (GoRouter router, ProviderContainer container) = await pump(
+      final ProviderContainer container = await pump(
         tester,
         stored: const UseSmileIDSampleSessionRecord(
           ended: UseSmileIDSampleEndedSession(id: 'a1b2c3d4', endedAtMillis: 1),
@@ -684,17 +690,14 @@ void main() {
         ),
         findsOne,
       );
-      expect(
-        router.routerDelegate.currentConfiguration.uri.path,
-        UseSmileIDSampleRoutes.scanToken,
-      );
+      expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.scanToken);
       expect(container.read(useSmileIDSampleInterruptedRunProvider), isNull);
     });
 
     testWidgets('leaving the scanner unlinked drops the run it was sent', (
       WidgetTester tester,
     ) async {
-      final (GoRouter router, ProviderContainer _) = await pump(
+      await pump(
         tester,
         stored: const UseSmileIDSampleSessionRecord(
           ended: UseSmileIDSampleEndedSession(id: 'a1b2c3d4', endedAtMillis: 1),
@@ -707,7 +710,10 @@ void main() {
       expect(await tester.binding.handlePopRoute(), isTrue);
       await tester.pumpAndSettle();
 
-      unawaited(router.push(UseSmileIDSampleRoutes.scanToken));
+      final UseSmileIDSampleEngine engine = useSmileIDSampleTestEngine(tester);
+      await engine
+          .navigator(engine.state.top!)
+          .goStep(UseSmileIDSampleStep.scanToken);
       await tester.pumpAndSettle();
       expect(
         find.text(

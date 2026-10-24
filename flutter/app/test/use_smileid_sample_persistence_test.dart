@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_jobs_repository.dart';
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preferences_settings_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// Settings survive a restart, which is the whole claim, so a restart is what the tests perform.
 void main() {
@@ -128,6 +128,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleSettingsRepositoryProvider.overrideWithValue(store),
           useSmileIDSampleStoredSettingsProvider.overrideWithValue(
             await store.read(),
@@ -137,7 +138,7 @@ void main() {
           theme: UseSmileIDSampleTheme.light(),
           darkTheme: UseSmileIDSampleTheme.dark(),
           themeMode: ThemeMode.system,
-          routerConfig: useSmileIDSampleRouter(),
+          routerConfig: useSmileIDSampleTestRouter(),
         ),
       ),
     );

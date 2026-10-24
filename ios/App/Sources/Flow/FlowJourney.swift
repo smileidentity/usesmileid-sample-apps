@@ -1,35 +1,32 @@
 import Foundation
 import SampleUI
 
+/// Where a run starts: the facts it runs under and the step a product tap goes to.
+struct UseSmileIDSampleRunEntry: Equatable {
+  let facts: Set<UseSmileIDSampleFact>
+  let step: String
+}
+
 extension UseSmileIDSampleAppState {
-  /// A product tap: the scanner first when no live session backs the run, since every run submits under a token.
-  func entry(for product: UseSmileIDSampleProduct) -> Route {
+  /// A product tap's run, or nil when no live session backs it and the scanner comes first, since every run submits under a token.
+  func entry(in graph: UseSmileIDSampleGraph, for product: UseSmileIDSampleProduct) -> UseSmileIDSampleRunEntry? {
     guard let session, !session.hasExpired(at: Date()) else {
       interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: launchArguments.route, resumeAt: .firstStep)
-      return .scanToken
+      return nil
     }
-    return firstStep(for: product)
+    return runEntry(in: graph, for: product)
   }
 
-  /// A form is skipped only when the token already carries all of it.
-  func firstStep(for product: UseSmileIDSampleProduct) -> Route {
-    tokenBindsUserDetails
-      ? stepAfterUserDetails(product)
-      : .consentDetailsForm(productId: product.id)
+  /// Where `product` starts under this launch and its token: a form is skipped only when the token already carries all of it.
+  func runEntry(in graph: UseSmileIDSampleGraph, for product: UseSmileIDSampleProduct) -> UseSmileIDSampleRunEntry {
+    UseSmileIDSampleRunEntry(facts: njiaFacts(for: product), step: njiaFirstStep(in: graph, for: product))
   }
 
-  /// Shared with the form's own Continue, so the two routes cannot drift.
-  func stepAfterUserDetails(_ product: UseSmileIDSampleProduct) -> Route {
-    if product == .smartSelfieAuth {
-      return .authUserId(productId: product.id)
-    }
-    return product.needsIdDetails && !tokenBindsIdDetails(product)
-      ? .idDetailsForm(productId: product.id)
-      : sdkFlow(product)
-  }
-
-  /// Carries the launched presentation: without it the in-shell route is only reached by a cold link.
-  func sdkFlow(_ product: UseSmileIDSampleProduct) -> Route {
-    .sdkFlow(productId: product.id, presentation: launchArguments.route)
+  /// Straight into the run on `route`, past every form, as an autostart or a resumed run goes.
+  func runOnly(_ product: UseSmileIDSampleProduct, route: UseSmileIDSampleFlowRoute) -> UseSmileIDSampleRunEntry {
+    UseSmileIDSampleRunEntry(
+      facts: useSmileIDSampleFacts(product, bindsIdDetails: tokenBindsIdDetails(product), route: route),
+      step: (route == .fullscreen ? UseSmileIDSampleStep.sdkFlowFullScreen : .sdkFlow).rawValue
+    )
   }
 }

@@ -105,8 +105,8 @@ Enhanced Document Verification leaves out a country that Document Verification o
 `catalogue=unreachable` fails every list at once, which is how a flow reaches the error state and its
 Retry. The fixture holds about a dozen rows chosen for the UI's cases; it changes when the
 UI gains a case, never because the API changed. Android and iOS bundle it straight from `spec/`. Flutter's
-asset list and Metro cannot reach outside their app, so each ships a copy, and
-`scripts/sync_catalogue_fixture.py --check` fails `verify.sh` if a copy drifts.
+asset list and Metro cannot reach outside their app, so each ships a copy, as it does of `spec/njia-graph.json`,
+and `scripts/sync_spec_assets.py --check` fails `verify.sh` if a copy drifts.
 
 **Capture as matches the document by default.** Each platform's document-options flow asserts that Match
 document is the checked row of the Capture as sheet, that the Green Book row and a passport row each read
@@ -121,7 +121,7 @@ Verification.
 they never see a submission. On an Android debug build a probe on the SDK's public interceptor hook logs
 `auto_capture_enabled`, `capture_both_sides`, `allow_skip_back` and `allow_gallery_upload` from the submission metadata,
 and nothing else, under the `UseSmileIDSampleWire` tag: capture a real document on sandbox and read
-`adb logcat -s UseSmileIDSampleWire`, or open Settings → Network logs. On iOS the request shows in Loupe. Release logs no traffic. A
+`adb logcat -s UseSmileIDSampleWire`, or open Settings → Network logs. On iOS the request shows in Loupe: open Settings → Network logs, or shake the device. Release logs no traffic. A
 release run checks what the screen does instead: under `manual` the shutter shows at once, under the
 default after 10 seconds, and under `auto` not while the scan runs. Every mode shows it once a scan times out.
 

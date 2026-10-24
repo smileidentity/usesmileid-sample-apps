@@ -2,13 +2,13 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_products_tab.dart';
 import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_settings_tab.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// The two surfaces the design does not draw: reaching them, and the act each performs.
 void main() {
@@ -26,6 +26,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleLaunchArgsProvider.overrideWithValue(args),
           // The registry is empty under `flutter test` whatever the build bundles, so the screen's
           // content is supplied here rather than asserted against a stream that yields nothing.
@@ -39,7 +40,7 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(initialLocation: location),
+          routerConfig: useSmileIDSampleTestRouter(location),
         ),
       ),
     );
@@ -173,14 +174,14 @@ void main() {
     });
   });
 
-  /// Dismissing a sheet link hands the route to its owner, which must update in place, not rebuild.
+  /// Dismissing a sheet link hands back to its owner, which must update in place, not rebuild.
   group('a sheet link and its owner are one page', () {
     Future<void> dismissKeepsOwner(
       WidgetTester tester, {
       required String link,
       required String sheetId,
       required Finder owner,
-      required String ownerPath,
+      required UseSmileIDSampleStep ownerStep,
     }) async {
       await pumpAt(tester, link);
       final State<StatefulWidget> before = tester.state(owner);
@@ -188,8 +189,7 @@ void main() {
       Navigator.of(tester.element(byId(sheetId))).pop();
       await tester.pumpAndSettle();
 
-      final GoRouter router = GoRouter.of(tester.element(owner));
-      expect(router.routerDelegate.currentConfiguration.uri.path, ownerPath);
+      expect(useSmileIDSampleTestTop(tester), ownerStep);
       expect(identical(tester.state(owner), before), isTrue);
     }
 
@@ -200,7 +200,7 @@ void main() {
         link: UseSmileIDSampleRoutes.profileSwitch,
         sheetId: UseSmileIDSampleTestIds.profileSwitchSheet,
         owner: find.byType(UseSmileIDSampleProductsTab),
-        ownerPath: UseSmileIDSampleRoutes.products,
+        ownerStep: UseSmileIDSampleStep.products,
       ),
     );
 
@@ -211,19 +211,19 @@ void main() {
         link: UseSmileIDSampleRoutes.scenarioDrawer,
         sheetId: UseSmileIDSampleTestIds.scenarioDrawer,
         owner: find.byType(UseSmileIDSampleSettingsTab),
-        ownerPath: UseSmileIDSampleRoutes.settings,
+        ownerStep: UseSmileIDSampleStep.settings,
       ),
     );
 
-    /// The shared page is updated rather than recreated, so a link arriving warm still opens the sheet.
+    /// A link arriving warm still opens the sheet over its owner.
     testWidgets('a warm profile-switch link still opens the sheet', (
       WidgetTester tester,
     ) async {
       await pumpAt(tester, UseSmileIDSampleRoutes.products);
-      GoRouter.of(
-        tester.element(find.byType(UseSmileIDSampleProductsTab)),
-      ).go(UseSmileIDSampleRoutes.profileSwitch);
-      await tester.pumpAndSettle();
+      await useSmileIDSampleTestDeliver(
+        tester,
+        UseSmileIDSampleRoutes.profileSwitch,
+      );
 
       expect(byId(UseSmileIDSampleTestIds.profileSwitchSheet), findsOneWidget);
     });

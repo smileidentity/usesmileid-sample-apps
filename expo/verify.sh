@@ -77,9 +77,9 @@ if runs checks; then
   # needs no secret and always runs. A hand-edited path fails here.
   python3 "$REPO_ROOT/scripts/generate_expo_icons.py" --check
 
-  echo "==> catalogue fixture is current"
-  # Metro cannot reach spec/, so the app ships a copy that must match it byte for byte.
-  python3 "$REPO_ROOT/scripts/sync_catalogue_fixture.py" --check
+  echo "==> bundled spec files are current"
+  # Metro cannot reach spec/, so the app ships copies of the fixture and the njia graph that must match byte for byte.
+  python3 "$REPO_ROOT/scripts/sync_spec_assets.py" --check
 fi
 
 if runs checks; then

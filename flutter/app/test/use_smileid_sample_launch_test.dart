@@ -1,41 +1,33 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:usesmileid_sample_flutter/src/use_smileid_sample_launch.dart';
 
-/// The cold-start link: where it opens, and what arguments it carried.
+/// The cold-start link: the link it opens, and what arguments it carried.
 void main() {
   UseSmileIDSampleLaunch at(String route) => UseSmileIDSampleLaunch(route);
 
-  group('the location', () {
-    test('is the start destination when the app was opened from the icon', () {
-      expect(at('/').location, '/products');
+  group('the link', () {
+    test('is none when the app was opened from the icon', () {
+      expect(at('/').link, isNull);
+      expect(at('').link, isNull);
     });
 
-    // The defect this exists for, measured on a device: a custom-scheme link arrives WHOLE.
-    test('folds a custom scheme and its host back into a path', () {
-      expect(at('usesmileid-sample-flutter://settings').location, '/settings');
-      expect(at('usesmileid-sample-flutter://settings/').location, '/settings');
-    });
+    // Measured on a device: a custom-scheme link arrives whole, scheme and host included.
+    test(
+      'is the whole custom-scheme link, which the shell folds into a graph path',
+      () {
+        expect(
+          at('usesmileid-sample-flutter://settings/licenses').link,
+          Uri.parse('usesmileid-sample-flutter://settings/licenses'),
+        );
+        expect(
+          at('usesmileid-sample-flutter://settings').link,
+          Uri.parse('usesmileid-sample-flutter://settings'),
+        );
+      },
+    );
 
-    test('keeps the segments under the host, which carry the arguments', () {
-      expect(
-        at('usesmileid-sample-flutter://verifications/job_01').location,
-        '/verifications/job_01',
-      );
-      expect(
-        at('usesmileid-sample-flutter://settings/licenses').location,
-        '/settings/licenses',
-      );
-    });
-
-    test('leaves a plain path alone', () {
-      expect(at('/verifications').location, '/verifications');
-    });
-
-    test('drops the query, which is arguments rather than a destination', () {
-      expect(
-        at('usesmileid-sample-flutter://verifications?seedJobs=true').location,
-        '/verifications',
-      );
+    test('is a plain path as it came', () {
+      expect(at('/verifications').link, Uri.parse('/verifications'));
     });
   });
 
@@ -64,29 +56,6 @@ void main() {
       expect(at('/?seedJobs=').args.seedJobs, isFalse);
       expect(at('/?seedJobs=TRUE').args.seedJobs, isTrue);
       expect(at('/?seedJobs= true ').args.seedJobs, isTrue);
-    });
-  });
-
-  group('the start location', () {
-    test('is the run of the product autostart names', () {
-      expect(
-        at('usesmileid-sample-flutter://?autostart=biometricKyc').startLocation,
-        '/flow/biometricKyc/run',
-      );
-      expect(
-        at(
-          'usesmileid-sample-flutter://verifications?autostart=biometricKyc',
-        ).startLocation,
-        '/flow/biometricKyc/run',
-      );
-    });
-
-    test('is the location when the link names no product', () {
-      expect(at('/').startLocation, '/products');
-      expect(
-        at('usesmileid-sample-flutter://settings?autostart=nope').startLocation,
-        '/settings',
-      );
     });
   });
 }

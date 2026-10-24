@@ -2,26 +2,25 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../catalogue/use_smileid_sample_catalogue_providers.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../navigation/use_smileid_sample_navigation.dart';
+import '../navigation/use_smileid_sample_njia.dart';
 import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
-import '../use_smileid_sample_routes.dart';
 import 'use_smileid_sample_above_shell_page.dart';
-import 'use_smileid_sample_profile_switcher.dart';
 
 /// The details every product collects before its flow, filled from the profile the run is for.
 class UseSmileIDSampleUserDetailsTab extends ConsumerStatefulWidget {
-  /// [productId] comes from the route and titles the page.
-  const UseSmileIDSampleUserDetailsTab({required this.productId, super.key});
+  /// The form for [scope]'s entry, which the run's product titles.
+  const UseSmileIDSampleUserDetailsTab({required this.scope, super.key});
 
-  /// The product whose flow this precedes.
-  final String productId;
+  /// The form's entry, which Continue goes on from.
+  final UseSmileIDSampleStepScope scope;
 
   @override
   ConsumerState<UseSmileIDSampleUserDetailsTab> createState() =>
@@ -33,6 +32,9 @@ class _UseSmileIDSampleUserDetailsTabState
   late final UseSmileIDSampleCatalogueStore _catalogue = ref.read(
     useSmileIDSampleCatalogueStoreProvider,
   );
+
+  /// Read once: a page still animating out after a run leaves would find no product.
+  late final String _productId = _runProductId(context, widget.scope);
 
   @override
   void initState() {
@@ -50,7 +52,7 @@ class _UseSmileIDSampleUserDetailsTabState
       // A deep link lands here without the product tap that asks ahead.
       useSmileIDSampleEnsureEnabled(
         _catalogue,
-        _productFor(widget.productId),
+        useSmileIDSampleProductOf(_productId),
         ref.read(useSmileIDSampleSessionProvider).live,
       );
     });
@@ -64,8 +66,10 @@ class _UseSmileIDSampleUserDetailsTabState
   );
 
   Widget _form(BuildContext context) {
-    final String productId = widget.productId;
-    final UseSmileIDSampleProduct? product = _productFor(productId);
+    final String productId = _productId;
+    final UseSmileIDSampleProduct? product = useSmileIDSampleProductOf(
+      productId,
+    );
     final UseSmileIDSampleForms forms = ref.watch(
       useSmileIDSampleFormsProvider,
     );
@@ -86,10 +90,8 @@ class _UseSmileIDSampleUserDetailsTabState
     final UseSmileIDSampleFormsNotifier edits = ref.read(
       useSmileIDSampleFormsProvider.notifier,
     );
-    void back() =>
-        useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
+    void back() => unawaited(widget.scope.navigator.back());
     return UseSmileIDSampleAboveShellPage(
-      onBack: back,
       child: UseSmileIDSampleUserDetailsScreen(
         // The raw id for a product this build does not know, so a stale link names what it looked
         // for rather than showing an empty title.
@@ -108,18 +110,13 @@ class _UseSmileIDSampleUserDetailsTabState
                   requirement: requirement,
                 );
           }
-          context.push(
-            product == null
-                ? UseSmileIDSampleRoutes.sdkFlow(productId)
-                : UseSmileIDSampleJourney.afterUserDetails(
-                    product,
-                    useSmileIDSampleLiveBindings(ref),
-                  ),
-          );
+          unawaited(widget.scope.navigator.next());
         },
         profile: profiles.active,
         profileIndex: profiles.activeIndex,
-        onProfileTap: () => showUseSmileIDSampleProfileSwitch(context, ref),
+        onProfileTap: () => unawaited(
+          widget.scope.navigator.goStep(UseSmileIDSampleStep.profileSwitch),
+        ),
         saveToProfile: forms.saveToProfile,
         onSaveToProfileChanged: edits.setSaveToProfile,
         organisation: forms.organisation,
@@ -131,11 +128,11 @@ class _UseSmileIDSampleUserDetailsTabState
 
 /// SmartSelfie Authentication's user ID, typed or picked from runs that enrolled one; the run never makes one up.
 class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
-  /// [productId] is the run's, carried through to the flow.
-  const UseSmileIDSampleAuthUserIdTab({required this.productId, super.key});
+  /// The form for [scope]'s entry, in a SmartSelfie Authentication run.
+  const UseSmileIDSampleAuthUserIdTab({required this.scope, super.key});
 
-  /// The product the flow will run, always SmartSelfie Authentication.
-  final String productId;
+  /// The form's entry, which Continue goes on from.
+  final UseSmileIDSampleStepScope scope;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -149,10 +146,8 @@ class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
       ref.watch(useSmileIDSampleSessionProvider).live,
       DateTime.now().millisecondsSinceEpoch,
     );
-    void back() =>
-        useSmileIDSampleBack(context, UseSmileIDSampleRoutes.products);
+    void back() => unawaited(scope.navigator.back());
     return UseSmileIDSampleAboveShellPage(
-      onBack: back,
       child: UseSmileIDSampleAuthUserIdScreen(
         userId: forms.authUserId,
         // A user is enrolled under one partner in one environment, so another's IDs would authenticate nobody.
@@ -168,40 +163,41 @@ class UseSmileIDSampleAuthUserIdTab extends ConsumerWidget {
           ref
               .read(useSmileIDSampleFormsProvider.notifier)
               .startRun(ref.read(useSmileIDSampleProfilesProvider).active);
-          context.go(
-            useSmileIDSampleEntryFor(
-              ref,
-              UseSmileIDSampleProduct.smartSelfieEnrollment,
-            ),
+          const UseSmileIDSampleProduct enrolment =
+              UseSmileIDSampleProduct.smartSelfieEnrollment;
+          final UseSmileIDSampleEngine engine =
+              UseSmileIDSampleNavigationScope.engineOf(context);
+          final int? start = engine.runStart(scope.entry)?.id;
+          final UseSmileIDSampleRunEntry? run = useSmileIDSampleEntryFor(
+            ref,
+            engine.graph,
+            enrolment,
+          );
+          // In the authentication run's place, so back from the enrolment returns to products.
+          unawaited(
+            run == null
+                ? scope.navigator.go(
+                    UseSmileIDSampleStep.scanToken.name,
+                    replace: start,
+                  )
+                : engine.startRun(scope.entry, enrolment, run, replace: start),
           );
         },
         onBack: back,
-        onContinue: () {
-          // Once: a second quick tap would stack a second flow, and so a second run.
-          if (!(ModalRoute.of(context)?.isCurrent ?? true)) {
-            return;
-          }
-          context.push(UseSmileIDSampleRoutes.sdkFlow(productId));
-        },
+        // `next` from this entry only, so a second quick tap is stale and starts no second run.
+        onContinue: () => unawaited(scope.navigator.next()),
       ),
     );
   }
 }
 
-/// The ID-details form, with its pickers and capture sheets as layers over it.
+/// The ID-details form; its pickers and capture sheets are sheet steps over it.
 class UseSmileIDSampleKycFormTab extends ConsumerStatefulWidget {
-  /// [openSheet] names a sheet a deep link asked for, so the link opens this page with it up.
-  const UseSmileIDSampleKycFormTab({
-    required this.productId,
-    this.openSheet,
-    super.key,
-  });
+  /// The form for [scope]'s entry.
+  const UseSmileIDSampleKycFormTab({required this.scope, super.key});
 
-  /// The product whose flow this precedes.
-  final String productId;
-
-  /// Which sheet to open on arrival, if any.
-  final UseSmileIDSamplePicker? openSheet;
+  /// The form's entry, which its pickers and Continue go from.
+  final UseSmileIDSampleStepScope scope;
 
   @override
   ConsumerState<UseSmileIDSampleKycFormTab> createState() =>
@@ -214,13 +210,11 @@ class _UseSmileIDSampleKycFormTabState
     useSmileIDSampleCatalogueStoreProvider,
   );
 
-  UseSmileIDSampleCatalogueFamily get _family {
-    final UseSmileIDSampleProduct? product = _productFor(widget.productId);
-    return (product == null
-            ? null
-            : useSmileIDSampleCatalogueFamily(product)) ??
-        UseSmileIDSampleCatalogueFamily.kyc;
-  }
+  /// Read once: a page still animating out after a run leaves would find no product.
+  late final String _productId = _runProductId(context, widget.scope);
+
+  UseSmileIDSampleCatalogueFamily get _family =>
+      useSmileIDSampleFamilyOf(useSmileIDSampleProductOf(_productId));
 
   @override
   void initState() {
@@ -233,15 +227,13 @@ class _UseSmileIDSampleKycFormTabState
       }
       // A deep link lands here without the product tap that fetches ahead, so the form starts it.
       _ensureCatalogue();
-      final UseSmileIDSampleProduct? product = _productFor(widget.productId);
+      final UseSmileIDSampleProduct? product = useSmileIDSampleProductOf(
+        _productId,
+      );
       if (product != null) {
         ref
             .read(useSmileIDSampleFormsProvider.notifier)
             .keepDocumentListedOn(product);
-      }
-      final UseSmileIDSamplePicker? asked = widget.openSheet;
-      if (asked != null) {
-        _openFromLink(asked);
       }
     });
   }
@@ -253,21 +245,11 @@ class _UseSmileIDSampleKycFormTabState
     super.dispose();
   }
 
-  /// Also on every picker: a sheet link's form stacks above this one and stops the run, and the token button relinks.
-  void _ensureCatalogue() {
-    final UseSmileIDSampleTokenSession? live = ref
-        .read(useSmileIDSampleSessionProvider)
-        .live;
-    _catalogue.ensure(
-      useSmileIDSampleCatalogueEnvironment(live),
-      useSmileIDSampleCatalogueLocale(),
-    );
-    useSmileIDSampleEnsureEnabled(
-      _catalogue,
-      _productFor(widget.productId),
-      live,
-    );
-  }
+  /// Also from every picker: the token button relinks, and the lists follow the new session.
+  void _ensureCatalogue() => useSmileIDSampleEnsureCatalogue(
+    ref,
+    useSmileIDSampleProductOf(_productId),
+  );
 
   /// After the frame, since a notifier cannot change while this builds; nothing is scheduled when every pick is still enabled.
   void _keepOnlyEnabled(UseSmileIDSampleIdDetails details) {
@@ -303,34 +285,11 @@ class _UseSmileIDSampleKycFormTabState
     );
   }
 
-  /// A link can ask for a second-level sheet before its trigger could open; refused, not held until later.
-  void _openFromLink(UseSmileIDSamplePicker asked) {
-    final UseSmileIDSampleIdDetails details = ref
-        .read(useSmileIDSampleFormsProvider)
-        .idDetails;
-    switch (asked) {
-      case UseSmileIDSamplePicker.country:
-        _pickCountry();
-      case UseSmileIDSamplePicker.idType:
-        if (details.country != null) {
-          _pickIdType();
-        }
-      case UseSmileIDSamplePicker.document:
-        if (details.country != null) {
-          _pickDocument();
-        }
-      case UseSmileIDSamplePicker.captureAs:
-        if (details.document != null) {
-          _pickCaptureAs();
-        }
-      case UseSmileIDSamplePicker.genericDocument:
-        _buildGenericDocument();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final UseSmileIDSampleProduct? product = _productFor(widget.productId);
+    final UseSmileIDSampleProduct? product = useSmileIDSampleProductOf(
+      _productId,
+    );
     final UseSmileIDSampleIdDetails details = ref
         .watch(useSmileIDSampleFormsProvider)
         .idDetails;
@@ -343,12 +302,10 @@ class _UseSmileIDSampleKycFormTabState
       ),
       (String? _, String? _) => _ensureCatalogue(),
     );
-    void back() => useSmileIDSampleBack(
-      context,
-      UseSmileIDSampleRoutes.consentDetailsForm(widget.productId),
-    );
+    void back() => unawaited(widget.scope.navigator.back());
+    void go(UseSmileIDSampleStep step) =>
+        unawaited(widget.scope.navigator.goStep(step));
     return UseSmileIDSampleAboveShellPage(
-      onBack: back,
       child: ListenableBuilder(
         listenable: _catalogue,
         builder: (BuildContext context, Widget? _) {
@@ -357,7 +314,7 @@ class _UseSmileIDSampleKycFormTabState
             _keepOnlyEnabled(details);
           }
           return UseSmileIDSampleKycFormScreen(
-            title: product?.label ?? widget.productId,
+            title: product?.label ?? _productId,
             family: _family,
             details: details,
             countryListLoading:
@@ -377,185 +334,47 @@ class _UseSmileIDSampleKycFormTabState
                   UseSmileIDSampleCatalogueFamily.passport => false,
                 },
             onBack: back,
-            onPickCountry: _pickCountry,
-            onPickIdType: _pickIdType,
-            onPickDocument: _pickDocument,
-            onPickCaptureAs: _pickCaptureAs,
+            onPickCountry: () => go(UseSmileIDSampleStep.countryPicker),
+            onPickIdType: () => go(UseSmileIDSampleStep.idTypePicker),
+            onPickDocument: () => go(UseSmileIDSampleStep.documentPicker),
+            onPickCaptureAs: () => go(UseSmileIDSampleStep.captureAs),
             onIdNumberChanged: edits.setIdNumber,
-            // Through the journey, the one place the step order lives.
-            onContinue: () => context.push(
-              product == null
-                  ? UseSmileIDSampleRoutes.sdkFlow(widget.productId)
-                  : UseSmileIDSampleJourney.afterIdDetails(product),
-            ),
-            onScanToken: () => context.push(UseSmileIDSampleRoutes.scanToken),
+            // `next`, the graph's step after this form, which is the run.
+            onContinue: () => unawaited(widget.scope.navigator.next()),
+            onScanToken: () => go(UseSmileIDSampleStep.scanToken),
           );
         },
       ),
     );
   }
-
-  /// A sheet whose list may still be arriving, so it rebuilds as the store and the form change.
-  Future<void> _catalogueSheet(
-    String testId,
-    Widget Function(
-      BuildContext sheetContext,
-      UseSmileIDSampleIdDetails details,
-    )
-    body,
-  ) {
-    _ensureCatalogue();
-    return showUseSmileIDSampleSheet<void>(
-      context: context,
-      testId: testId,
-      builder: (BuildContext sheetContext) => ListenableBuilder(
-        listenable: _catalogue,
-        builder: (BuildContext _, Widget? _) => Consumer(
-          builder: (BuildContext _, WidgetRef ref, Widget? _) => body(
-            sheetContext,
-            ref.watch(useSmileIDSampleFormsProvider).idDetails,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Future<void> _pickCountry() => _catalogueSheet(
-    UseSmileIDSampleTestIds.countrySheet,
-    (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
-        UseSmileIDSampleCountryPickerSheet(
-          catalogue: _catalogue.countries(
-            _family,
-            product: _productFor(widget.productId),
-          ),
-          selected: details.country,
-          onRetry: _catalogue.retry,
-          onSelect: (UseSmileIDSampleCountry country) {
-            ref
-                .read(useSmileIDSampleFormsProvider.notifier)
-                .setCountry(country);
-            Navigator.of(sheetContext).pop();
-          },
-        ),
-  );
-
-  Future<void> _pickIdType() => _catalogueSheet(
-    UseSmileIDSampleTestIds.idTypeSheet,
-    (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
-        UseSmileIDSampleIdTypePickerSheet(
-          country: details.country,
-          catalogue: _catalogue.idTypes(details.country?.code ?? ''),
-          selected: details.idType,
-          onRetry: _catalogue.retry,
-          onSelect: (UseSmileIDSampleKycIdType idType) {
-            ref.read(useSmileIDSampleFormsProvider.notifier).setIdType(idType);
-            Navigator.of(sheetContext).pop();
-          },
-        ),
-  );
-
-  Future<void> _pickDocument() => _catalogueSheet(
-    UseSmileIDSampleTestIds.documentSheet,
-    (BuildContext sheetContext, UseSmileIDSampleIdDetails details) =>
-        UseSmileIDSampleDocumentPickerSheet(
-          country: details.country,
-          catalogue: _catalogue.documents(
-            details.country?.code ?? '',
-            product:
-                _productFor(widget.productId) ??
-                UseSmileIDSampleProduct.documentVerification,
-          ),
-          selected: details.document,
-          onRetry: _catalogue.retry,
-          onSelect: (UseSmileIDSampleDocument document) {
-            ref
-                .read(useSmileIDSampleFormsProvider.notifier)
-                .setDocument(document);
-            Navigator.of(sheetContext).pop();
-          },
-        ),
-  );
-
-  Future<void> _pickCaptureAs() async {
-    UseSmileIDSampleCaptureAs? chosen;
-    bool picked = false;
-    final UseSmileIDSampleIdDetails details = ref
-        .read(useSmileIDSampleFormsProvider)
-        .idDetails;
-    await showUseSmileIDSampleSheet<void>(
-      context: context,
-      title: context.strings.captureAsTitle,
-      testId: UseSmileIDSampleTestIds.captureAsSheet,
-      builder: (BuildContext sheetContext) => UseSmileIDSampleCaptureAsSheet(
-        selected: details.captureAsOverride,
-        matched: useSmileIDSampleResolvedCaptureAs(
-          details.document,
-          null,
-          details.genericDocument,
-        ),
-        onSelect: (UseSmileIDSampleCaptureAs? option) {
-          chosen = option;
-          picked = true;
-          Navigator.of(sheetContext).pop();
-        },
-      ),
-    );
-    if (!mounted || !picked) {
-      return;
-    }
-    // Generic document hands over to its own sheet, which is what keeps it; the others are kept at once.
-    if (chosen == UseSmileIDSampleCaptureAs.genericDocument) {
-      await _buildGenericDocument();
-    } else {
-      ref.read(useSmileIDSampleFormsProvider.notifier).setCaptureAs(chosen);
-    }
-  }
-
-  Future<void> _buildGenericDocument() => showUseSmileIDSampleSheet<void>(
-    context: context,
-    title: context.strings.captureAsGenericDocument,
-    testId: UseSmileIDSampleTestIds.genericDocumentSheet,
-    builder: (BuildContext sheetContext) =>
-        UseSmileIDSampleGenericDocumentSheet(
-          initial: ref
-              .read(useSmileIDSampleFormsProvider)
-              .idDetails
-              .genericDocument,
-          onDone: (UseSmileIDSampleGenericDocument genericDocument) {
-            ref
-                .read(useSmileIDSampleFormsProvider.notifier)
-                .setGenericDocument(genericDocument);
-            Navigator.of(sheetContext).pop();
-          },
-        ),
-  );
 }
 
-/// Which sheet a deep link asked for.
-enum UseSmileIDSamplePicker {
-  /// The country picker.
-  country,
+/// The product the run [scope]'s entry belongs to, by id.
+String _runProductId(BuildContext context, UseSmileIDSampleStepScope scope) =>
+    UseSmileIDSampleNavigationScope.engineOf(
+      context,
+    ).runProductId(scope.entry) ??
+    '';
 
-  /// The ID type picker.
-  idType,
-
-  /// The document picker.
-  document,
-
-  /// The capture-as sheet.
-  captureAs,
-
-  /// The generic-document sheet.
-  genericDocument,
+/// Starts the lists for [product] under the live session, or keeps the ones already started.
+void useSmileIDSampleEnsureCatalogue(
+  WidgetRef ref,
+  UseSmileIDSampleProduct? product,
+) {
+  final UseSmileIDSampleTokenSession? live = ref
+      .read(useSmileIDSampleSessionProvider)
+      .live;
+  final UseSmileIDSampleCatalogueStore catalogue =
+      ref.read(useSmileIDSampleCatalogueStoreProvider)..ensure(
+        useSmileIDSampleCatalogueEnvironment(live),
+        useSmileIDSampleCatalogueLocale(),
+      );
+  useSmileIDSampleEnsureEnabled(catalogue, product, live);
 }
 
-/// The product with this id, or null for one this build does not know.
-UseSmileIDSampleProduct? _productFor(String productId) {
-  for (final UseSmileIDSampleProduct product
-      in UseSmileIDSampleProduct.values) {
-    if (product.id == productId) {
-      return product;
-    }
-  }
-  return null;
-}
+/// The catalogue family [product]'s pickers list, the KYC one for a product this build does not know.
+UseSmileIDSampleCatalogueFamily useSmileIDSampleFamilyOf(
+  UseSmileIDSampleProduct? product,
+) =>
+    (product == null ? null : useSmileIDSampleCatalogueFamily(product)) ??
+    UseSmileIDSampleCatalogueFamily.kyc;

@@ -8,8 +8,9 @@ import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_preference
 import 'package:usesmileid_sample_flutter/src/data/use_smileid_sample_secure_profiles_repository.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_forms.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+
 import 'support/use_smileid_sample_catalogue_fixture.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 import 'support/use_smileid_sample_test_session.dart';
 
 void main() {
@@ -33,6 +34,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleLaunchArgsProvider.overrideWithValue(
             UseSmileIDSampleLaunchArgs(seedProfiles: seedProfiles),
           ),
@@ -43,7 +45,7 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(initialLocation: location),
+          routerConfig: useSmileIDSampleTestRouter(location),
         ),
       ),
     );

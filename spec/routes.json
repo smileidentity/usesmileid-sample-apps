@@ -17,9 +17,9 @@
       "presentation": "tab",
       "args": [],
       "platform": {
-        "android": "ProductsScreenDestination",
-        "ios": "Route.products",
-        "flutter": "/products",
+        "android": "UseSmileIDSampleStep.Products",
+        "ios": "UseSmileIDSampleStep.products",
+        "flutter": "UseSmileIDSampleStep.products",
         "expo": "app/(tabs)/products.tsx"
       }
     },
@@ -30,9 +30,9 @@
       "presentation": "tab",
       "args": [],
       "platform": {
-        "android": "VerificationsScreenDestination",
-        "ios": "Route.verifications",
-        "flutter": "/verifications",
+        "android": "UseSmileIDSampleStep.Verifications",
+        "ios": "UseSmileIDSampleStep.verifications",
+        "flutter": "UseSmileIDSampleStep.verifications",
         "expo": "app/(tabs)/verifications.tsx"
       }
     },
@@ -43,9 +43,9 @@
       "presentation": "tab",
       "args": [],
       "platform": {
-        "android": "SettingsScreenDestination",
-        "ios": "Route.settings",
-        "flutter": "/settings",
+        "android": "UseSmileIDSampleStep.Settings",
+        "ios": "UseSmileIDSampleStep.settings",
+        "flutter": "UseSmileIDSampleStep.settings",
         "expo": "app/(tabs)/settings.tsx"
       }
     },
@@ -56,9 +56,9 @@
       "presentation": "push",
       "args": [],
       "platform": {
-        "android": "LicensesScreenDestination",
-        "ios": "Route.licenses",
-        "flutter": "/settings/licenses",
+        "android": "UseSmileIDSampleStep.Licenses",
+        "ios": "UseSmileIDSampleStep.licenses",
+        "flutter": "UseSmileIDSampleStep.licenses",
         "expo": "app/(tabs)/settings/licenses.tsx"
       },
       "notes": "The third-party notices, shipped in the binary rather than linked: Apache-2.0 §4 asks the notice to travel with the distribution, so every platform renders its own generated licenses.json instead of opening a URL. Reachable by deep link like every other route, which is also how a device flow gets to it without scrolling Settings."
@@ -70,9 +70,9 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.CaptureMode",
-        "ios": "Sheet.captureMode",
-        "flutter": "/settings/capture-mode",
+        "android": "UseSmileIDSampleStep.CaptureMode",
+        "ios": "UseSmileIDSampleStep.captureMode",
+        "flutter": "UseSmileIDSampleStep.captureMode",
         "expo": "app/(settings)/settings/capture-mode.tsx"
       },
       "notes": "Layers over Settings, the only screen that owns the row that opens it."
@@ -84,9 +84,9 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.Appearance",
-        "ios": "Sheet.appearance",
-        "flutter": "/settings/appearance",
+        "android": "UseSmileIDSampleStep.Appearance",
+        "ios": "UseSmileIDSampleStep.appearance",
+        "flutter": "UseSmileIDSampleStep.appearance",
         "expo": "app/(settings)/settings/appearance.tsx"
       },
       "notes": "Layers over Settings, the only screen that owns the row that opens it."
@@ -98,9 +98,9 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.Language",
-        "ios": "Sheet.language",
-        "flutter": "/settings/language",
+        "android": "UseSmileIDSampleStep.Language",
+        "ios": "UseSmileIDSampleStep.language",
+        "flutter": "UseSmileIDSampleStep.language",
         "expo": "app/(settings)/settings/language.tsx"
       },
       "notes": "Layers over Settings, the only screen that owns the row that opens it."
@@ -118,9 +118,9 @@
         }
       ],
       "platform": {
-        "android": "VerificationDetailsScreenDestination",
-        "ios": "Route.verificationDetails(jobId:)",
-        "flutter": "/verifications/:jobId",
+        "android": "UseSmileIDSampleStep.VerificationDetails",
+        "ios": "UseSmileIDSampleStep.verificationDetails",
+        "flutter": "UseSmileIDSampleStep.verificationDetails",
         "expo": "app/(tabs)/verifications/[jobId].tsx"
       },
       "notes": "Also the post-submission landing route — replace, don't stack (docs/architecture.md §4)."
@@ -138,9 +138,9 @@
         }
       ],
       "platform": {
-        "android": "ConsentDetailsFormScreenDestination",
-        "ios": "Route.consentDetailsForm(productId:)",
-        "flutter": "/flow/:productId/details",
+        "android": "UseSmileIDSampleStep.ConsentDetailsForm",
+        "ios": "UseSmileIDSampleStep.consentDetailsForm",
+        "flutter": "UseSmileIDSampleStep.consentDetailsForm",
         "expo": "app/flow/[productId]/details.tsx"
       },
       "notes": "The owner's 'Consent Details Form'. Shown for every product, seeded from the active profile."
@@ -158,9 +158,9 @@
         }
       ],
       "platform": {
-        "android": "AuthUserIdScreenDestination",
-        "ios": "Route.authUserId(productId:)",
-        "flutter": "/flow/:productId/user-id",
+        "android": "UseSmileIDSampleStep.AuthUserId",
+        "ios": "UseSmileIDSampleStep.authUserId",
+        "flutter": "UseSmileIDSampleStep.authUserId",
         "expo": "app/flow/[productId]/user-id.tsx"
       },
       "notes": "SmartSelfie Authentication only. Continue goes to the SDK flow with the chosen ID."
@@ -178,9 +178,9 @@
         }
       ],
       "platform": {
-        "android": "IdDetailsFormScreenDestination",
-        "ios": "Route.idDetailsForm(productId:)",
-        "flutter": "/flow/:productId/id-details",
+        "android": "UseSmileIDSampleStep.IdDetailsForm",
+        "ios": "UseSmileIDSampleStep.idDetailsForm",
+        "flutter": "UseSmileIDSampleStep.idDetailsForm",
         "expo": "app/flow/[productId]/id-details/index.tsx"
       },
       "notes": "Only for products whose spec entry sets needsIdDetails."
@@ -204,9 +204,9 @@
         }
       ],
       "platform": {
-        "android": "SdkFlowScreenDestination",
-        "ios": "Route.sdkFlow(productId:presentation:)",
-        "flutter": "/flow/:productId/run",
+        "android": "UseSmileIDSampleStep.SdkFlow | UseSmileIDSampleStep.SdkFlowFullScreen",
+        "ios": "UseSmileIDSampleStep.sdkFlow | UseSmileIDSampleStep.sdkFlowFullScreen",
+        "flutter": "UseSmileIDSampleStep.sdkFlow | UseSmileIDSampleStep.sdkFlowFullScreen",
         "expo": "app/flow/[productId]/run.tsx"
       },
       "notes": "ONE route, TWO presentations. The SDK owns everything inside it — the host must not model consent/instructions/capture/preview/processing as routes of its own."
@@ -224,9 +224,9 @@
         }
       ],
       "platform": {
-        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.CountryPicker",
-        "ios": "Sheet.countryPicker",
-        "flutter": "/flow/:productId/id-details/country",
+        "android": "UseSmileIDSampleStep.CountryPicker",
+        "ios": "UseSmileIDSampleStep.countryPicker",
+        "flutter": "UseSmileIDSampleStep.countryPicker",
         "expo": "app/flow/[productId]/id-details/country.tsx"
       }
     },
@@ -243,9 +243,9 @@
         }
       ],
       "platform": {
-        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.IdTypePicker",
-        "ios": "Sheet.idTypePicker",
-        "flutter": "/flow/:productId/id-details/id-type",
+        "android": "UseSmileIDSampleStep.IdTypePicker",
+        "ios": "UseSmileIDSampleStep.idTypePicker",
+        "flutter": "UseSmileIDSampleStep.idTypePicker",
         "expo": "app/flow/[productId]/id-details/id-type.tsx"
       },
       "notes": "Unreachable until a country is selected — the trigger is disabled, so the route must also reject entry without one."
@@ -263,9 +263,9 @@
         }
       ],
       "platform": {
-        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.DocumentPicker",
-        "ios": "Sheet.documentPicker",
-        "flutter": "/flow/:productId/id-details/document",
+        "android": "UseSmileIDSampleStep.DocumentPicker",
+        "ios": "UseSmileIDSampleStep.documentPicker",
+        "flutter": "UseSmileIDSampleStep.documentPicker",
         "expo": "app/flow/[productId]/id-details/document.tsx"
       },
       "notes": "The document products' counterpart of idTypePicker, and unreachable until a country is selected in the same way."
@@ -283,9 +283,9 @@
         }
       ],
       "platform": {
-        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.CaptureAs",
-        "ios": "Sheet.captureAs",
-        "flutter": "/flow/:productId/id-details/capture-as",
+        "android": "UseSmileIDSampleStep.CaptureAs",
+        "ios": "UseSmileIDSampleStep.captureAs",
+        "flutter": "UseSmileIDSampleStep.captureAs",
         "expo": "app/flow/[productId]/id-details/capture-as.tsx"
       },
       "notes": "Unreachable until a document is selected, which is when its trigger enables."
@@ -303,9 +303,9 @@
         }
       ],
       "platform": {
-        "android": "IdDetailsFormScreenDestination + UseSmileIDSampleSheet.GenericDocument",
-        "ios": "Sheet.genericDocument",
-        "flutter": "/flow/:productId/id-details/generic-document",
+        "android": "UseSmileIDSampleStep.GenericDocument",
+        "ios": "UseSmileIDSampleStep.genericDocument",
+        "flutter": "UseSmileIDSampleStep.genericDocument",
         "expo": "app/flow/[productId]/id-details/generic-document.tsx"
       },
       "notes": "Opened by choosing Generic document in captureAs. Nothing is kept until Done, so dismissing it, or a link straight here that is dismissed, leaves the form's choice as it was."
@@ -317,9 +317,9 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "ProductsScreenDestination + UseSmileIDSampleSheet.ProfileSwitch",
-        "ios": "Sheet.profileSwitch",
-        "flutter": "/profiles/switch",
+        "android": "UseSmileIDSampleStep.ProfileSwitch",
+        "ios": "UseSmileIDSampleStep.profileSwitch",
+        "flutter": "UseSmileIDSampleStep.profileSwitch",
         "expo": "app/(products)/profiles/switch.tsx"
       },
       "notes": "Its path sits under /profiles but its owner is the products screen, the only place the avatar that opens it appears."
@@ -331,9 +331,9 @@
       "presentation": "push",
       "args": [],
       "platform": {
-        "android": "ProfilesScreenDestination",
-        "ios": "Route.profiles",
-        "flutter": "/profiles",
+        "android": "UseSmileIDSampleStep.Profiles",
+        "ios": "UseSmileIDSampleStep.profiles",
+        "flutter": "UseSmileIDSampleStep.profiles",
         "expo": "app/profiles/index.tsx"
       },
       "notes": "Reached from the settings PROFILE row — that row opens this list, not the active profile's own page. Owns the created confirmation, and owns the /profiles/new sheet, so a create from a deep link lands on the confirmation rather than losing it."
@@ -351,9 +351,9 @@
         }
       ],
       "platform": {
-        "android": "ProfileConfigScreenDestination",
-        "ios": "Route.profileConfig(profileId:)",
-        "flutter": "/profiles/:profileId",
+        "android": "UseSmileIDSampleStep.ProfileConfig",
+        "ios": "UseSmileIDSampleStep.profileConfig",
+        "flutter": "UseSmileIDSampleStep.profileConfig",
         "expo": "app/profiles/[profileId].tsx"
       },
       "notes": "Titled with the profile's name. Its CTA activates the profile as well as saving the defaults, so this is also how a newly created profile becomes the active one."
@@ -365,9 +365,9 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "ProfilesScreenDestination + UseSmileIDSampleSheet.NewProfile",
-        "ios": "Sheet.newProfile",
-        "flutter": "/profiles/new",
+        "android": "UseSmileIDSampleStep.NewProfile",
+        "ios": "UseSmileIDSampleStep.newProfile",
+        "flutter": "UseSmileIDSampleStep.newProfile",
         "expo": "app/profiles/new.tsx"
       },
       "notes": "Resolved before /profiles/:profileId so 'new' is not swallowed as a profile id. It layers over /profiles, which is where the created confirmation appears — so a link straight here now gets the confirmation too, where a sheet-as-destination lost it."
@@ -379,9 +379,9 @@
       "presentation": "push",
       "args": [],
       "platform": {
-        "android": "ScanTokenScreenDestination",
-        "ios": "Route.scanToken",
-        "flutter": "/token/scan",
+        "android": "UseSmileIDSampleStep.ScanToken",
+        "ios": "UseSmileIDSampleStep.scanToken",
+        "flutter": "UseSmileIDSampleStep.scanToken",
         "expo": "app/token/scan.tsx"
       }
     },
@@ -392,9 +392,9 @@
       "presentation": "modalSheet",
       "args": [],
       "platform": {
-        "android": "SettingsScreenDestination + UseSmileIDSampleSheet.ScenarioDrawer",
-        "ios": "Sheet.scenarioDrawer",
-        "flutter": "/debug/scenarios",
+        "android": "UseSmileIDSampleStep.ScenarioDrawer",
+        "ios": "UseSmileIDSampleStep.scenarioDrawer",
+        "flutter": "UseSmileIDSampleStep.scenarioDrawer",
         "expo": "app/debug/scenarios.tsx"
       },
       "notes": "A debug affordance with no design frame. Deep-linkable so a flow can open it directly rather than reproducing a hidden gesture — the Settings row that opens it is debug-only, the link is not."

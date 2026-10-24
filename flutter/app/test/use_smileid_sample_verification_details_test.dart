@@ -5,7 +5,7 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
-import 'package:usesmileid_sample_flutter/src/use_smileid_sample_routes.dart';
+import 'support/use_smileid_sample_test_njia.dart';
 
 /// The detail page: reaching it, what it shows, and what it does with a job it cannot find.
 void main() {
@@ -54,6 +54,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
             repository ??
                 UseSmileIDSampleMemoryJobsRepository(
@@ -63,7 +64,7 @@ void main() {
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(initialLocation: location),
+          routerConfig: useSmileIDSampleTestRouter(location),
         ),
       ),
     );
@@ -199,20 +200,43 @@ void main() {
     expect(container.read(useSmileIDSampleJobsProvider).value, isEmpty);
   });
 
+  testWidgets('the list confirms a delete whose write outlasts the page', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(job.id),
+      repository: _SlowRemoveRepository(<UseSmileIDSampleJob>[job]),
+    );
+    await tester.tap(byId(UseSmileIDSampleTestIds.detailsDelete));
+    await tester.pumpAndSettle();
+    expect(
+      byId(UseSmileIDSampleTestIds.verificationDetailsScreen),
+      findsNothing,
+    );
+
+    await tester.pump(_SlowRemoveRepository.delay);
+    await tester.pumpAndSettle();
+
+    expect(find.text('1 verification hidden from App list'), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.toastUndo), findsOne);
+  });
+
   testWidgets('a cold link claims no absence before the store has answered', (
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          ...useSmileIDSampleTestNjia(),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
             _SlowReadRepository(<UseSmileIDSampleJob>[job]),
           ),
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
-          routerConfig: useSmileIDSampleRouter(
-            initialLocation: UseSmileIDSampleRoutes.verificationDetails(job.id),
+          routerConfig: useSmileIDSampleTestRouter(
+            UseSmileIDSampleRoutes.verificationDetails(job.id),
           ),
         ),
       ),
@@ -355,6 +379,18 @@ class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
   Future<List<UseSmileIDSampleJob>?> read() async {
     await Future<void>.delayed(delay);
     return super.read();
+  }
+}
+
+class _SlowRemoveRepository extends UseSmileIDSampleMemoryJobsRepository {
+  _SlowRemoveRepository(super.initial);
+
+  static const Duration delay = Duration(seconds: 2);
+
+  @override
+  Future<int> remove(Set<String> ids) async {
+    await Future<void>.delayed(delay);
+    return super.remove(ids);
   }
 }
 

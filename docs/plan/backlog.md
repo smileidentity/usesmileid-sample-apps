@@ -101,6 +101,24 @@ do, run by `flutter/verify.sh` on the Mac.
 
 ## Spec and code health
 
+### Android: replace the pinned njia and SDK snapshot builds with releases
+
+`android/gradle/libs.versions.toml` pins njia to one snapshot build, `0.0.1-20261023.003202-6`, and the
+SDK artifacts to the builds made against it (`12.3.0-20261023.083151-*`). A bare `0.0.1-SNAPSHOT` lost
+Gradle's conflict resolution to the SDK snapshot's older njia, and an SDK built on another njia fails at
+run time with `NoSuchMethodError`. Maven Central's snapshot repository deletes builds after about 90 days,
+so once these go, a clean build can't resolve them. Done when both pins are releases, or newer matching
+builds until then.
+
+### Android: the system-bars test's sheet case idles through endless frames
+
+`UseSmileIDSampleSystemBarsTest`'s sheet cases open Material 3's `ModalBottomSheet`, whose window
+polls its position every frame (`withInfiniteAnimationFrameNanos`), so `ShadowLooper.idleMainLooper()`
+runs frame after frame: a run of the class takes about eight minutes, and Robolectric's trace shadow
+keeps every section those frames open. At the default 512 MB heap that ran out and stopped the
+recomposer for the tests after it, so the app's tests now get 2 GB. Done when the sheet cases idle a
+bounded number of frames, or a fixed span of the clock, and the class runs in seconds.
+
 ### Flutter iOS: retire the first-push launch listener
 
 `UseSmileIDSampleColdLink` takes a cold link from the first route push within two seconds of the first

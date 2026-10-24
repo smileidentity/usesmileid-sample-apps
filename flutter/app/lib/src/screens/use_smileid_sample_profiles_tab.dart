@@ -1,19 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:sample_ui/sample_ui.dart';
 
+import '../navigation/use_smileid_sample_navigation.dart';
+import '../navigation/use_smileid_sample_njia.dart';
 import '../state/use_smileid_sample_providers.dart';
-import '../use_smileid_sample_routes.dart';
 import 'use_smileid_sample_above_shell_page.dart';
 
-/// The profiles list, and the sheet that creates another.
+/// The profiles list, whose new-profile sheet is a step over it.
 class UseSmileIDSampleProfilesTab extends ConsumerStatefulWidget {
-  /// [onBack] leaves the list.
-  const UseSmileIDSampleProfilesTab({required this.onBack, super.key});
+  /// The list for [scope]'s entry.
+  const UseSmileIDSampleProfilesTab({required this.scope, super.key});
 
-  /// Leaves the list.
-  final VoidCallback onBack;
+  /// The list's entry, which a row and the create button go from.
+  final UseSmileIDSampleStepScope scope;
 
   @override
   ConsumerState<UseSmileIDSampleProfilesTab> createState() =>
@@ -26,6 +28,21 @@ class _UseSmileIDSampleProfilesTabState
 
   @override
   Widget build(BuildContext context) {
+    // Consumed on sight: returning to this screen later must not replay a confirmation for a profile created minutes ago.
+    ref.listen<String?>(
+      useSmileIDSampleProfilesProvider.select(
+        (UseSmileIDSampleProfiles profiles) => profiles.lastCreatedId,
+      ),
+      (String? _, String? created) {
+        if (created == null) {
+          return;
+        }
+        setState(() => _createdId = created);
+        scheduleMicrotask(
+          ref.read(useSmileIDSampleProfilesProvider.notifier).clearLastCreated,
+        );
+      },
+    );
     final UseSmileIDSampleProfiles profiles = ref.watch(
       useSmileIDSampleProfilesProvider,
     );
@@ -33,14 +50,19 @@ class _UseSmileIDSampleProfilesTabState
         ? null
         : profiles.find(_createdId!);
     return UseSmileIDSampleAboveShellPage(
-      onBack: widget.onBack,
       child: UseSmileIDSampleProfilesScreen(
         profiles: profiles.all,
         activeId: profiles.activeId,
-        onBack: widget.onBack,
-        onProfileTap: (UseSmileIDSampleProfile profile) =>
-            context.go(UseSmileIDSampleRoutes.profileConfig(profile.id)),
-        onCreate: _create,
+        onBack: () => unawaited(widget.scope.navigator.back()),
+        onProfileTap: (UseSmileIDSampleProfile profile) => unawaited(
+          widget.scope.navigator.goStep(
+            UseSmileIDSampleStep.profileConfig,
+            arg: profile.id,
+          ),
+        ),
+        onCreate: () => unawaited(
+          widget.scope.navigator.goStep(UseSmileIDSampleStep.newProfile),
+        ),
         createdNotice: created?.title(context.strings),
         onMakeCreatedActive: created == null
             ? null
@@ -50,30 +72,6 @@ class _UseSmileIDSampleProfilesTabState
                     .setActive(created.id);
                 setState(() => _createdId = null);
               },
-      ),
-    );
-  }
-
-  Future<void> _create() async {
-    await showUseSmileIDSampleSheet<void>(
-      context: context,
-      testId: UseSmileIDSampleTestIds.newProfileSheet,
-      builder: (BuildContext sheetContext) => UseSmileIDSampleNewProfileSheet(
-        onCreate: (String organisation, UseSmileIDSampleUserDetails details) {
-          final UseSmileIDSampleProfile added = ref
-              .read(useSmileIDSampleProfilesProvider.notifier)
-              .add(organisation: organisation, defaults: details);
-          final bool offer =
-              ref.read(useSmileIDSampleProfilesProvider).lastCreatedId ==
-              added.id;
-          // Consumed on sight, before the confirmation is shown: returning to this screen later
-          // must not replay a confirmation for a profile created minutes ago.
-          ref
-              .read(useSmileIDSampleProfilesProvider.notifier)
-              .clearLastCreated();
-          setState(() => _createdId = offer ? added.id : null);
-          Navigator.of(sheetContext).pop();
-        },
       ),
     );
   }

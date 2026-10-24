@@ -100,7 +100,7 @@ jobs:
 
   archive:
     name: iOS archive and store art
-    runs-on: macos-26
+    runs-on: xcode-27
     timeout-minutes: 60
     steps:
       # No fetch-depth: the build number here is the run number, and this job runs no git command.
@@ -118,8 +118,8 @@ jobs:
           fi
           xcodebuild -version
         env:
-          XCODE_VERSION: "26.6"
-          XCODE_BUILD: 17F113
+          XCODE_VERSION: "27.1"
+          XCODE_BUILD: 27A9275
 
       - name: Install XcodeGen
         run: brew install xcodegen
