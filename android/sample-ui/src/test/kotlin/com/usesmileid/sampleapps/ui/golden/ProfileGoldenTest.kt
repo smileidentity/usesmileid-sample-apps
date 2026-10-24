@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
-import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
 import com.usesmileid.sampleapps.ui.screens.NewProfileSheet
 import com.usesmileid.sampleapps.ui.screens.ProfileConfigScreen
@@ -61,14 +60,14 @@ class ProfileGoldenTest : GoldenTest() {
     fun profile_config_newly_created() = goldens("screen_profile_config_new") { Config(CREATED) }
 
     @Test
-    fun new_profile_sheet_empty() = goldens("sheet_new_profile_empty", fullWindow = true) { NewProfile() }
+    fun new_profile_sheet_empty() = sheetGoldens("sheet_new_profile_empty") { NewProfile() }
 
     @Test
-    fun new_profile_sheet_filled() = goldens("sheet_new_profile_filled", fullWindow = true) { NewProfile(FILLED) }
+    fun new_profile_sheet_filled() = sheetGoldens("sheet_new_profile_filled") { NewProfile(FILLED) }
 
     @Test
     fun new_profile_sheet_max_font_scale() =
-        assertSurvivesMaxFontScale(rootTestId = UseSmileIDSampleTestIds.NEW_PROFILE_SHEET) { NewProfile(FILLED) }
+        assertSurvivesMaxFontScale { NewProfile(FILLED) }
 
     private companion object {
         val PROFILES = ProfileFixtures.Seeded

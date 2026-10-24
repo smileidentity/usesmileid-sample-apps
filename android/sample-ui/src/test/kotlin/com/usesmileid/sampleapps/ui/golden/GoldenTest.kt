@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalDensity
@@ -56,6 +57,24 @@ abstract class GoldenTest {
         capture("${name}_dark", dark = true, fullWindow, interact, content)
     }
 
+    /** [goldens] for a sheet, drawn as njia hosts a sheet step: its panel at the bottom of the window, over the host's scrim. */
+    protected fun sheetGoldens(
+        name: String,
+        interact: GoldenInteractions.() -> Unit = {},
+        content: @Composable () -> Unit,
+    ) = goldens(name, fullWindow = true, interact) { SheetFrame(content) }
+
+    /** [sheetGoldens] for a sheet that names the device's theme. */
+    protected fun sheetGoldensOnDevice(name: String, content: @Composable (deviceDark: Boolean) -> Unit) =
+        goldensOnDevice(name, fullWindow = true) { deviceDark -> SheetFrame { content(deviceDark) } }
+
+    /** The host's frame for a sheet step: its scrim over the window, and the sheet's panel at the bottom. */
+    @Composable
+    private fun SheetFrame(sheet: @Composable () -> Unit) =
+        Box(Modifier.fillMaxSize().background(UseSmileIDSampleTheme.colors.overlayScrim)) {
+            Box(Modifier.align(Alignment.BottomCenter)) { sheet() }
+        }
+
     /** [goldens] for content that names the device's theme, which each baseline sets to its own. */
     protected fun goldensOnDevice(
         name: String,
@@ -82,12 +101,10 @@ abstract class GoldenTest {
     protected fun assertSurvivesMaxFontScale(
         fontScale: Float = MAX_FONT_SCALE,
         checkWidth: Boolean = true,
-        /** A sheet is its own window, so its content is not under [GOLDEN_ROOT] and must be named. */
-        rootTestId: String = GOLDEN_ROOT,
         content: @Composable () -> Unit,
     ) = runComposeUiTest {
         host(dark = false, fontScale = fontScale, content = content)
-        val root = onNodeWithTag(rootTestId).fetchSemanticsNode()
+        val root = onNodeWithTag(GOLDEN_ROOT).fetchSemanticsNode()
         val nodes = mutableListOf<SemanticsNode>().also { it.collectFrom(root) }
 
         val overflowing = nodes

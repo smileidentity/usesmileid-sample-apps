@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.android
 
-import android.app.Dialog
 import android.graphics.Color
 import android.view.Window
 import androidx.activity.ComponentActivity
@@ -12,7 +11,7 @@ import androidx.core.view.WindowCompat
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBottomSheet
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -60,7 +59,7 @@ class UseSmileIDSampleSystemBarsTest {
         assertTrue("a dark bar", ColorUtils.calculateLuminance(drawn) < 0.5)
     }
 
-    // Material 3 derives the sheet window's bars from its content colour.
+    // njia draws a sheet over the page in the activity's own window, so its bars are the app's.
     @Test
     @Config(qualifiers = "night")
     fun `a light app on a dark device draws dark icons over a sheet`() {
@@ -79,10 +78,9 @@ class UseSmileIDSampleSystemBarsTest {
     private fun shell(dark: Boolean): Window = compose(dark) { }.window
 
     private fun sheet(dark: Boolean): Window {
-        compose(dark) { UseSmileIDSampleBottomSheet(onDismissRequest = {}) { Text("Sheet") } }
-        val dialog: Dialog? = ShadowDialog.getLatestDialog()
-        assertNotNull("the sheet opens a window of its own", dialog)
-        return dialog!!.window!!
+        val activity = compose(dark) { UseSmileIDSampleBottomSheet(onDismissRequest = {}) { Text("Sheet") } }
+        assertNull("the sheet opened a window of its own", ShadowDialog.getLatestDialog())
+        return activity.window
     }
 
     private fun compose(dark: Boolean, content: @Composable () -> Unit): ComponentActivity {

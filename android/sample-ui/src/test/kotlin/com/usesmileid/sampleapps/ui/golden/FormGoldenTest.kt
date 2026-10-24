@@ -159,7 +159,7 @@ class FormGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun country_picker_sheet() = goldens("sheet_country_picker", fullWindow = true) {
+    fun country_picker_sheet() = sheetGoldens("sheet_country_picker") {
         Box(modifier = Modifier.fillMaxSize()) {
             KycForm(UseSmileIDSampleIdDetails())
             CountryPickerSheet(
@@ -175,7 +175,7 @@ class FormGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun id_type_picker_sheet() = goldens("sheet_id_type_picker", fullWindow = true) {
+    fun id_type_picker_sheet() = sheetGoldens("sheet_id_type_picker") {
         Box(modifier = Modifier.fillMaxSize()) {
             KycForm(COUNTRY_ONLY)
             IdTypePickerSheet(
