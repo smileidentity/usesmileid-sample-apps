@@ -193,7 +193,7 @@ class _GrabHandle extends StatelessWidget {
   );
 }
 
-/// `useSafeArea` leaves the bottom inset to the content.
+/// njia's sheet meets the bottom edge, so its content clears the navigation bar itself.
 double _navigationBarInset(BuildContext context) =>
     MediaQuery.paddingOf(context).bottom;
 

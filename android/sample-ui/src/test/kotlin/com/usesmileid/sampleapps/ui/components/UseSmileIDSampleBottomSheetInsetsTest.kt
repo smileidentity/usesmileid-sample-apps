@@ -26,15 +26,15 @@ import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 
-/** A sheet a navigation host draws pads for the keyboard: edge to edge, nothing else lifts its fields above it. */
+/** A sheet pads for the keyboard: edge to edge, nothing else lifts its fields above it. */
 @RunWith(RobolectricTestRunner::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [36], qualifiers = "w411dp-h891dp-xhdpi")
-class UseSmileIDSampleHostedSheetInsetsTest {
+class UseSmileIDSampleBottomSheetInsetsTest {
     @get:Rule val compose = createComposeRule()
 
     @Test
-    fun a_hosted_sheet_keeps_its_content_above_the_keyboard() {
+    fun a_sheet_keeps_its_content_above_the_keyboard() {
         lateinit var view: View
         compose.setContent {
             view = LocalView.current
