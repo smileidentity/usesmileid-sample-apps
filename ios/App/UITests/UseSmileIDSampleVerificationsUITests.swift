@@ -9,7 +9,8 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     continueAfterFailure = false
     app = XCUIApplication()
     // Rows are the precondition, not the subject; re-seeding is a no-op, so a row an earlier test hid is back.
-    app.launchArguments = useSmileIDSampleLaunchSeed + ["-seedJobs", "true"]
+    // A 10 s notice outlasts the checks before an undo tap on a loaded runner, yet closes inside the 15 s wait.
+    app.launchArguments = useSmileIDSampleLaunchSeed + ["-seedJobs", "true", "-noticeWindow", "10"]
     app.launch()
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
     element("sample_nav_verifications").tap()
@@ -204,6 +205,8 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
 
   /// The link launches the app, so the row arrives after the screen — the case where "not loaded yet" read as "no row".
   func testAColdStartLinkIntoASettledRowRefreshesNothing() {
+    // Seeding is asynchronous, so the app is only stopped once the rows it writes have arrived.
+    XCTAssertTrue(element("sample_job_row_0").waitForExistence(timeout: 10))
     app.terminate()
     app.useSmileIDSampleOpen("verifications/job_00ky31za00")
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 15))
