@@ -30,6 +30,7 @@ import {
 import { UseSmileIDSampleUserField, smileIDSampleUserFields } from '../src/model/use-smile-id-sample-user-fields';
 import { UseSmileIDSampleCataloguePicker } from '../src/components/use-smile-id-sample-catalogue-picker';
 import { AppearanceSheet } from '../src/screens/appearance-sheet';
+import { ScenarioDrawerSheet } from '../src/screens/scenario-drawer-sheet';
 import { LanguageSheet } from '../src/screens/language-sheet';
 import { UseSmileIDSampleLanguage } from '../src/model/use-smile-id-sample-language';
 import { CaptureAsSheet } from '../src/screens/capture-as-sheet';
@@ -433,6 +434,33 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
     },
   },
   {
+    screen: 'scenarioDrawer',
+    states: {
+      flowScenarios: {
+        element: () => (
+          <ScenarioDrawerSheet
+            scenario="expiredToken"
+            theme="brandDefault"
+            onScenarioSelect={noop}
+            onThemeSelect={noop}
+            onDismiss={noop}
+          />
+        ),
+      },
+      themeScenarios: {
+        element: () => (
+          <ScenarioDrawerSheet
+            scenario="normal"
+            theme="partnerOverride"
+            onScenarioSelect={noop}
+            onThemeSelect={noop}
+            onDismiss={noop}
+          />
+        ),
+      },
+    },
+  },
+  {
     screen: 'languageSheet',
     states: {
       default: {
@@ -472,7 +500,7 @@ describe('id details in Arabic', () => {
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(78);
+    expect(total * schemes.length).toBe(82);
   });
 });
 

@@ -15,8 +15,9 @@ import * as Clipboard from 'expo-clipboard';
 import type { ReactElement } from 'react';
 import { StyleSheet } from 'react-native';
 
-import VerificationDetails from '../app/(tabs)/verifications/[jobId]';
-import Profiles from '../app/profiles/index';
+import { UseSmileIDSampleProfilesStep } from '../src/steps/use-smile-id-sample-profiles-step';
+import { UseSmileIDSampleVerificationDetailsStep } from '../src/steps/use-smile-id-sample-verification-details-step';
+import { smileIDSampleFakeScope } from './support/use-smile-id-sample-test-njia';
 
 const strings = UseSmileIDSampleStrings.forLanguage('en');
 
@@ -26,11 +27,14 @@ const BOTTOM_INSET = 48;
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 24, bottom: 48, left: 0, right: 0 }),
 }));
-const mockRouter = { back: jest.fn(), replace: jest.fn(), push: jest.fn(), canGoBack: () => true };
-jest.mock('expo-router', () => ({
-  useRouter: () => mockRouter,
-  useLocalSearchParams: () => ({ jobId: 'job_notice' }),
-}));
+
+/// The details step, opened on the job the tests seed.
+const VerificationDetails = () => (
+  <UseSmileIDSampleVerificationDetailsStep scope={smileIDSampleFakeScope('verificationDetails', { arg: 'job_notice' }).scope} />
+);
+
+/// The profiles list step.
+const Profiles = () => <UseSmileIDSampleProfilesStep scope={smileIDSampleFakeScope('profiles').scope} />;
 
 jest.mock('expo-clipboard', () => ({ setStringAsync: jest.fn(async () => true) }));
 

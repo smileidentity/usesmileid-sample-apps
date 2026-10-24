@@ -91,7 +91,6 @@ const config: ExpoConfig = {
     },
   },
   plugins: [
-    'expo-router',
     'expo-status-bar',
     'expo-font',
     // No supportsRTL: with it the module resets forceRTL from the device's locale on every launch.
@@ -121,9 +120,6 @@ const config: ExpoConfig = {
     ],
     ...addedPlugins,
   ],
-  experiments: {
-    typedRoutes: true,
-  },
 };
 
 export default withSceneLifecycle(config);

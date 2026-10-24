@@ -18,6 +18,7 @@ describe('metro.config in a submodule', () => {
   it("watches the enclosing workspace but keeps Expo's own server root, which export's entry path is relative to", () => {
     expect(config.watchFolders).toEqual([mockSuperproject]);
     expect(config.server.unstable_serverRoot).not.toBe(mockSuperproject);
-    expect(config.resolver.resolveRequest).toBeInstanceOf(Function);
+    // No extension named, so Metro keeps its own resolver: the shell adds one only for a source build's add-on.
+    expect(config.resolver.resolveRequest ?? null).toBeNull();
   });
 });

@@ -11,14 +11,16 @@ import {
 } from '@smileid/sample-ui';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
-import { BottomTabBarHeightContext } from 'expo-router/tabs';
 import { useEffect } from 'react';
 import { Appearance, Platform, Text, useColorScheme } from 'react-native';
 
-import Verifications from '../app/(tabs)/verifications';
-import RootLayout from '../app/_layout';
+import { smileIDSampleStartShell } from '../src/navigation/use-smile-id-sample-shell';
+import { UseSmileIDSampleVerificationsStep } from '../src/steps/use-smile-id-sample-verifications-step';
+import { UseSmileIDSampleApp as RootLayout } from '../src/use-smile-id-sample-app';
 import { useSmileIDSampleDeviceScheme } from '../src/use-smile-id-sample-device-scheme';
 import { smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
+import { UseSmileIDSampleBarHeightContext } from '../src/use-smile-id-sample-nav-bar-host';
+import { smileIDSampleFakeScope } from './support/use-smile-id-sample-test-njia';
 
 jest.mock('expo-linking', () => ({ getInitialURL: jest.fn() }));
 jest.mock('react-native/Libraries/Utilities/useColorScheme');
@@ -53,28 +55,18 @@ jest.mock('react-native-safe-area-context', () => ({
   },
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
 }));
-// The router owns navigation; the stand-in renders the probe, which reads the theme from inside the provider.
-/// Held for the router mock: a hook must be named use*, and jest only lets a factory reach a mock*.
-const mockReact = { useEffect };
-
-jest.mock('expo-router', () => {
-  // One instance, not one per render: a component keying an effect on the router would loop.
-  const router = { push: jest.fn(), back: jest.fn(), replace: jest.fn() };
-  const useRouter = () => router;
-  function Stack() {
+// The shell owns navigation, which the navigation tests drive; the stand-in renders the probe from inside every provider.
+jest.mock('../src/navigation/use-smile-id-sample-shell', () => ({
+  UseSmileIDSampleShell: function Shell() {
     const Probe = mockProbe;
     return <Probe />;
-  }
-  Stack.Screen = function StackScreen() {
-    return null;
-  };
-  // Runs the effect and its cleanup as the real one does, so the focus teardown is not stubbed inert.
-  const useFocusEffect = (effect: () => void | (() => void)) =>
-    mockReact.useEffect(effect, [effect]);
-  const usePathname = () => '/';
-  const useRootNavigationState = () => ({ key: 'root' });
-  return { Stack, router, useRouter, usePathname, useFocusEffect, useRootNavigationState };
-});
+  },
+  smileIDSampleStartShell: jest.fn(),
+  smileIDSampleCurrentLink: () => null,
+  smileIDSampleOpenLink: () => undefined,
+}));
+
+const startShell = smileIDSampleStartShell as jest.MockedFunction<typeof smileIDSampleStartShell>;
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;
 
@@ -297,9 +289,9 @@ describe('hiding a verification is confirmed and can be undone', () => {
     await useSmileIDSampleJobStore.getState().seedFixtures(Date.now());
     return render(
       <UseSmileIDSampleThemeProvider dark={false}>
-        <BottomTabBarHeightContext.Provider value={100}>
-          <Verifications />
-        </BottomTabBarHeightContext.Provider>
+        <UseSmileIDSampleBarHeightContext value={100}>
+          <UseSmileIDSampleVerificationsStep scope={smileIDSampleFakeScope('verifications').scope} />
+        </UseSmileIDSampleBarHeightContext>
       </UseSmileIDSampleThemeProvider>,
     );
   };
@@ -334,21 +326,18 @@ describe('hiding a verification is confirmed and can be undone', () => {
   });
 });
 
-describe('autostart', () => {
-  it("opens the product's run once the shell has mounted", async () => {
-    const { router } = jest.requireMock('expo-router') as { router: { push: jest.Mock } };
-    router.push.mockClear();
+describe('the shell starts once everything has loaded', () => {
+  it('starts it once, at the launch link with the arguments that link carries', async () => {
+    startShell.mockClear();
     await launch(`${LAUNCH}?autostart=biometricKyc`);
-    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/flow/biometricKyc/run'));
+    await waitFor(() => expect(startShell).toHaveBeenCalledTimes(1));
+    expect(startShell.mock.calls[0]![0]).toBe(`${LAUNCH}?autostart=biometricKyc`);
+    expect(startShell.mock.calls[0]![1].autostart).toBe('biometricKyc');
   });
 
-  it('opens nothing on a plain launch', async () => {
-    const { router } = jest.requireMock('expo-router') as { router: { push: jest.Mock } };
-    router.push.mockClear();
-    await launch(LAUNCH);
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    });
-    expect(router.push).not.toHaveBeenCalled();
+  it('starts it with no link on a launch from the icon', async () => {
+    startShell.mockClear();
+    await launch(null);
+    await waitFor(() => expect(startShell).toHaveBeenCalledWith(null, expect.objectContaining({ autostart: null })));
   });
 });

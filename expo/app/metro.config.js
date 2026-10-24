@@ -4,7 +4,7 @@ const path = require('node:path');
 const { getDefaultConfig } = require('expo/metro-config');
 
 const { withShellExtension } = require('./metro-shell-extension');
-const { outermostWorkspaceRoot, withHoistedEntry } = require('./metro-workspace-root');
+const { outermostWorkspaceRoot } = require('./metro-workspace-root');
 
 const projectRoot = __dirname;
 // Outermost: in a submodule, node_modules is hoisted to the enclosing repo.
@@ -20,7 +20,7 @@ config.resolver.nodeModulesPaths = [
 ];
 
 config.resolver.resolveRequest = withShellExtension(
-  withHoistedEntry(config.resolver.resolveRequest, config.server.unstable_serverRoot),
+  config.resolver.resolveRequest,
   projectRoot,
   process.env.USESMILEID_SAMPLE_EXTENSION,
 );

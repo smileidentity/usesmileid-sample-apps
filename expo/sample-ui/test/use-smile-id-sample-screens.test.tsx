@@ -4,11 +4,13 @@ import { LicensesScreen, type UseSmileIDSampleLicence } from '../src/screens/lic
 import { ProductsScreen } from '../src/screens/products-screen';
 import { ScanTokenScreen } from '../src/screens/scan-token-screen';
 import { AppearanceSheet } from '../src/screens/appearance-sheet';
+import { ScenarioDrawerSheet } from '../src/screens/scenario-drawer-sheet';
 import { SettingsScreen } from '../src/screens/settings-screen';
 import { smileIDSampleSettingsDefaults } from '../src/state/use-smile-id-sample-settings';
 import { useSmileIDSampleTheme } from '../src/theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleSuffixedTestIds, UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { UseSmileIDSampleAppearance } from '../src/model/use-smile-id-sample-appearance';
+import { smileIDSampleScenarios, smileIDSampleThemeScenarios } from '../src/model/use-smile-id-sample-scenario';
 import { renderInTheme, rightToLeft, schemes } from './render-in-theme';
 import { expectGoldens } from './paint/pixel-golden';
 
@@ -194,6 +196,26 @@ describe('the Theme row and its sheet', () => {
 
     const onLight = await renderInTheme(sheet(false), false);
     expect(onLight.getByText('System (Light)')).toBeTruthy();
+  });
+});
+
+describe('the scenario drawer', () => {
+  it('lists every flow and theme scenario, checking the active one of each', async () => {
+    const screen = await renderInTheme(
+      <ScenarioDrawerSheet scenario="offlineRetry" theme="partnerOverride" onScenarioSelect={noop} onThemeSelect={noop} onDismiss={noop} />,
+      false,
+    );
+    expect(screen.getByTestId(UseSmileIDSampleTestIds.SCENARIO_DRAWER)).toBeTruthy();
+    for (const option of smileIDSampleScenarios) {
+      expect(screen.getByTestId(UseSmileIDSampleSuffixedTestIds.scenarioItem(option.id)).props.accessibilityState).toMatchObject({
+        selected: option.id === 'offlineRetry',
+      });
+    }
+    for (const option of smileIDSampleThemeScenarios) {
+      expect(screen.getByTestId(UseSmileIDSampleSuffixedTestIds.themeItem(option.id)).props.accessibilityState).toMatchObject({
+        selected: option.id === 'partnerOverride',
+      });
+    }
   });
 });
 
