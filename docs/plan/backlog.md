@@ -156,14 +156,6 @@ start flashes the opposite theme before the app draws. `UiModeManager.setApplica
 but it is API 31+ while the app's `minSdk` is 24, and Flutter and Expo would each need their own bridge.
 Done looks like a pinned appearance that launches in its own theme on API 31+, on all three Android shells.
 
-### Expo: the notices read a nested package's version from the top-level copy
-
-`scripts/generate_expo_licenses.py` names each bundled package by its last `node_modules/` segment and
-reads its version from the app's or the top-level `node_modules`. With `node-linker=hoisted`, a package the
-SDK nests at another version is recorded at the top-level copy's version: zod ships at 4.6.7 under the SDK
-while the notices say 4.6.5, the dev tools' copy, and `--check` still passes. Done when the version comes
-from the directory the source map names, or the generator fails on a package installed at two versions.
-
 ## Device suite and CI
 
 ### Document capture: the shutter and gallery by id
