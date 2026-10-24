@@ -36,6 +36,11 @@ infrastructure. Two `main` runs died on the second of those with the app already
 logcat. Hiding error dialogs hides this app's crash dialog too, not its evidence: a red whose app
 crashed carries `logs/crash-report.txt` beside `device-logcat.txt`.
 
+**A link right after `clearState` can start a process Android then kills.** Clearing data force-stops the
+app, and when the old task's removal times out a second later, Android kills the new process the link
+started (`Destroy timeout of remove-task` and `remove task` in logcat), leaving a blank page. The flow
+that opens that way retries its first launch once; a launch that never comes up still fails.
+
 **The undo offer is a race, so the flow widens the window.** `noticeWindow` exists for this: the
 product window is short enough not to outlive its cause, and on a loaded runner Maestro's first
 hierarchy poll after `Hide from List` landed after the toast had dismissed itself. The offer is
