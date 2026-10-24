@@ -29,7 +29,6 @@ export const CountryPickerSheet = ({
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       fullHeight
       title={strings.pickerCountryTitle}
       onDismiss={onDismiss}

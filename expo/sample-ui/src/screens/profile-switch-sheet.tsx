@@ -24,7 +24,6 @@ export const ProfileSwitchSheet = ({ profiles, activeId, onSelect, onDismiss, on
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.profileSwitchTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.PROFILE_SWITCH_SHEET}

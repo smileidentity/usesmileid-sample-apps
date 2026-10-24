@@ -17,7 +17,6 @@ type Props = {
 /// The flow and theme scenarios, both shown at once because a run carries one of each.
 export const ScenarioDrawerSheet = ({ scenario, theme, onScenarioSelect, onThemeSelect, onDismiss }: Props) => (
   <UseSmileIDSampleBottomSheet
-    visible
     title="Scenarios"
     onDismiss={onDismiss}
     testID={UseSmileIDSampleTestIds.SCENARIO_DRAWER}

@@ -21,7 +21,6 @@ export const LanguageSheet = ({ selected, deviceLanguages, onSelect, onDismiss }
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.languageTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.LANGUAGE_SHEET}

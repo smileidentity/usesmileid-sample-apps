@@ -124,7 +124,7 @@ export const UseSmileIDSampleShell = ({ args }: { args: UseSmileIDSampleLaunchAr
         steps={smileIDSampleSteps}
         // Each screen names itself `sample_*`, and a second test id on its view would replace the first.
         stepIds={false}
-        // The design's own scrim and corners, as the platform sheets drew them.
+        // The design's own scrim and corners, which njia's default sheet style would replace.
         sheetStyle={{
           scrim: theme.colors.overlayScrim,
           shape: { borderTopLeftRadius: theme.shapes.sheet, borderTopRightRadius: theme.shapes.sheet },

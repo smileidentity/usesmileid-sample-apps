@@ -23,7 +23,6 @@ export const CaptureAsSheet = ({ selected, matched, onSelect, onDismiss }: Props
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.captureAsTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.CAPTURE_AS_SHEET}

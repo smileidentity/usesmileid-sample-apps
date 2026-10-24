@@ -21,7 +21,6 @@ export const AppearanceSheet = ({ selected, deviceDark, onSelect, onDismiss }: P
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.appearanceTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.APPEARANCE_SHEET}
