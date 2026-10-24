@@ -54,6 +54,19 @@ release. `next` is only ever merged into, never rebased or force-pushed: release
 its commits. When an SDK version ships, `next` is merged into `main` and each SDK repository moves
 its pin to the result.
 
+The **Promote next** workflow (`promote-next.yml`) opens that merge, named for the release: run it
+with the version that shipped. Its head is a copy of `next`, because merging a pull request deletes
+its head branch and `next` must never be deleted. Once it merges, merge `main` back into `next`, then
+run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
+
+- A promotion held open because `next` needs a newer SDK is replaced when Promote next runs for that
+  version.
+- Conflicts are resolved on `next`, by merging `main` into it, and then Promote next runs again; never
+  on the promotion branch.
+- It runs in the `release` environment. Its `PROMOTE_NEXT_TOKEN` is a token for this repository alone,
+  because a pull request opened with the workflow's own token starts no checks. It needs contents,
+  pull requests and workflows write, the last because a promotion can carry workflow changes.
+
 ## The reserved `e2eScenario` argument
 
 An SDK repository's add-on reads one launch argument, `e2eScenario`: the JSON name of one of the

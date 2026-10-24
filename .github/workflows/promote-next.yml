@@ -1,0 +1,36 @@
+name: Promote next
+
+# Opens the release's next-into-main pull request from a copy of next; docs/source-build.md says why.
+
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: The SDK version that shipped (e.g. 12.4.0)
+        required: true
+        type: string
+
+concurrency:
+  group: promote-next
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: release
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Open the next into main pull request
+        env:
+          # A pull request opened with GITHUB_TOKEN starts no checks, so this one uses its own token.
+          GH_TOKEN: ${{ secrets.PROMOTE_NEXT_TOKEN }}
+          REPO: ${{ github.repository }}
+          RELEASE: ${{ inputs.release }}
+        run: python3 scripts/promote_next.py
