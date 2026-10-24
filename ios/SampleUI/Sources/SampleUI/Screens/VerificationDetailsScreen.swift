@@ -8,17 +8,26 @@ public struct UseSmileIDSampleVerificationDetailsState: Equatable {
   public var result: UseSmileIDSampleResult
   /// Computed by the host: `sample-ui` reads no build configuration and no launch argument.
   public var showProbes: Bool
+  /// True until the store first reports: a cold link lands before the rows do.
+  public var pending: Bool
+
+  /// The row is known not to exist, rather than not loaded yet.
+  var missing: Bool {
+    job == nil && !pending
+  }
 
   public init(
     jobId: String,
     job: UseSmileIDSampleJob? = nil,
     result: UseSmileIDSampleResult = UseSmileIDSampleFlowResult().snapshot,
-    showProbes: Bool = true
+    showProbes: Bool = true,
+    pending: Bool = false
   ) {
     self.jobId = jobId
     self.job = job
     self.result = result
     self.showProbes = showProbes
+    self.pending = pending
   }
 }
 
@@ -62,7 +71,7 @@ public struct VerificationDetailsScreen: View {
           if let job = state.job {
             heading(job)
             details(job)
-          } else {
+          } else if state.missing {
             UseSmileIDSampleEmptyState(
               text: UseSmileIDSampleStrings.detailsMissingTitle,
               supportingText: UseSmileIDSampleStrings.detailsMissingBody(jobId: state.jobId),

@@ -420,7 +420,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
         jobId: jobId,
         job: app.jobs?.first { $0.id == jobId },
         result: app.flowResult.snapshot,
-        showProbes: app.showProbes
+        showProbes: app.showProbes,
+        pending: app.jobs == nil
       ),
       resultExpanded: $app.resultCardExpanded,
       onBack: navigator.back,
