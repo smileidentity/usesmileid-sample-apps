@@ -128,7 +128,7 @@ fun UseSmileIDSampleShell() {
                         NjiaDisplay(
                             engine = engine,
                             steps = UseSmileIDSampleSteps,
-                            // The design's own scrim and corners, as the modal sheets drew them.
+                            // The design's own scrim and corners, which njia's default sheet style would replace.
                             sheetStyle = NjiaSheetStyle(UseSmileIDSampleTheme.colors.overlayScrim, UseSmileIDSampleTheme.shapes.sheet),
                             // Consumed, or every screen and the SDK under the shell pad the same inset again.
                             modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
