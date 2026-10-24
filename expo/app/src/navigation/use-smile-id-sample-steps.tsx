@@ -1,6 +1,5 @@
 import { select } from '@smileid/njia';
 import { njiaSteps, type NjiaSteps } from '@smileid/njia/host';
-import { UseSmileIDSampleSheetHostProvider } from '@smileid/sample-ui';
 import type { ReactNode } from 'react';
 
 import { UseSmileIDSampleAuthUserIdStep } from '../steps/use-smile-id-sample-auth-user-id-step';
@@ -57,14 +56,6 @@ const UseSmileIDSampleShellPage = ({ scope, children }: { scope: UseSmileIDSampl
 export const smileIDSampleSteps: NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampleFact> = njiaSteps((steps) => {
   steps.decorate((scope, content) =>
     shellPages.has(scope.step.kind) ? <UseSmileIDSampleShellPage scope={scope}>{content}</UseSmileIDSampleShellPage> : content,
-  );
-  // A sheet step is drawn in njia's own panel, so the shared sheets give it their content without a platform sheet.
-  steps.decorate((scope, content) =>
-    scope.step.presentation === 'sheet' ? (
-      <UseSmileIDSampleSheetHostProvider value>{content}</UseSmileIDSampleSheetHostProvider>
-    ) : (
-      content
-    ),
   );
   steps.step('products', (scope) => <UseSmileIDSampleProductsStep scope={scope} />);
   steps.step('verifications', (scope) => <UseSmileIDSampleVerificationsStep scope={scope} />);

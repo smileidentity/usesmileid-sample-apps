@@ -229,8 +229,6 @@ describe('the profiles list', () => {
 });
 
 describe('the new-profile sheet', () => {
-  // Asserted on the CTA's own disabled state rather than by pressing it: the sheet's host view is
-  // inert in a hostless runner, so a press proves nothing and "no call" would pass either way.
   const saveDisabled = async (draft: UseSmileIDSampleNewProfileDraft) => {
     const rendered = await renderInTheme(
       <NewProfileSheet draft={draft} onDraftChange={noop} onSave={noop} onDismiss={noop} />,
@@ -254,20 +252,22 @@ describe('the new-profile sheet', () => {
     expect(await saveDisabled(FILLED_DRAFT)).toBe(false);
   });
 
-  it('is not driveable by a press in this runner, which is why the CTA is asserted structurally', async () => {
-    // Recorded rather than worked around: the sheet's host view reports pointerEvents=none in a hostless runner.
+  const savesOnPress = async (draft: UseSmileIDSampleNewProfileDraft) => {
     const pressed: string[] = [];
     const rendered = await renderInTheme(
-      <NewProfileSheet
-        draft={FILLED_DRAFT}
-        onDraftChange={noop}
-        onSave={() => pressed.push('saved')}
-        onDismiss={noop}
-      />,
+      <NewProfileSheet draft={draft} onDraftChange={noop} onSave={() => pressed.push('saved')} onDismiss={noop} />,
       false,
     );
     await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.NEW_PROFILE_SAVE));
-    expect(pressed).toEqual([]);
+    return pressed.length > 0;
+  };
+
+  it('saves a complete draft when its CTA is pressed', async () => {
+    expect(await savesOnPress(FILLED_DRAFT)).toBe(true);
+  });
+
+  it('saves nothing when an incomplete draft has its CTA pressed', async () => {
+    expect(await savesOnPress({ ...FILLED_DRAFT, lastName: '' })).toBe(false);
   });
 
   it('treats blank space as absent, or a space would enable the CTA', () => {

@@ -15,7 +15,6 @@ export const CaptureModeSheet = ({ selected, onSelect, onDismiss }: Props) => {
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.captureModeTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.CAPTURE_MODE_SHEET}

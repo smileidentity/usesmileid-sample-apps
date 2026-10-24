@@ -35,7 +35,6 @@ export const DocumentPickerSheet = ({
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       fullHeight
       title={strings.pickerDocumentTitle}
       onDismiss={onDismiss}

@@ -711,7 +711,6 @@ describe('the pickers', () => {
 
   it('offer Retry only on a failure', async () => {
     const onRetry = jest.fn();
-    // The picker body alone: under jest the platform sheet's host takes no touches.
     const rendered = await renderInTheme(
       <UseSmileIDSampleCataloguePicker<UseSmileIDSampleCountry>
         catalogue={failed}

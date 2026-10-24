@@ -8,60 +8,7 @@ import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
 import 'use_smileid_sample_top_app_bar.dart';
 
-/// The partial sheet: a grab handle over a scrim, sized to its content.
-Future<T?> showUseSmileIDSampleSheet<T>({
-  required BuildContext context,
-  required WidgetBuilder builder,
-  String? title,
-  String? testId,
-}) {
-  final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
-  return showModalBottomSheet<T>(
-    context: context,
-    // Content height, not the platform's half-screen state: at half, the five-field new-profile
-    // sheet clipped its last field and put its CTA below the fold.
-    isScrollControlled: true,
-    useSafeArea: true,
-    // The ROOT navigator: in the shell's body the bar is painted over the sheet and eats its taps.
-    useRootNavigator: true,
-    backgroundColor: colors.surface,
-    barrierColor: colors.overlayScrim,
-    shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
-    builder: (BuildContext sheetContext) => UseSmileIDSamplePartialSheetBody(
-      title: title,
-      testId: testId,
-      child: builder(sheetContext),
-    ),
-  );
-}
-
-/// The full-height sheet: a back header instead of a handle, for the long pickers.
-Future<T?> showUseSmileIDSampleFullHeightSheet<T>({
-  required BuildContext context,
-  required String title,
-  required WidgetBuilder builder,
-  String? testId,
-}) {
-  final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(context);
-  return showModalBottomSheet<T>(
-    context: context,
-    isScrollControlled: true,
-    useSafeArea: true,
-    useRootNavigator: true,
-    backgroundColor: colors.surface,
-    barrierColor: colors.overlayScrim,
-    shape: RoundedRectangleBorder(borderRadius: UseSmileIDSampleShapes.sheet),
-    constraints: const BoxConstraints.expand(),
-    builder: (BuildContext sheetContext) => UseSmileIDSampleFullHeightSheetBody(
-      title: title,
-      testId: testId,
-      onClose: () => Navigator.of(sheetContext).pop(),
-      child: builder(sheetContext),
-    ),
-  );
-}
-
-/// A partial sheet's content on the sheet's surface, for a host that draws the sheet's window and scrim itself.
+/// A partial sheet's content on the sheet's surface; njia's sheet step draws the window, scrim and dismissal.
 class UseSmileIDSamplePartialSheetBody extends StatelessWidget {
   /// [child] under the grab handle and the optional [title].
   const UseSmileIDSamplePartialSheetBody({
@@ -133,7 +80,7 @@ class UseSmileIDSamplePartialSheetBody extends StatelessWidget {
   }
 }
 
-/// A full-height sheet's content on the sheet's surface, for a host that draws the sheet's window and scrim itself.
+/// A full-height sheet's content on the sheet's surface; njia's sheet step draws the window, scrim and dismissal.
 class UseSmileIDSampleFullHeightSheetBody extends StatelessWidget {
   /// [child] under a header titled [title] whose back control calls [onClose].
   const UseSmileIDSampleFullHeightSheetBody({
@@ -246,7 +193,7 @@ class _GrabHandle extends StatelessWidget {
   );
 }
 
-/// `useSafeArea` leaves the bottom inset to the content.
+/// njia's sheet meets the bottom edge, so its content clears the navigation bar itself.
 double _navigationBarInset(BuildContext context) =>
     MediaQuery.paddingOf(context).bottom;
 

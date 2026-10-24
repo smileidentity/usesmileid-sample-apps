@@ -63,15 +63,13 @@ describe('under Android resolution', () => {
     expect(smileDimens.touchTarget).toBe(48);
   });
 
-  it("draws the Compose app's 44x4 handle in place of Material's own", async () => {
+  it("draws the Compose app's 44x4 handle once on a partial sheet", async () => {
     const rendered = await renderInTheme(
-      <UseSmileIDSampleBottomSheet visible title="Switch profile" onDismiss={noop}>
+      <UseSmileIDSampleBottomSheet title="Switch profile" onDismiss={noop}>
         <Text>row</Text>
       </UseSmileIDSampleBottomSheet>,
       false,
     );
-    const [sheet] = hostNodes(rendered.toJSON()).filter((node) => node.type === 'ComposeSheet');
-    expect(sheet?.props.handleComponent).toBeNull();
     const pills = viewStyles(rendered.toJSON()).filter((style) => style.width === 44 && style.height === 4);
     expect(pills).toHaveLength(1);
   });

@@ -11,13 +11,11 @@ import { paintSvg } from './paint-svg';
 export const PIXEL_RATIO = 2;
 
 /// Hosts the painter cannot draw, each drawn as a labelled box.
-export const PLACEHOLDERS: Readonly<Record<string, (props: Record<string, unknown>) => string>> = {
+const PLACEHOLDERS: Readonly<Record<string, (props: Record<string, unknown>) => string>> = {
   RCTSwitch: (props) =>
     `${props.value === true ? 'on' : 'off'}${props.disabled === true ? ' · disabled' : ''}`,
   ActivityIndicator: () => 'Spinner',
   Image: () => 'Image',
-  // The sheet's corner radius and scrim are not drawn at all.
-  SheetDragIndicator: () => '',
   // Emoji: the bundled face lacks them and a host emoji font differs per runner.
   MissingGlyph: () => '',
 };
@@ -451,7 +449,7 @@ const PLACEHOLDER_COLOURS = {
 } as const;
 
 /// A hatched, outlined, labelled stand-in for something the painter cannot draw.
-export const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y: number, width: number, height: number) => {
+const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y: number, width: number, height: number) => {
   ctx.save();
   ctx.beginPath();
   ctx.rect(x, y, width, height);
@@ -604,24 +602,13 @@ const contentHeight = (node: LaidOutNode, top = 0): number =>
   Math.max(top + node.top + node.height, ...node.children.map((child) => contentHeight(child, top + node.top)));
 
 /// Paints a laid-out tree at [PIXEL_RATIO] into a canvas its content height tall.
-export const paintTree = (
-  root: LaidOutNode,
-  { backdrop, overlay }: {
-    backdrop?: string;
-    overlay?: (ctx: SKRSContext2D, width: number) => void;
-  } = {},
-): Canvas => {
+export const paintTree = (root: LaidOutNode): Canvas => {
   registerFonts();
   const width = Math.ceil(root.width * PIXEL_RATIO);
   const height = Math.max(Math.ceil(contentHeight(root) * PIXEL_RATIO), 1);
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext('2d');
-  if (backdrop) {
-    ctx.fillStyle = backdrop;
-    ctx.fillRect(0, 0, width, height);
-  }
   ctx.scale(PIXEL_RATIO, PIXEL_RATIO);
   paintNode({ ctx, canvasWidth: width, canvasHeight: height }, { ...root, left: 0, top: 0 }, 0, 0, 'root');
-  overlay?.(ctx, root.width);
   return canvas;
 };

@@ -31,7 +31,6 @@ export const IdTypePickerSheet = ({
   const strings = useSmileIDSampleStrings();
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       fullHeight
       title={strings.pickerIdTypeTitle}
       onDismiss={onDismiss}

@@ -70,12 +70,12 @@ class ScreenGoldenTest : GoldenTest() {
 
     /** One sheet holds both sections, so the two spec states differ by which section's selection has moved. */
     @Test
-    fun scenario_drawer_flow() = goldens("sheet_scenario_drawer_flow", fullWindow = true) {
+    fun scenario_drawer_flow() = sheetGoldens("sheet_scenario_drawer_flow") {
         ScenarioDrawer(scenario = UseSmileIDSampleScenario.ExpiredToken)
     }
 
     @Test
-    fun scenario_drawer_theme() = goldens("sheet_scenario_drawer_theme", fullWindow = true) {
+    fun scenario_drawer_theme() = sheetGoldens("sheet_scenario_drawer_theme") {
         ScenarioDrawer(theme = UseSmileIDSampleThemeScenario.PartnerOverride)
     }
 
@@ -105,16 +105,13 @@ class ScreenGoldenTest : GoldenTest() {
 
     /** Products presents it, not Profiles: the sheet's own link resolves to the products route. */
     @Test
-    fun profile_switch_sheet() = goldens("sheet_profile_switch", fullWindow = true) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Products(TOKEN_LINKED)
-            ProfileSwitchSheet(
-                profiles = ProfileFixtures.Seeded.all,
-                activeId = ProfileFixtures.Seeded.activeId,
-                onSelect = {},
-                onDismissRequest = {},
-            )
-        }
+    fun profile_switch_sheet() = sheetGoldens("sheet_profile_switch", behind = { Products(TOKEN_LINKED) }) {
+        ProfileSwitchSheet(
+            profiles = ProfileFixtures.Seeded.all,
+            activeId = ProfileFixtures.Seeded.activeId,
+            onSelect = {},
+            onDismissRequest = {},
+        )
     }
 
     @Test

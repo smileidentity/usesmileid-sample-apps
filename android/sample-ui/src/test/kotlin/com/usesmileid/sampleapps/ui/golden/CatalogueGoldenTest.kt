@@ -43,18 +43,18 @@ class CatalogueGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun country_picker_loading() = goldens("sheet_country_picker_loading", fullWindow = true) {
+    fun country_picker_loading() = sheetGoldens("sheet_country_picker_loading") {
         Country(UseSmileIDSampleCatalogue.Loading)
     }
 
     @Test
-    fun country_picker_error() = goldens("sheet_country_picker_error", fullWindow = true) {
+    fun country_picker_error() = sheetGoldens("sheet_country_picker_error") {
         Country(UseSmileIDSampleCatalogue.Failed("offline"))
     }
 
     /** A search that matched nothing, which needs no advice: the reader typed the query. */
     @Test
-    fun country_picker_empty() = goldens("sheet_country_picker_empty", fullWindow = true) {
+    fun country_picker_empty() = sheetGoldens("sheet_country_picker_empty") {
         Country(UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.countries(UseSmileIDSampleCatalogueFamily.Kyc)), query = "Atlantis")
     }
 
@@ -62,55 +62,55 @@ class CatalogueGoldenTest : GoldenTest() {
     fun country_picker_error_max_font_scale() = assertSurvivesMaxFontScale { Country(UseSmileIDSampleCatalogue.Failed("offline")) }
 
     @Test
-    fun id_type_picker_loading() = goldens("sheet_id_type_picker_loading", fullWindow = true) {
+    fun id_type_picker_loading() = sheetGoldens("sheet_id_type_picker_loading") {
         IdType(UseSmileIDSampleCatalogue.Loading)
     }
 
     @Test
-    fun id_type_picker_error() = goldens("sheet_id_type_picker_error", fullWindow = true) {
+    fun id_type_picker_error() = sheetGoldens("sheet_id_type_picker_error") {
         IdType(UseSmileIDSampleCatalogue.Failed("offline"))
     }
 
     @Test
-    fun id_type_picker_empty() = goldens("sheet_id_type_picker_empty", fullWindow = true) {
+    fun id_type_picker_empty() = sheetGoldens("sheet_id_type_picker_empty") {
         IdType(UseSmileIDSampleCatalogue.Empty, country = UseSmileIDSampleCountry("RW", "Rwanda"))
     }
 
     @Test
-    fun document_picker() = goldens("sheet_document_picker", fullWindow = true) {
+    fun document_picker() = sheetGoldens("sheet_document_picker") {
         Document(UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.documents("ZA")))
     }
 
     /** South Africa on Enhanced Document Verification, which leaves out the Green Book the SDK refuses there. */
     @Test
-    fun document_picker_enhanced() = goldens("sheet_document_picker_enhanced", fullWindow = true) {
+    fun document_picker_enhanced() = sheetGoldens("sheet_document_picker_enhanced") {
         Document(UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.documents("ZA", UseSmileIDSampleProduct.EnhancedDocumentVerification)))
     }
 
     /** Only names are translated under ar-EG, and the app does not flip its own layout, so the rows stay left-to-right. */
     @Test
-    fun document_picker_arabic_names() = goldens("sheet_document_picker_ar", fullWindow = true) {
+    fun document_picker_arabic_names() = sheetGoldens("sheet_document_picker_ar") {
         Document(UseSmileIDSampleCatalogue.Ready(ARABIC_DOCUMENTS), country = UseSmileIDSampleCountry("KE", "كينيا"))
     }
 
     @Test
-    fun document_picker_loading() = goldens("sheet_document_picker_loading", fullWindow = true) {
+    fun document_picker_loading() = sheetGoldens("sheet_document_picker_loading") {
         Document(UseSmileIDSampleCatalogue.Loading)
     }
 
     @Test
-    fun document_picker_error() = goldens("sheet_document_picker_error", fullWindow = true) {
+    fun document_picker_error() = sheetGoldens("sheet_document_picker_error") {
         Document(UseSmileIDSampleCatalogue.Failed("offline"))
     }
 
     @Test
-    fun document_picker_empty() = goldens("sheet_document_picker_empty", fullWindow = true) {
+    fun document_picker_empty() = sheetGoldens("sheet_document_picker_empty") {
         Document(UseSmileIDSampleCatalogue.Empty)
     }
 
     /** Match document checked on a passport row, so its label names the preset it resolves to. */
     @Test
-    fun capture_as_sheet() = goldens("sheet_capture_as", fullWindow = true) {
+    fun capture_as_sheet() = sheetGoldens("sheet_capture_as") {
         val passport = CatalogueFixtures.documents("KE").first { it.code == "PASSPORT" }
         CaptureAsSheet(
             selected = null,
@@ -121,7 +121,7 @@ class CatalogueGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun generic_document_sheet() = goldens("sheet_generic_document", fullWindow = true) {
+    fun generic_document_sheet() = sheetGoldens("sheet_generic_document") {
         GenericDocumentSheet(initial = UseSmileIDSampleGenericDocument(), onDone = {}, onDismissRequest = {})
     }
 
@@ -131,12 +131,12 @@ class CatalogueGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun capture_mode_sheet() = goldens("sheet_capture_mode", fullWindow = true) {
+    fun capture_mode_sheet() = sheetGoldens("sheet_capture_mode") {
         CaptureModeSheet(selected = UseSmileIDSampleCaptureMode.AutoWithFallback, onSelect = {}, onDismissRequest = {})
     }
 
     @Test
-    fun appearance_sheet() = goldensOnDevice("sheet_appearance", fullWindow = true) { deviceDark ->
+    fun appearance_sheet() = sheetGoldensOnDevice("sheet_appearance") { deviceDark ->
         AppearanceSheet(selected = UseSmileIDSampleAppearance.System, deviceDark = deviceDark, onSelect = {}, onDismissRequest = {})
     }
 
@@ -146,7 +146,7 @@ class CatalogueGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun language_sheet() = goldens("sheet_language", fullWindow = true) {
+    fun language_sheet() = sheetGoldens("sheet_language") {
         LanguageSheet(selected = UseSmileIDSampleLanguage.System, deviceLanguages = listOf("en-US"), onSelect = {}, onDismissRequest = {})
     }
 

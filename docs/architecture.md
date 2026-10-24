@@ -81,9 +81,8 @@ The rules all four follow:
 8. **Cold start is the test that matters.** Every route must open with the app not already running. On
    Android, an intent sent to a live task rebuilds the Activity and resets launch arguments, so
    automation force-stops the app first.
-9. **A sheet is a layer over the current destination, never a replacement.** On Flutter and Expo it is
-   a njia sheet step over the whole page, so the scrim covers the nav bar and dismissing gives it back. Android
-   still replaces the destination (see the [backlog](plan/backlog.md)).
+9. **A sheet is a layer over the current destination, never a replacement.** On all four it is a njia
+   sheet step over the whole page, so the scrim covers the nav bar and dismissing gives it back.
 10. **The nav bar floats over the tab roots only**, and screens measure its height rather than
     hard-coding it.
 11. **A confirmation belongs to the screen the action returns to**, not the one that fired it.

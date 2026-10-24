@@ -758,8 +758,8 @@
         "partial": "grab handle 44x5 (size.control-md by space4) at radius.chip, sheet at radius.sheet",
         "fullHeight": "no handle; a 40 filled circular back control and the title, gap spacing.xs",
         "horizontalPadding": "20 in the design, spacing.md (16) here",
-        "platform": "Material 3 ModalBottomSheet — drag-to-dismiss, scrim tap and insets are the platform's",
-        "ownership": "The screen beneath owns the sheet — a boolean it holds — and the sheet is REMOVED FROM COMPOSITION when hidden, which is M3's own guidance. Never a route of its own: a sheet destination replaces the screen it should be covering, so the scrim covers nothing. spec/routes.json keeps the sheet paths and resolves each to its owner plus the sheet it opens.",
+        "platform": "njia's sheet step: the host draws the scrim, the slide, drag-to-dismiss and back; the sheet draws its panel and insets its content past the navigation bar and the keyboard",
+        "ownership": "A sheet is a step of spec/njia-graph.json with presentation sheet, drawn over the step that opened it, never in its place. spec/routes.json keeps each sheet's path, and a link to it opens the owner with the sheet over it.",
         "openHeight": "content height, NOT the platform's half-screen partial state: the five-field new-profile sheet clipped its last field and put its CTA below the fold at half height",
         "overflow": "the content scrolls rather than clips, so enlarged type cannot strand a CTA",
         "radius": "radius.surface (16) on the top corners. Was radius.sheet (20); one rule sets one radius value wherever a radius is chosen. A slightly squarer sheet than Android users see elsewhere, which is why §7.8 asks for a device look rather than a golden diff."

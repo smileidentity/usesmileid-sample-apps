@@ -35,7 +35,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfiles
 import org.junit.Test
 
-/** `BottomSheet` is absent on purpose: `ModalBottomSheet` renders into its own window, so it is verified on a device. */
+/** `BottomSheet` has no composite golden of its own: every sheet golden draws it, framed as njia hosts a sheet step. */
 class CompositeGoldenTest : GoldenTest() {
 
     @Test
