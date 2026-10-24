@@ -13,7 +13,13 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleIdDetails
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleUserDetails
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+/** Under Robolectric: building a flow initialises SDK state that, made outside its sandbox, leaks into the shell tests sharing the JVM. */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [36])
 class UseSmileIDSampleCustomiseNetworkTest {
     @Test
     fun the_extension_customises_the_network_the_shell_configured_for_the_product() {
