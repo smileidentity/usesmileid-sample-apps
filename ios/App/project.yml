@@ -18,7 +18,7 @@ packages:
   # The navigation engine the shell draws from spec/njia-graph.json; the exact version the SDK's package pins, which SwiftPM unifies with it.
   Njia:
     url: https://github.com/smileidentity/njia-spm
-    exactVersion: 0.0.1-SNAPSHOT.7
+    exactVersion: 0.0.1-SNAPSHOT.9
 
 settings:
   base:
