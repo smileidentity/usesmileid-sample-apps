@@ -95,8 +95,8 @@ do, run by `flutter/verify.sh` on the Mac.
 
 ### Android: replace the pinned njia and SDK snapshot builds with releases
 
-`android/gradle/libs.versions.toml` pins njia to one snapshot build, `0.0.1-20261023.003202-6`, and the
-SDK artifacts to the builds made against it (`12.3.0-20261024.141813-*`). A bare `0.0.1-SNAPSHOT` lost
+`android/gradle/libs.versions.toml` pins njia to one snapshot build and the SDK artifacts to the builds
+made against it. A bare `0.0.1-SNAPSHOT` lost
 Gradle's conflict resolution to the SDK snapshot's older njia, and an SDK built on another njia fails at
 run time with `NoSuchMethodError`. Maven Central's snapshot repository deletes builds after about 90 days,
 so once these go, a clean build can't resolve them. Done when both pins are releases, or newer matching
@@ -150,8 +150,9 @@ Done looks like a pinned appearance that launches in its own theme on API 31+, o
 
 ### Expo: the notices read a nested package's version from the top-level copy
 
-`scripts/generate_expo_licenses.py` names each bundled package by its last `node_modules/` segment and
-reads its version from the app's or the top-level `node_modules`. With `node-linker=hoisted`, a package the
+`scripts/generate_expo_licenses.py` reads the release bundle's source maps, names each bundled package by
+the last `node_modules/` segment of its path, and reads its version from the app's or the top-level
+`node_modules`. With `node-linker=hoisted`, a package the
 SDK nests at another version is recorded at the top-level copy's version, and `--check` still passes. zod did
 this until the lockfile was deduped to one copy: 4.6.7 shipped under the SDK while the notices said 4.6.5, the
 dev tools' copy. Done when the version comes from the directory the source map names, or the generator fails
