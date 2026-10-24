@@ -9,7 +9,7 @@ import subprocess
 import sys
 
 PREFIX = "sync/next-into-main-"
-VERSION = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+$")
+VERSION = re.compile(r"[0-9]+\.[0-9]+\.[0-9]+")
 
 
 class PromoteError(Exception):
@@ -111,7 +111,7 @@ This branch is a copy of `next` at {sha[:8]}, so the branch deletion that follow
 
 def promote(github: GitHub, version: str) -> str:
     """Opens or refreshes the promotion for version, replaces an older one, and says what it did."""
-    if not VERSION.match(version):
+    if not VERSION.fullmatch(version):
         raise PromoteError(f"'{version}' is not a release version such as 12.4.0")
     if github.tree("main") == github.tree("next") or github.changed("main", "next") == 0:
         return "main already holds everything on next, so there is nothing to promote"
@@ -122,7 +122,7 @@ def promote(github: GitHub, version: str) -> str:
         for pull in github.open_pulls()
         if (pull["head"].get("repo") or {}).get("full_name") == github.repo
         and pull["head"]["ref"].startswith(PREFIX)
-        and VERSION.match(pull["head"]["ref"][len(PREFIX):])
+        and VERSION.fullmatch(pull["head"]["ref"][len(PREFIX):])
     }
     older = {}
     for ref, number in promotions.items():

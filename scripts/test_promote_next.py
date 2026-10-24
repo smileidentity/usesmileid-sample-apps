@@ -67,7 +67,7 @@ def promotion(version, number, repo=REPO):
 
 class TestPromote(unittest.TestCase):
     def test_a_version_that_is_not_a_release_is_refused(self):
-        for bad in ("v12.4.0", "12.4", "12.4.0\nx"):
+        for bad in ("v12.4.0", "12.4", "12.4.0\nx", "12.4.0\n"):
             with self.assertRaises(pn.PromoteError):
                 pn.promote(FakeGitHub(), bad)
 
