@@ -63,7 +63,7 @@ export const UseSmileIDSampleLanguageStep = ({ scope }: { scope: UseSmileIDSampl
   );
 };
 
-/// The scenario drawer over settings, which stays open while a scenario and a theme are picked for later runs.
+/// The scenario drawer over settings: its row is debug-only, but `debug/scenarios` reaches it on every build, as device flows do.
 export const UseSmileIDSampleScenarioDrawerStep = ({ scope }: { scope: UseSmileIDSampleStepScope }) => {
   const { scenario, theme } = useLaunchArgs();
   return (
