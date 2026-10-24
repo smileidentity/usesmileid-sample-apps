@@ -406,6 +406,20 @@ describe('a run', () => {
     expect(engine().state.entries.at(-1)?.arg).toBe('smartSelfieEnrollment');
   });
 
+  it('leaves a run a link opened at a later form in that form\'s place, so it never stacks a form on a form', async () => {
+    await act(async () => {
+      await useSmileIDSampleSessionStore.getState().link(liveSession(false));
+    });
+    const { engine } = await launch('flow/biometricKyc/id-details');
+    // A link rebuilds only the tab root beneath the form, so the form is the run's one entry that carries the product.
+    expect(engine().state.entries.map((entry) => entry.arg)).toEqual([undefined, 'biometricKyc']);
+    await act(async () => navigatorFor(engine(), top(engine().state)!).next());
+    await settle();
+    // The run finds no user details and leaves for their form, which replaces the form the link opened.
+    expect(smileIDSampleStackKinds(engine())).toEqual(['products', 'consentDetailsForm']);
+    expect(engine().state.entries.map((entry) => entry.arg)).toEqual([undefined, 'biometricKyc']);
+  });
+
   it('sends a run whose form was skipped but whose details are missing back to that form', async () => {
     await act(async () => {
       await useSmileIDSampleSessionStore.getState().link(liveSession(false));
