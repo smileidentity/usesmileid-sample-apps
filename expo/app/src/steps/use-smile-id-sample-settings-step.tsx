@@ -88,6 +88,8 @@ export const UseSmileIDSampleSettingsStep = ({ scope }: { scope: UseSmileIDSampl
         clearProfiles();
         smileIDSampleLeaveToProducts(engine);
       }}
+      // A debug affordance, as on the other three apps: release builds don't offer it.
+      onOpenScenarioDrawer={__DEV__ ? () => scope.navigator.go('scenarioDrawer') : undefined}
       debugRows={smileIDSampleDebugRows(useSmileIDSampleShellExtension)}
       bottomInset={bottomInset}
     />

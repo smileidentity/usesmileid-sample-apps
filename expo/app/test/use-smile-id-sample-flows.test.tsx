@@ -19,7 +19,7 @@ import {
   useSmileIDSampleSettingsStore,
   type UseSmileIDSampleLaunchArgs,
 } from '@smileid/sample-ui';
-import { act, fireEvent, render, waitFor, type RenderResult } from '@testing-library/react-native';
+import { act, fireEvent, render, renderHook, waitFor, type RenderResult } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 import { AccessibilityInfo, Alert, BackHandler, Platform } from 'react-native';
 
@@ -31,7 +31,12 @@ import {
   UseSmileIDSampleShell,
 } from '../src/navigation/use-smile-id-sample-shell';
 import type { UseSmileIDSampleFact } from '../src/navigation/use-smile-id-sample-njia';
-import { smileIDSampleLoadLaunchArgs, smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
+import {
+  smileIDSampleLoadLaunchArgs,
+  smileIDSampleResetLaunchArgs,
+  useLaunchArgs,
+  useLaunchArgsAsLaunched,
+} from '../src/use-smile-id-sample-launch';
 import {
   smileIDSampleReferenceNavigation,
   smileIDSampleStackKinds,
@@ -220,9 +225,30 @@ describe('the settings sheets', () => {
     expect(useSmileIDSampleSettingsStore.getState().settings.appearance).toBe('dark');
   });
 
-  it('lands a link to the scenario drawer, which this app has not built, on settings', async () => {
-    const { engine } = await launch('debug/scenarios');
-    await waitFor(() => expect(smileIDSampleStackKinds(engine())).toEqual(['settings']));
+  it('opens the scenario drawer from settings, and a pick changes what later runs take but not the launch', async () => {
+    const { screen, engine } = await launch('settings');
+    await tap(screen, UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON);
+    expect(smileIDSampleStackKinds(engine())).toEqual(['settings', 'scenarioDrawer']);
+    await tap(screen, UseSmileIDSampleSuffixedTestIds.scenarioItem('expiredToken'));
+    await tap(screen, UseSmileIDSampleSuffixedTestIds.themeItem('partnerOverride'));
+    // The drawer stays open while both are picked, and each row says which is active.
+    expect(smileIDSampleTopKind(engine())).toBe('scenarioDrawer');
+    expect(
+      screen.getByTestId(UseSmileIDSampleSuffixedTestIds.scenarioItem('expiredToken')).props.accessibilityState,
+    ).toMatchObject({ selected: true });
+    await fireEvent.press(screen.getByTestId(njiaSheetScrim, { includeHiddenElements: true }));
+    await settle();
+    expect(smileIDSampleStackKinds(engine())).toEqual(['settings']);
+    // Read last: a second render replaces the shell's.
+    const { result } = await renderHook(() => ({ picked: useLaunchArgs(), launched: useLaunchArgsAsLaunched() }));
+    expect([result.current.picked.scenario, result.current.picked.theme]).toEqual(['expiredToken', 'partnerOverride']);
+    expect(result.current.launched.scenario).toBe(smileIDSampleLaunchArgDefaults.scenario);
+  });
+
+  it('opens the scenario drawer from its link over settings', async () => {
+    const { screen, engine } = await launch('debug/scenarios');
+    expect(smileIDSampleStackKinds(engine())).toEqual(['settings', 'scenarioDrawer']);
+    expect(screen.queryByTestId(UseSmileIDSampleTestIds.SCENARIO_DRAWER)).not.toBeNull();
   });
 
   it('pushes the notices inside settings, and back returns to it', async () => {
