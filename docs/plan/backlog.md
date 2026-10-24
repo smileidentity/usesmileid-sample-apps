@@ -152,9 +152,10 @@ Done looks like a pinned appearance that launches in its own theme on API 31+, o
 
 `scripts/generate_expo_licenses.py` names each bundled package by its last `node_modules/` segment and
 reads its version from the app's or the top-level `node_modules`. With `node-linker=hoisted`, a package the
-SDK nests at another version is recorded at the top-level copy's version: zod ships at 4.6.7 under the SDK
-while the notices say 4.6.5, the dev tools' copy, and `--check` still passes. Done when the version comes
-from the directory the source map names, or the generator fails on a package installed at two versions.
+SDK nests at another version is recorded at the top-level copy's version, and `--check` still passes. zod did
+this until the lockfile was deduped to one copy: 4.6.7 shipped under the SDK while the notices said 4.6.5, the
+dev tools' copy. Done when the version comes from the directory the source map names, or the generator fails
+on a package installed at two versions.
 
 ## Device suite and CI
 
