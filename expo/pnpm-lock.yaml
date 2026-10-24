@@ -41,9 +41,6 @@ importers:
       '@smileid/usesmileid':
         specifier: 12.3.1-SNAPSHOT.52
         version: 12.3.1-SNAPSHOT.52(j3wye52f4pg5223icxlc6jjq2u)
-      '@smileid/usesmileid_bridge':
-        specifier: 12.3.1-SNAPSHOT.52
-        version: 12.3.1-SNAPSHOT.52(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3)(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/usesmileid_huawei_document':
         specifier: 12.3.1-SNAPSHOT.52
         version: 12.3.1-SNAPSHOT.52(expo-modules-core@57.0.18(react-native-worklets@0.10.1(@babel/core@7.29.7)(@react-native/metro-config@0.86.3)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3)(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3)(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@react-native/metro-config@0.86.3)(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
