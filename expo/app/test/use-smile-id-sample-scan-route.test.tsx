@@ -2,25 +2,31 @@ import {
   UseSmileIDSampleTestIds,
   UseSmileIDSampleThemeProvider,
   smileIDSampleBase64UrlEncode,
+  smileIDSampleLaunchArgDefaults,
   smileIDSampleTokenSession,
   useSmileIDSampleSessionStore,
+  type UseSmileIDSampleRunIntent,
 } from '@smileid/sample-ui';
+import { NjiaDefaults } from '@smileid/njia';
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
-import type { ReactElement } from 'react';
 
-import Products from '../app/(tabs)/products';
-import SdkFlowRun from '../app/flow/[productId]/run';
-import ScanToken from '../app/token/scan';
 import { smileIDSampleSimulatedToken } from '../src/flow/use-smile-id-sample-flow-tokens';
-import { smileIDSampleLoadLaunchArgs, smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
+import { smileIDSampleStartShell, UseSmileIDSampleShell } from '../src/navigation/use-smile-id-sample-shell';
+import { smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
+import {
+  smileIDSampleReferenceNavigation,
+  smileIDSampleStackKinds,
+  smileIDSampleTopKind,
+} from './support/use-smile-id-sample-test-njia';
 
 jest.mock('@smileid/usesmileid_mlkit_face', () => ({ useSmileIDMlkitFace: { key: 'mlkit' } }));
 jest.mock('@smileid/usesmileid_vision_face', () => ({ useSmileIDVisionFace: { key: 'vision' } }));
 jest.mock('@smileid/usesmileid_mlkit_document', () => ({ useSmileIDMlkitDocument: { key: 'mlkit-document' } }));
 jest.mock('@smileid/usesmileid_vision_document', () => ({ useSmileIDVisionDocument: { key: 'vision-document' } }));
-/// The cold-start link.
-let mockLaunchUrl: string | null = null;
-jest.mock('expo-linking', () => ({ getInitialURL: jest.fn(async () => mockLaunchUrl) }));
+jest.mock('expo-linking', () => ({
+  getInitialURL: jest.fn(async () => null),
+  addEventListener: () => ({ remove: () => undefined }),
+}));
 jest.mock('expo-haptics', () => ({
   notificationAsync: jest.fn(async () => undefined),
   NotificationFeedbackType: { Success: 'success', Error: 'error' },
@@ -32,32 +38,24 @@ jest.mock('expo-camera', () => ({ CameraView: () => null, useCameraPermissions: 
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
 }));
-
-/// The redirects a route declared.
-const mockRedirects: string[] = [];
-const mockRouter = { back: jest.fn(), replace: jest.fn(), push: jest.fn(), canGoBack: () => true };
-jest.mock('expo-router', () => ({
-  useRouter: () => mockRouter,
-  useNavigation: () => ({
-    addListener: (_type: string, listener: (event: { data: { closing: boolean } }) => void) => {
-      listener({ data: { closing: false } });
-      return () => undefined;
-    },
-  }),
-  useIsFocused: () => true,
-  useLocalSearchParams: () => ({ productId: 'enhancedKyc' }),
-  Redirect: function Redirect({ href }: { href: string }) {
-    mockRedirects.push(href);
-    return null;
-  },
-}));
-jest.mock('expo-router/tabs', () => ({ useBottomTabBarHeight: () => 0 }));
 jest.mock('@smileid/usesmileid', () => ({
   ...jest.requireActual('@smileid/usesmileid'),
   UseSmileIDBuilder: () => null,
 }));
 
-const inTheme = async (element: ReactElement) => await render(<UseSmileIDSampleThemeProvider dark={false}>{element}</UseSmileIDSampleThemeProvider>);
+/// The real shell on njia's reference reducer, launched at the app's link to `path` when given, else from the icon.
+const shellAt = async (path?: string) => {
+  const { model } = smileIDSampleReferenceNavigation();
+  smileIDSampleStartShell(path === undefined ? null : `usesmileid-sample-expo://${path}`, smileIDSampleLaunchArgDefaults);
+  const screen = await render(
+    <UseSmileIDSampleThemeProvider dark={false}>
+      <UseSmileIDSampleShell args={smileIDSampleLaunchArgDefaults} />
+    </UseSmileIDSampleThemeProvider>,
+  );
+  // The scanner takes taps once its step has moved in.
+  await act(async () => await new Promise((resolve) => setTimeout(resolve, NjiaDefaults.motionDurationMs + 50)));
+  return { screen, engine: () => model.engine! };
+};
 
 /// A details-bound session lasting `spanMillis`.
 const shortSession = (spanMillis: number) => {
@@ -79,36 +77,38 @@ const endedSession = () =>
     }),
   )!;
 
+/// The runs handed to the scanner, which claims each as it mounts, so the store alone can't show them.
+let sent: UseSmileIDSampleRunIntent[] = [];
+let unsubscribe = () => {};
+
 beforeEach(() => {
-  mockLaunchUrl = null;
   smileIDSampleResetLaunchArgs();
   useSmileIDSampleSessionStore.getState().reset();
-  mockRedirects.length = 0;
   jest.clearAllMocks();
+  sent = [];
+  unsubscribe = useSmileIDSampleSessionStore.subscribe((state, previous) => {
+    if (state.pendingRun !== null && state.pendingRun !== previous.pendingRun) sent.push(state.pendingRun);
+  });
 });
 
+afterEach(() => unsubscribe());
+
 describe('the expiry gate', () => {
-  it('sends a run whose session ended to the scanner, holding the run it interrupted', async () => {
+  it('sends a run whose session ended to the scanner in its place, holding the run it interrupted', async () => {
     await act(async () => {
       const ended = endedSession();
       await useSmileIDSampleSessionStore.getState().link(ended);
       await useSmileIDSampleSessionStore.getState().retire(ended);
     });
-    await inTheme(<SdkFlowRun />);
-    expect(mockRedirects).toEqual(['/token/scan']);
-    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'fullscreen', resumeAt: 'flow' });
+    const { engine } = await shellAt('flow/enhancedKyc/run');
+    await waitFor(() => expect(smileIDSampleStackKinds(engine())).toEqual(['products', 'scanToken']));
+    expect(sent.at(-1)).toEqual({ productId: 'enhancedKyc', route: 'fullscreen', resumeAt: 'flow' });
   });
 
-  it('takes its snapshot from the launch arguments the cold link carried', async () => {
-    mockLaunchUrl = 'usesmileid-sample-expo:///flow/enhancedKyc/run?route=shell';
-    await act(async () => {
-      await smileIDSampleLoadLaunchArgs();
-      const ended = endedSession();
-      await useSmileIDSampleSessionStore.getState().link(ended);
-      await useSmileIDSampleSessionStore.getState().retire(ended);
-    });
-    await inTheme(<SdkFlowRun />);
-    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({ productId: 'enhancedKyc', route: 'shell', resumeAt: 'flow' });
+  it('takes the route it holds from the link, which opened the in-shell run', async () => {
+    const { engine } = await shellAt('flow/enhancedKyc/run?route=shell');
+    await waitFor(() => expect(smileIDSampleTopKind(engine())).toBe('scanToken'));
+    expect(sent.at(-1)).toEqual({ productId: 'enhancedKyc', route: 'shell', resumeAt: 'flow' });
   });
 
   it('reads the clock at entry, so a session that lapsed since the last tick is sent to the scanner', async () => {
@@ -117,8 +117,8 @@ describe('the expiry gate', () => {
       await useSmileIDSampleSessionStore.getState().link(session);
     });
     await lapse(session);
-    await inTheme(<SdkFlowRun />);
-    expect(mockRedirects).toEqual(['/token/scan']);
+    const { engine } = await shellAt('flow/enhancedKyc/run');
+    await waitFor(() => expect(smileIDSampleTopKind(engine())).toBe('scanToken'));
   });
 
   it('reads the clock at the tap, so a session that lapsed since the last tick opens the scanner', async () => {
@@ -126,55 +126,62 @@ describe('the expiry gate', () => {
     await act(async () => {
       await useSmileIDSampleSessionStore.getState().link(session);
     });
-    const screen = await inTheme(<Products />);
+    const { screen, engine } = await shellAt();
     await lapse(session);
     await fireEvent.press(screen.getByTestId('sample_product_card_biometricKyc'));
-    expect(mockRouter.push).toHaveBeenCalledWith('/token/scan');
-    expect(useSmileIDSampleSessionStore.getState().pendingRun).toEqual({
-      productId: 'biometricKyc',
-      route: 'fullscreen',
-      resumeAt: 'firstStep',
+    expect(smileIDSampleStackKinds(engine())).toEqual(['products', 'scanToken']);
+    expect(sent.at(-1)).toEqual({ productId: 'biometricKyc', route: 'fullscreen', resumeAt: 'firstStep' });
+  });
+
+  it('starts a live tap at its first form, under the run facts its product needs', async () => {
+    await act(async () => {
+      await useSmileIDSampleSessionStore.getState().link(shortSession(600_000));
     });
+    const { screen, engine } = await shellAt();
+    await fireEvent.press(screen.getByTestId('sample_product_card_smartSelfieAuth'));
+    // The token binds the user's details, so the consent form is skipped and Auth asks for the user ID.
+    expect(smileIDSampleStackKinds(engine())).toEqual(['products', 'authUserId']);
+    expect([...engine().state.facts].sort()).toEqual(['fullScreenRun', 'needsUserId']);
   });
 
   it('sends a run with no session at all to the scanner rather than the SDK', async () => {
-    await inTheme(<SdkFlowRun />);
-    expect(mockRedirects).toEqual(['/token/scan']);
+    const { engine } = await shellAt('flow/enhancedKyc/run');
+    await waitFor(() => expect(smileIDSampleTopKind(engine())).toBe('scanToken'));
   });
 });
 
 describe('the scanner', () => {
   it('says why it opened, drops the run from app state, and resumes a run of unknown partner at its first step', async () => {
     useSmileIDSampleSessionStore.getState().sendRun({ productId: 'enhancedKyc', route: 'fullscreen', resumeAt: 'flow' });
-    const screen = await inTheme(<ScanToken />);
+    const { screen, engine } = await shellAt('token/scan');
     expect(screen.queryByText('Scan a token to start this verification.')).not.toBeNull();
     expect(useSmileIDSampleSessionStore.getState().pendingRun).toBeNull();
 
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
-    await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith('/flow/enhancedKyc/details'));
-    expect(mockRouter.back).not.toHaveBeenCalled();
+    // In the scanner's place, so back from the form goes to Products, not to a scanner already used.
+    await waitFor(() => expect(smileIDSampleStackKinds(engine())).toEqual(['products', 'consentDetailsForm']));
+    expect(engine().state.entries.at(-1)?.arg).toBe('enhancedKyc');
   });
 
   it('resumes a run sent from a product tap at its first step', async () => {
     useSmileIDSampleSessionStore
       .getState()
       .sendRun({ productId: 'smartSelfieEnrollment', route: 'fullscreen', resumeAt: 'firstStep' });
-    const screen = await inTheme(<ScanToken />);
+    const { screen, engine } = await shellAt('token/scan');
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
-    await waitFor(() => expect(mockRouter.replace).toHaveBeenCalledWith('/flow/smartSelfieEnrollment/details'));
+    await waitFor(() => expect(smileIDSampleStackKinds(engine())).toEqual(['products', 'consentDetailsForm']));
   });
 
   it('opened deliberately, says nothing about an ended session and returns once linked', async () => {
-    const screen = await inTheme(<ScanToken />);
+    const { screen, engine } = await shellAt('token/scan');
     expect(screen.queryByText('Token session ended. Scan to continue where you left off.')).toBeNull();
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_SIMULATE));
     await waitFor(() => expect(useSmileIDSampleSessionStore.getState().live).not.toBeNull());
-    expect(mockRouter.back).toHaveBeenCalledTimes(1);
-    expect(mockRouter.replace).not.toHaveBeenCalled();
+    expect(smileIDSampleStackKinds(engine())).toEqual(['products']);
   });
 
   it('refuses a typed token that does not decode, under the field, and links nothing', async () => {
-    const screen = await inTheme(<ScanToken />);
+    const { screen } = await shellAt('token/scan');
     await fireEvent.changeText(screen.getByPlaceholderText('Or enter token manually'), 'not-a-jwt');
     await fireEvent.press(screen.getByText('Link token'));
     expect(screen.queryByText('A token is three dot-separated base64url segments; this is not.')).not.toBeNull();
@@ -182,7 +189,7 @@ describe('the scanner', () => {
   });
 
   it('pastes the clipboard into the field, and says so when it holds nothing', async () => {
-    const screen = await inTheme(<ScanToken />);
+    const { screen } = await shellAt('token/scan');
     mockClipboard = '';
     await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.TOKEN_PASTE));
     await waitFor(() => expect(screen.queryByText('The clipboard holds no text to paste.')).not.toBeNull());

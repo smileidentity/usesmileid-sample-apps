@@ -7,9 +7,6 @@ const DECLARATIONS = join(__dirname, '../src/use-smile-id-sample-test-ids.ts');
 
 /// Declared for parity and attached to nothing on Expo, each with its reason; a stale entry fails.
 const EXCUSED: Record<string, string> = {
-  SCENARIO_DRAWER: 'no Expo shell presents the scenario drawer yet',
-  SCENARIO_ITEM: 'no Expo shell presents the scenario drawer yet',
-  THEME_ITEM: 'no Expo shell presents the scenario drawer yet',
   ENV_CHIP: 'the chip is hidden on every shipped screen',
   LICENSE_LINK: 'every licence ships its text, so none opens a page',
   SIGN_OUT_CONFIRM: 'a native Alert button takes no test id',
@@ -28,7 +25,7 @@ const sourcesUnder = (dir: string): string[] =>
 /// The other direction of the id contract: a declared id has to reach a view, not only the spec.
 describe('every declared id is attached somewhere', () => {
   // Both packages: a sheet's id is supplied by the shell route that presents it.
-  const callers = [join(__dirname, '../src'), join(__dirname, '../../app/app'), join(__dirname, '../../app/src')]
+  const callers = [join(__dirname, '../src'), join(__dirname, '../../app/src')]
     .flatMap(sourcesUnder)
     .filter((path) => path !== DECLARATIONS)
     .map((path) => readFileSync(path, 'utf8'))

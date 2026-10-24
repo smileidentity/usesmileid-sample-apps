@@ -38,6 +38,7 @@ python3 "$REPO_ROOT/scripts/test_appgallery_publish.py" >/dev/null
 python3 "$REPO_ROOT/scripts/appgallery_publish.py" check-notes "$REPO_ROOT/android/appgallery/whatsnew-en-US"
 python3 "$REPO_ROOT/scripts/test_app_size.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_select_android_flows.py" >/dev/null
+python3 "$REPO_ROOT/scripts/test_promote_next.py" >/dev/null
 ./gradlew :app:checkLicenses :app:checkAppgalleryLicenses
 
 echo "==> strings are current"

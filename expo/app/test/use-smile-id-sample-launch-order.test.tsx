@@ -3,8 +3,8 @@ import { render, waitFor } from '@testing-library/react-native';
 import * as Linking from 'expo-linking';
 import { Component, type ReactNode, useEffect } from 'react';
 
-import RootLayout from '../app/_layout';
 import { useSmileIDSampleShellExtension } from '../src/extension';
+import { UseSmileIDSampleApp as RootLayout } from '../src/use-smile-id-sample-app';
 import { smileIDSampleResetLaunchArgs } from '../src/use-smile-id-sample-launch';
 
 /// Every extension member the shell reached, in order.
@@ -41,9 +41,9 @@ jest.mock('react-native-safe-area-context', () => ({
   SafeAreaProvider: ({ children }: { children?: unknown }) => children,
   useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
 }));
-/// Held for the router mock, which may only reach mock* names.
+/// Held for the shell mock, which may only reach mock* names.
 const mockReact = { useEffect };
-/// The first screen the stack draws, reaching the extension in its render and in its first effect.
+/// The first screen the shell draws, reaching the extension in its render and in its first effect.
 const mockScreen = () => {
   useSmileIDSampleShellExtension?.debugRows?.();
   mockReact.useEffect(() => {
@@ -51,23 +51,15 @@ const mockScreen = () => {
   }, []);
   return null;
 };
-jest.mock('expo-router', () => {
-  const Stack = () => {
+jest.mock('../src/navigation/use-smile-id-sample-shell', () => ({
+  UseSmileIDSampleShell: function Shell() {
     const Screen = mockScreen;
     return <Screen />;
-  };
-  Stack.Screen = function StackScreen() {
-    return null;
-  };
-  const router = { push: jest.fn(), back: jest.fn(), replace: jest.fn() };
-  return {
-    Stack,
-    router,
-    useRouter: () => router,
-    usePathname: () => '/',
-    useRootNavigationState: () => ({ key: 'root' }),
-  };
-});
+  },
+  smileIDSampleStartShell: () => undefined,
+  smileIDSampleCurrentLink: () => null,
+  smileIDSampleOpenLink: () => undefined,
+}));
 
 const getInitialURL = Linking.getInitialURL as jest.MockedFunction<typeof Linking.getInitialURL>;
 

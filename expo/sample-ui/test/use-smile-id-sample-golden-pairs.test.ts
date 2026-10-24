@@ -44,7 +44,7 @@ const snapshotFiles = [
   'use-smile-id-sample-profiles-screens.test.tsx.snap',
 ];
 
-const expectedStates = 168;
+const expectedStates = 170;
 
 const readPairs = () => {
   const pairs = new Map<string, { light?: string; dark?: string }>();

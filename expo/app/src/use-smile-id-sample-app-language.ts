@@ -9,7 +9,6 @@ import {
 } from '@smileid/sample-ui';
 import { reloadAppAsync } from 'expo';
 import { useLocales } from 'expo-localization';
-import { type Href, usePathname, useRouter } from 'expo-router';
 import { useEffect, useMemo, useRef } from 'react';
 import { I18nManager } from 'react-native';
 
@@ -29,11 +28,13 @@ UseSmileIDLocalizations.localeResolver = () => shown.language;
 /// The pending direction reload, read back after the restart.
 const RELOAD_KEY = 'usesmileid-sample.directionReload';
 
-/// The sheet a pick is made on, which closes as the pick lands, so the reload returns to its owner.
-const LANGUAGE_SHEET = '/settings/language';
-const SETTINGS = '/settings';
+/// Where the app is, as the graph link of the screen showing, and how to go back there after a reload.
+export type UseSmileIDSampleReloadRouting = {
+  readonly currentLink: () => string | null;
+  readonly reopen: (link: string) => void;
+};
 
-/// A direction reload, and the route to return to after it.
+/// A direction reload, and the link to return to after it.
 type Reload = { readonly direction: 'ltr' | 'rtl'; readonly path: string; readonly atMillis: number };
 
 /// Long enough to cover the reload a pick asks for, so a later launch gets one fresh attempt.
@@ -51,6 +52,7 @@ const readReload = async (): Promise<Reload | null> => {
 export const useSmileIDSampleAppLanguage = (
   appLocale: string | null,
   ready: boolean,
+  routing: UseSmileIDSampleReloadRouting,
 ): {
   language: Exclude<UseSmileIDSampleLanguage, 'system'>;
   deviceLanguages: readonly string[];
@@ -59,9 +61,7 @@ export const useSmileIDSampleAppLanguage = (
   const deviceLanguages = useMemo(() => locales.map((locale) => locale.languageTag), [locales]);
   const setting = useSmileIDSampleSettingsStore((state) => state.settings.language);
   const loaded = useSmileIDSampleSettingsStore((state) => state.loaded);
-  const router = useRouter();
-  const pathname = usePathname();
-  const path = useRef(pathname);
+  const routingRef = useRef(routing);
   const pinned =
     (appLocale === null ? null : smileIDSampleShippedLanguage(appLocale)) ??
     (setting === UseSmileIDSampleLanguage.System ? null : setting);
@@ -73,10 +73,10 @@ export const useSmileIDSampleAppLanguage = (
   }, [language, pinned]);
 
   useEffect(() => {
-    path.current = pathname;
-  }, [pathname]);
+    routingRef.current = routing;
+  }, [routing]);
 
-  // RN fixes direction at start, and a reload replays the launch link, so the route is restored.
+  // RN fixes direction at start, and a reload replays the launch link, so the screen is restored.
   useEffect(() => {
     if (!loaded || !ready) return;
     const direction = smileIDSampleLanguageIsRightToLeft(language) ? 'rtl' : 'ltr';
@@ -84,7 +84,7 @@ export const useSmileIDSampleAppLanguage = (
       if (I18nManager.isRTL === (direction === 'rtl')) {
         if (last === null) return;
         await AsyncStorage.removeItem(RELOAD_KEY);
-        if (last.direction === direction && last.path !== path.current) router.replace(last.path as Href);
+        if (last.direction === direction && last.path !== routingRef.current.currentLink()) routingRef.current.reopen(last.path);
         return;
       }
       // Once per window, so a build that cannot apply it never loops.
@@ -95,13 +95,13 @@ export const useSmileIDSampleAppLanguage = (
         RELOAD_KEY,
         JSON.stringify({
           direction,
-          path: path.current === LANGUAGE_SHEET ? SETTINGS : path.current,
+          path: routingRef.current.currentLink() ?? 'products',
           atMillis: Date.now(),
         } satisfies Reload),
       );
       await reloadAppAsync('layout direction changed');
     });
-  }, [loaded, ready, language, router]);
+  }, [loaded, ready, language]);
 
   return { language, deviceLanguages };
 };

@@ -32,14 +32,6 @@ gates its measured coverage, at 95% once the app reaches it.
 
 ## UI and design fidelity
 
-### Expo: the scenario drawer is not presented
-
-Expo's Settings screen shows the scenario-drawer button only when a shell passes
-`onOpenScenarioDrawer`, and no Expo route does, so the drawer and its `sample_scenario_drawer`,
-`sample_scenario_item_*` and `sample_theme_item_*` ids exist nowhere on Expo. Present the drawer from
-the Expo shell as the other three apps do, then drop the three excused ids from
-`use-smile-id-sample-test-id-usage.test.ts`.
-
 ### Translations: a native speaker's review
 
 The French, Arabic and Hebrew strings in `spec/l10n/app/` were written without a native speaker's

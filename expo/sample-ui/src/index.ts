@@ -92,7 +92,7 @@ export {
 export { UseSmileIDSampleIcon, UseSmileIDSampleMarkNames } from './components/use-smile-id-sample-icon';
 export { smileIcons, type SmileIcon, type SmileIconName, type SmileIconPart } from './smile-icons';
 
-export { UseSmileIDSampleBottomSheet } from './components/use-smile-id-sample-bottom-sheet';
+export { UseSmileIDSampleBottomSheet, UseSmileIDSampleSheetHostProvider } from './components/use-smile-id-sample-bottom-sheet';
 export { UseSmileIDSampleDataFieldRow } from './components/use-smile-id-sample-data-field-row';
 export { UseSmileIDSampleDateGroupHeader } from './components/use-smile-id-sample-date-group-header';
 export { UseSmileIDSampleEmptyState } from './components/use-smile-id-sample-empty-state';
@@ -380,6 +380,7 @@ export { IdTypePickerSheet } from './screens/id-type-picker-sheet';
 export { DocumentPickerSheet } from './screens/document-picker-sheet';
 export { CaptureAsSheet } from './screens/capture-as-sheet';
 export { AppearanceSheet } from './screens/appearance-sheet';
+export { ScenarioDrawerSheet } from './screens/scenario-drawer-sheet';
 export { LanguageSheet } from './screens/language-sheet';
 export { CaptureModeSheet } from './screens/capture-mode-sheet';
 export { GenericDocumentSheet } from './screens/generic-document-sheet';
