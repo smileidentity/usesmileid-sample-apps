@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-import { steps, validate } from '@smileid/njia';
+import { NjiaJsonException, steps, validate } from '@smileid/njia';
 
 import {
   smileIDSampleFacts,
@@ -35,9 +35,10 @@ describe('the njia graph', () => {
     expect(readFileSync(join(__dirname, '../assets/njia-graph.json'), 'utf8')).toBe(specGraph());
   });
 
-  it('refuses a kind the app does not know', () => {
-    const json = JSON.parse(specGraph()) as { nodes: { kind?: string }[] };
-    const unknown = { ...json, nodes: [...json.nodes.slice(1), { step: 'stray', kind: 'stray' }] };
-    expect(() => smileIDSampleNjiaGraph(unknown)).toThrow();
+  it('refuses a kind the app does not know, and only for that', () => {
+    const json = JSON.parse(specGraph()) as { nodes: object[] };
+    const withStep = (kind: string) => ({ ...json, nodes: [...json.nodes, { step: 'stray', kind }] });
+    expect(() => smileIDSampleNjiaGraph(withStep('products'))).not.toThrow();
+    expect(() => smileIDSampleNjiaGraph(withStep('stray'))).toThrow(NjiaJsonException);
   });
 });
