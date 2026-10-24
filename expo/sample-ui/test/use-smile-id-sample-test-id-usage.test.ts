@@ -28,7 +28,7 @@ const sourcesUnder = (dir: string): string[] =>
 /// The other direction of the id contract: a declared id has to reach a view, not only the spec.
 describe('every declared id is attached somewhere', () => {
   // Both packages: a sheet's id is supplied by the shell route that presents it.
-  const callers = [join(__dirname, '../src'), join(__dirname, '../../app/app'), join(__dirname, '../../app/src')]
+  const callers = [join(__dirname, '../src'), join(__dirname, '../../app/src')]
     .flatMap(sourcesUnder)
     .filter((path) => path !== DECLARATIONS)
     .map((path) => readFileSync(path, 'utf8'))

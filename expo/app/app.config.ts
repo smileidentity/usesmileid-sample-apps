@@ -91,7 +91,6 @@ const config: ExpoConfig = {
     },
   },
   plugins: [
-    'expo-router',
     'expo-status-bar',
     'expo-font',
     'react-native-quick-crypto',
@@ -122,9 +121,6 @@ const config: ExpoConfig = {
     ],
     ...addedPlugins,
   ],
-  experiments: {
-    typedRoutes: true,
-  },
 };
 
 export default withSceneLifecycle(config);

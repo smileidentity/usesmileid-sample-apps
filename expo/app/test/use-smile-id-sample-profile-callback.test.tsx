@@ -10,16 +10,20 @@ import {
 } from '@smileid/sample-ui';
 import { act, fireEvent, render } from '@testing-library/react-native';
 
-import ProfileConfig from '../app/profiles/[profileId]';
+import { UseSmileIDSampleProfileConfigStep } from '../src/steps/use-smile-id-sample-profile-config-step';
+import { FakeNjiaCalls, type FakeNjiaNavigator } from '@smileid/njia-testing';
+
+import { smileIDSampleFakeScope } from './support/use-smile-id-sample-test-njia';
 
 jest.mock('react-native-safe-area-context', () => ({
   useSafeAreaInsets: () => ({ top: 24, bottom: 48, left: 0, right: 0 }),
 }));
-const mockRouter = { back: jest.fn(), replace: jest.fn(), push: jest.fn(), canGoBack: () => true };
-jest.mock('expo-router', () => ({
-  useRouter: () => mockRouter,
-  useLocalSearchParams: () => ({ profileId: 'p-2' }),
-}));
+
+/// The page's scope, made fresh for each test, and its navigator, which records what the page asked for.
+let opened: { scope: ReturnType<typeof smileIDSampleFakeScope>['scope']; navigator: FakeNjiaNavigator };
+
+/// The profile page step, opened on the second fixture profile.
+const ProfileConfig = () => <UseSmileIDSampleProfileConfigStep scope={opened.scope} />;
 
 const liveSession = (payload: string) => {
   const nowSeconds = Math.floor(Date.now() / 1000);
@@ -35,6 +39,7 @@ const page = async () =>
   );
 
 beforeEach(async () => {
+  opened = smileIDSampleFakeScope('profileConfig', { arg: 'p-2' });
   await AsyncStorage.clear();
   useSmileIDSampleSessionStore.getState().reset();
   useSmileIDSampleProfileStore.getState().reset(smileIDSampleFixtureProfiles());
@@ -55,6 +60,7 @@ describe('a profile callback URL', () => {
     const { items, activeId } = useSmileIDSampleProfileStore.getState();
     expect(activeId).toBe('p-2');
     expect(items.find((item) => item.id === 'p-2')?.callbackUrl).toBe('https://kazi.example/hooks');
+    opened.navigator.expect(FakeNjiaCalls.back);
   });
 
   it('gives way to a live session, and says whose URL applies', async () => {

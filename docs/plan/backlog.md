@@ -35,10 +35,11 @@ gates its measured coverage, at 95% once the app reaches it.
 ### Expo: the scenario drawer is not presented
 
 Expo's Settings screen shows the scenario-drawer button only when a shell passes
-`onOpenScenarioDrawer`, and no Expo route does, so the drawer and its `sample_scenario_drawer`,
-`sample_scenario_item_*` and `sample_theme_item_*` ids exist nowhere on Expo. Present the drawer from
-the Expo shell as the other three apps do, then drop the three excused ids from
-`use-smile-id-sample-test-id-usage.test.ts`.
+`onOpenScenarioDrawer`, and the Expo shell doesn't, so the drawer and its `sample_scenario_drawer`,
+`sample_scenario_item_*` and `sample_theme_item_*` ids exist nowhere on Expo. Its graph step,
+`scenarioDrawer`, goes straight back, so a `debug/scenarios` link lands on Settings. Draw the drawer in
+that step and pass `onOpenScenarioDrawer` as the other three apps do, then drop the three excused ids
+from `use-smile-id-sample-test-id-usage.test.ts`.
 
 ### Translations: a native speaker's review
 

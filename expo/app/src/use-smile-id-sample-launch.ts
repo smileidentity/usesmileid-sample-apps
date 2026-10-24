@@ -12,13 +12,20 @@ import { useSmileIDSampleShellExtension } from './extension';
 
 type State = {
   readonly args: UseSmileIDSampleLaunchArgs;
+  /// The link the app launched at, or null for a launch from the icon.
+  readonly url: string | null;
   /// False until the cold-start link is read; the root waits on it.
   readonly loaded: boolean;
   /// What the extension's `onLaunch` threw, which fails the launch.
   readonly failure: Error | null;
 };
 
-const useLaunchStore = create<State>(() => ({ args: smileIDSampleLaunchArgDefaults, loaded: false, failure: null }));
+const useLaunchStore = create<State>(() => ({
+  args: smileIDSampleLaunchArgDefaults,
+  url: null,
+  loaded: false,
+  failure: null,
+}));
 
 let reading: Promise<void> | null = null;
 
@@ -33,7 +40,7 @@ export const smileIDSampleLoadLaunchArgs = (): Promise<void> => {
         useLaunchStore.setState({ failure: error instanceof Error ? error : new Error(String(error)) });
         return;
       }
-      useLaunchStore.setState({ args: smileIDSampleLaunchArgsFromUrl(url), loaded: true });
+      useLaunchStore.setState({ args: smileIDSampleLaunchArgsFromUrl(url), url, loaded: true });
     })
     .catch(() => useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: true }));
   return reading;
@@ -47,6 +54,9 @@ export const useLaunchArgs = (): UseSmileIDSampleLaunchArgs => {
   return useLaunchStore((state) => state.args);
 };
 
+/// The cold-start link, which the shell opens once everything has loaded.
+export const useLaunchUrl = (): string | null => useLaunchStore((state) => state.url);
+
 /// Whether the cold-start link has been read.
 export const useLaunchArgsLoaded = (): boolean => useLaunchStore((state) => state.loaded);
 
@@ -56,5 +66,5 @@ export const useLaunchFailure = (): Error | null => useLaunchStore((state) => st
 /// Forgets the read, for tests.
 export const smileIDSampleResetLaunchArgs = (): void => {
   reading = null;
-  useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, loaded: false, failure: null });
+  useLaunchStore.setState({ args: smileIDSampleLaunchArgDefaults, url: null, loaded: false, failure: null });
 };

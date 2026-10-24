@@ -1,5 +1,5 @@
 import { BottomSheet } from '@expo/ui/community/bottom-sheet';
-import type { ReactNode } from 'react';
+import { createContext, use, type ReactNode } from 'react';
 import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
@@ -29,6 +29,12 @@ type Props = {
   children: ReactNode;
 };
 
+/// True under a navigation host that draws its own sheet layer, so a sheet gives it the panel's content only.
+const SheetHostContext = createContext(false);
+
+/// Marks its children as drawn inside a host's sheet layer, which brings its own scrim, panel and dismiss gestures.
+export const UseSmileIDSampleSheetHostProvider = SheetHostContext.Provider;
+
 /// The platform sheet, owned by the screen beneath as a boolean — never a route, which would leave nothing behind the scrim.
 export const UseSmileIDSampleBottomSheet = ({
   visible,
@@ -40,25 +46,14 @@ export const UseSmileIDSampleBottomSheet = ({
 }: Props) => {
   const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
+  const hosted = use(SheetHostContext);
 
   // Removed from the tree when hidden, which is the platform's own guidance for a modal sheet.
   if (!visible) return null;
 
-  return (
-    <BottomSheet
-      onDismiss={onDismiss}
-      onClose={onDismiss}
-      enablePanDownToClose
-      // Content height, not the platform's half-screen state: at half, the five-field new-profile
-      // sheet clipped its last field and put its CTA below the fold.
-      {...(fullHeight
-        ? { snapPoints: ['100%'], handleComponent: null }
-        : { enableDynamicSizing: true, ...(DRAWS_OWN_HANDLE ? { handleComponent: null } : {}) })}
-      backgroundStyle={{ backgroundColor: theme.colors.surface }}
-      style={{ borderTopLeftRadius: theme.shapes.sheet, borderTopRightRadius: theme.shapes.sheet }}
-    >
+  const content = (
       <View testID={testID} style={[styles.sheet, { paddingHorizontal: SHEET_PADDING_X }]}>
-        {!fullHeight && DRAWS_OWN_HANDLE ? <GrabHandle /> : null}
+        {!fullHeight && (DRAWS_OWN_HANDLE || hosted) ? <GrabHandle /> : null}
         {fullHeight && title !== undefined ? (
           <View style={[styles.header, { columnGap: SHEET_HEADER_GAP, paddingVertical: theme.dimens.spacing.xs }]}>
             <UseSmileIDSampleTopAppBarButton
@@ -93,6 +88,25 @@ export const UseSmileIDSampleBottomSheet = ({
           {children}
         </ScrollView>
       </View>
+  );
+
+  // The host's panel takes the content's height, so the sheet shrinks to fit rather than filling it.
+  if (hosted) return <View style={[styles.hosted, { backgroundColor: theme.colors.surface }]}>{content}</View>;
+
+  return (
+    <BottomSheet
+      onDismiss={onDismiss}
+      onClose={onDismiss}
+      enablePanDownToClose
+      // Content height, not the platform's half-screen state: at half, the five-field new-profile
+      // sheet clipped its last field and put its CTA below the fold.
+      {...(fullHeight
+        ? { snapPoints: ['100%'], handleComponent: null }
+        : { enableDynamicSizing: true, ...(DRAWS_OWN_HANDLE ? { handleComponent: null } : {}) })}
+      backgroundStyle={{ backgroundColor: theme.colors.surface }}
+      style={{ borderTopLeftRadius: theme.shapes.sheet, borderTopRightRadius: theme.shapes.sheet }}
+    >
+      {content}
     </BottomSheet>
   );
 };
@@ -117,5 +131,6 @@ const GrabHandle = () => {
 const styles = StyleSheet.create({
   handle: { alignItems: 'center' },
   sheet: { width: '100%' },
+  hosted: { flexShrink: 1, width: '100%' },
   header: { alignItems: 'center', flexDirection: 'row' },
 });
