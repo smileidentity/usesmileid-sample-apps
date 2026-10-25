@@ -2,16 +2,56 @@
 """Merges main into next after every push to main; docs/source-build.md has the rules."""
 from __future__ import annotations
 
+import json
+import os
 import subprocess
 import sys
 import time
 
-
 WORKFLOWS = ".github/workflows"
+BLOCKED = "Sync next is blocked"
 
 
 class SyncError(Exception):
     """A state the sync leaves to a person, saying what to do about it."""
+
+
+class Issues:
+    """The one open issue that says a sync is waiting on a person, through the gh CLI."""
+
+    def __init__(self, repo: str, run_url: str):
+        self.repo = repo
+        self.run_url = run_url
+
+    def _api(self, path: str, method: str = "GET", fields: dict[str, str] | None = None):
+        """One REST call on the repository, its JSON answer or None."""
+        args = ["gh", "api", "-X", method, f"repos/{self.repo}/{path}"]
+        for key, value in (fields or {}).items():
+            args += ["-f", f"{key}={value}"]
+        out = subprocess.run(args, check=True, capture_output=True, text=True).stdout
+        return json.loads(out) if out.strip() else None
+
+    def blocked(self) -> int | None:
+        """The open blocked-sync issue's number, or None."""
+        issues = self._api("issues?state=open&per_page=100") or []
+        return next((i["number"] for i in issues if i["title"] == BLOCKED and "pull_request" not in i), None)
+
+    def report(self, reason: str) -> None:
+        """Opens the blocked-sync issue, or adds this run's reason to the open one."""
+        text = f"{reason}\n\nRun: {self.run_url}"
+        number = self.blocked()
+        if number is None:
+            body = f"Sync next couldn't merge `main` into `next`: {text}\n\nThe next clean run closes this issue."
+            self._api("issues", "POST", {"title": BLOCKED, "body": body})
+        else:
+            self._api(f"issues/{number}/comments", "POST", {"body": text})
+
+    def resolve(self, done: str) -> None:
+        """Closes the blocked-sync issue, if one is open, saying what cleared it."""
+        number = self.blocked()
+        if number is not None:
+            self._api(f"issues/{number}/comments", "POST", {"body": f"Cleared: {done}. Run: {self.run_url}"})
+            self._api(f"issues/{number}", "PATCH", {"state": "closed"})
 
 
 def git(repo: str, *args: str, check: bool = True) -> subprocess.CompletedProcess:
@@ -69,16 +109,31 @@ def annotation(message: str) -> str:
     return "::error::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
 
 
-def main() -> int:
-    """Syncs next, as an Actions error when it can't."""
+def run(issues: Issues | None, attempt=sync) -> int:
+    """Syncs next and keeps the blocked-sync issue and the job summary in step with the result."""
     try:
-        print(sync())
-        return 0
+        done = attempt()
     except SyncError as error:
         print(annotation(str(error)))
+        if summary := os.environ.get("GITHUB_STEP_SUMMARY"):
+            with open(summary, "a") as handle:
+                handle.write(f"### {BLOCKED}\n\n{error}\n")
+        if issues:
+            issues.report(str(error))
+        return 1
     except subprocess.CalledProcessError as error:
         print(annotation(f"git {' '.join(error.cmd[3:])} failed: {(error.stderr or '').strip()}"))
-    return 1
+        return 1
+    print(done)
+    if issues:
+        issues.resolve(done)
+    return 0
+
+
+def main() -> int:
+    """Syncs the workflow's repository, reporting a blocked sync as an issue."""
+    repo = os.environ.get("REPO")
+    return run(Issues(repo, os.environ.get("RUN_URL", "")) if repo else None)
 
 
 if __name__ == "__main__":

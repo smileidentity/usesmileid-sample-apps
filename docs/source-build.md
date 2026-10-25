@@ -70,9 +70,10 @@ its head branch and `next` must never be deleted. Once it merges, Sync next merg
 Sync next pushes a clean merge straight to `next` with the run's own token, so no credential is stored
 for it. That token can't push a merge that changes `.github/workflows`, so a sync that carries a
 workflow change fails, as a conflict does, and leaves `next` as it was: merge `main` into `next` by
-hand, resolve any conflict there and push. Any other failure is tried again within the run, and a daily
-run catches up after anything longer. A repository ruleset on `next` refuses a force-push or a
-deletion from anyone.
+hand, resolve any conflict there and push. A blocked sync opens a "Sync next is blocked" issue, or
+adds to the open one, and whoever owns the current SDK release clears it; the next clean run closes
+the issue. Any other failure is tried again within the run, and a daily run catches up after anything
+longer. A repository ruleset on `next` refuses a force-push or a deletion from anyone.
 
 ## The reserved `e2eScenario` argument
 

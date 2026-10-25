@@ -22,14 +22,19 @@ jobs:
     timeout-minutes: 5
     permissions:
       contents: write
+      issues: write
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           filter: blob:none
+          sparse-checkout: scripts
 
       - name: Merge main into next
         env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
           GIT_AUTHOR_NAME: github-actions[bot]
           GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
           GIT_COMMITTER_NAME: github-actions[bot]

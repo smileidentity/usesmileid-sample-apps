@@ -196,5 +196,54 @@ class SyncNextTest(unittest.TestCase):
         self.assertEqual(self.tip("next"), before)
 
 
+class ScriptedIssues(sn.Issues):
+    """Answers from a list of open issues and records every change the sync asks for."""
+
+    def __init__(self, open_issues=()):
+        super().__init__("smileidentity/usesmileid-sample-apps", "https://example.com/run/1")
+        self.open_issues = list(open_issues)
+        self.changes: list[tuple] = []
+
+    def _api(self, path, method="GET", fields=None):
+        if method == "GET":
+            return self.open_issues
+        self.changes.append((method, path, (fields or {}).get("title") or (fields or {}).get("state")))
+        return None
+
+
+class BlockedSyncIssueTest(unittest.TestCase):
+    """The run keeps one issue open while a sync waits on a person, and closes it when one goes through."""
+
+    def blocked(self):
+        raise sn.SyncError("main changes .github/workflows/lane.yml, which this run's token can't push")
+
+    def test_a_blocked_sync_opens_the_issue_and_writes_the_summary(self):
+        issues = ScriptedIssues([{"number": 5, "title": "Something else"}, {"number": 6, "title": sn.BLOCKED, "pull_request": {}}])
+        with tempfile.NamedTemporaryFile("r", suffix=".md") as summary, \
+                mock.patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": summary.name}), mock.patch("builtins.print"):
+            self.assertEqual(sn.run(issues, self.blocked), 1)
+            self.assertIn("lane.yml", summary.read())
+        self.assertEqual(issues.changes, [("POST", "issues", sn.BLOCKED)])
+
+    def test_a_still_blocked_sync_comments_on_the_open_issue(self):
+        issues = ScriptedIssues([{"number": 7, "title": sn.BLOCKED}])
+        with mock.patch.dict(os.environ, {}, clear=False), mock.patch("builtins.print"):
+            os.environ.pop("GITHUB_STEP_SUMMARY", None)
+            self.assertEqual(sn.run(issues, self.blocked), 1)
+        self.assertEqual(issues.changes, [("POST", "issues/7/comments", None)])
+
+    def test_a_clean_sync_closes_the_open_issue(self):
+        issues = ScriptedIssues([{"number": 7, "title": sn.BLOCKED}])
+        with mock.patch("builtins.print"):
+            self.assertEqual(sn.run(issues, lambda: "merged main (abc) into next"), 0)
+        self.assertEqual(issues.changes, [("POST", "issues/7/comments", None), ("PATCH", "issues/7", "closed")])
+
+    def test_a_clean_sync_with_no_open_issue_changes_nothing(self):
+        issues = ScriptedIssues()
+        with mock.patch("builtins.print"):
+            self.assertEqual(sn.run(issues, lambda: "next already holds everything on main"), 0)
+        self.assertEqual(issues.changes, [])
+
+
 if __name__ == "__main__":
     unittest.main()
