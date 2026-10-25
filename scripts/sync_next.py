@@ -15,26 +15,29 @@ def git(repo: str, *args: str, check: bool = True) -> subprocess.CompletedProces
     return subprocess.run(["git", "-C", repo, *args], check=check, capture_output=True, text=True)
 
 
-def sync(repo: str = ".") -> str:
+def sync(repo: str = ".", attempts: int = 3) -> str:
     """Merges origin/main into next and pushes it when that is clean, and says what it did."""
-    git(repo, "fetch", "--quiet", "origin", "main", "next")
-    if git(repo, "merge-base", "--is-ancestor", "origin/main", "origin/next", check=False).returncode == 0:
-        return "next already holds everything on main"
+    for _ in range(attempts):
+        git(repo, "fetch", "--quiet", "origin", "main", "next")
+        if git(repo, "merge-base", "--is-ancestor", "origin/main", "origin/next", check=False).returncode == 0:
+            return "next already holds everything on main"
 
-    git(repo, "checkout", "--quiet", "-B", "next", "origin/next")
-    if git(repo, "merge", "--no-ff", "--no-edit", "origin/main", check=False).returncode != 0:
-        conflicts = git(repo, "diff", "--name-only", "--diff-filter=U").stdout.split()
-        git(repo, "merge", "--abort", check=False)
-        raise SyncError(
-            f"merging main into next conflicts in {', '.join(conflicts) or 'the merge'}; merge main into next by "
-            "hand, resolve them there and push next"
-        )
+        git(repo, "checkout", "--quiet", "-B", "next", "origin/next")
+        if git(repo, "merge", "--no-ff", "--no-edit", "origin/main", check=False).returncode != 0:
+            conflicts = git(repo, "diff", "--name-only", "--diff-filter=U").stdout.split()
+            git(repo, "merge", "--abort", check=False)
+            raise SyncError(
+                f"merging main into next conflicts in {', '.join(conflicts) or 'the merge'}; merge main into next "
+                "by hand, resolve them there and push next"
+            )
 
-    pushed = git(repo, "push", "origin", "HEAD:next", check=False)
-    if pushed.returncode != 0:
-        raise SyncError(f"next moved while this ran, so the merge wasn't pushed; run Sync next again: {pushed.stderr.strip()}")
-    main_sha = git(repo, "rev-parse", "--short=8", "origin/main").stdout.strip()
-    return f"merged main ({main_sha}) into next"
+        pushed = git(repo, "push", "origin", "HEAD:next", check=False)
+        if pushed.returncode == 0:
+            return f"merged main ({git(repo, 'rev-parse', '--short=8', 'origin/main').stdout.strip()}) into next"
+        git(repo, "fetch", "--quiet", "origin", "next")
+        if git(repo, "rev-parse", "origin/next").stdout == git(repo, "rev-parse", "HEAD^1").stdout:
+            raise SyncError(f"git refused the push to next: {pushed.stderr.strip()}")
+    raise SyncError(f"next moved during each of {attempts} attempts; run Sync next again once it settles")
 
 
 def main() -> int:

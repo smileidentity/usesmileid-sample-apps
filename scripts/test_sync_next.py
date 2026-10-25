@@ -88,20 +88,35 @@ class SyncNextTest(unittest.TestCase):
         self.assertEqual(self.tip("next"), before)
         self.assertEqual(self.run_git(self.checkout, "status", "--porcelain"), "")
 
-    def test_a_next_that_moves_during_the_run_is_not_overwritten(self):
+    def test_a_next_that_moves_during_the_run_is_merged_again_not_overwritten(self):
         self.commit("main-only.txt", "main\n")
         self.publish("main")
-        real_git = sn.git
+        real_git, moved = sn.git, []
 
         def moving_next(repo, *args, check=True):
-            if args[0] == "push":
+            if args[0] == "push" and not moved:
+                moved.append(True)
                 self.commit("late.txt", "late\n", branch="next")
                 self.publish("next")
             return real_git(repo, *args, check=check)
 
-        with mock.patch.object(sn, "git", moving_next), self.assertRaisesRegex(sn.SyncError, "next moved while this ran"):
+        with mock.patch.object(sn, "git", moving_next):
+            self.assertIn("merged main", sn.sync(self.checkout))
+        late = self.run_git(self.origin, "rev-list", "-1", "--grep=edit late.txt", "next")
+        self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", late, "next"), "")
+        self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", self.tip("main"), "next"), "")
+
+    def test_a_refused_push_says_what_git_said_and_leaves_next_alone(self):
+        self.commit("main-only.txt", "main\n")
+        self.publish("main")
+        before = self.tip("next")
+        hook = os.path.join(self.origin, "hooks", "pre-receive")
+        with open(hook, "w") as handle:
+            handle.write("#!/bin/sh\necho 'token expired' >&2\nexit 1\n")
+        os.chmod(hook, 0o755)
+        with self.assertRaisesRegex(sn.SyncError, "git refused the push to next: .*token expired"):
             sn.sync(self.checkout)
-        self.assertEqual(self.run_git(self.origin, "log", "-1", "--format=%s", "next"), "edit late.txt on next")
+        self.assertEqual(self.tip("next"), before)
 
 
 if __name__ == "__main__":
