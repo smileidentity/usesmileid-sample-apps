@@ -59,12 +59,13 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  useEffect(
-    () => () => {
+  useEffect(() => {
+    // Set again on every mount: StrictMode and Fast Refresh mount, clean up, then mount once more.
+    mounted.current = true;
+    return () => {
       mounted.current = false;
-    },
-    [],
-  );
+    };
+  }, []);
 
   useEffect(() => {
     // Only a processing row can change, so only that one is asked about, and again while the server still has it processing.
@@ -76,13 +77,18 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
       Date.now,
       smileIDSampleStatusApi,
       (millis) => new Promise((resolve) => setTimeout(() => resolve(mounted.current), millis)),
-    ).then((outcome) => {
-      polling.current = false;
-      // Silent unless something happened: "still processing" on every check is noise.
-      if (mounted.current && outcome !== null && outcome.kind !== 'stillProcessing') {
-        show({ message: smileIDSampleRefreshLabel(outcome, strings) });
-      }
-    });
+    )
+      .then((outcome) => {
+        // Silent unless something happened: "still processing" on every check is noise.
+        if (mounted.current && outcome !== null && outcome.kind !== 'stillProcessing') {
+          show({ message: smileIDSampleRefreshLabel(outcome, strings) });
+        }
+      })
+      // A check that fails outright says nothing, as the silent one before it did; a pull still answers.
+      .catch(() => undefined)
+      .finally(() => {
+        polling.current = false;
+      });
     // The session is a dependency so a session linked after a check ended without one starts another.
   }, [job, liveSessionId, refreshUntilSettled, show, strings]);
 
