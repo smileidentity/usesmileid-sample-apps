@@ -18,7 +18,7 @@ IDENTITY = {"GIT_AUTHOR_NAME": "test", "GIT_AUTHOR_EMAIL": "test@example.com",
 
 
 class SyncNextTest(unittest.TestCase):
-    """A bare origin with main and next, a seed clone that edits them, and the clone the workflow checks out."""
+    """A bare origin with main and next, a seed clone that edits them, and a partial, sparse clone as the workflow's."""
 
     def setUp(self):
         self.root = tempfile.TemporaryDirectory()
@@ -38,8 +38,11 @@ class SyncNextTest(unittest.TestCase):
         self.run_git(self.seed, "add", "README.md")
         self.run_git(self.seed, "commit", "--quiet", "-m", "start")
         self.run_git(self.seed, "push", "--quiet", "origin", "main", "main:next")
+        self.run_git(self.origin, "config", "uploadpack.allowFilter", "true")
+        self.run_git(self.origin, "config", "uploadpack.allowAnySHA1InWant", "true")
         self.checkout = os.path.join(self.root.name, "checkout")
-        self.run_git(self.root.name, "clone", "--quiet", self.origin, self.checkout)
+        self.run_git(self.root.name, "clone", "--quiet", "--filter=blob:none", "--sparse", f"file://{self.origin}", self.checkout)
+        self.run_git(self.checkout, "sparse-checkout", "set", "scripts")
 
     def run_git(self, repo, *args):
         return subprocess.run(["git", "-C", repo, *args], check=True, capture_output=True, text=True).stdout.strip()
@@ -138,6 +141,20 @@ class SyncNextTest(unittest.TestCase):
             self.assertIn("merged main", sn.sync(self.checkout, wait=0))
         self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", self.tip("main"), "next"), "")
 
+    def test_a_conflict_outside_the_sparse_checkout_is_named(self):
+        os.makedirs(os.path.join(self.seed, "android"), exist_ok=True)
+        self.commit("android/app.txt", "start\n")
+        self.publish("main")
+        self.run_git(self.seed, "push", "--quiet", "origin", "main:next")
+        self.commit("android/app.txt", "next's words\n", branch="next")
+        self.publish("next")
+        before = self.tip("next")
+        self.commit("android/app.txt", "main's words\n")
+        self.publish("main")
+        with self.assertRaisesRegex(sn.SyncError, "conflicts in android/app.txt"):
+            sn.sync(self.checkout, wait=0)
+        self.assertEqual(self.tip("next"), before)
+
     def test_a_merge_that_changes_workflows_is_left_to_a_person(self):
         os.makedirs(os.path.join(self.seed, ".github", "workflows"))
         self.commit(".github/workflows/lane.yml", "name: lane\n")
@@ -196,6 +213,11 @@ class SyncNextTest(unittest.TestCase):
         self.assertEqual(self.tip("next"), before)
 
 
+def issue(number, title, author=sn.BOT, **extra):
+    """An open issue as the REST API lists it."""
+    return {"number": number, "title": title, "user": {"login": author}, **extra}
+
+
 class ScriptedIssues(sn.Issues):
     """Answers from a list of open issues and records every change the sync asks for."""
 
@@ -203,10 +225,14 @@ class ScriptedIssues(sn.Issues):
         super().__init__("smileidentity/usesmileid-sample-apps", "https://example.com/run/1")
         self.open_issues = list(open_issues)
         self.changes: list[tuple] = []
+        self.refuse = False
 
     def _api(self, path, method="GET", fields=None):
         if method == "GET":
-            return self.open_issues
+            page = int(path.rsplit("page=", 1)[1])
+            return self.open_issues[(page - 1) * 2:page * 2]
+        if self.refuse:
+            raise subprocess.CalledProcessError(1, ["gh", "api"], stderr="HTTP 502")
         self.changes.append((method, path, (fields or {}).get("title") or (fields or {}).get("state")))
         return None
 
@@ -218,7 +244,8 @@ class BlockedSyncIssueTest(unittest.TestCase):
         raise sn.SyncError("main changes .github/workflows/lane.yml, which this run's token can't push")
 
     def test_a_blocked_sync_opens_the_issue_and_writes_the_summary(self):
-        issues = ScriptedIssues([{"number": 5, "title": "Something else"}, {"number": 6, "title": sn.BLOCKED, "pull_request": {}}])
+        issues = ScriptedIssues([issue(5, "Something else"), issue(6, sn.BLOCKED, pull_request={}),
+                                 issue(8, sn.BLOCKED, author="someone")])
         with tempfile.NamedTemporaryFile("r", suffix=".md") as summary, \
                 mock.patch.dict(os.environ, {"GITHUB_STEP_SUMMARY": summary.name}), mock.patch("builtins.print"):
             self.assertEqual(sn.run(issues, self.blocked), 1)
@@ -226,17 +253,26 @@ class BlockedSyncIssueTest(unittest.TestCase):
         self.assertEqual(issues.changes, [("POST", "issues", sn.BLOCKED)])
 
     def test_a_still_blocked_sync_comments_on_the_open_issue(self):
-        issues = ScriptedIssues([{"number": 7, "title": sn.BLOCKED}])
+        issues = ScriptedIssues([issue(1, "One"), issue(2, "Two"), issue(7, sn.BLOCKED)])
         with mock.patch.dict(os.environ, {}, clear=False), mock.patch("builtins.print"):
             os.environ.pop("GITHUB_STEP_SUMMARY", None)
             self.assertEqual(sn.run(issues, self.blocked), 1)
         self.assertEqual(issues.changes, [("POST", "issues/7/comments", None)])
 
     def test_a_clean_sync_closes_the_open_issue(self):
-        issues = ScriptedIssues([{"number": 7, "title": sn.BLOCKED}])
+        issues = ScriptedIssues([issue(7, sn.BLOCKED)])
         with mock.patch("builtins.print"):
             self.assertEqual(sn.run(issues, lambda: "merged main (abc) into next"), 0)
         self.assertEqual(issues.changes, [("POST", "issues/7/comments", None), ("PATCH", "issues/7", "closed")])
+
+    def test_a_refused_issue_update_is_a_warning_and_the_sync_result_stands(self):
+        issues = ScriptedIssues([issue(7, sn.BLOCKED)])
+        issues.refuse = True
+        with mock.patch("builtins.print") as printed:
+            self.assertEqual(sn.run(issues, lambda: "merged main (abc) into next"), 0)
+            self.assertEqual(sn.run(issues, self.blocked), 1)
+        warnings = [call.args[0] for call in printed.call_args_list if call.args[0].startswith("::warning::")]
+        self.assertEqual(len(warnings), 2)
 
     def test_a_clean_sync_with_no_open_issue_changes_nothing(self):
         issues = ScriptedIssues()

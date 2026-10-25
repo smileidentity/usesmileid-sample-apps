@@ -10,6 +10,7 @@ import time
 
 WORKFLOWS = ".github/workflows"
 BLOCKED = "Sync next is blocked"
+BOT = "github-actions[bot]"
 
 
 class SyncError(Exception):
@@ -32,9 +33,14 @@ class Issues:
         return json.loads(out) if out.strip() else None
 
     def blocked(self) -> int | None:
-        """The open blocked-sync issue's number, or None."""
-        issues = self._api("issues?state=open&per_page=100") or []
-        return next((i["number"] for i in issues if i["title"] == BLOCKED and "pull_request" not in i), None)
+        """The open blocked-sync issue this workflow opened, all pages read, or None."""
+        page = 1
+        while issues := self._api(f"issues?state=open&per_page=100&page={page}"):
+            for issue in issues:
+                if issue["title"] == BLOCKED and issue["user"]["login"] == BOT and "pull_request" not in issue:
+                    return issue["number"]
+            page += 1
+        return None
 
     def report(self, reason: str) -> None:
         """Opens the blocked-sync issue, or adds this run's reason to the open one."""
@@ -109,6 +115,15 @@ def annotation(message: str) -> str:
     return "::error::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
 
 
+def tell(issues: Issues | None, action: str, text: str) -> None:
+    """Updates the blocked-sync issue, as a warning when GitHub refuses, so the sync's result stands."""
+    if issues:
+        try:
+            getattr(issues, action)(text)
+        except subprocess.CalledProcessError as error:
+            print(f"::warning::couldn't {action} the {BLOCKED!r} issue: {(error.stderr or '').strip()}")
+
+
 def run(issues: Issues | None, attempt=sync) -> int:
     """Syncs next and keeps the blocked-sync issue and the job summary in step with the result."""
     try:
@@ -118,15 +133,13 @@ def run(issues: Issues | None, attempt=sync) -> int:
         if summary := os.environ.get("GITHUB_STEP_SUMMARY"):
             with open(summary, "a") as handle:
                 handle.write(f"### {BLOCKED}\n\n{error}\n")
-        if issues:
-            issues.report(str(error))
+        tell(issues, "report", str(error))
         return 1
     except subprocess.CalledProcessError as error:
         print(annotation(f"git {' '.join(error.cmd[3:])} failed: {(error.stderr or '').strip()}"))
         return 1
     print(done)
-    if issues:
-        issues.resolve(done)
+    tell(issues, "resolve", done)
     return 0
 
 
