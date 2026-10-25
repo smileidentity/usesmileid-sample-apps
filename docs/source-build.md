@@ -44,10 +44,11 @@ keep the registry identity, so on one device it is one or the other.
 
 ## The `next` branch
 
-`main` builds against released SDK versions only. A change that needs SDK API that is not released
-yet lands on `next`, the one long-lived branch the SDK repositories pin, and is reviewed with the
-linked SDK pull request's source-build lane green. This repo's own lanes build against the released
-SDK, so they run red on `next` while it carries such a change; the SDK repositories' source-build
+`main` builds against the exact SDK builds it pins: snapshots for test builds until the next SDK
+release, released versions after it (AGENTS.md, "Unreleased SDK API"). A change that needs SDK API no
+published build has lands on `next`, the one long-lived branch the SDK repositories pin, and is
+reviewed with the linked SDK pull request's source-build lane green. This repo's own lanes build
+against the pinned SDK, so they run red on `next` while it carries such a change; the SDK repositories' source-build
 lanes are its gate. Everything else lands on `main`, which is merged
 into `next` by whoever next works on `next`, and at least weekly by whoever owns the current SDK
 release. `next` is only ever merged into, never rebased or force-pushed: released SDK versions pin
