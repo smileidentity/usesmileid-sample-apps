@@ -157,7 +157,8 @@ expo/verify.sh        # eslint + tsc --noEmit + test + release build
 
 When a script cannot run on your machine, state plainly in the PR what you could and could not
 run. No package is published from here: the apps ship to the stores through the `publish-*`
-workflows, which `release-check.yml` gates.
+workflows, run by hand. `release-check.yml` builds the store bundles and checks the store art weekly
+and on packaging changes.
 
 **All four platforms run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`,
 `flutter.yml`, `expo.yml`). Each workflow runs that platform's `verify.sh` itself rather than
@@ -185,9 +186,9 @@ deployment target stay reviewable and no `.pbxproj` is ever hand-edited; `ios/ve
 before it builds, and the generated project is not committed.
 
 Sessions on one Mac share its simulators, and several can be named `iPhone 17 Pro`, so a `name=`
-destination can land on one another session has booted. Create or pick your own iPhone 17 Pro, the
-model the goldens use, pass it as `DESTINATION="platform=iOS Simulator,id=<udid>"`, and shut it down
-when you finish. With an `id=` destination the `ui` phase boots that simulator and resets the apps on
+destination can land on one another session has booted. Create or pick your own iPhone 17 Pro on
+iOS 27.0, the simulator the goldens use (`ios.yml` pins that runtime), pass it as
+`DESTINATION="platform=iOS Simulator,id=<udid>"`, and shut it down when you finish. With an `id=` destination the `ui` phase boots that simulator and resets the apps on
 it alone.
 
 Two things the token step needs. `--check` compares the vendored output against the design system,

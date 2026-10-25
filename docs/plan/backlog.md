@@ -118,8 +118,8 @@ the first launch after an install, on iOS, with a test for it.
 
 ### Back onto released SDKs with the next SDK release
 
-`main` builds the four apps against SDK snapshots for test builds (#163), which AGENTS.md allows only
-for released SDKs. The Android pins can stop resolving on their own: Central prunes snapshot builds
+`main` builds the four apps against SDK snapshots for test builds (#163), until the next SDK release
+(AGENTS.md, "Unreleased SDK API"). The Android pins can stop resolving on their own: Central prunes snapshot builds
 after its retention window, and every `main` build then fails until the pins move. Each piece goes
 in the release bump:
 
