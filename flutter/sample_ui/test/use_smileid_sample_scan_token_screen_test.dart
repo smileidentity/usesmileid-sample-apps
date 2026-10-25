@@ -65,6 +65,43 @@ void main() {
     );
   }
 
+  testWidgets('a tap on the camera area still reaches the viewfinder', (
+    WidgetTester tester,
+  ) async {
+    int taps = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UseSmileIDSampleTheme.light(),
+        home: Scaffold(
+          body: UseSmileIDSampleScanTokenScreen(
+            onBack: () {},
+            onLink: (_) {},
+            onSimulate: (_, _, _) {},
+            onPaste: () async => null,
+            viewfinder:
+                (
+                  BuildContext context, {
+                  required bool enabled,
+                  required ValueChanged<String> onCandidate,
+                }) => GestureDetector(
+                  behavior: HitTestBehavior.opaque,
+                  onTap: () => taps++,
+                  child: const ColoredBox(color: Colors.black),
+                ),
+          ),
+        ),
+      ),
+    );
+    final Rect portal = tester.getRect(
+      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.tokenPortalLink),
+    );
+    // Beside the copy rather than on it, where nothing of the overlay's own wants the tap.
+    await tester.tapAt(Offset(portal.left / 2, portal.top));
+    await tester.pump();
+
+    expect(taps, 1);
+  });
+
   for (final bool accepts in <bool>[false, true]) {
     testWidgets(
       accepts

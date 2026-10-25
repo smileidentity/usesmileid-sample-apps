@@ -323,6 +323,8 @@ class _UseSmileIDSampleScanTokenScreenState
         widget.viewfinder!(context, enabled: searching, onCandidate: _scanned),
         // Scrolls like the placeholder: with the keyboard up the copy no longer fits above the sheet.
         SingleChildScrollView(
+          // Translucent, so a tap or a pinch on the preview still reaches the camera beneath.
+          hitTestBehavior: HitTestBehavior.translucent,
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Padding(
