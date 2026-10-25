@@ -159,6 +159,18 @@ SDK's mount. Add the same three checks to the iOS device lane.
 ends the Expo flows (see `expo/maestro/README.md`). Once that is solved, drive it through consent to the
 capture screen, as the Android and Flutter flows do.
 
+### iOS: build against the published SDK on the oldest Xcode partners use
+
+Every iOS lane builds with the one Xcode `.github/actions/select-xcode` pins, the one the team builds
+with. The SDK's xcframeworks carry a `.swiftinterface` stamped with the compiler that built them, and an
+older Xcode compiling an interface a newer compiler wrote fails on any syntax it lacks. That gap is
+already open: `ios-spm` states Swift tools 6.0 (Xcode 16), but the interfaces this repo pins were
+written by Swift 6.3.1, UseSmileID's enable `MemberImportVisibility` (Swift 6.1) and
+`InferIsolatedConformances` (Swift 6.2), and Njia's and Kamera's carry
+`-no-verify-emitted-module-interface`, so the build that wrote them never checked that they compile. A
+build on the pinned Xcode cannot see any of that, so add a job that resolves the published SDK into a
+minimal consumer and builds it with the oldest Xcode the SDK's installation guide names.
+
 ### A registry-consumption lane that launches and drives the published SDK
 
 These apps exist to consume the SDK exactly as a partner does, but no lane here resolves the published

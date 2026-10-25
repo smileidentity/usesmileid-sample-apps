@@ -27,20 +27,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Select Xcode
-        run: |
-          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
-            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
-          done
-          BUILD="$(xcodebuild -version | tail -1)"
-          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
-            echo "::warning title=Xcode build drifted::The uploaded binary links against this \
-            runner's SDK, and it is $BUILD rather than the pinned $XCODE_BUILD."
-          fi
-          xcodebuild -version
-        env:
-          XCODE_VERSION: "27.1"
-          XCODE_BUILD: 27A9275
+      # The uploaded binary links against this Xcode's SDK.
+      - uses: ./.github/actions/select-xcode
 
       - name: Install XcodeGen
         run: brew install xcodegen

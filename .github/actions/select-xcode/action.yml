@@ -1,0 +1,54 @@
+name: Select Xcode
+description: >-
+  Switches the runner to the Xcode every Smile ID repo builds with, locally and in CI, and makes the
+  iPhone 17 Pro simulator on iOS 27.0 that the local lanes test on. Fails when the image has no
+  Xcode 27.1. The pin lives here and nowhere else; every repo carries this same file, so a bump is
+  the same one-file change in each.
+runs:
+  using: composite
+  steps:
+    - name: Select Xcode
+      shell: bash
+      env:
+        # `xcodebuild -version` on the machines the team builds on: Xcode 27.1, Build version 27A9275.
+        XCODE_VERSION: "27.1"
+        XCODE_BUILD: 27A9275
+        SIMULATOR_RUNTIME: com.apple.CoreSimulator.SimRuntime.iOS-27-0
+      run: |
+        set -euo pipefail
+        # Images name the bundle Xcode_27.1.app, Xcode_27.1.0.app or plain Xcode.app from one
+        # release to the next, so each candidate is asked for its own version. Every pipe below reads
+        # its whole input (sed -n, grep >/dev/null, never head or grep -q): under pipefail, a reader
+        # that stops early kills the writer with SIGPIPE and fails the step.
+        XCODE_APP=""
+        for candidate in "/Applications/Xcode_${XCODE_VERSION}.app" "/Applications/Xcode_${XCODE_VERSION}.0.app" /Applications/Xcode.app; do
+          [ -d "$candidate" ] || continue
+          if [ "$(DEVELOPER_DIR="$candidate/Contents/Developer" xcodebuild -version | sed -n 1p)" = "Xcode ${XCODE_VERSION}" ]; then
+            XCODE_APP="$candidate"
+            break
+          fi
+        done
+        if [ -z "$XCODE_APP" ]; then
+          echo "::error title=No Xcode ${XCODE_VERSION}::This image has no Xcode ${XCODE_VERSION}. Run the job on xcode-27. Available:"
+          for app in /Applications/Xcode*.app; do
+            echo "$app: $(DEVELOPER_DIR="$app/Contents/Developer" xcodebuild -version 2>/dev/null | tr '\n' ' ')"
+          done
+          exit 1
+        fi
+        sudo xcode-select --switch "$XCODE_APP"
+        # A different build of the same version warns rather than fails, so an image moving on
+        # reports drift instead of failing every job.
+        BUILD="$(xcodebuild -version | tail -1)"
+        if [ "$BUILD" != "Build version ${XCODE_BUILD}" ]; then
+          echo "::warning title=Xcode build drifted::Pinned ${XCODE_BUILD}; this runner has ${BUILD#Build version }."
+        fi
+        xcodebuild -version
+        # The local lanes test on an iPhone 17 Pro with iOS 27.0, and the image doesn't always
+        # create that pair (it also ships newer runtimes), so make it when it's missing.
+        if xcrun simctl list runtimes | grep "$SIMULATOR_RUNTIME" >/dev/null; then
+          xcrun simctl list devices "iOS 27.0" | grep "iPhone 17 Pro (" >/dev/null ||
+            xcrun simctl create "iPhone 17 Pro" com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro "$SIMULATOR_RUNTIME" >/dev/null
+        else
+          echo "::warning title=No iOS 27.0 runtime::This image has no iOS 27.0 simulator runtime, the one the local lanes test on."
+        fi
+        xcrun simctl list runtimes | grep iOS
