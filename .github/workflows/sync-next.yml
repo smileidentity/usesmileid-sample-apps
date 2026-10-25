@@ -24,8 +24,8 @@ jobs:
         with:
           fetch-depth: 0
           filter: blob:none
-          # GITHUB_TOKEN can't push a merge that carries workflow changes.
-          token: ${{ secrets.SYNC_NEXT_TOKEN }}
+          # A deploy key, because GITHUB_TOKEN can't push a merge that carries workflow changes.
+          ssh-key: ${{ secrets.SYNC_NEXT_DEPLOY_KEY }}
 
       - name: Merge main into next
         env:

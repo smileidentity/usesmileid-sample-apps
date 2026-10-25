@@ -302,8 +302,8 @@ Because every commit is public, each PR holds to these:
 - [ ] no secret, credential, fixture, biometric media or internal playbook, in any commit — rewriting
       history after a push does not unpublish what was already fetched
 - [ ] every credential in CI is sandbox-scoped or held in the `release` environment, except Sync
-      next's contents-and-workflows token in `sync-next`, which only `main` can use; and no workflow
-      exposes a secret to a fork PR
+      next's deploy key in `sync-next`, which only `main` can use; and no workflow exposes a secret
+      to a fork PR
 - [ ] bundled third-party assets are listed in `NOTICE` and `spec/bundled-assets.json` with their licence
 - [ ] `gitleaks git --log-opts="origin/main..HEAD" --redact` is clean before you push; a finding is
       fixed at the source, never allow-listed unreviewed
