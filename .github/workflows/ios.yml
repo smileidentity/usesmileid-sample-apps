@@ -8,6 +8,7 @@ on:
       - 'spec/**'
       - 'scripts/**'
       - '.github/workflows/ios.yml'
+      - '.github/actions/select-xcode/**'
   push:
     branches: [main]
 
@@ -44,10 +45,7 @@ jobs:
             class: UseSmileIDSampleSettingsUITests
           - phase: ui
             class: UseSmileIDSampleDocumentOptionsUITests
-    # Xcode 27.1 with the iPhone 17 Pro simulator, matching ios/verify.sh's default and the SDK repo's
-    # own snapshot gate. Goldens are pixel comparisons, so recording and verifying have to happen on
-    # one runtime — a runner or simulator that drifts from the local default reds the lane for
-    # reasons that have nothing to do with the UI.
+    # The Xcode and iPhone 17 Pro select-xcode pins: goldens are pixel comparisons, so recording and verifying share one runtime.
     runs-on: xcode-27
     # The UI tests drive a cross-process system alert, which can hang where the earlier programmatic
     # steps could not; without this a wedged run holds the branch's concurrency group for hours.
@@ -56,6 +54,9 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
+
+      # The pinned build is the one the goldens were recorded on, so a drift warning here explains a snapshot failure first.
+      - uses: ./.github/actions/select-xcode
 
       # --check needs the design system, which is private; a fork PR gets no secret, so this skips and says so.
       - name: Check out the design system
@@ -80,34 +81,6 @@ jobs:
 
       - name: Install the build tools
         run: brew install xcodegen swiftformat
-
-      # The BUILD is what is pinned, not a path: a runner that moves Xcode moves the SDK the app
-      # compiles against and the simulator runtime every golden baseline was recorded on, and the
-      # image names its Xcode directories differently from release to release.
-      # Warns rather than fails, so an image moving on reports drift rather than a code failure.
-      # The runtime is echoed so a golden diff can be told apart from a toolchain move at a glance.
-      - name: Select Xcode
-        run: |
-          for candidate in /Applications/Xcode_${XCODE_VERSION}.app /Applications/Xcode.app; do
-            if [ -d "$candidate" ]; then sudo xcode-select -s "$candidate"; break; fi
-          done
-          BUILD="$(xcodebuild -version | tail -1)"
-          if [ "$BUILD" != "Build version $XCODE_BUILD" ]; then
-            echo "::warning title=Xcode build drifted::Goldens were recorded on build $XCODE_BUILD, \
-            and this runner has $BUILD. Check that before trusting a snapshot failure, and update \
-            the pin once the new build is the one baselines are recorded on."
-          fi
-          xcodebuild -version
-          xcrun simctl list runtimes | grep iOS
-        env:
-          XCODE_VERSION: "27.1"
-          XCODE_BUILD: 27A9275
-
-      # The image creates no iPhone 17 Pro on iOS 27.0, the runtime Xcode 27.1 ships, and the baselines need that one.
-      - name: Create the iPhone 17 Pro simulator
-        run: |
-          xcrun simctl list devices "iOS 27.0" | grep -q "iPhone 17 Pro (" || xcrun simctl create "iPhone 17 Pro" \
-            com.apple.CoreSimulator.SimDeviceType.iPhone-17-Pro com.apple.CoreSimulator.SimRuntime.iOS-27-0
 
       - name: Verify
         env:
