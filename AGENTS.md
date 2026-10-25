@@ -108,9 +108,10 @@ both places is what keeps them from drifting apart.
 
 **Unreleased SDK API.** `main` pins exact SDK builds from the registries. Until the next SDK release
 those are snapshots for test builds (#163): Android a timestamped build (`<version>-<date>.<time>-<n>`),
-because a bare `-SNAPSHOT` can resolve a build made against another njia; iOS an `ios-spm`
-`<version>-SNAPSHOT.<timestamp>.<run>`; Flutter and Expo `<version>-SNAPSHOT.<run>`. Each app pins njia
-to the exact build its SDK snapshot was made against, never a newer one. `main` moves back to released
+because a bare `-SNAPSHOT` can resolve a build made against another build of njia, the SDKs'
+navigation engine (`com.usesmileid:njia`, `njia-spm`, `usesmileid_njia`, `@smileid/njia`); iOS an
+`ios-spm` `<version>-SNAPSHOT.<timestamp>.<run>`; Flutter and Expo `<version>-SNAPSHOT.<run>`. Each app
+pins njia to the exact build its SDK snapshot was made against, never a newer one. `main` moves back to released
 SDKs at that release (`docs/plan/backlog.md`, "Back onto released SDKs"). A change that needs SDK API
 no published build has lands on `next`, the one long-lived branch the SDK repos pin; everything else
 lands on `main` and is merged into `next`, which is never rebased or force-pushed. At an SDK release
