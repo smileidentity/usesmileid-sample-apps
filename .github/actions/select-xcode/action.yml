@@ -21,7 +21,7 @@ runs:
         XCODE_APP=""
         for candidate in "/Applications/Xcode_${XCODE_VERSION}.app" "/Applications/Xcode_${XCODE_VERSION}.0.app" /Applications/Xcode.app; do
           [ -d "$candidate" ] || continue
-          if [ "$(DEVELOPER_DIR="$candidate/Contents/Developer" xcodebuild -version | head -1)" = "Xcode ${XCODE_VERSION}" ]; then
+          if [ "$(DEVELOPER_DIR="$candidate/Contents/Developer" xcodebuild -version | sed -n 1p)" = "Xcode ${XCODE_VERSION}" ]; then
             XCODE_APP="$candidate"
             break
           fi
