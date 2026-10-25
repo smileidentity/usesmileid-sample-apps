@@ -97,6 +97,10 @@ class VerificationsGoldenTest : GoldenTest() {
     @Test
     fun verification_details_unknown_job() = goldens("screen_verification_details_unknown") { UnknownDetails() }
 
+    /** A cold link lands before the store reports: the page waits rather than saying the row is missing. */
+    @Test
+    fun verification_details_pending() = goldens("screen_verification_details_pending") { UnknownDetails(pending = true) }
+
     @Test
     fun verification_details_without_probes() =
         goldens("screen_verification_details_no_probes") { Details(showProbes = false) }
@@ -162,12 +166,13 @@ class VerificationsGoldenTest : GoldenTest() {
     )
 
     @Composable
-    private fun UnknownDetails() = VerificationDetailsScreen(
+    private fun UnknownDetails(pending: Boolean = false) = VerificationDetailsScreen(
         jobId = "job_missing",
         job = null,
         result = ResultFixtures.Failed,
         onBack = {},
         onDelete = {},
         onCopy = { _, _ -> },
+        pending = pending,
     )
 }

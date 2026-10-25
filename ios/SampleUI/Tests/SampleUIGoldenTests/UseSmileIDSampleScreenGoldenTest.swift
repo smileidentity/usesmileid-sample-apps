@@ -109,6 +109,20 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  /// A cold link lands before the store reports: the page waits rather than saying the row is missing.
+  func testVerificationDetailsPending() {
+    goldens("verification_details_pending") {
+      VerificationDetailsScreen(
+        state: .init(jobId: "job_pending", result: UseSmileIDSampleResultFixtures.succeeded, pending: true),
+        resultExpanded: .constant(true),
+        onBack: {},
+        onDelete: {},
+        onCopy: { _, _ in }
+      )
+      .frame(height: 560)
+    }
+  }
+
   /// A taller viewport: at the largest content size the rows fill 1800pt and the card sits below them.
   func testVerificationDetailsSurvivesMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
