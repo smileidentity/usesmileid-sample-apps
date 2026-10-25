@@ -70,8 +70,9 @@ its head branch and `next` must never be deleted. Once it merges, Sync next merg
 Sync next pushes a clean merge straight to `next`. A conflict fails its run and leaves `next` as it
 was: merge `main` into `next` by hand, resolve it there and push. It runs in the `sync-next`
 environment, which only `main` can use and which has no reviewers, so a sync never waits on one. Its
-`SYNC_NEXT_TOKEN` holds the same token as `PROMOTE_NEXT_TOKEN`, because `GITHUB_TOKEN` can't push a
-merge that carries workflow changes.
+`SYNC_NEXT_TOKEN` is its own token for this repository alone, with contents and workflows write and
+nothing else, since it opens no pull requests. `GITHUB_TOKEN` won't do: it can't push a merge that
+carries workflow changes.
 
 ## The reserved `e2eScenario` argument
 
