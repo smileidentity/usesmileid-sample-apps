@@ -61,7 +61,7 @@ class SyncNextTest(unittest.TestCase):
         self.commit("next-only.txt", "next\n", branch="next")
         self.publish("next")
         before = self.tip("next")
-        self.assertEqual(sn.sync(self.checkout), "next already holds everything on main")
+        self.assertEqual(sn.sync(self.checkout, wait=0), "next already holds everything on main")
         self.assertEqual(self.tip("next"), before)
 
     def test_merges_main_into_next_and_keeps_what_next_holds(self):
@@ -70,7 +70,7 @@ class SyncNextTest(unittest.TestCase):
         next_before = self.tip("next")
         self.commit("main-only.txt", "main\n")
         self.publish("main")
-        self.assertIn("merged main", sn.sync(self.checkout))
+        self.assertIn("merged main", sn.sync(self.checkout, wait=0))
         merged = self.tip("next")
         self.assertEqual(self.run_git(self.origin, "rev-list", "--parents", "-n", "1", merged).split()[1:],
                          [next_before, self.tip("main")])
@@ -84,7 +84,7 @@ class SyncNextTest(unittest.TestCase):
         self.commit("README.md", "main's words\n")
         self.publish("main")
         with self.assertRaisesRegex(sn.SyncError, "conflicts in README.md"):
-            sn.sync(self.checkout)
+            sn.sync(self.checkout, wait=0)
         self.assertEqual(self.tip("next"), before)
         self.assertEqual(self.run_git(self.checkout, "status", "--porcelain"), "")
 
@@ -101,7 +101,7 @@ class SyncNextTest(unittest.TestCase):
             return real_git(repo, *args, check=check)
 
         with mock.patch.object(sn, "git", moving_next):
-            self.assertIn("merged main", sn.sync(self.checkout))
+            self.assertIn("merged main", sn.sync(self.checkout, wait=0))
         late = self.run_git(self.origin, "rev-list", "-1", "--grep=edit late.txt", "next")
         self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", late, "next"), "")
         self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", self.tip("main"), "next"), "")
@@ -119,9 +119,24 @@ class SyncNextTest(unittest.TestCase):
             return real_git(repo, *args, check=check)
 
         with mock.patch.object(sn, "git", always_moving_next), \
-                self.assertRaisesRegex(sn.SyncError, "next moved during each of 2 attempts"):
-            sn.sync(self.checkout, attempts=2)
+                self.assertRaisesRegex(sn.SyncError, r"next moved while this ran \(gave up after 2 attempts"):
+            sn.sync(self.checkout, attempts=2, wait=0)
         self.assertEqual(self.run_git(self.origin, "log", "-1", "--format=%s", "next"), f"edit {late[-1]} on next")
+
+    def test_a_fetch_that_fails_once_is_tried_again(self):
+        self.commit("main-only.txt", "main\n")
+        self.publish("main")
+        real_git, failed = sn.git, []
+
+        def flaky_fetch(repo, *args, check=True):
+            if args[0] == "fetch" and not failed:
+                failed.append(True)
+                return subprocess.CompletedProcess(args, 128, "", "fatal: the remote end hung up unexpectedly\n")
+            return real_git(repo, *args, check=check)
+
+        with mock.patch.object(sn, "git", flaky_fetch):
+            self.assertIn("merged main", sn.sync(self.checkout, wait=0))
+        self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", self.tip("main"), "next"), "")
 
     def test_a_merge_that_fails_without_conflicts_says_what_git_said(self):
         self.commit("main-only.txt", "main\n")
@@ -135,7 +150,7 @@ class SyncNextTest(unittest.TestCase):
 
         with mock.patch.object(sn, "git", failing_merge), \
                 self.assertRaisesRegex(sn.SyncError, "^merging main into next failed: fatal: unable to write"):
-            sn.sync(self.checkout)
+            sn.sync(self.checkout, wait=0)
 
     def test_an_annotation_keeps_every_line(self):
         self.assertEqual(sn.annotation("To github\n ! [remote rejected] 100%"),
@@ -149,8 +164,8 @@ class SyncNextTest(unittest.TestCase):
         with open(hook, "w") as handle:
             handle.write("#!/bin/sh\necho 'token expired' >&2\nexit 1\n")
         os.chmod(hook, 0o755)
-        with self.assertRaisesRegex(sn.SyncError, "pushing to next failed, and next hasn't moved: .*token expired"):
-            sn.sync(self.checkout)
+        with self.assertRaisesRegex(sn.SyncError, "pushing to next failed: .*token expired"):
+            sn.sync(self.checkout, wait=0)
         self.assertEqual(self.tip("next"), before)
 
 

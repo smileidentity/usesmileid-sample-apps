@@ -68,7 +68,8 @@ its head branch and `next` must never be deleted. Once it merges, Sync next merg
   pull requests and workflows write, the last because a promotion can carry workflow changes.
 
 Sync next pushes a clean merge straight to `next`. A conflict fails its run and leaves `next` as it
-was: merge `main` into `next` by hand, resolve it there and push. It runs in the `sync-next`
+was: merge `main` into `next` by hand, resolve it there and push. Any other failure is tried again
+within the run, and a daily run catches up after anything longer. It runs in the `sync-next`
 environment, which only `main` can use and which has no reviewers, so a sync never waits on one. Its
 `SYNC_NEXT_DEPLOY_KEY` is the private half of a write deploy key on this repository, which reaches no
 other repository and no API and doesn't expire. `GITHUB_TOKEN` won't do: it can't push a merge that
