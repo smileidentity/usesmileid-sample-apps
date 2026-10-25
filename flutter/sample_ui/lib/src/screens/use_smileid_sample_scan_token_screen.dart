@@ -321,55 +321,61 @@ class _UseSmileIDSampleScanTokenScreenState
       fit: StackFit.expand,
       children: <Widget>[
         widget.viewfinder!(context, enabled: searching, onCandidate: _scanned),
-        Padding(
-          padding: const EdgeInsets.all(SmileDimens.spacingMd),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              AnimatedOpacity(
-                opacity: searching ? _reticleIdleAlpha : 1,
-                duration: kThemeAnimationDuration,
-                child: UseSmileIDSampleScanGlyph(
-                  size: reticle,
-                  tint: switch (_scan) {
-                    UseSmileIDSampleScanSearching() => colors.textInverse,
-                    UseSmileIDSampleScanFound() => colors.infoFill,
-                    UseSmileIDSampleScanLinked() => colors.successFill,
-                    UseSmileIDSampleScanRejected() => colors.errorFill,
-                  },
-                ),
-              ),
-              const SizedBox(height: SmileDimens.spacingMd),
-              // No container: one was a white slab over the preview.
-              if (searching) ...<Widget>[
-                _copy(
-                  context.strings.scanPoint,
-                  UseSmileIDSampleType.textStyleTitle.copyWith(
-                    shadows: overCamera,
+        // Scrolls like the placeholder: with the keyboard up the copy no longer fits above the sheet.
+        SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Padding(
+              padding: const EdgeInsets.all(SmileDimens.spacingMd),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  AnimatedOpacity(
+                    opacity: searching ? _reticleIdleAlpha : 1,
+                    duration: kThemeAnimationDuration,
+                    child: UseSmileIDSampleScanGlyph(
+                      size: reticle,
+                      tint: switch (_scan) {
+                        UseSmileIDSampleScanSearching() => colors.textInverse,
+                        UseSmileIDSampleScanFound() => colors.infoFill,
+                        UseSmileIDSampleScanLinked() => colors.successFill,
+                        UseSmileIDSampleScanRejected() => colors.errorFill,
+                      },
+                    ),
                   ),
-                  colors.textInverse,
-                ),
-                const SizedBox(height: SmileDimens.spacingMd),
-                _copy(
-                  caption,
-                  _captionStyle.copyWith(shadows: overCamera),
-                  colors.textInverse,
-                ),
-                const SizedBox(height: SmileDimens.spacingSm),
-                _portalLine(
-                  _captionStyle.copyWith(shadows: overCamera),
-                  colors.textInverse,
-                  colors,
-                ),
-              ] else
-                UseSmileIDSampleScanStatus(
-                  state: _scan,
-                  onRetry: () => setState(() {
-                    _rejection = null;
-                    _scan = const UseSmileIDSampleScanSearching();
-                  }),
-                ),
-            ],
+                  const SizedBox(height: SmileDimens.spacingMd),
+                  // No container: one was a white slab over the preview.
+                  if (searching) ...<Widget>[
+                    _copy(
+                      context.strings.scanPoint,
+                      UseSmileIDSampleType.textStyleTitle.copyWith(
+                        shadows: overCamera,
+                      ),
+                      colors.textInverse,
+                    ),
+                    const SizedBox(height: SmileDimens.spacingMd),
+                    _copy(
+                      caption,
+                      _captionStyle.copyWith(shadows: overCamera),
+                      colors.textInverse,
+                    ),
+                    const SizedBox(height: SmileDimens.spacingSm),
+                    _portalLine(
+                      _captionStyle.copyWith(shadows: overCamera),
+                      colors.textInverse,
+                      colors,
+                    ),
+                  ] else
+                    UseSmileIDSampleScanStatus(
+                      state: _scan,
+                      onRetry: () => setState(() {
+                        _rejection = null;
+                        _scan = const UseSmileIDSampleScanSearching();
+                      }),
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ],
