@@ -20,14 +20,13 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    environment: sync-next
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           filter: blob:none
-          # A deploy key, because GITHUB_TOKEN can't push a merge that carries workflow changes.
-          ssh-key: ${{ secrets.SYNC_NEXT_DEPLOY_KEY }}
 
       - name: Merge main into next
         env:

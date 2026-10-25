@@ -138,6 +138,33 @@ class SyncNextTest(unittest.TestCase):
             self.assertIn("merged main", sn.sync(self.checkout, wait=0))
         self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", self.tip("main"), "next"), "")
 
+    def test_a_merge_that_changes_workflows_is_left_to_a_person(self):
+        os.makedirs(os.path.join(self.seed, ".github", "workflows"))
+        self.commit(".github/workflows/lane.yml", "name: lane\n")
+        self.publish("main")
+        before = self.tip("next")
+        with self.assertRaisesRegex(sn.SyncError, "main changes .github/workflows/lane.yml, which this run's token"):
+            sn.sync(self.checkout, wait=0)
+        self.assertEqual(self.tip("next"), before)
+
+    def test_a_checkout_that_keeps_failing_ends_with_its_own_error_and_leaves_next_alone(self):
+        self.commit("next-only.txt", "next\n", branch="next")
+        self.publish("next")
+        self.commit("main-only.txt", "main\n")
+        self.publish("main")
+        before = self.tip("next")
+        real_git = sn.git
+
+        def failing_checkout(repo, *args, check=True):
+            if args[0] == "checkout":
+                return subprocess.CompletedProcess(args, 128, "", "fatal: could not fetch a missing object\n")
+            return real_git(repo, *args, check=check)
+
+        with mock.patch.object(sn, "git", failing_checkout), \
+                self.assertRaisesRegex(sn.SyncError, r"^checking out next failed: fatal: could not fetch .*\(gave up after 2"):
+            sn.sync(self.checkout, attempts=2, wait=0)
+        self.assertEqual(self.tip("next"), before)
+
     def test_a_merge_that_fails_without_conflicts_says_what_git_said(self):
         self.commit("main-only.txt", "main\n")
         self.publish("main")

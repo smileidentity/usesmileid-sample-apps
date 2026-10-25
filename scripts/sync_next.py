@@ -7,6 +7,9 @@ import sys
 import time
 
 
+WORKFLOWS = ".github/workflows"
+
+
 class SyncError(Exception):
     """A state the sync leaves to a person, saying what to do about it."""
 
@@ -29,7 +32,10 @@ def sync(repo: str = ".", attempts: int = 3, wait: float = 5.0) -> str:
         if git(repo, "merge-base", "--is-ancestor", "origin/main", "origin/next", check=False).returncode == 0:
             return "next already holds everything on main"
 
-        git(repo, "checkout", "--quiet", "-B", "next", "origin/next")
+        checked_out = git(repo, "checkout", "--quiet", "--force", "-B", "next", "origin/next", check=False)
+        if checked_out.returncode != 0:
+            failure = f"checking out next failed: {checked_out.stderr.strip()}"
+            continue
         merged = git(repo, "merge", "--no-ff", "--no-edit", "origin/main", check=False)
         if merged.returncode != 0:
             conflicts = git(repo, "diff", "--name-only", "--diff-filter=U").stdout.split()
@@ -41,6 +47,13 @@ def sync(repo: str = ".", attempts: int = 3, wait: float = 5.0) -> str:
                 )
             failure = f"merging main into next failed: {(merged.stderr or merged.stdout).strip()}"
             continue
+
+        workflows = git(repo, "diff", "--name-only", "origin/next", "HEAD", "--", WORKFLOWS).stdout.split()
+        if workflows:
+            raise SyncError(
+                f"main changes {', '.join(workflows)}, which this run's token can't push; merge main into next by "
+                "hand and push next"
+            )
 
         pushed = git(repo, "push", "origin", "HEAD:next", check=False)
         if pushed.returncode == 0:
