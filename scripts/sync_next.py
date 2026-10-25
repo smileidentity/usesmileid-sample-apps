@@ -36,7 +36,7 @@ def sync(repo: str = ".", attempts: int = 3) -> str:
             return f"merged main ({git(repo, 'rev-parse', '--short=8', 'origin/main').stdout.strip()}) into next"
         git(repo, "fetch", "--quiet", "origin", "next")
         if git(repo, "rev-parse", "origin/next").stdout == git(repo, "rev-parse", "HEAD^1").stdout:
-            raise SyncError(f"git refused the push to next: {pushed.stderr.strip()}")
+            raise SyncError(f"pushing to next failed, and next hasn't moved: {pushed.stderr.strip()}")
     raise SyncError(f"next moved during each of {attempts} attempts; run Sync next again once it settles")
 
 

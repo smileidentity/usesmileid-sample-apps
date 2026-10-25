@@ -106,6 +106,23 @@ class SyncNextTest(unittest.TestCase):
         self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", late, "next"), "")
         self.assertEqual(self.run_git(self.origin, "merge-base", "--is-ancestor", self.tip("main"), "next"), "")
 
+    def test_a_next_that_keeps_moving_ends_the_run_without_overwriting_it(self):
+        self.commit("main-only.txt", "main\n")
+        self.publish("main")
+        real_git, late = sn.git, []
+
+        def always_moving_next(repo, *args, check=True):
+            if args[0] == "push":
+                late.append(f"late-{len(late)}.txt")
+                self.commit(late[-1], "late\n", branch="next")
+                self.publish("next")
+            return real_git(repo, *args, check=check)
+
+        with mock.patch.object(sn, "git", always_moving_next), \
+                self.assertRaisesRegex(sn.SyncError, "next moved during each of 2 attempts"):
+            sn.sync(self.checkout, attempts=2)
+        self.assertEqual(self.run_git(self.origin, "log", "-1", "--format=%s", "next"), f"edit {late[-1]} on next")
+
     def test_a_refused_push_says_what_git_said_and_leaves_next_alone(self):
         self.commit("main-only.txt", "main\n")
         self.publish("main")
@@ -114,7 +131,7 @@ class SyncNextTest(unittest.TestCase):
         with open(hook, "w") as handle:
             handle.write("#!/bin/sh\necho 'token expired' >&2\nexit 1\n")
         os.chmod(hook, 0o755)
-        with self.assertRaisesRegex(sn.SyncError, "git refused the push to next: .*token expired"):
+        with self.assertRaisesRegex(sn.SyncError, "pushing to next failed, and next hasn't moved: .*token expired"):
             sn.sync(self.checkout)
         self.assertEqual(self.tip("next"), before)
 

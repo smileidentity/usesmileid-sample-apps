@@ -23,6 +23,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
+          filter: blob:none
           # GITHUB_TOKEN can't push a merge that carries workflow changes.
           token: ${{ secrets.SYNC_NEXT_TOKEN }}
 
