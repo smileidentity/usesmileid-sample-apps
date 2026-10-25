@@ -106,8 +106,14 @@ dependency for its local project. One UI source, two consumers:
 Neither is redundant, and `sample-ui` is **never published** as an artifact — source consumption in
 both places is what keeps them from drifting apart.
 
-**Unreleased SDK API.** `main` here must always build against released SDK versions. A change that
-needs unreleased SDK API lands on `next`, the one long-lived branch the SDK repos pin; everything else
+**Unreleased SDK API.** `main` pins exact SDK builds from the registries. Until the next SDK release
+those are snapshots for test builds (#163): Android a timestamped build (`<version>-<date>.<time>-<n>`),
+because a bare `-SNAPSHOT` can resolve a build made against another build of njia, the SDKs'
+navigation engine (`com.usesmileid:njia`, `njia-spm`, `usesmileid_njia`, `@smileid/njia`); iOS an
+`ios-spm` `<version>-SNAPSHOT.<timestamp>.<run>`; Flutter and Expo `<version>-SNAPSHOT.<run>`. Each app
+pins njia to the exact build its SDK snapshot was made against, never a newer one. `main` moves back to released
+SDKs at that release (`docs/plan/backlog.md`, "Back onto released SDKs"). A change that needs SDK API
+no published build has lands on `next`, the one long-lived branch the SDK repos pin; everything else
 lands on `main` and is merged into `next`, which is never rebased or force-pushed. At an SDK release
 `next` is merged into `main`. `docs/source-build.md` has the rule, the shell's extension point and the
 `e2eScenario` name the SDK repos' add-ons reserve.
@@ -144,12 +150,15 @@ python3 scripts/test_sync_design_tokens.py    # tests for the token generator
 
 android/verify.sh     # lint + unit tests + spec validation + release assemble
 ios/verify.sh         # swiftformat/swiftlint + tests + release build
+DESTINATION="platform=iOS Simulator,id=<udid>" ios/verify.sh   # on your own simulator
 flutter/verify.sh     # format + analyze + test + release build
 expo/verify.sh        # eslint + tsc --noEmit + test + release build
 ```
 
 When a script cannot run on your machine, state plainly in the PR what you could and could not
-run. Publishing is not this repo's job; there is nothing here to publish.
+run. No package is published from here: the apps ship to the stores through the `publish-*`
+workflows, run by hand. `release-check.yml` builds the store bundles and checks the store art weekly
+and on packaging changes.
 
 **All four platforms run in CI on every PR** (`.github/workflows/android.yml`, `ios.yml`,
 `flutter.yml`, `expo.yml`). Each workflow runs that platform's `verify.sh` itself rather than
@@ -159,7 +168,10 @@ Linux reds the lane for reasons unrelated to the UI. Which Mac matters too: glyp
 between macOS versions and the comparator has no tolerance, so **record Flutter baselines on the
 runner** — let the lane red and take the PNGs from its `flutter-goldens-recorded` artifact. Expo's pixel
 goldens are host-rasterised too (Skia on the Linux runner), so the same rule holds: take them from
-`expo-goldens-recorded`; a Mac recording is only provisional.
+`expo-goldens-recorded`; a Mac recording is only provisional. So a local `expo/verify.sh` on a Mac
+reds hundreds of pixel goldens on a clean `main` too: compare your failing set with a clean-`main` run
+on the same Mac, and say so in the PR. `jest -u` rewrites those PNGs as well as the `.snap` style
+trees, so `git restore` the PNGs and take CI's `expo-goldens-recorded` ones.
 
 `expo/verify.sh` takes a phase, as `ios/verify.sh` does: `all` (the default) is checks plus the
 production bundle, and `native` builds the minified release APK on top of a regenerated prebuild. The
@@ -172,6 +184,12 @@ surviving a run.
 The iOS project is generated from `ios/App/project.yml` by XcodeGen, so the bundle id, URL scheme and
 deployment target stay reviewable and no `.pbxproj` is ever hand-edited; `ios/verify.sh` regenerates
 before it builds, and the generated project is not committed.
+
+Sessions on one Mac share its simulators, and several can be named `iPhone 17 Pro`, so a `name=`
+destination can land on one another session has booted. Create or pick your own iPhone 17 Pro on
+iOS 27.0, the simulator the goldens use (`ios.yml` pins that runtime), pass it as
+`DESTINATION="platform=iOS Simulator,id=<udid>"`, and shut it down when you finish. With an `id=` destination the `ui` phase boots that simulator and resets the apps on
+it alone.
 
 Two things the token step needs. `--check` compares the vendored output against the design system,
 which lives in a **private** repo, so CI checks it out with a secret and points the script at it
@@ -236,6 +254,8 @@ deterministic.
   result-card fields match `spec/` exactly. Cheapest test in the repo and the one that keeps four
   apps aligned.
 - **Golden/screenshot tests** per platform for each screen, light and dark.
+- **An Android JVM test that builds an SDK flow runs under Robolectric.** Outside its sandbox the SDK
+  state it creates leaks into the shell tests that share the JVM (#243).
 - **Device flows** (Maestro on Android, XCUITest on iOS) asserting on `si_*` and `sample_*` IDs and
   on the result card — never on screenshots or coordinates. Public flows in this repo drive up to
   the capture screen; completing a capture needs frame injection, which is deliberately not part of
