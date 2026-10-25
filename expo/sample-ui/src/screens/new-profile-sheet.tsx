@@ -102,7 +102,6 @@ export const NewProfileSheet = ({ draft, onDraftChange, onSave, onDismiss }: Pro
 
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.profileSwitchNew}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.NEW_PROFILE_SHEET}

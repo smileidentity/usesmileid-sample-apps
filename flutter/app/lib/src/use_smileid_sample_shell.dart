@@ -181,7 +181,7 @@ class _UseSmileIDSampleShellState extends ConsumerState<UseSmileIDSampleShell> {
         steps: useSmileIDSampleSteps,
         // Each screen names itself `sample_*`, and a second identifier on its element would replace the first.
         stepIds: false,
-        // The design's own scrim and corners, as the modal sheets drew them.
+        // The design's own scrim and corners, which njia's default sheet style would replace.
         sheetStyle: NjiaSheetStyle(
           scrim: colors.overlayScrim,
           shape: RoundedRectangleBorder(

@@ -102,15 +102,6 @@ run time with `NoSuchMethodError`. Maven Central's snapshot repository deletes b
 so once these go, a clean build can't resolve them. Done when both pins are releases, or newer matching
 builds until then.
 
-### Android: the system-bars test's sheet case idles through endless frames
-
-`UseSmileIDSampleSystemBarsTest`'s sheet cases open Material 3's `ModalBottomSheet`, whose window
-polls its position every frame (`withInfiniteAnimationFrameNanos`), so `ShadowLooper.idleMainLooper()`
-runs frame after frame: a run of the class takes about eight minutes, and Robolectric's trace shadow
-keeps every section those frames open. At the default 512 MB heap that ran out and stopped the
-recomposer for the tests after it, so the app's tests now get 2 GB. Done when the sheet cases idle a
-bounded number of frames, or a fixed span of the clock, and the class runs in seconds.
-
 ### Flutter iOS: retire the first-push launch listener
 
 `UseSmileIDSampleColdLink` takes a cold link from the first route push within two seconds of the first

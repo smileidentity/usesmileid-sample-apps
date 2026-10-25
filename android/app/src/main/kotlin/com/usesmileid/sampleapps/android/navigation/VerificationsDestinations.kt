@@ -171,6 +171,7 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             refreshing = refreshing,
             // Computed here: `sample-ui` reads no host's BuildConfig.
             showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
+            pending = app.jobs == null,
         )
         // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
         // Waits for Room's first emission, so a cold-start deep link cannot read an empty list and skip.

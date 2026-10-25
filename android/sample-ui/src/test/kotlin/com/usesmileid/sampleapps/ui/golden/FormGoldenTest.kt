@@ -4,14 +4,11 @@ import org.robolectric.annotation.Config
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfile
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
@@ -159,36 +156,30 @@ class FormGoldenTest : GoldenTest() {
     }
 
     @Test
-    fun country_picker_sheet() = goldens("sheet_country_picker", fullWindow = true) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            KycForm(UseSmileIDSampleIdDetails())
-            CountryPickerSheet(
-                catalogue = UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.countries(UseSmileIDSampleCatalogueFamily.Kyc)),
-                selected = null,
-                query = "",
-                onQueryChange = {},
-                onSelect = {},
-                onRetry = {},
-                onDismissRequest = {},
-            )
-        }
+    fun country_picker_sheet() = sheetGoldens("sheet_country_picker", behind = { KycForm(UseSmileIDSampleIdDetails()) }) {
+        CountryPickerSheet(
+            catalogue = UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.countries(UseSmileIDSampleCatalogueFamily.Kyc)),
+            selected = null,
+            query = "",
+            onQueryChange = {},
+            onSelect = {},
+            onRetry = {},
+            onDismissRequest = {},
+        )
     }
 
     @Test
-    fun id_type_picker_sheet() = goldens("sheet_id_type_picker", fullWindow = true) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            KycForm(COUNTRY_ONLY)
-            IdTypePickerSheet(
-                country = CatalogueFixtures.kenya,
-                catalogue = UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.idTypes("KE")),
-                selected = null,
-                query = "",
-                onQueryChange = {},
-                onSelect = {},
-                onRetry = {},
-                onDismissRequest = {},
-            )
-        }
+    fun id_type_picker_sheet() = sheetGoldens("sheet_id_type_picker", behind = { KycForm(COUNTRY_ONLY) }) {
+        IdTypePickerSheet(
+            country = CatalogueFixtures.kenya,
+            catalogue = UseSmileIDSampleCatalogue.Ready(CatalogueFixtures.idTypes("KE")),
+            selected = null,
+            query = "",
+            onQueryChange = {},
+            onSelect = {},
+            onRetry = {},
+            onDismissRequest = {},
+        )
     }
 
     private companion object {

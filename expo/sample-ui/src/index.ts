@@ -92,7 +92,7 @@ export {
 export { UseSmileIDSampleIcon, UseSmileIDSampleMarkNames } from './components/use-smile-id-sample-icon';
 export { smileIcons, type SmileIcon, type SmileIconName, type SmileIconPart } from './smile-icons';
 
-export { UseSmileIDSampleBottomSheet, UseSmileIDSampleSheetHostProvider } from './components/use-smile-id-sample-bottom-sheet';
+export { UseSmileIDSampleBottomSheet } from './components/use-smile-id-sample-bottom-sheet';
 export { UseSmileIDSampleDataFieldRow } from './components/use-smile-id-sample-data-field-row';
 export { UseSmileIDSampleDateGroupHeader } from './components/use-smile-id-sample-date-group-header';
 export { UseSmileIDSampleEmptyState } from './components/use-smile-id-sample-empty-state';

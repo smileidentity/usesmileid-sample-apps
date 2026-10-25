@@ -153,6 +153,6 @@ class ScreenStateGoldenTest {
         val STATE_KEY = Regex("\"state\"\\s*:")
 
         /** Roborazzi names its output from this argument, so a renamed golden is a renamed baseline. */
-        val GOLDEN_CALL = Regex("goldens(?:OnDevice)?\\(\\s*(?:name\\s*=\\s*)?\"([a-z0-9_]+)\"")
+        val GOLDEN_CALL = Regex("(?:goldens|sheetGoldens)(?:OnDevice)?\\(\\s*(?:name\\s*=\\s*)?\"([a-z0-9_]+)\"")
     }
 }

@@ -35,7 +35,6 @@ export const GenericDocumentSheet = ({ initial, onDone, onDismiss }: Props) => {
 
   return (
     <UseSmileIDSampleBottomSheet
-      visible
       title={strings.genericDocumentTitle}
       onDismiss={onDismiss}
       testID={UseSmileIDSampleTestIds.GENERIC_DOCUMENT_SHEET}

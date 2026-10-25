@@ -4,40 +4,29 @@ import 'package:sample_ui/sample_ui.dart';
 
 /// Edge to edge, a sheet's content must end above the navigation bar.
 void main() {
-  Future<void> openSheet(
-    WidgetTester tester,
-    Future<void> Function(BuildContext context) show,
-  ) async {
+  Future<void> hostSheet(WidgetTester tester, Widget sheet) async {
     tester.view
       ..devicePixelRatio = 1
       ..physicalSize = const Size(393, 852)
       ..viewPadding = const FakeViewPadding(bottom: _navigationBar)
       ..padding = const FakeViewPadding(bottom: _navigationBar);
     addTearDown(tester.view.reset);
+    // As njia hosts a sheet step: the panel at the bottom of the window, the host drawing the rest.
     await tester.pumpWidget(
       MaterialApp(
         theme: UseSmileIDSampleTheme.light(),
-        home: Builder(
-          builder: (BuildContext context) => TextButton(
-            onPressed: () => show(context),
-            child: const Text('open'),
-          ),
-        ),
+        home: Align(alignment: Alignment.bottomCenter, child: sheet),
       ),
     );
-    await tester.tap(find.text('open'));
     await tester.pumpAndSettle();
   }
 
   testWidgets('the partial sheet ends its last row above the bar', (
     WidgetTester tester,
   ) async {
-    await openSheet(
+    await hostSheet(
       tester,
-      (BuildContext context) => showUseSmileIDSampleSheet<void>(
-        context: context,
-        builder: (_) => const Text(_lastRow),
-      ),
+      const UseSmileIDSamplePartialSheetBody(child: Text(_lastRow)),
     );
 
     expect(
@@ -49,14 +38,17 @@ void main() {
   testWidgets('the full-height sheet ends its list above the bar', (
     WidgetTester tester,
   ) async {
-    await openSheet(
+    await hostSheet(
       tester,
-      (BuildContext context) => showUseSmileIDSampleFullHeightSheet<void>(
-        context: context,
-        title: 'Country',
-        builder: (_) => const Align(
-          alignment: Alignment.bottomCenter,
-          child: Text(_lastRow),
+      SizedBox(
+        height: 852,
+        child: UseSmileIDSampleFullHeightSheetBody(
+          title: 'Country',
+          onClose: () {},
+          child: const Align(
+            alignment: Alignment.bottomCenter,
+            child: Text(_lastRow),
+          ),
         ),
       ),
     );

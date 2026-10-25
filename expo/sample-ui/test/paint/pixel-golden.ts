@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join } from 'node:path';
 
-import type { Canvas, SKRSContext2D } from '@napi-rs/canvas';
+import type { Canvas } from '@napi-rs/canvas';
 import pixelmatch from 'pixelmatch';
 import { PNG } from 'pngjs';
 import type { ReactElement } from 'react';
@@ -15,7 +15,7 @@ import {
   withoutHarness,
   type Interaction,
 } from '../render-in-theme';
-import { paintPlaceholder, paintTree, PIXEL_RATIO, PLACEHOLDERS } from './paint-tree';
+import { paintTree, PIXEL_RATIO } from './paint-tree';
 
 /// Where mismatches and would-be baselines are written.
 const GOLDEN_OUTPUT_DIR = join(__dirname, '..', 'golden-output');
@@ -25,51 +25,6 @@ const pngNameOf = (testName: string): string => {
   const parsed = testName.match(/^(\S+) (light|dark) (.+)$/);
   if (!parsed) throw new Error(`"${testName}" is not named "<component> <light|dark> <state>"`);
   return `${parsed[1]}.${parsed[2]}.${parsed[3]}`;
-};
-
-/// A native sheet's content, surface colour and grabber.
-type Sheet = { content: RenderedNode; backdrop?: string; grabber: boolean };
-
-/// One modifier @expo/ui passes to the sheet host.
-type Modifier = { $type?: string; style?: { color?: string }; visibility?: string };
-
-/// Unwraps a native sheet into its content and the chrome the painter can stand in for.
-const sheetOf = (tree: RenderedNode): Sheet | undefined => {
-  if (typeof tree === 'string' || tree.type !== 'ViewManagerAdapter_ExpoUI') return undefined;
-  const modifiers: Modifier[] = [];
-  let layoutRoot: Exclude<RenderedNode, string> | undefined;
-  const walk = (node: RenderedNode) => {
-    if (typeof node === 'string' || node.type !== 'ViewManagerAdapter_ExpoUI') return;
-    modifiers.push(...((node.props.modifiers as Modifier[] | undefined) ?? []));
-    if (node.props.layoutRoot === true) layoutRoot = node;
-    else for (const child of node.children ?? []) walk(child);
-  };
-  walk(tree);
-  if (!layoutRoot) throw new Error('a native sheet with no layout root the painter could lay its content out in');
-  const background = modifiers.find((it) => it.$type === 'presentationBackground');
-  const indicator = modifiers.find((it) => it.$type === 'presentationDragIndicator');
-  return {
-    content: { type: 'View', props: {}, children: (layoutRoot.children ?? []).map(sizedByContent) },
-    backdrop: background?.style?.color,
-    grabber: indicator?.visibility !== 'hidden',
-  };
-};
-
-/// Drops the size the native sheet assigns on device, so the wrapper lays out at content size.
-const sizedByContent = (node: RenderedNode): RenderedNode => {
-  if (typeof node === 'string' || node === null) return node;
-  const sizedOnDevice = new Set(['height', 'flexGrow', 'width']);
-  const style = Object.fromEntries(Object.entries(flatten(node.props.style)).filter(([name]) => !sizedOnDevice.has(name)));
-  return { ...node, props: { ...node.props, style } };
-};
-
-/// The native grabber's size and inset.
-const GRABBER = { width: 36, height: 5, top: 5 } as const;
-
-/// Stands in for the grabber.
-const drawGrabber = (ctx: SKRSContext2D, width: number) => {
-  const label = PLACEHOLDERS.SheetDragIndicator!({});
-  paintPlaceholder(ctx, label, (width - GRABBER.width) / 2, GRABBER.top, GRABBER.width, GRABBER.height);
 };
 
 /// [node] with its style replaced.
@@ -99,10 +54,8 @@ const inWindow = (tree: RenderedNode): RenderedNode => {
 /// Lays [tree] out at the pinned width and content height, and paints it.
 const paintGolden = async (tree: RenderedNode, fontScale: number): Promise<Canvas> => {
   await loadLayoutEngine();
-  const sheet = sheetOf(tree);
-  const framed = sheet ? sheet.content : inWindow(tree);
-  const laidOut = layoutTree(scrolledThrough(framed), { width: PINNED_FRAME.width, fontScale, pixelRatio: PIXEL_RATIO });
-  return paintTree(laidOut, { backdrop: sheet?.backdrop, overlay: sheet?.grabber ? drawGrabber : undefined });
+  const laidOut = layoutTree(scrolledThrough(inWindow(tree)), { width: PINNED_FRAME.width, fontScale, pixelRatio: PIXEL_RATIO });
+  return paintTree(laidOut);
 };
 
 /// The canvas's pixels as a PNG.

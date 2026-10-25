@@ -118,12 +118,6 @@ extension NjiaEngine where K == UseSmileIDSampleStep, F == UseSmileIDSampleFact 
     navigator(from).go(run.step, arg: product.id, replace: replace)
   }
 
-  /// Leaves the run `entry` belongs to by going to `step` in its place, with `arg`.
-  func leaveRun(_ entry: NjiaEntry, to step: UseSmileIDSampleStep, arg: String? = nil) {
-    let start = runStart(entry) ?? entry
-    navigator(entry).go(step.rawValue, arg: arg, replace: start.id)
-  }
-
   /// Back to the products tab's root, which leaves a run however deep it went.
   func leaveToProducts() {
     select(UseSmileIDSampleStep.products.rawValue)

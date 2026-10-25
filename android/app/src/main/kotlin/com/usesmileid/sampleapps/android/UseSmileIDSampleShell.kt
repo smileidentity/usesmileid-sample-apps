@@ -40,7 +40,7 @@ import androidx.core.util.Consumer
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.usesmileid.njia.NjiaPresentation
 import com.usesmileid.njia.NjiaState
-import com.usesmileid.njia.compose.NjiaDisplay
+import com.usesmileid.njia.compose.NjiaHost
 import com.usesmileid.njia.compose.NjiaSheetStyle
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import com.usesmileid.njia.compose.rememberNjiaState
@@ -125,10 +125,10 @@ fun UseSmileIDSampleShell() {
                         BackHandler { galleryOpen = false }
                         Box(Modifier.padding(contentPadding).consumeWindowInsets(contentPadding)) { ComponentGalleryScreen() }
                     } else {
-                        NjiaDisplay(
+                        NjiaHost(
                             engine = engine,
                             steps = UseSmileIDSampleSteps,
-                            // The design's own scrim and corners, as the modal sheets drew them.
+                            // The design's own scrim and corners, which njia's default sheet style would replace.
                             sheetStyle = NjiaSheetStyle(UseSmileIDSampleTheme.colors.overlayScrim, UseSmileIDSampleTheme.shapes.sheet),
                             // Consumed, or every screen and the SDK under the shell pad the same inset again.
                             modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
