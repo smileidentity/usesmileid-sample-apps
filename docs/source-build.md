@@ -73,7 +73,8 @@ within the run, and a daily run catches up after anything longer. It runs in the
 environment, which only `main` can use and which has no reviewers, so a sync never waits on one. Its
 `SYNC_NEXT_DEPLOY_KEY` is the private half of a write deploy key on this repository, which reaches no
 other repository and no API and doesn't expire. `GITHUB_TOKEN` won't do: it can't push a merge that
-carries workflow changes.
+carries workflow changes. A repository ruleset on `next` refuses a force-push or a deletion from the key
+or anyone else, and `main`'s branch protection refuses both there.
 
 ## The reserved `e2eScenario` argument
 
