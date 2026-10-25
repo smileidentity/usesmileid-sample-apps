@@ -67,8 +67,8 @@ A change to `spec/` lands with all four app-side updates, or says in the PR whic
 
 The rules all four follow:
 
-1. **Routes are data.** Every route in `spec/routes.json` exists on every platform, and on the njia apps
-   it is a step of `spec/njia-graph.json` linked at its path, which each app's routes test asserts.
+1. **Routes are data.** Every route in `spec/routes.json` exists on every platform as a step of
+   `spec/njia-graph.json` linked at its path, which each app's routes test asserts.
 2. **The SDK flow is one opaque destination.** The SDK runs its own navigation. The host never models
    consent, capture or processing as its own routes, and lets the SDK consume a back gesture first.
 3. **That destination has two presentations**: full screen, and nested in the tab shell. The in-shell
