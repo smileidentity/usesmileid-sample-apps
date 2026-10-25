@@ -285,6 +285,28 @@ class UseSmileIDSampleJobsNotifier
     return outcome;
   }
 
+  /// The details screen's check of a processing row, repeated with the list's backoff; returns what settled it.
+  Future<UseSmileIDSampleStatusRefresh?> refreshJobUntilSettled({
+    required String jobId,
+    required UseSmileIDSampleRefreshSession? Function() session,
+    required UseSmileIDSampleJobStatusSource source,
+    required Future<bool> Function(Duration delay) wait,
+  }) async {
+    final UseSmileIDSampleStatusRefresh? outcome = await ref
+        .read(useSmileIDSampleJobsRepositoryProvider)
+        .refreshUntilSettled(
+          jobId: jobId,
+          session: session,
+          nowMillis: () => DateTime.now().millisecondsSinceEpoch,
+          source: source,
+          wait: wait,
+        );
+    if (outcome is UseSmileIDSampleStatusUpdated) {
+      ref.invalidateSelf();
+    }
+    return outcome;
+  }
+
   /// The list's check of its processing rows; returns how many the server still has processing.
   Future<int> refreshProcessingJobs({
     required UseSmileIDSampleRefreshSession? session,

@@ -232,6 +232,46 @@ class UseSmileIDSampleJobStoreRefreshTest {
         assertTrue(source.calls.isEmpty())
     }
 
+    @Test
+    fun `the details check asks again with the list's backoff until the row settles`() = runTest {
+        val answers = ArrayDeque(listOf(UseSmileIDSampleStatusRefresh.StillProcessing, UseSmileIDSampleStatusRefresh.StillProcessing, updated()))
+        val source = FakeStatusSource { _, _, _ -> answers.removeFirst() }
+        val store = store(source)
+        store.add(job("job-1", sessionId = "s-1"))
+        val waits = mutableListOf<Long>()
+
+        assertEquals(updated(), store.refreshUntilSettled("job-1", session(id = "s-1"), { NOW }) { waits += it })
+        assertEquals(listOf(5_000L, 10_000L), waits)
+        assertEquals(3, source.calls.size)
+    }
+
+    @Test
+    fun `the details check stops after the list's twelve waits`() = runTest {
+        val source = FakeStatusSource { _, _, _ -> UseSmileIDSampleStatusRefresh.StillProcessing }
+        val store = store(source)
+        store.add(job("job-1", sessionId = "s-1"))
+        val waits = mutableListOf<Long>()
+
+        assertEquals(
+            UseSmileIDSampleStatusRefresh.StillProcessing,
+            store.refreshUntilSettled("job-1", session(id = "s-1"), { NOW }) { waits += it },
+        )
+        assertEquals(12, waits.size)
+        assertEquals(13, source.calls.size)
+    }
+
+    @Test
+    fun `the details check stops at once when nothing can ask about the row`() = runTest {
+        val source = FakeStatusSource { _, _, _ -> updated() }
+        val store = store(source)
+        store.add(job("job-1", sessionId = "s-1"))
+        val waits = mutableListOf<Long>()
+
+        assertEquals(UseSmileIDSampleStatusRefresh.NoSession, store.refreshUntilSettled("job-1", live = null, { NOW }) { waits += it })
+        assertTrue(waits.isEmpty())
+        assertTrue(source.calls.isEmpty())
+    }
+
     private fun store(source: UseSmileIDSampleJobStatusSource) = UseSmileIDSampleJobStore(FakeJobDao(), source)
 
     private fun updated() = UseSmileIDSampleStatusRefresh.Updated(UseSmileIDSampleStatus.Clear, "Approved", 200)

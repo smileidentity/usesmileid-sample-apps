@@ -429,12 +429,15 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onDelete: { app.removeJobs([jobId])
         navigator.back() },
       onCopy: { label, value in copy(label, value) },
-      onRefresh: { await refresh(silentWhenUnchanged: false) }
+      onRefresh: { await refresh() }
     )
-    .task(id: jobId) {
+    // Asked again with the list's backoff while the server still has it processing, and afresh under a new session.
+    .task(id: [jobId, app.session?.id ?? ""]) {
       // Off the store's first emission: nil is "not loaded yet", not "no row".
       guard await loaded(jobId)?.status == .processing else { return }
-      await refresh(silentWhenUnchanged: true)
+      // Silent unless something happened: "still processing" on every check is noise.
+      guard let outcome = await app.refreshJobUntilSettled(jobId), outcome != .stillProcessing else { return }
+      notice = UseSmileIDSampleTransientNotice(message: label(outcome))
     }
     .overlay(alignment: .bottom) {
       UseSmileIDSampleTransientNoticeHost(notice: notice, onDismiss: { notice = nil })
@@ -456,11 +459,9 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     return nil
   }
 
-  private func refresh(silentWhenUnchanged: Bool) async {
+  /// A pull, which always answers, "still processing" included.
+  private func refresh() async {
     guard let outcome = await app.refreshJob(jobId) else { return }
-    if silentWhenUnchanged, outcome == .stillProcessing {
-      return
-    }
     notice = UseSmileIDSampleTransientNotice(message: label(outcome))
   }
 

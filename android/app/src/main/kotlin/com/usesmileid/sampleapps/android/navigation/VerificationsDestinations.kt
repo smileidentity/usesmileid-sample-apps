@@ -173,17 +173,14 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
             pending = app.jobs == null,
         )
-        // Only a processing row can change. Keyed on the id, not the job: keying on the row would loop off its own write.
-        // Waits for Room's first emission, so a cold-start deep link cannot read an empty list and skip.
-        LaunchedEffect(jobId) {
+        // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
+        LaunchedEffect(jobId, app.session?.id) {
             val jobs = snapshotFlow { app.jobs }.first { it != null } ?: return@LaunchedEffect
             if (jobs.firstOrNull { it.id == jobId }?.status != UseSmileIDSampleStatus.Processing) {
                 return@LaunchedEffect
             }
-            refreshing = true
-            // Silent unless something happened: "still processing" on every visit is noise.
-            val result = app.jobStore.refresh(jobId, app.session, System.currentTimeMillis())
-            refreshing = false
+            // Silent unless something happened: "still processing" on every check is noise.
+            val result = app.jobStore.refreshUntilSettled(jobId, app.session, System::currentTimeMillis)
             if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) notice.show(result.message(resources))
         }
 

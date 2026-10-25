@@ -209,6 +209,76 @@ describe("the list's check", () => {
   });
 });
 
+describe('the details check', () => {
+  const completed: UseSmileIDSampleStatusRefresh = {
+    kind: 'updated',
+    status: UseSmileIDSampleStatus.Clear,
+    message: 'Approved',
+    httpCode: 200,
+  };
+
+  /// A source that answers in order, one answer per check, and counts the checks.
+  const queued = (answers: readonly UseSmileIDSampleStatusRefresh[]) => {
+    const source = { calls: 0, check: async () => answers[source.calls++]! };
+    return source;
+  };
+
+  it("asks again with the list's backoff until the row settles", async () => {
+    await store().add(job());
+    const source = queued([{ kind: 'stillProcessing' }, { kind: 'stillProcessing' }, completed]);
+    const waits: number[] = [];
+
+    const outcome = await store().refreshUntilSettled('job_1', () => session(), () => NOW, source, async (millis) => {
+      waits.push(millis);
+      return true;
+    });
+
+    expect(outcome).toEqual(completed);
+    expect(waits).toEqual([5_000, 10_000]);
+    expect(source.calls).toBe(3);
+  });
+
+  it("stops after the list's twelve waits", async () => {
+    await store().add(job());
+    const source = queued(Array.from({ length: 13 }, () => ({ kind: 'stillProcessing' }) as const));
+    const waits: number[] = [];
+
+    const outcome = await store().refreshUntilSettled('job_1', () => session(), () => NOW, source, async (millis) => {
+      waits.push(millis);
+      return true;
+    });
+
+    expect(outcome).toEqual({ kind: 'stillProcessing' });
+    expect(waits).toHaveLength(12);
+    expect(source.calls).toBe(13);
+  });
+
+  it('stops at once when nothing can ask about the row', async () => {
+    await store().add(job());
+    const source = queued([completed]);
+    const waits: number[] = [];
+
+    const outcome = await store().refreshUntilSettled('job_1', () => null, () => NOW, source, async (millis) => {
+      waits.push(millis);
+      return true;
+    });
+
+    expect(outcome).toEqual({ kind: 'noSession' });
+    expect(waits).toEqual([]);
+    expect(source.calls).toBe(0);
+  });
+
+  it('stops once the screen asking has gone', async () => {
+    await store().add(job());
+    const source = queued([{ kind: 'stillProcessing' }, completed]);
+
+    const outcome = await store().refreshUntilSettled('job_1', () => session(), () => NOW, source, async () => false);
+
+    expect(outcome).toEqual({ kind: 'stillProcessing' });
+    expect(source.calls).toBe(1);
+  });
+});
+
 describe('refresh', () => {
   const updated: UseSmileIDSampleStatusRefresh = {
     kind: 'updated',

@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -145,6 +146,22 @@ class UseSmileIDSampleJobStore(
         jobs.first()
             .filter { it.status == UseSmileIDSampleStatus.Processing }
             .count { refresh(it.id, live, nowMillis) is UseSmileIDSampleStatusRefresh.StillProcessing }
+
+    /** The details screen's check: asks about one row, and again with the list's backoff while the server still has it processing; returns what settled it. */
+    suspend fun refreshUntilSettled(
+        jobId: String,
+        live: UseSmileIDSampleTokenSession?,
+        nowMillis: () -> Long,
+        wait: suspend (Long) -> Unit = { delay(it) },
+    ): UseSmileIDSampleStatusRefresh? {
+        var attempt = 0
+        while (true) {
+            val result = refresh(jobId, live, nowMillis())
+            // A null is a pull on the same row already asking, so the next check still has something to learn.
+            if (result != null && result !is UseSmileIDSampleStatusRefresh.StillProcessing) return result
+            wait(processingPollDelayMillis(attempt++) ?: return result)
+        }
+    }
 
     suspend fun find(jobId: String): UseSmileIDSampleJob? = dao.find(jobId)?.toJob()
 

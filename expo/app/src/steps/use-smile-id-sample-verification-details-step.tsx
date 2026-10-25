@@ -27,6 +27,8 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const jobs = useSmileIDSampleJobStore((state) => state.jobs);
   const load = useSmileIDSampleJobStore((state) => state.load);
   const refresh = useSmileIDSampleJobStore((state) => state.refresh);
+  const refreshUntilSettled = useSmileIDSampleJobStore((state) => state.refreshUntilSettled);
+  const liveSessionId = useSmileIDSampleSessionStore((state) => state.live?.id ?? null);
   const remove = useSmileIDSampleJobStore((state) => state.remove);
   const [refreshing, setRefreshing] = useState(false);
   const notice = useSmileIDSampleTransientNotice();
@@ -35,31 +37,21 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
-  /// The entry refresh runs once per row, so its own state write cannot re-trigger it.
-  const refreshedOnEntry = useRef<string | null>(null);
+  /// Whether the processing row is being asked about, so its own state write cannot start a second check.
+  const polling = useRef(false);
+  /// Cleared on leaving, which is what ends a check still waiting out its backoff.
+  const mounted = useRef(true);
 
   const job = (jobs ?? []).find((row) => row.id === jobId) ?? null;
 
-  const run = useCallback(
-    async (silent: boolean) => {
-      if (jobId === undefined) return;
-      if (!silent) setRefreshing(true);
-      const outcome = await refresh(
-        jobId,
-        useSmileIDSampleSessionStore.getState().live,
-        Date.now(),
-        smileIDSampleStatusApi,
-      );
-      // Only the call that raised the spinner lowers it: the on-entry refresh is silent and shows
-      // none, so clearing it there ended a pull-to-refresh the reader had started moments before.
-      if (!silent) setRefreshing(false);
-      // Silent on entry only about "still processing", which every visit would repeat.
-      if (outcome !== null && (!silent || outcome.kind !== 'stillProcessing')) {
-        show({ message: smileIDSampleRefreshLabel(outcome, strings) });
-      }
-    },
-    [jobId, refresh, show, strings],
-  );
+  /// A pull, which raises the spinner and always answers, "still processing" included.
+  const pull = useCallback(async () => {
+    if (jobId === undefined) return;
+    setRefreshing(true);
+    const outcome = await refresh(jobId, useSmileIDSampleSessionStore.getState().live, Date.now(), smileIDSampleStatusApi);
+    setRefreshing(false);
+    if (outcome !== null) show({ message: smileIDSampleRefreshLabel(outcome, strings) });
+  }, [jobId, refresh, show, strings]);
 
   useEffect(() => {
     // A cold link lands here without the list, which is otherwise the only screen that loads the store.
@@ -68,12 +60,37 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   }, []);
 
   useEffect(() => {
-    // Only a processing row can change, so only that one is refreshed on entry.
-    if (job === null || job.status !== UseSmileIDSampleStatus.Processing) return;
-    if (refreshedOnEntry.current === job.id) return;
-    refreshedOnEntry.current = job.id;
-    void run(true);
-  }, [job, run]);
+    // Set again on every mount: StrictMode and Fast Refresh mount, clean up, then mount once more.
+    mounted.current = true;
+    return () => {
+      mounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    // Only a processing row can change, so only that one is asked about, and again while the server still has it processing.
+    if (job === null || job.status !== UseSmileIDSampleStatus.Processing || polling.current) return;
+    polling.current = true;
+    void refreshUntilSettled(
+      job.id,
+      () => useSmileIDSampleSessionStore.getState().live,
+      Date.now,
+      smileIDSampleStatusApi,
+      (millis) => new Promise((resolve) => setTimeout(() => resolve(mounted.current), millis)),
+    )
+      .then((outcome) => {
+        // Silent unless something happened: "still processing" on every check is noise.
+        if (mounted.current && outcome !== null && outcome.kind !== 'stillProcessing') {
+          show({ message: smileIDSampleRefreshLabel(outcome, strings) });
+        }
+      })
+      // A check that fails outright says nothing, as the silent one before it did; a pull still answers.
+      .catch(() => undefined)
+      .finally(() => {
+        polling.current = false;
+      });
+    // The session is a dependency so a session linked after a check ended without one starts another.
+  }, [job, liveSessionId, refreshUntilSettled, show, strings]);
 
   return (
     <View style={styles.host}>
@@ -90,7 +107,7 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           if (job !== null) void remove([job.id]);
           back();
         }}
-        onRefresh={() => void run(false)}
+        onRefresh={() => void pull()}
         onCopy={(label, value) => {
           Clipboard.setStringAsync(value)
             .then(() => {

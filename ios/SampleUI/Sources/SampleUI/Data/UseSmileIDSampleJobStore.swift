@@ -206,6 +206,26 @@ public actor UseSmileIDSampleJobStore {
     return stillProcessing
   }
 
+  /// The details screen's check: asks about one row, and again with the list's backoff while the server still has it processing; returns what settled it.
+  public func refreshUntilSettled(
+    _ jobId: String,
+    live: UseSmileIDSampleTokenSession?,
+    now: @Sendable () -> Date,
+    wait: @Sendable (TimeInterval) async throws -> Void = { try await Task.sleep(nanoseconds: UInt64($0 * 1000000000)) }
+  ) async throws -> UseSmileIDSampleStatusRefresh? {
+    var attempt = 0
+    while true {
+      let outcome = try await refresh(jobId, live: live, now: now())
+      // A nil is a pull on the same row already asking, so the next check still has something to learn.
+      if let outcome, outcome != .stillProcessing {
+        return outcome
+      }
+      guard let delay = Self.processingPollDelay(attempt: attempt) else { return outcome }
+      attempt += 1
+      try await wait(delay)
+    }
+  }
+
   /// Reached only by the `seedJobs` launch argument — see `spec/launch-args.json`. Idempotent.
   public func seedFixtures(now: Date) {
     write(inserting: Self.fixtures(now: now).map { UseSmileIDSampleJobRecord(job: $0) })
