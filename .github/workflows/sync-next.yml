@@ -1,0 +1,35 @@
+name: Sync next
+
+# Merges main into next after every push to main; docs/source-build.md says why.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: sync-next
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    environment: sync-next
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          # GITHUB_TOKEN can't push a merge that carries workflow changes.
+          token: ${{ secrets.SYNC_NEXT_TOKEN }}
+
+      - name: Merge main into next
+        env:
+          GIT_AUTHOR_NAME: github-actions[bot]
+          GIT_AUTHOR_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+          GIT_COMMITTER_NAME: github-actions[bot]
+          GIT_COMMITTER_EMAIL: 41898282+github-actions[bot]@users.noreply.github.com
+        run: python3 scripts/sync_next.py

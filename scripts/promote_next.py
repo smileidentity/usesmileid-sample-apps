@@ -102,7 +102,7 @@ def description(version: str, sha: str) -> str:
 
 ## After merging
 
-- Merge `main` back into `next`.
+- Sync next merges `main` back into `next`; if its run fails on a conflict, merge them by hand.
 - Run `bump_sample_apps.yaml` in each SDK repository, to pin `main`.
 
 This branch is a copy of `next` at {sha[:8]}, so the branch deletion that follows the merge leaves `next` as it is.
