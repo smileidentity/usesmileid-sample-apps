@@ -32344,15 +32344,21 @@ exports[`products light tokenLinkedLate 1`] = `
 
 exports[`scanToken dark default 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+        undefined,
+      ],
       {
-        "flex": 1,
+        "paddingBottom": 0,
       },
-      {
-        "backgroundColor": "#1a1c23",
-      },
-      undefined,
     ]
   }
   testID="sample_scan_token_screen"
@@ -33391,15 +33397,21 @@ exports[`scanToken dark default 1`] = `
 
 exports[`scanToken dark redirected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+        undefined,
+      ],
       {
-        "flex": 1,
+        "paddingBottom": 0,
       },
-      {
-        "backgroundColor": "#1a1c23",
-      },
-      undefined,
     ]
   }
   testID="sample_scan_token_screen"
@@ -34438,15 +34450,21 @@ exports[`scanToken dark redirected 1`] = `
 
 exports[`scanToken light default 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+        undefined,
+      ],
       {
-        "flex": 1,
+        "paddingBottom": 0,
       },
-      {
-        "backgroundColor": "#f9fafb",
-      },
-      undefined,
     ]
   }
   testID="sample_scan_token_screen"
@@ -35485,15 +35503,21 @@ exports[`scanToken light default 1`] = `
 
 exports[`scanToken light redirected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+        undefined,
+      ],
       {
-        "flex": 1,
+        "paddingBottom": 0,
       },
-      {
-        "backgroundColor": "#f9fafb",
-      },
-      undefined,
     ]
   }
   testID="sample_scan_token_screen"

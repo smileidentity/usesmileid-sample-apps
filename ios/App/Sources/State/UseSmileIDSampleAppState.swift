@@ -172,6 +172,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     try? await jobStore.refresh(jobId, live: session, now: Date())
   }
 
+  /// The details screen's check of a processing row, repeated with the list's backoff; nil once the screen is left.
+  func refreshJobUntilSettled(_ jobId: String) async -> UseSmileIDSampleStatusRefresh? {
+    try? await jobStore.refreshUntilSettled(jobId, live: session, now: { Date() })
+  }
+
   /// The list's check of its processing rows; how many the server still has processing, or 0 once the list is left.
   func refreshProcessingJobs() async -> Int {
     await (try? jobStore.refreshProcessing(live: session, now: Date())) ?? 0

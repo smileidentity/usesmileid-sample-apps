@@ -248,6 +248,58 @@ final class UseSmileIDSampleJobStoreRefreshTest: XCTestCase {
     XCTAssertTrue(source.calls.isEmpty)
   }
 
+  func testTheDetailsCheckAsksAgainWithTheListsBackoffUntilTheRowSettles() async throws {
+    let answers = QueuedAnswers([.stillProcessing, .stillProcessing, Self.updated])
+    let source = UseSmileIDSampleFakeStatusSource { _ in answers.next() }
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-1", sessionId: "s-1"))
+    let waits = RecordedWaits()
+
+    let outcome = try await store.refreshUntilSettled(
+      "job-1",
+      live: Self.session(id: "s-1"),
+      now: { useSmileIDSampleTestNow },
+      wait: { waits.record($0) }
+    )
+    XCTAssertEqual(outcome, Self.updated)
+    XCTAssertEqual(waits.all, [5, 10])
+    XCTAssertEqual(source.calls.count, 3)
+  }
+
+  func testTheDetailsCheckStopsAfterTheListsTwelveWaits() async throws {
+    let source = UseSmileIDSampleFakeStatusSource { _ in .stillProcessing }
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-1", sessionId: "s-1"))
+    let waits = RecordedWaits()
+
+    let outcome = try await store.refreshUntilSettled(
+      "job-1",
+      live: Self.session(id: "s-1"),
+      now: { useSmileIDSampleTestNow },
+      wait: { waits.record($0) }
+    )
+    XCTAssertEqual(outcome, .stillProcessing)
+    XCTAssertEqual(waits.all.count, 12)
+    XCTAssertEqual(source.calls.count, 13)
+  }
+
+  func testTheDetailsCheckStopsAtOnceWhenNothingCanAskAboutTheRow() async throws {
+    let source = Self.source()
+    let store = Self.store(source)
+    await store.add(Self.job(id: "job-1", sessionId: "s-1"))
+    let waits = RecordedWaits()
+
+    let outcome = try await store.refreshUntilSettled(
+      "job-1",
+      live: nil,
+      now: { useSmileIDSampleTestNow },
+      wait: { waits.record($0) }
+    )
+    XCTAssertEqual(outcome, .noSession)
+    XCTAssertTrue(waits.all.isEmpty)
+    XCTAssertTrue(source.calls.isEmpty)
+  }
+
   private static func source() -> UseSmileIDSampleFakeStatusSource {
     UseSmileIDSampleFakeStatusSource { _ in .updated(status: .clear, message: "Approved", httpCode: 200) }
   }
@@ -308,5 +360,33 @@ private let useSmileIDSampleTestNow = Date(timeIntervalSince1970: 1784202612)
 private extension Array {
   var single: Element? {
     count == 1 ? first : nil
+  }
+}
+
+/// The source's answers in order, one per check.
+private final class QueuedAnswers: @unchecked Sendable {
+  private let lock = NSLock()
+  private var queue: [UseSmileIDSampleStatusRefresh]
+
+  init(_ queue: [UseSmileIDSampleStatusRefresh]) {
+    self.queue = queue
+  }
+
+  func next() -> UseSmileIDSampleStatusRefresh {
+    lock.withLock { queue.removeFirst() }
+  }
+}
+
+/// Every wait the store asked for, in seconds, without waiting any of them out.
+private final class RecordedWaits: @unchecked Sendable {
+  private let lock = NSLock()
+  private var recorded: [TimeInterval] = []
+
+  var all: [TimeInterval] {
+    lock.withLock { recorded }
+  }
+
+  func record(_ seconds: TimeInterval) {
+    lock.withLock { recorded.append(seconds) }
   }
 }

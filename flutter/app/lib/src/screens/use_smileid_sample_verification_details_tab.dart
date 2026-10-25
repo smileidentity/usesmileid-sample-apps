@@ -56,9 +56,28 @@ class _UseSmileIDSampleVerificationDetailsTabState
           it.id == widget.jobId &&
           it.status == UseSmileIDSampleStatus.processing,
     );
-    if (processing && mounted) {
-      await _refresh(onEntry: true);
+    if (!processing || !mounted) {
+      return;
     }
+    // Asked again with the list's backoff while the server still has it processing, until this page is left.
+    final UseSmileIDSampleStatusRefresh? outcome = await ref
+        .read(useSmileIDSampleJobsProvider.notifier)
+        .refreshJobUntilSettled(
+          jobId: widget.jobId,
+          session: _session,
+          source: ref.read(useSmileIDSampleJobStatusSourceProvider),
+          wait: (Duration delay) async {
+            await Future<void>.delayed(delay);
+            return mounted;
+          },
+        );
+    // Silent unless something happened: "still processing" on every check is noise.
+    if (outcome == null ||
+        outcome is UseSmileIDSampleStatusStillProcessing ||
+        !mounted) {
+      return;
+    }
+    _say(outcome);
   }
 
   @override
@@ -111,39 +130,41 @@ class _UseSmileIDSampleVerificationDetailsTabState
     return null;
   }
 
-  /// Asks the store what became of the job, and says whatever it decided.
-  Future<void> _refresh({bool onEntry = false}) async {
-    final int now = DateTime.now().millisecondsSinceEpoch;
+  /// The live session as the store asks with it, read afresh for every check.
+  UseSmileIDSampleRefreshSession? _session() {
     final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
       ref.read(useSmileIDSampleSessionProvider).live,
-      now,
+      DateTime.now().millisecondsSinceEpoch,
     );
+    return live == null
+        ? null
+        : UseSmileIDSampleRefreshSession(
+            token: live.token,
+            partnerId: live.partnerId,
+            expiresAtMillis: live.expiresAtMillis,
+          );
+  }
+
+  /// A pull: asks the store what became of the job, and says whatever it decided.
+  Future<void> _refresh() async {
     final UseSmileIDSampleStatusRefresh? outcome = await ref
         .read(useSmileIDSampleJobsProvider.notifier)
         .refreshJob(
           jobId: widget.jobId,
-          session: live == null
-              ? null
-              : UseSmileIDSampleRefreshSession(
-                  token: live.token,
-                  partnerId: live.partnerId,
-                  expiresAtMillis: live.expiresAtMillis,
-                ),
-          nowMillis: now,
+          session: _session(),
+          nowMillis: DateTime.now().millisecondsSinceEpoch,
           source: ref.read(useSmileIDSampleJobStatusSourceProvider),
         );
     // Already in flight: the notice standing is the one this refresh would have repeated.
     if (outcome == null || !mounted) {
       return;
     }
-    if (onEntry && outcome is UseSmileIDSampleStatusStillProcessing) {
-      return;
-    }
-    setState(
-      () => _refreshNotice = useSmileIDSampleRefreshLabel(
-        outcome,
-        context.strings,
-      ),
-    );
+    _say(outcome);
   }
+
+  /// Puts [outcome] in the notice, in the other three apps' words.
+  void _say(UseSmileIDSampleStatusRefresh outcome) => setState(
+    () =>
+        _refreshNotice = useSmileIDSampleRefreshLabel(outcome, context.strings),
+  );
 }

@@ -11,6 +11,7 @@ import {
 } from '../components/use-smile-id-sample-select-trigger';
 import { UseSmileIDSampleTextInput } from '../components/use-smile-id-sample-text-input';
 import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top-app-bar';
+import { UseSmileIDSampleKeyboardAvoidingScreen } from '../components/use-smile-id-sample-keyboard-avoiding-screen';
 import {
   smileIDSampleCaptureAsTriggerText,
   smileIDSampleFlag,
@@ -86,7 +87,7 @@ export const KycIdFormScreen = ({
       : smileIDSampleCaptureAsTriggerText(smileIDSampleIdDetailsCaptureAs(state.details), strings);
 
   return (
-    <View
+    <UseSmileIDSampleKeyboardAvoidingScreen
       testID={UseSmileIDSampleTestIds.KYC_FORM_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
@@ -173,7 +174,7 @@ export const KycIdFormScreen = ({
           marginTop: theme.dimens.spacing.md,
         }}
       />
-    </View>
+    </UseSmileIDSampleKeyboardAvoidingScreen>
   );
 };
 

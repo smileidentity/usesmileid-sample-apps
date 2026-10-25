@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -155,6 +156,8 @@ fun ScanTokenScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            // The sheet rides above the keyboard, so the field being typed in and Link stay in view.
+            .imePadding()
             .testTag(UseSmileIDSampleTestIds.SCAN_TOKEN_SCREEN),
     ) {
         UseSmileIDSampleTopAppBar(title = UseSmileIDSampleStrings.scanTitle, onBack = onBack) {
