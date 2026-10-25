@@ -47,6 +47,8 @@ fun VerificationDetailsScreen(
     refreshing: Boolean = false,
     /** The card and its counters, still on the release classpath rather than compiled out. */
     showProbes: Boolean = true,
+    /** True until the store first reports: a cold link lands before the rows do, and a row not loaded is not missing. */
+    pending: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -77,13 +79,15 @@ fun VerificationDetailsScreen(
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             ) {
             if (job == null) {
-                item {
-                    // The id stays in the supporting line: which one was asked for is the whole diagnostic.
-                    UseSmileIDSampleEmptyState(
-                        text = UseSmileIDSampleStrings.detailsMissingTitle,
-                        supportingText = UseSmileIDSampleStrings.detailsMissingBody(jobId),
-                        testId = UseSmileIDSampleTestIds.DETAILS_EMPTY,
-                    )
+                if (!pending) {
+                    item {
+                        // The id stays in the supporting line: which one was asked for is the whole diagnostic.
+                        UseSmileIDSampleEmptyState(
+                            text = UseSmileIDSampleStrings.detailsMissingTitle,
+                            supportingText = UseSmileIDSampleStrings.detailsMissingBody(jobId),
+                            testId = UseSmileIDSampleTestIds.DETAILS_EMPTY,
+                        )
+                    }
                 }
             } else {
                 item {
