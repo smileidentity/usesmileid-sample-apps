@@ -3834,13 +3834,19 @@ exports[`newProfileSheet light filled 1`] = `
 
 exports[`profileConfig dark activeProfile 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -4755,13 +4761,19 @@ exports[`profileConfig dark activeProfile 1`] = `
 
 exports[`profileConfig dark newlyCreated 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -5676,13 +5688,19 @@ exports[`profileConfig dark newlyCreated 1`] = `
 
 exports[`profileConfig dark otherProfile 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -6597,13 +6615,19 @@ exports[`profileConfig dark otherProfile 1`] = `
 
 exports[`profileConfig light activeProfile 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -7518,13 +7542,19 @@ exports[`profileConfig light activeProfile 1`] = `
 
 exports[`profileConfig light newlyCreated 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -8439,13 +8469,19 @@ exports[`profileConfig light newlyCreated 1`] = `
 
 exports[`profileConfig light otherProfile 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }

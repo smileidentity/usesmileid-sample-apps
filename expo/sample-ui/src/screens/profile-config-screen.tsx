@@ -11,6 +11,7 @@ import {
 } from '../components/use-smile-id-sample-section-surface';
 import { UseSmileIDSampleDestructiveRow } from '../components/use-smile-id-sample-setting-row';
 import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top-app-bar';
+import { UseSmileIDSampleKeyboardAvoidingScreen } from '../components/use-smile-id-sample-keyboard-avoiding-screen';
 import type { UseSmileIDSampleUserDetails } from '../state/use-smile-id-sample-profiles';
 import {
   smileIDSampleUserFieldRead,
@@ -70,7 +71,7 @@ export const ProfileConfigScreen = ({
   const insets = useSafeAreaInsets();
 
   return (
-    <View
+    <UseSmileIDSampleKeyboardAvoidingScreen
       testID={UseSmileIDSampleTestIds.PROFILE_CONFIG_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
@@ -150,7 +151,7 @@ export const ProfileConfigScreen = ({
           marginTop: theme.dimens.spacing.md,
         }}
       />
-    </View>
+    </UseSmileIDSampleKeyboardAvoidingScreen>
   );
 };
 

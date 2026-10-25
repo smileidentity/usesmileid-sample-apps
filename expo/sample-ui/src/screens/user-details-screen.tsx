@@ -12,6 +12,7 @@ import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top
 import { avatarColorForProfile } from '../components/use-smile-id-sample-avatar';
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleProfileRow } from '../components/use-smile-id-sample-profile-row';
+import { UseSmileIDSampleKeyboardAvoidingScreen } from '../components/use-smile-id-sample-keyboard-avoiding-screen';
 import {
   smileIDSampleProfileInitials,
   smileIDSampleProfileTitle,
@@ -100,7 +101,7 @@ export const UserDetailsScreen = ({
     (profile === null || !smileIDSampleUserDetailsEqual(state.details, profile.defaults));
 
   return (
-    <View
+    <UseSmileIDSampleKeyboardAvoidingScreen
       testID={UseSmileIDSampleTestIds.USER_DETAILS_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
@@ -219,7 +220,7 @@ export const UserDetailsScreen = ({
           marginTop: theme.dimens.spacing.md,
         }}
       />
-    </View>
+    </UseSmileIDSampleKeyboardAvoidingScreen>
   );
 };
 
