@@ -274,6 +274,19 @@ class BlockedSyncIssueTest(unittest.TestCase):
         warnings = [call.args[0] for call in printed.call_args_list if call.args[0].startswith("::warning::")]
         self.assertEqual(len(warnings), 2)
 
+    def test_an_unexpected_git_error_is_reported_like_a_blocked_sync(self):
+        def git_error():
+            raise subprocess.CalledProcessError(128, ["git", "-C", ".", "diff", "--name-only"], stderr="fatal: could not fetch")
+
+        issues = ScriptedIssues()
+        with mock.patch("builtins.print"):
+            self.assertEqual(sn.run(issues, git_error), 1)
+        self.assertEqual(issues.changes, [("POST", "issues", sn.BLOCKED)])
+
+    def test_a_long_path_list_is_cut_to_twenty(self):
+        self.assertEqual(sn.listed(["a", "b"]), "a, b")
+        self.assertEqual(sn.listed([f"p{n}" for n in range(25)]), ", ".join(f"p{n}" for n in range(20)) + " and 5 more")
+
     def test_a_clean_sync_with_no_open_issue_changes_nothing(self):
         issues = ScriptedIssues()
         with mock.patch("builtins.print"):

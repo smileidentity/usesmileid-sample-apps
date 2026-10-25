@@ -60,6 +60,12 @@ class Issues:
             self._api(f"issues/{number}", "PATCH", {"state": "closed"})
 
 
+def listed(paths: list[str], limit: int = 20) -> str:
+    """Paths for a message, the first limit of them, so an issue stays under GitHub's size cap."""
+    shown = ", ".join(paths[:limit])
+    return shown + (f" and {len(paths) - limit} more" if len(paths) > limit else "")
+
+
 def git(repo: str, *args: str, check: bool = True) -> subprocess.CompletedProcess:
     """One git command in repo, its output captured."""
     return subprocess.run(["git", "-C", repo, *args], check=check, capture_output=True, text=True)
@@ -88,16 +94,16 @@ def sync(repo: str = ".", attempts: int = 3, wait: float = 5.0) -> str:
             git(repo, "merge", "--abort", check=False)
             if conflicts:
                 raise SyncError(
-                    f"merging main into next conflicts in {', '.join(conflicts)}; merge main into next by hand, "
+                    f"merging main into next conflicts in {listed(conflicts)}; merge main into next by hand, "
                     "resolve them there and push next"
                 )
             failure = f"merging main into next failed: {(merged.stderr or merged.stdout).strip()}"
             continue
 
-        workflows = git(repo, "diff", "--name-only", "origin/next", "HEAD", "--", WORKFLOWS).stdout.split()
+        workflows = git(repo, "diff", "--no-renames", "--name-only", "origin/next", "HEAD", "--", WORKFLOWS).stdout.split()
         if workflows:
             raise SyncError(
-                f"main changes {', '.join(workflows)}, which this run's token can't push; merge main into next by "
+                f"main changes {listed(workflows)}, which this run's token can't push; merge main into next by "
                 "hand and push next"
             )
 
@@ -128,15 +134,16 @@ def run(issues: Issues | None, attempt=sync) -> int:
     """Syncs next and keeps the blocked-sync issue and the job summary in step with the result."""
     try:
         done = attempt()
-    except SyncError as error:
-        print(annotation(str(error)))
+    except (SyncError, subprocess.CalledProcessError) as error:
+        if isinstance(error, SyncError):
+            reason = str(error)
+        else:
+            reason = f"git {' '.join(error.cmd[3:])} failed: {(error.stderr or '').strip()}"
+        print(annotation(reason))
         if summary := os.environ.get("GITHUB_STEP_SUMMARY"):
             with open(summary, "a") as handle:
-                handle.write(f"### {BLOCKED}\n\n{error}\n")
-        tell(issues, "report", str(error))
-        return 1
-    except subprocess.CalledProcessError as error:
-        print(annotation(f"git {' '.join(error.cmd[3:])} failed: {(error.stderr or '').strip()}"))
+                handle.write(f"### {BLOCKED}\n\n{reason}\n")
+        tell(issues, "report", reason)
         return 1
     print(done)
     tell(issues, "resolve", done)
