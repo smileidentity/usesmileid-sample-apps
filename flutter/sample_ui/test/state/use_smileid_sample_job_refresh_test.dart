@@ -165,6 +165,104 @@ void main() {
     );
   });
 
+  group('the details check', () {
+    test('asks again with the list\'s backoff until the row settles', () async {
+      await store.add(row());
+      final _Queued source = _Queued(<UseSmileIDSampleStatusRefresh>[
+        const UseSmileIDSampleStatusStillProcessing(),
+        const UseSmileIDSampleStatusStillProcessing(),
+        updated,
+      ]);
+      final List<Duration> waits = <Duration>[];
+
+      final UseSmileIDSampleStatusRefresh? outcome = await store
+          .refreshUntilSettled(
+            jobId: 'job_1',
+            session: session,
+            nowMillis: () => now,
+            source: source,
+            wait: (Duration delay) async {
+              waits.add(delay);
+              return true;
+            },
+          );
+
+      expect(outcome, updated);
+      expect(waits, const <Duration>[
+        Duration(seconds: 5),
+        Duration(seconds: 10),
+      ]);
+      expect(source.calls, 3);
+    });
+
+    test('stops after the list\'s twelve waits', () async {
+      await store.add(row());
+      final _Queued source = _Queued(<UseSmileIDSampleStatusRefresh>[
+        for (int i = 0; i < 13; i++)
+          const UseSmileIDSampleStatusStillProcessing(),
+      ]);
+      final List<Duration> waits = <Duration>[];
+
+      final UseSmileIDSampleStatusRefresh? outcome = await store
+          .refreshUntilSettled(
+            jobId: 'job_1',
+            session: session,
+            nowMillis: () => now,
+            source: source,
+            wait: (Duration delay) async {
+              waits.add(delay);
+              return true;
+            },
+          );
+
+      expect(outcome, isA<UseSmileIDSampleStatusStillProcessing>());
+      expect(waits, hasLength(12));
+      expect(source.calls, 13);
+    });
+
+    test('stops at once when nothing can ask about the row', () async {
+      await store.add(row());
+      final _Queued source = _Queued(<UseSmileIDSampleStatusRefresh>[updated]);
+      final List<Duration> waits = <Duration>[];
+
+      final UseSmileIDSampleStatusRefresh? outcome = await store
+          .refreshUntilSettled(
+            jobId: 'job_1',
+            session: () => null,
+            nowMillis: () => now,
+            source: source,
+            wait: (Duration delay) async {
+              waits.add(delay);
+              return true;
+            },
+          );
+
+      expect(outcome, isA<UseSmileIDSampleStatusNoSession>());
+      expect(waits, isEmpty);
+      expect(source.calls, 0);
+    });
+
+    test('stops once the screen asking has gone', () async {
+      await store.add(row());
+      final _Queued source = _Queued(<UseSmileIDSampleStatusRefresh>[
+        const UseSmileIDSampleStatusStillProcessing(),
+        updated,
+      ]);
+
+      final UseSmileIDSampleStatusRefresh? outcome = await store
+          .refreshUntilSettled(
+            jobId: 'job_1',
+            session: session,
+            nowMillis: () => now,
+            source: source,
+            wait: (Duration delay) async => false,
+          );
+
+      expect(outcome, isA<UseSmileIDSampleStatusStillProcessing>());
+      expect(source.calls, 1);
+    });
+  });
+
   group('refresh', () {
     test('reads the row, asks the source and writes back', () async {
       await store.add(row());
@@ -432,6 +530,23 @@ class _Returning implements UseSmileIDSampleJobStatusSource {
     required String token,
     required bool sandbox,
   }) async => outcome;
+}
+
+/// A source that answers in order, one answer per check, and counts the checks.
+class _Queued implements UseSmileIDSampleJobStatusSource {
+  _Queued(this.answers);
+
+  final List<UseSmileIDSampleStatusRefresh> answers;
+
+  /// How many times the source was asked.
+  int calls = 0;
+
+  @override
+  Future<UseSmileIDSampleStatusRefresh> check({
+    required String jobId,
+    required String token,
+    required bool sandbox,
+  }) async => answers[calls++];
 }
 
 /// A source that remembers whether it was asked at all, and with which environment.

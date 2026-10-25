@@ -45,6 +45,15 @@ abstract interface class UseSmileIDSampleJobsRepository {
     required int nowMillis,
     required UseSmileIDSampleJobStatusSource source,
   });
+
+  /// The details screen's check: asks about one row, and again with the list's backoff while the server still has it processing; returns what settled it.
+  Future<UseSmileIDSampleStatusRefresh?> refreshUntilSettled({
+    required String jobId,
+    required UseSmileIDSampleRefreshSession? Function() session,
+    required int Function() nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+    required Future<bool> Function(Duration delay) wait,
+  });
 }
 
 /// The refresh sequence, written once: it is the part that encodes the contract, and two copies drift.
@@ -75,6 +84,35 @@ mixin UseSmileIDSampleJobRefreshMixin
       }
     }
     return stillProcessing;
+  }
+
+  @override
+  Future<UseSmileIDSampleStatusRefresh?> refreshUntilSettled({
+    required String jobId,
+    required UseSmileIDSampleRefreshSession? Function() session,
+    required int Function() nowMillis,
+    required UseSmileIDSampleJobStatusSource source,
+    required Future<bool> Function(Duration delay) wait,
+  }) async {
+    int attempt = 0;
+    while (true) {
+      final UseSmileIDSampleStatusRefresh? outcome = await refresh(
+        jobId: jobId,
+        session: session(),
+        nowMillis: nowMillis(),
+        source: source,
+      );
+      // A null is a pull on the same row already asking, so the next check still has something to learn.
+      if (outcome != null &&
+          outcome is! UseSmileIDSampleStatusStillProcessing) {
+        return outcome;
+      }
+      final Duration? delay = useSmileIDSampleProcessingPollDelay(attempt++);
+      // False from the wait once the screen asking has gone.
+      if (delay == null || !await wait(delay)) {
+        return outcome;
+      }
+    }
   }
 
   @override

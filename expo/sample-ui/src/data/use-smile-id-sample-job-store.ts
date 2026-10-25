@@ -10,6 +10,7 @@ import type { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status
 import {
   SMILE_ID_SAMPLE_NOT_RECORDED_DETAIL,
   SMILE_ID_SAMPLE_NOT_RECORDED_WINDOW_MILLIS,
+  smileIDSampleProcessingPollDelayMillis,
   type UseSmileIDSampleJobStatusSource,
   type UseSmileIDSampleStatusRefresh,
 } from './use-smile-id-sample-job-status-source';
@@ -52,6 +53,13 @@ type Actions = {
     nowMillis: number,
     source: UseSmileIDSampleJobStatusSource,
   ) => Promise<number>;
+  refreshUntilSettled: (
+    jobId: string,
+    session: () => UseSmileIDSampleRefreshSession | null,
+    nowMillis: () => number,
+    source: UseSmileIDSampleJobStatusSource,
+    wait: (millis: number) => Promise<boolean>,
+  ) => Promise<UseSmileIDSampleStatusRefresh | null>;
   find: (jobId: string) => UseSmileIDSampleJob | null;
   consumeRemoval: () => number | null;
   seedFixtures: (nowMillis: number) => Promise<void>;
@@ -222,6 +230,18 @@ export const useSmileIDSampleJobStore = create<State & Actions>((set, get) => ({
       if (outcome?.kind === 'stillProcessing') stillProcessing += 1;
     }
     return stillProcessing;
+  },
+
+  /// The details screen's check: asks about one row, and again with the list's backoff while the server still has it processing; returns what settled it.
+  refreshUntilSettled: async (jobId, session, nowMillis, source, wait) => {
+    for (let attempt = 0; ; attempt += 1) {
+      const outcome = await get().refresh(jobId, session(), nowMillis(), source);
+      // A null is a pull on the same row already asking, so the next check still has something to learn.
+      if (outcome !== null && outcome.kind !== 'stillProcessing') return outcome;
+      const delay = smileIDSampleProcessingPollDelayMillis(attempt);
+      // False from the wait once the screen asking has gone.
+      if (delay === null || !(await wait(delay))) return outcome;
+    }
   },
 
   find: (jobId) => (get().jobs ?? []).find((row) => row.id === jobId) ?? null,

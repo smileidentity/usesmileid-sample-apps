@@ -17,7 +17,7 @@ void main() {
 
   Future<void> open(
     WidgetTester tester,
-    UseSmileIDSampleStatusRefresh answer,
+    UseSmileIDSampleJobStatusSource source,
   ) async {
     final UseSmileIDSampleSessionRecord live = UseSmileIDSampleSessionRecord(
       live: _session,
@@ -33,9 +33,7 @@ void main() {
             UseSmileIDSampleMemorySessionRepository(live),
           ),
           useSmileIDSampleStoredSessionProvider.overrideWithValue(live),
-          useSmileIDSampleJobStatusSourceProvider.overrideWithValue(
-            _Answering(answer),
-          ),
+          useSmileIDSampleJobStatusSourceProvider.overrideWithValue(source),
         ],
         child: MaterialApp.router(
           theme: UseSmileIDSampleTheme.light(),
@@ -52,27 +50,66 @@ void main() {
   testWidgets(
     'a verdict lands and is announced as the status and the server message',
     (WidgetTester tester) async {
-      await open(
-        tester,
-        const UseSmileIDSampleStatusUpdated(
-          status: UseSmileIDSampleStatus.clear,
-          message: 'Job completed',
-          httpCode: 200,
-        ),
-      );
+      await open(tester, const _Answering(_completed));
 
       expect(find.text('Clear — Job completed'), findsOne);
     },
   );
 
+  testWidgets('a row still processing is asked again until its verdict lands', (
+    WidgetTester tester,
+  ) async {
+    await open(
+      tester,
+      _Queued(<UseSmileIDSampleStatusRefresh>[
+        const UseSmileIDSampleStatusStillProcessing(),
+        _completed,
+      ]),
+    );
+    expect(find.text('Clear — Job completed'), findsNothing);
+
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Clear — Job completed'), findsOne);
+  });
+
   testWidgets('still processing on the way in says nothing', (
     WidgetTester tester,
   ) async {
-    await open(tester, const UseSmileIDSampleStatusStillProcessing());
+    await open(
+      tester,
+      const _Answering(UseSmileIDSampleStatusStillProcessing()),
+    );
 
     expect(find.text('Still processing'), findsNothing);
     expect(find.byType(UseSmileIDSampleToast), findsNothing);
+    // Leaves, then lets the next check come due, which finds the page gone and stops.
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 5));
   });
+}
+
+const UseSmileIDSampleStatusUpdated _completed = UseSmileIDSampleStatusUpdated(
+  status: UseSmileIDSampleStatus.clear,
+  message: 'Job completed',
+  httpCode: 200,
+);
+
+/// Answers in order, one answer per check.
+class _Queued implements UseSmileIDSampleJobStatusSource {
+  _Queued(this.answers);
+
+  final List<UseSmileIDSampleStatusRefresh> answers;
+
+  int _next = 0;
+
+  @override
+  Future<UseSmileIDSampleStatusRefresh> check({
+    required String jobId,
+    required String token,
+    required bool sandbox,
+  }) async => answers[_next++];
 }
 
 class _Answering implements UseSmileIDSampleJobStatusSource {
