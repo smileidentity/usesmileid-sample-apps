@@ -23,12 +23,15 @@ def sync(repo: str = ".", attempts: int = 3) -> str:
             return "next already holds everything on main"
 
         git(repo, "checkout", "--quiet", "-B", "next", "origin/next")
-        if git(repo, "merge", "--no-ff", "--no-edit", "origin/main", check=False).returncode != 0:
+        merged = git(repo, "merge", "--no-ff", "--no-edit", "origin/main", check=False)
+        if merged.returncode != 0:
             conflicts = git(repo, "diff", "--name-only", "--diff-filter=U").stdout.split()
             git(repo, "merge", "--abort", check=False)
+            if not conflicts:
+                raise SyncError(f"merging main into next failed: {(merged.stderr or merged.stdout).strip()}")
             raise SyncError(
-                f"merging main into next conflicts in {', '.join(conflicts) or 'the merge'}; merge main into next "
-                "by hand, resolve them there and push next"
+                f"merging main into next conflicts in {', '.join(conflicts)}; merge main into next by hand, "
+                "resolve them there and push next"
             )
 
         pushed = git(repo, "push", "origin", "HEAD:next", check=False)
@@ -40,15 +43,20 @@ def sync(repo: str = ".", attempts: int = 3) -> str:
     raise SyncError(f"next moved during each of {attempts} attempts; run Sync next again once it settles")
 
 
+def annotation(message: str) -> str:
+    """An Actions error annotation that keeps every line of message."""
+    return "::error::" + message.replace("%", "%25").replace("\r", "%0D").replace("\n", "%0A")
+
+
 def main() -> int:
     """Syncs next, as an Actions error when it can't."""
     try:
         print(sync())
         return 0
     except SyncError as error:
-        print(f"::error::{error}")
+        print(annotation(str(error)))
     except subprocess.CalledProcessError as error:
-        print(f"::error::git refused {' '.join(error.cmd[3:5])}: {(error.stderr or '').strip()}")
+        print(annotation(f"git {' '.join(error.cmd[3:])} failed: {(error.stderr or '').strip()}"))
     return 1
 
 

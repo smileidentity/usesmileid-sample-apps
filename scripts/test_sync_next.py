@@ -123,6 +123,24 @@ class SyncNextTest(unittest.TestCase):
             sn.sync(self.checkout, attempts=2)
         self.assertEqual(self.run_git(self.origin, "log", "-1", "--format=%s", "next"), f"edit {late[-1]} on next")
 
+    def test_a_merge_that_fails_without_conflicts_says_what_git_said(self):
+        self.commit("main-only.txt", "main\n")
+        self.publish("main")
+        real_git = sn.git
+
+        def failing_merge(repo, *args, check=True):
+            if args[:2] == ("merge", "--no-ff"):
+                return subprocess.CompletedProcess(args, 128, "", "fatal: unable to write new index file\n")
+            return real_git(repo, *args, check=check)
+
+        with mock.patch.object(sn, "git", failing_merge), \
+                self.assertRaisesRegex(sn.SyncError, "^merging main into next failed: fatal: unable to write"):
+            sn.sync(self.checkout)
+
+    def test_an_annotation_keeps_every_line(self):
+        self.assertEqual(sn.annotation("To github\n ! [remote rejected] 100%"),
+                         "::error::To github%0A ! [remote rejected] 100%25")
+
     def test_a_refused_push_says_what_git_said_and_leaves_next_alone(self):
         self.commit("main-only.txt", "main\n")
         self.publish("main")
