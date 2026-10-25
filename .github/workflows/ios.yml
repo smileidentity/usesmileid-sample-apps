@@ -45,7 +45,7 @@ jobs:
             class: UseSmileIDSampleSettingsUITests
           - phase: ui
             class: UseSmileIDSampleDocumentOptionsUITests
-    # The Xcode and iPhone 17 Pro select-xcode pins: goldens are pixel comparisons, so recording and verifying share one runtime.
+    # Goldens are pixel comparisons: they verify on select-xcode's Xcode and on the runtime DESTINATION names below.
     runs-on: xcode-27
     # The UI tests drive a cross-process system alert, which can hang where the earlier programmatic
     # steps could not; without this a wedged run holds the branch's concurrency group for hours.
