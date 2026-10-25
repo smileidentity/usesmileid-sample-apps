@@ -9,6 +9,7 @@ import { UseSmileIDSampleSettingRowChevron } from '../components/use-smile-id-sa
 import { UseSmileIDSamplePill } from '../components/use-smile-id-sample-status-badge';
 import { UseSmileIDSampleTextInput } from '../components/use-smile-id-sample-text-input';
 import { UseSmileIDSampleTopAppBar } from '../components/use-smile-id-sample-top-app-bar';
+import { UseSmileIDSampleKeyboardAvoidingScreen } from '../components/use-smile-id-sample-keyboard-avoiding-screen';
 import { smileIDSampleJobMiddleUserId, type UseSmileIDSampleJob } from '../model/use-smile-id-sample-job';
 import { smileIDSampleTimeLabels } from '../model/use-smile-id-sample-job-dates';
 import { smileIDSampleProductFrom, smileIDSampleProductTitle } from '../model/use-smile-id-sample-product';
@@ -45,7 +46,7 @@ export const AuthUserIdScreen = ({ state, onUserIdChange, onRegister, onBack, on
   const language = useSmileIDSampleLanguageShown();
   const times = useMemo(() => smileIDSampleTimeLabels(state.previousUsers, language), [state.previousUsers, language]);
   return (
-    <View
+    <UseSmileIDSampleKeyboardAvoidingScreen
       testID={UseSmileIDSampleTestIds.AUTH_USER_ID_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }]}
     >
@@ -107,7 +108,7 @@ export const AuthUserIdScreen = ({ state, onUserIdChange, onRegister, onBack, on
           marginTop: theme.dimens.spacing.md,
         }}
       />
-    </View>
+    </UseSmileIDSampleKeyboardAvoidingScreen>
   );
 };
 

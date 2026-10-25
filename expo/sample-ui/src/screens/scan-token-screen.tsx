@@ -13,6 +13,7 @@ import {
   UseSmileIDSampleTopAppBar,
   UseSmileIDSampleTopAppBarButton,
 } from '../components/use-smile-id-sample-top-app-bar';
+import { UseSmileIDSampleKeyboardAvoidingScreen } from '../components/use-smile-id-sample-keyboard-avoiding-screen';
 import type { UseSmileIDSampleEnvironment } from '../model/use-smile-id-sample-result';
 import {
   smileIDSampleScanReasonCaption,
@@ -149,7 +150,7 @@ export const ScanTokenScreen = ({
   }[scan.kind];
 
   return (
-    <View
+    <UseSmileIDSampleKeyboardAvoidingScreen
       testID={UseSmileIDSampleTestIds.SCAN_TOKEN_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }, style]}
     >
@@ -247,7 +248,7 @@ export const ScanTokenScreen = ({
           if (acceptsTaps) onSimulate(sheet.span, sheet.bindings, sheet.environment);
         }}
       />
-    </View>
+    </UseSmileIDSampleKeyboardAvoidingScreen>
   );
 };
 

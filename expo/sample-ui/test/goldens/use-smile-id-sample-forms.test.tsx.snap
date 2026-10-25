@@ -758,13 +758,19 @@ exports[`appearanceSheet light default 1`] = `
 
 exports[`authUserId dark noJobs 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -1518,13 +1524,19 @@ exports[`authUserId dark noJobs 1`] = `
 
 exports[`authUserId dark previousIds 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -2767,13 +2779,19 @@ exports[`authUserId dark previousIds 1`] = `
 
 exports[`authUserId dark selected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -4016,13 +4034,19 @@ exports[`authUserId dark selected 1`] = `
 
 exports[`authUserId dark typed 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -5265,13 +5289,19 @@ exports[`authUserId dark typed 1`] = `
 
 exports[`authUserId light noJobs 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -6025,13 +6055,19 @@ exports[`authUserId light noJobs 1`] = `
 
 exports[`authUserId light previousIds 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -7274,13 +7310,19 @@ exports[`authUserId light previousIds 1`] = `
 
 exports[`authUserId light selected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -8523,13 +8565,19 @@ exports[`authUserId light selected 1`] = `
 
 exports[`authUserId light typed 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -24316,13 +24364,19 @@ exports[`id details in Arabic mirrors the form, with the catalogue names left as
   }
 >
   <View
+    onLayout={[Function]}
     style={
       [
+        [
+          {
+            "flex": 1,
+          },
+          {
+            "backgroundColor": "#f9fafb",
+          },
+        ],
         {
-          "flex": 1,
-        },
-        {
-          "backgroundColor": "#f9fafb",
+          "paddingBottom": 0,
         },
       ]
     }
@@ -29043,13 +29097,19 @@ exports[`idTypePickerSheet light loading 1`] = `
 
 exports[`kycIdForm dark catalogueError 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -30063,13 +30123,19 @@ exports[`kycIdForm dark catalogueError 1`] = `
 
 exports[`kycIdForm dark documentGenericChosen 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -31249,13 +31315,19 @@ exports[`kycIdForm dark documentGenericChosen 1`] = `
 
 exports[`kycIdForm dark documentOneSidedMatched 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -32435,13 +32507,19 @@ exports[`kycIdForm dark documentOneSidedMatched 1`] = `
 
 exports[`kycIdForm dark documentPassportMatched 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -33621,13 +33699,19 @@ exports[`kycIdForm dark documentPassportMatched 1`] = `
 
 exports[`kycIdForm dark documentPresetChosen 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -34807,13 +34891,19 @@ exports[`kycIdForm dark documentPresetChosen 1`] = `
 
 exports[`kycIdForm dark documentSelected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -35993,13 +36083,19 @@ exports[`kycIdForm dark documentSelected 1`] = `
 
 exports[`kycIdForm dark documentTwoSidedMatched 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -37179,13 +37275,19 @@ exports[`kycIdForm dark documentTwoSidedMatched 1`] = `
 
 exports[`kycIdForm dark empty 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -38199,13 +38301,19 @@ exports[`kycIdForm dark empty 1`] = `
 
 exports[`kycIdForm dark idNumberInvalid 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -39241,13 +39349,19 @@ exports[`kycIdForm dark idNumberInvalid 1`] = `
 
 exports[`kycIdForm dark loading 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -40261,13 +40375,19 @@ exports[`kycIdForm dark loading 1`] = `
 
 exports[`kycIdForm dark selected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -41281,13 +41401,19 @@ exports[`kycIdForm dark selected 1`] = `
 
 exports[`kycIdForm light catalogueError 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -42301,13 +42427,19 @@ exports[`kycIdForm light catalogueError 1`] = `
 
 exports[`kycIdForm light documentGenericChosen 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -43487,13 +43619,19 @@ exports[`kycIdForm light documentGenericChosen 1`] = `
 
 exports[`kycIdForm light documentOneSidedMatched 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -44673,13 +44811,19 @@ exports[`kycIdForm light documentOneSidedMatched 1`] = `
 
 exports[`kycIdForm light documentPassportMatched 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -45859,13 +46003,19 @@ exports[`kycIdForm light documentPassportMatched 1`] = `
 
 exports[`kycIdForm light documentPresetChosen 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -47045,13 +47195,19 @@ exports[`kycIdForm light documentPresetChosen 1`] = `
 
 exports[`kycIdForm light documentSelected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -48231,13 +48387,19 @@ exports[`kycIdForm light documentSelected 1`] = `
 
 exports[`kycIdForm light documentTwoSidedMatched 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -49417,13 +49579,19 @@ exports[`kycIdForm light documentTwoSidedMatched 1`] = `
 
 exports[`kycIdForm light empty 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -50437,13 +50605,19 @@ exports[`kycIdForm light empty 1`] = `
 
 exports[`kycIdForm light idNumberInvalid 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -51479,13 +51653,19 @@ exports[`kycIdForm light idNumberInvalid 1`] = `
 
 exports[`kycIdForm light loading 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -52499,13 +52679,19 @@ exports[`kycIdForm light loading 1`] = `
 
 exports[`kycIdForm light selected 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -58295,13 +58481,19 @@ exports[`scenarioDrawer light themeScenarios 1`] = `
 
 exports[`userDetails dark complete 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -59364,13 +59556,19 @@ exports[`userDetails dark complete 1`] = `
 
 exports[`userDetails dark empty 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -60356,13 +60554,19 @@ exports[`userDetails dark empty 1`] = `
 
 exports[`userDetails dark namesNotAsked 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -61184,13 +61388,19 @@ exports[`userDetails dark namesNotAsked 1`] = `
 
 exports[`userDetails dark tokenSuppliedNames 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#1a1c23",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#1a1c23",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -62176,13 +62386,19 @@ exports[`userDetails dark tokenSuppliedNames 1`] = `
 
 exports[`userDetails light complete 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -63245,13 +63461,19 @@ exports[`userDetails light complete 1`] = `
 
 exports[`userDetails light empty 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -64237,13 +64459,19 @@ exports[`userDetails light empty 1`] = `
 
 exports[`userDetails light namesNotAsked 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
@@ -65065,13 +65293,19 @@ exports[`userDetails light namesNotAsked 1`] = `
 
 exports[`userDetails light tokenSuppliedNames 1`] = `
 <View
+  onLayout={[Function]}
   style={
     [
+      [
+        {
+          "flex": 1,
+        },
+        {
+          "backgroundColor": "#f9fafb",
+        },
+      ],
       {
-        "flex": 1,
-      },
-      {
-        "backgroundColor": "#f9fafb",
+        "paddingBottom": 0,
       },
     ]
   }
