@@ -93,7 +93,6 @@ const config: ExpoConfig = {
   plugins: [
     'expo-status-bar',
     'expo-font',
-    'react-native-quick-crypto',
     // No supportsRTL: with it the module resets forceRTL from the device's locale on every launch.
     [
       'expo-localization',
