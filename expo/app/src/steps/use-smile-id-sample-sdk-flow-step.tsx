@@ -156,6 +156,12 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
     left.current = true;
     toProducts();
   };
+  // Where the SDK's own failure lands, so the reason is on screen rather than a dead tap.
+  const toUnsubmittedDetails = () => {
+    if (left.current) return;
+    left.current = true;
+    smileIDSampleLeaveRun(engine, scope.entry, 'verificationDetails', unsubmittedJobId);
+  };
 
   if (snapshot === null) return <UseSmileIDSampleLeave onLeave={toProducts} />;
   if (preflight?.kind === 'needsSession') {
@@ -174,10 +180,10 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
       <UseSmileIDSampleLeave onLeave={() => smileIDSampleLeaveRun(engine, scope.entry, 'consentDetailsForm', productId)} />
     );
   }
-  // No form fixes a misconfigured builder, and it must still never reach the SDK.
+  // No form fixes a misconfigured builder, and validate() gives build()'s verdict, so it never reaches the SDK.
   if (preflight?.kind === 'misconfigured') {
     const reason = preflight.issues.map((issue) => issue.message).join('; ') || strings.flowInvalid;
-    return <RecordBlocked reason={reason} run={runOf(snapshot)} onBlocked={toProducts} />;
+    return <RecordBlocked reason={reason} run={runOf(snapshot)} onBlocked={toUnsubmittedDetails} />;
   }
   if (preflight?.kind !== 'ready') return <UseSmileIDSampleLeave onLeave={toProducts} />;
   if (!analyzersReady) return null;
@@ -199,8 +205,12 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
           if (snapshot.scenario === 'throwingCallback') {
             throw new Error('throwingCallback scenario: the host result callback throws');
           }
-          if (result.status !== 'success') {
+          if (result.status === 'cancelled') {
             leave();
+            return;
+          }
+          if (result.status !== 'success') {
+            toUnsubmittedDetails();
             return;
           }
           // Held by the store, not this screen: the write must outlive a same-frame teardown.
@@ -229,6 +239,9 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
 };
 
 const acceptedCode = 202;
+
+/// The details entry for a run that never produced a job: the screen shows the run's result instead.
+const unsubmittedJobId = 'unsubmitted';
 
 /// Recorded when the SDK hands back a captured job instead of submitting it.
 const capturedNotSubmitted = 'Captured, not submitted';

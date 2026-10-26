@@ -15,7 +15,7 @@ and the AOT snapshot for all four ABIs is wasted minutes when only one of them i
 
 ## What this lane is for
 
-Eight flows, not a port of the Android suite — that one was measured at 36–53 minutes returning
+Nine flows, not a port of the Android suite — that one was measured at 36–53 minutes returning
 nothing across four runs. These cover what a **hostless** Flutter test structurally cannot reach:
 
 - **`licenses.yaml`** — `LicenseRegistry` is empty under `flutter test` by design, so no widget test
@@ -34,6 +34,10 @@ nothing across four runs. These cover what a **hostless** Flutter test structura
 - **`document-options.yaml`** — the document form against `catalogue=fixture`: the Green Book as its
   own row, "Capture as" and the generic-document sheet through SDK mount, the `unreachable` error and Retry,
   Enhanced Document Verification's partner list, and the capture-mode sheet in Settings. A widget test has no route from a real product tap to the SDK.
+- **`settings.yaml`** — the consent switch, as in the Android twin's `settings.yaml`: with no consent
+  screen and no bound consent the run is refused before the SDK, and it must land on the unsubmitted
+  job's details with the reason on its result card, not on the product list. A widget test pumps no
+  release build, and a refused run looked like a dead tap on a handset while every widget test passed.
 
 ## Traps
 

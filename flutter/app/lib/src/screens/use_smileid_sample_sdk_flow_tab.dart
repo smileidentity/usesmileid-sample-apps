@@ -16,6 +16,9 @@ import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_shell_extension.dart';
 
+/// The details entry for a run that never produced a job: the screen shows the run's result instead.
+const String unsubmittedJobId = 'unsubmitted';
+
 /// The single route hosting the SDK flow. The SDK owns everything inside it: no host chrome, no host back.
 class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
   /// [productId] comes from the run's first entry and decides the whole journey.
@@ -36,7 +39,7 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
   /// Whether the run covers the shell or sits inside it, which its step decides.
   final UseSmileIDSampleFlowRoute route;
 
-  /// Where a cancelled, failed or never-started run lands.
+  /// Where a cancelled or never-started run lands.
   final VoidCallback onLeave;
 
   /// Where a run the forms can still fix goes instead of the SDK.
@@ -48,7 +51,7 @@ class UseSmileIDSampleSdkFlowTab extends ConsumerStatefulWidget {
   /// Where SmartSelfie Authentication goes with no user ID to run as.
   final VoidCallback onNeedsUserId;
 
-  /// Where a delivered result lands, by the job id the server issued.
+  /// Where a run lands: the job id the server issued, or [unsubmittedJobId] for one that failed first.
   final void Function(String jobId) onResult;
 
   @override
@@ -236,7 +239,7 @@ class _UseSmileIDSampleSdkFlowTabState
               ),
             );
         widget.onNeedsSession();
-      // No form fixes this, and it must still never reach the SDK.
+      // No form fixes this, and validate() gives build()'s verdict, so it never reaches the SDK.
       case UseSmileIDSampleFlowMisconfigured(
         :final List<UseSmileIDValidationException> issues,
       ):
@@ -248,7 +251,7 @@ class _UseSmileIDSampleSdkFlowTabState
                     .map((UseSmileIDValidationException it) => it.message)
                     .join('; '),
         );
-        _leave();
+        _land(unsubmittedJobId);
     }
   }
 
@@ -262,13 +265,11 @@ class _UseSmileIDSampleSdkFlowTabState
       ):
         // Held by the provider, not this widget: the write must outlive a same-frame teardown.
         unawaited(_jobs.addJob(_processingJob(snapshot, value)));
-        if (!_left) {
-          _left = true;
-          widget.onResult(value.jobId);
-        }
+        _land(value.jobId);
       case UseSmileIDFailure<JobSubmissionResponse>():
-      case UseSmileIDCancelled<JobSubmissionResponse>():
       case UseSmileIDCaptured<JobSubmissionResponse>():
+        _land(unsubmittedJobId);
+      case UseSmileIDCancelled<JobSubmissionResponse>():
         _leave();
     }
   }
@@ -306,6 +307,15 @@ class _UseSmileIDSampleSdkFlowTabState
     }
     _left = true;
     widget.onLeave();
+  }
+
+  /// Lands on a job's details, so a failed or refused run shows its reason rather than a dead tap.
+  void _land(String jobId) {
+    if (_left) {
+      return;
+    }
+    _left = true;
+    widget.onResult(jobId);
   }
 
   UseSmileIDSampleJob _processingJob(

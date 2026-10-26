@@ -50,7 +50,9 @@ void main() {
       container.read(useSmileIDSampleSettingsProvider);
 
   Future<void> pick(WidgetTester tester, String id) async {
-    await tester.ensureVisible(byId(id));
+    // Centred: a drag that starts on a tappable row loses its touch slop, so a scrolled-to row can sit at the edge.
+    await Scrollable.ensureVisible(tester.element(byId(id)), alignment: 0.5);
+    await tester.pumpAndSettle();
     await tester.tap(byId(id));
     await tester.pumpAndSettle();
   }
