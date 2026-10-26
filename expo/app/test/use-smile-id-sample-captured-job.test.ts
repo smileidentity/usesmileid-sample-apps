@@ -11,6 +11,7 @@ jest.mock('expo-file-system', () => {
   class MockEntry {
     readonly uri: string;
     constructor(mockUri: string) {
+      if (typeof mockUri !== 'string' || mockUri.includes('unreadable')) throw new Error('not a path');
       this.uri = mockUri;
     }
     get exists() {
@@ -87,5 +88,22 @@ describe('a captured job', () => {
       ),
     ).not.toThrow();
     expect(mockDeleted).toEqual(['file:///data/UseSmileID/session']);
+  });
+
+  it('skips a path the native side left null, or one the file system cannot open', () => {
+    expect(() =>
+      smileIDSampleDeleteCapturedFiles(
+        job({
+          sessionDirectory: 'file:///data/UseSmileID/session',
+          selfieImage: null as unknown as string,
+          frontDocument: 'file:///data/unreadable/front.jpg',
+          livenessImages: ['file:///data/UseSmileID/session/liveness.jpg'],
+        }),
+      ),
+    ).not.toThrow();
+    expect(mockDeleted).toEqual([
+      'file:///data/UseSmileID/session/liveness.jpg',
+      'file:///data/UseSmileID/session',
+    ]);
   });
 });

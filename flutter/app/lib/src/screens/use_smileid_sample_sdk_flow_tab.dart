@@ -132,6 +132,12 @@ class _UseSmileIDSampleSdkFlowTabState
         builder.onResult = (UseSmileIDResult<JobSubmissionResponse> result) {
           // Before the throw: the throwing scenario still delivered, and the count must say so.
           _run!.deliverResult(result);
+          // Before the throw: a callback that throws must not leave the captured images on disk.
+          if (result case UseSmileIDCaptured<JobSubmissionResponse>(
+            :final CapturedJob job,
+          )) {
+            unawaited(job.deleteFiles());
+          }
           if (snapshot.scenario == UseSmileIDSampleScenario.throwingCallback) {
             throw StateError(
               'throwingCallback scenario: the host result callback throws',
@@ -269,9 +275,7 @@ class _UseSmileIDSampleSdkFlowTabState
         unawaited(_jobs.addJob(_processingJob(snapshot, value)));
         _land(value.jobId);
       case UseSmileIDFailure<JobSubmissionResponse>():
-        _land(unsubmittedJobId);
-      case UseSmileIDCaptured<JobSubmissionResponse>(:final CapturedJob job):
-        unawaited(job.deleteFiles());
+      case UseSmileIDCaptured<JobSubmissionResponse>():
         _land(unsubmittedJobId);
       case UseSmileIDCancelled<JobSubmissionResponse>():
         _leave();

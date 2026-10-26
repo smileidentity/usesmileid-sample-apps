@@ -143,6 +143,8 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
                     onResult = { result ->
                         viewModel.markResultDelivered()
                         recordResult(app.flowResult, result)
+                        // Before the throw: a callback that throws must not leave the captured images on disk.
+                        if (result is UseSmileIDResult.Captured) app.storeScope.launch { result.job.deleteFiles() }
                         if (snapshot.scenario == UseSmileIDSampleScenario.ThrowingCallback) {
                             throw IllegalStateException("throwingCallback scenario: the host result callback throws")
                         }
@@ -157,11 +159,7 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
                                 // A repeated delivery is stale once the run's entry has gone, so it stacks no second landing screen.
                                 engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = result.value.jobId)
                             }
-                            is UseSmileIDResult.Captured -> {
-                                app.storeScope.launch { result.job.deleteFiles() }
-                                engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
-                            }
-                            is UseSmileIDResult.Failure ->
+                            is UseSmileIDResult.Failure, is UseSmileIDResult.Captured ->
                                 engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
                             UseSmileIDResult.Cancelled ->
                                 if (composed.value) engine.leaveToProducts()

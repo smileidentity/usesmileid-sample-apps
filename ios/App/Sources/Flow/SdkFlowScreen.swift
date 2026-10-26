@@ -102,15 +102,15 @@ struct SdkFlowResultHandler {
 
   func deliver(_ result: UseSmileIDResult<JobSubmissionResponse>) {
     app.flowResult.record(result)
+    if case .captured(let job) = result {
+      Task.detached { job.deleteFiles() }
+    }
     switch result {
     case .success(let response):
       app.addJob(processingJob(response), bindings: snapshot.liveSession?.bindings)
       exit.leave(landing: .verificationDetails, arg: response.jobId)
     // Same destination: a failed or captured run has no server-issued job id, so the route carries a non-id.
-    case .failure:
-      exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
-    case .captured(let job):
-      Task.detached { job.deleteFiles() }
+    case .failure, .captured:
       exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
     // Popping the flow *is* the cancel, so the host fires none of its own.
     case .cancelled:

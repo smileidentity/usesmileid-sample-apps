@@ -50,6 +50,39 @@ void main() {
   );
 
   test(
+    'a delete the file system refuses is skipped, and the rest still go',
+    () async {
+      final Directory locked = Directory('${root.path}/locked')..createSync();
+      final File refused = File('${locked.path}/selfie.jpg')
+        ..writeAsStringSync('selfie');
+      final Directory session = Directory('${root.path}/session')..createSync();
+      final File front = File('${session.path}/front.jpg')
+        ..writeAsStringSync('front');
+      // Read-only, so deleting the file inside it fails as a permission error would.
+      await Process.run('chmod', <String>['500', locked.path]);
+      addTearDown(() => Process.runSync('chmod', <String>['700', locked.path]));
+
+      await CapturedJob(
+        jobType: JobType.smartSelfieEnrollment,
+        sessionId: 'session',
+        sessionDirectory: session.path,
+        selfieImage: refused.path,
+        livenessImages: const <String>[],
+        frontDocument: front.path,
+        backDocument: null,
+        headers: const <String, String>{},
+        encryptedPackage: '00',
+        packageNonce: '00',
+        packageTag: '00',
+      ).deleteFiles();
+
+      expect(refused.existsSync(), isTrue);
+      expect(front.existsSync(), isFalse);
+      expect(session.existsSync(), isFalse);
+    },
+  );
+
+  test(
     'a job with nothing on disk deletes nothing and does not throw',
     () async {
       await const CapturedJob(

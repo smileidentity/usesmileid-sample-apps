@@ -32,18 +32,16 @@ export const smileIDSampleRecordResult = (
 
 /// Deletes every file the job lists, then its session directory: this sample forwards nothing, and the SDK never deletes them.
 export const smileIDSampleDeleteCapturedFiles = (job: CapturedJob): void => {
-  const entries: (File | Directory)[] = [
-    job.selfieImage,
-    ...job.livenessImages,
-    job.frontDocument,
-    job.backDocument,
-    job.visaDocument,
-  ]
-    .filter((uri): uri is string => uri !== undefined)
-    .map((uri) => new File(uri));
-  if (job.sessionDirectory !== undefined) entries.push(new Directory(job.sessionDirectory));
-  for (const entry of entries) {
+  const files = [job.selfieImage, ...job.livenessImages, job.frontDocument, job.backDocument, job.visaDocument];
+  // `!= null`, not `!== undefined`: the native side can leave an absent path null.
+  const directory = job.sessionDirectory;
+  const entries = [
+    ...files.filter((uri) => uri != null).map((uri) => () => new File(uri)),
+    ...(directory != null ? [() => new Directory(directory)] : []),
+  ];
+  for (const open of entries) {
     try {
+      const entry = open();
       if (entry.exists) entry.delete();
     } catch {
       // A file left behind is harmless: the SDK writes each session to a folder of its own.

@@ -205,6 +205,8 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
         builder.onResult = (result: UseSmileIDResult<JobSubmissionResponse>) => {
           // Before the throw: the throwing scenario still delivered, and the count must say so.
           if (recorder !== null) smileIDSampleRecordResult(recorder, result);
+          // Before the throw: a callback that throws must not leave the captured images on disk.
+          if (result.status === 'captured') smileIDSampleDeleteCapturedFiles(result.job);
           if (snapshot.scenario === 'throwingCallback') {
             throw new Error('throwingCallback scenario: the host result callback throws');
           }
@@ -212,7 +214,6 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
             leave();
             return;
           }
-          if (result.status === 'captured') smileIDSampleDeleteCapturedFiles(result.job);
           if (result.status !== 'success') {
             toUnsubmittedDetails();
             return;
