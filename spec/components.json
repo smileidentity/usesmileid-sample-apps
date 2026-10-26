@@ -738,7 +738,8 @@
         "idTypePickerSheet",
         "documentPickerSheet",
         "captureAsSheet",
-        "captureModeSheet"
+        "captureModeSheet",
+        "submissionSheet"
       ],
       "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that has no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
       "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)",
@@ -1000,7 +1001,8 @@
         "running",
         "succeeded",
         "cancelled",
-        "failed"
+        "failed",
+        "captured"
       ],
       "notes": "Required by spec/result-card.schema.json and not present in the design set. It is the evidence channel automation asserts on. Placement still needs a design decision — see openItems in spec/README.md; built on the honest default, which Android implemented on 2026-08-14: a collapsible panel on verification details, plus a compact line on products while a job is in flight. Two decisions a port must copy rather than re-take. It defaults to expanded, because a collapsed field is absent from the accessibility tree and every flow would otherwise have to tap the card open before asserting on anything. And it renders on verification details whether or not the job resolved, because a flow that failed before submission has no job to show and that is exactly when its error and counts are the only evidence there is. A null field renders as an em dash, which flows assert on to prove a value was absent. It gained a required `environment` field on 2026-08-24: with the chip hidden and the Settings row gone, it is the only surface saying where a run submitted."
     },
@@ -1093,7 +1095,8 @@
     "Capture mode": "DocumentCaptureConfig.captureMode: auto → DocumentCaptureMode.AutoCapture (wire `auto_capture_only`), manual → ManualCapture (`manual`), autoWithFallback → AutoCaptureWithManualFallback with the SDK's 10 seconds (`autocapture_default`), the default. A typed field of its own, not one of the true/false settings.",
     "Gallery upload": "DocumentCaptureConfig.allowGalleryUpload = true. OFF by default, the SDK's default. Every platform's picker is the system one, which asks for no runtime permission; the iOS targets already declare NSPhotoLibraryUsageDescription.",
     "Skip the back": "DocumentCaptureConfig.allowSkipBack: a Skip button on the back-side capture. OFF by default, the SDK's default.",
-    "Selfie first": "Orders the two captures of the document products. OFF by default: document, then selfie, for both Document Verification and Enhanced Document Verification. The SDK accepts either order."
+    "Selfie first": "Orders the two captures of the document products. OFF by default: document, then selfie, for both Document Verification and Enhanced Document Verification. The SDK accepts either order.",
+    "API submission": "config.skipApiSubmission: submit → false (the default, the SDK submits the job), skip → true (the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored)."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

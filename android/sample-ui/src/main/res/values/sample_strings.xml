@@ -284,6 +284,8 @@
     <string name="sample_settings_skip_back_body">A Skip button on the back-side capture</string>
     <string name="sample_settings_selfie_first">Selfie first</string>
     <string name="sample_settings_selfie_first_body">The selfie before the document</string>
+    <string name="sample_settings_section_submission">SUBMISSION</string>
+    <string name="sample_settings_submission">API submission</string>
     <string name="sample_settings_section_about">ABOUT</string>
     <string name="sample_settings_documentation">Documentation</string>
     <string name="sample_settings_support">Support</string>
@@ -303,6 +305,9 @@
     <string name="sample_capture_mode_auto_body">Captures when the document is held steady</string>
     <string name="sample_capture_mode_manual_body">The shutter shows at once</string>
     <string name="sample_capture_mode_auto_with_fallback_body">The shutter shows after 10 seconds</string>
+    <string name="sample_submission_title">API submission</string>
+    <string name="sample_submission_submit">Submit to Smile ID</string>
+    <string name="sample_submission_skip">Skip API submission</string>
     <string name="sample_appearance_title">Theme</string>
     <string name="sample_appearance_system_light">System (Light)</string>
     <string name="sample_appearance_system_dark">System (Dark)</string>

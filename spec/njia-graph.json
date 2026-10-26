@@ -36,6 +36,7 @@
           "to": [
             "licenses",
             "captureMode",
+            "submission",
             "appearance",
             "language",
             "profiles",
@@ -57,6 +58,14 @@
       "kind": "captureMode",
       "reach": "go",
       "link": "settings/capture-mode",
+      "tab": "settings",
+      "presentation": "sheet"
+    },
+    {
+      "step": "submission",
+      "kind": "submission",
+      "reach": "go",
+      "link": "settings/submission",
       "tab": "settings",
       "presentation": "sheet"
     },

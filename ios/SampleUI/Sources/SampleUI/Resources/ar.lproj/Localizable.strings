@@ -282,6 +282,8 @@
 "settings_skip_back_body" = "زر تخطٍّ عند التقاط الوجه الخلفي";
 "settings_selfie_first" = "الصورة الذاتية أولًا";
 "settings_selfie_first_body" = "الصورة الذاتية قبل المستند";
+"settings_section_submission" = "الإرسال";
+"settings_submission" = "الإرسال إلى واجهة API";
 "settings_section_about" = "حول";
 "settings_documentation" = "الوثائق";
 "settings_support" = "الدعم";
@@ -301,6 +303,9 @@
 "capture_mode_auto_body" = "يلتقط الصورة عند ثبات المستند";
 "capture_mode_manual_body" = "يظهر زر الالتقاط فورًا";
 "capture_mode_auto_with_fallback_body" = "يظهر زر الالتقاط بعد 10 ثوانٍ";
+"submission_title" = "الإرسال إلى واجهة API";
+"submission_submit" = "الإرسال إلى Smile ID";
+"submission_skip" = "تخطي الإرسال إلى واجهة API";
 "appearance_title" = "السمة";
 "appearance_system_light" = "النظام (فاتح)";
 "appearance_system_dark" = "النظام (داكن)";

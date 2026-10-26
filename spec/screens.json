@@ -636,6 +636,7 @@
         "APPEARANCE",
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
         "DOCUMENT CAPTURE (four rows: Capture mode, Gallery upload, Skip the back, Selfie first; placed by the sample, the design draws no such section)",
+        "SUBMISSION (one row: API submission, opening submissionSheet; placed by the sample, the design draws no such section)",
         "ABOUT",
         "LEGAL",
         "sign out",
@@ -662,6 +663,7 @@
         "sample_setting_gallery_upload",
         "sample_setting_allow_skip_back",
         "sample_setting_selfie_first",
+        "sample_setting_submission",
         "sample_sign_out",
         "sample_sign_out_confirm"
       ],
@@ -700,6 +702,28 @@
       "testIds": [
         "sample_capture_mode_sheet",
         "sample_capture_mode_option"
+      ]
+    },
+    {
+      "id": "submissionSheet",
+      "title": "API submission",
+      "owner": "sample",
+      "board": "06",
+      "route": "sheet",
+      "states": [
+        {
+          "state": "default",
+          "design": "in-repo",
+          "note": "Two rows: Submit to Smile ID (the default) and Skip API submission, which sets config.skipApiSubmission so the SDK hands the captured job back instead of submitting it."
+        }
+      ],
+      "components": [
+        "BottomSheet",
+        "OptionRow"
+      ],
+      "testIds": [
+        "sample_submission_sheet",
+        "sample_submission_option"
       ]
     },
     {

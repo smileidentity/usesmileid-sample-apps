@@ -284,6 +284,8 @@
     <string name="sample_settings_skip_back_body">Un bouton Ignorer lors de la capture du verso</string>
     <string name="sample_settings_selfie_first">Selfie d’abord</string>
     <string name="sample_settings_selfie_first_body">Le selfie avant le document</string>
+    <string name="sample_settings_section_submission">SOUMISSION</string>
+    <string name="sample_settings_submission">Soumission à l’API</string>
     <string name="sample_settings_section_about">À PROPOS</string>
     <string name="sample_settings_documentation">Documentation</string>
     <string name="sample_settings_support">Assistance</string>
@@ -303,6 +305,9 @@
     <string name="sample_capture_mode_auto_body">Capture dès que le document est stable</string>
     <string name="sample_capture_mode_manual_body">Le déclencheur s\'affiche immédiatement</string>
     <string name="sample_capture_mode_auto_with_fallback_body">Le déclencheur s\'affiche après 10 secondes</string>
+    <string name="sample_submission_title">Soumission à l’API</string>
+    <string name="sample_submission_submit">Soumettre à Smile ID</string>
+    <string name="sample_submission_skip">Ignorer la soumission à l’API</string>
     <string name="sample_appearance_title">Thème</string>
     <string name="sample_appearance_system_light">Système (clair)</string>
     <string name="sample_appearance_system_dark">Système (sombre)</string>

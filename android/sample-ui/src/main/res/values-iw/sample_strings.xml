@@ -284,6 +284,8 @@
     <string name="sample_settings_skip_back_body">כפתור דילוג בצילום הצד האחורי</string>
     <string name="sample_settings_selfie_first">סלפי קודם</string>
     <string name="sample_settings_selfie_first_body">הסלפי לפני המסמך</string>
+    <string name="sample_settings_section_submission">שליחה</string>
+    <string name="sample_settings_submission">שליחה ל-API</string>
     <string name="sample_settings_section_about">אודות</string>
     <string name="sample_settings_documentation">תיעוד</string>
     <string name="sample_settings_support">תמיכה</string>
@@ -303,6 +305,9 @@
     <string name="sample_capture_mode_auto_body">מצלם כשהמסמך מוחזק יציב</string>
     <string name="sample_capture_mode_manual_body">כפתור הצילום מופיע מיד</string>
     <string name="sample_capture_mode_auto_with_fallback_body">כפתור הצילום מופיע אחרי 10 שניות</string>
+    <string name="sample_submission_title">שליחה ל-API</string>
+    <string name="sample_submission_submit">שליחה ל-Smile ID</string>
+    <string name="sample_submission_skip">דילוג על שליחה ל-API</string>
     <string name="sample_appearance_title">ערכת נושא</string>
     <string name="sample_appearance_system_light">מערכת (בהירה)</string>
     <string name="sample_appearance_system_dark">מערכת (כהה)</string>

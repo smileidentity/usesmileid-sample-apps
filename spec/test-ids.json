@@ -420,6 +420,18 @@
         "description": "Selfie first switch: the document products capture the selfie before the document. OFF by default."
       },
       {
+        "id": "sample_setting_submission",
+        "description": "API submission row, a select trigger showing the current choice → config.skipApiSubmission. Opens sample_submission_sheet."
+      },
+      {
+        "id": "sample_submission_sheet",
+        "description": "API submission option sheet root."
+      },
+      {
+        "id": "sample_submission_option",
+        "description": "One API submission row; suffixed submit (the default: the SDK submits the job) or skip (skipApiSubmission: the SDK hands the captured job back instead)."
+      },
+      {
         "id": "sample_setting_nav",
         "description": "One ABOUT/LEGAL navigation row; suffixed with the row id."
       },
