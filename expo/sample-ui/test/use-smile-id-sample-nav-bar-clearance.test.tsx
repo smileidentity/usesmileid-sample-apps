@@ -55,6 +55,7 @@ const screens = {
       onProfilePress={noop}
       onNavRowPress={noop}
       onCaptureModePress={noop}
+      onSubmissionPress={noop}
       onAppearancePress={noop}
       onLanguagePress={noop}
       onSignOut={noop}

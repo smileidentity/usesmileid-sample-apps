@@ -2,6 +2,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { UseSmileIDSampleAppearance } from '../src/model/use-smile-id-sample-appearance';
 import { UseSmileIDSampleCaptureMode } from '../src/model/use-smile-id-sample-capture-mode';
+import {
+  smileIDSampleSkipsApiSubmission,
+  smileIDSampleSubmissions,
+  UseSmileIDSampleSubmission,
+} from '../src/model/use-smile-id-sample-submission';
 import { smileIDSampleSettingsDefaults } from '../src/state/use-smile-id-sample-settings';
 import { UseSmileIDSampleSetting } from '../src/model/use-smile-id-sample-setting';
 import { useSmileIDSampleSettingsStore } from '../src/state/use-smile-id-sample-settings-store';
@@ -81,6 +86,34 @@ describe('the document capture settings', () => {
     await AsyncStorage.setItem('sample.setting.captureMode', 'sometimes');
     await store().load();
     expect(store().settings.captureMode).toBe(UseSmileIDSampleCaptureMode.AutoWithFallback);
+  });
+});
+
+describe('the API submission', () => {
+  it('submits by default', async () => {
+    await store().load();
+    expect(store().settings.submission).toBe(UseSmileIDSampleSubmission.Submit);
+  });
+
+  it('keeps the choice across a reload, stored by its id', async () => {
+    await store().setSubmission(UseSmileIDSampleSubmission.Skip);
+    expect(await AsyncStorage.getItem('sample.setting.submission')).toBe('skip');
+
+    store().reset();
+    await store().load();
+    expect(store().settings.submission).toBe(UseSmileIDSampleSubmission.Skip);
+  });
+
+  it('reads an unknown stored choice as submit', async () => {
+    await AsyncStorage.setItem('sample.setting.submission', 'later');
+    await store().load();
+    expect(store().settings.submission).toBe(UseSmileIDSampleSubmission.Submit);
+  });
+
+  it('turns on skipApiSubmission for skip only, with the rows the spec names', () => {
+    expect(smileIDSampleSkipsApiSubmission(UseSmileIDSampleSubmission.Submit)).toBe(false);
+    expect(smileIDSampleSkipsApiSubmission(UseSmileIDSampleSubmission.Skip)).toBe(true);
+    expect(smileIDSampleSubmissions.map((it) => it.id)).toEqual(['submit', 'skip']);
   });
 });
 

@@ -35,6 +35,8 @@ import { LanguageSheet } from '../src/screens/language-sheet';
 import { UseSmileIDSampleLanguage } from '../src/model/use-smile-id-sample-language';
 import { CaptureAsSheet } from '../src/screens/capture-as-sheet';
 import { CaptureModeSheet } from '../src/screens/capture-mode-sheet';
+import { SubmissionSheet } from '../src/screens/submission-sheet';
+import { UseSmileIDSampleSubmission } from '../src/model/use-smile-id-sample-submission';
 import { CountryPickerSheet } from '../src/screens/country-picker-sheet';
 import { GenericDocumentSheet } from '../src/screens/generic-document-sheet';
 import { DocumentPickerSheet } from '../src/screens/document-picker-sheet';
@@ -428,6 +430,14 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
     },
   },
   {
+    screen: 'submissionSheet',
+    states: {
+      default: {
+        element: () => <SubmissionSheet selected={UseSmileIDSampleSubmission.Submit} onSelect={noop} onDismiss={noop} />,
+      },
+    },
+  },
+  {
     screen: 'appearanceSheet',
     states: {
       default: { element: () => <AppearanceOnDevice /> },
@@ -500,7 +510,7 @@ describe('id details in Arabic', () => {
 describe('forms coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(82);
+    expect(total * schemes.length).toBe(84);
   });
 });
 

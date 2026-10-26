@@ -166,6 +166,12 @@ export {
   smileIDSampleCaptureModes,
 } from './model/use-smile-id-sample-capture-mode';
 export {
+  UseSmileIDSampleSubmission,
+  smileIDSampleSkipsApiSubmission,
+  smileIDSampleSubmissionLabel,
+  smileIDSampleSubmissions,
+} from './model/use-smile-id-sample-submission';
+export {
   UseSmileIDSampleAppearance,
   smileIDSampleAppearanceIsDark,
   smileIDSampleAppearanceLabel,
@@ -383,6 +389,7 @@ export { AppearanceSheet } from './screens/appearance-sheet';
 export { ScenarioDrawerSheet } from './screens/scenario-drawer-sheet';
 export { LanguageSheet } from './screens/language-sheet';
 export { CaptureModeSheet } from './screens/capture-mode-sheet';
+export { SubmissionSheet } from './screens/submission-sheet';
 export { GenericDocumentSheet } from './screens/generic-document-sheet';
 export { ProfilesScreen, type UseSmileIDSampleProfilesState } from './screens/profiles-screen';
 export {

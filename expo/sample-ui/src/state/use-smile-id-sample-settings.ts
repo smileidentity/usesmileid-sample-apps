@@ -2,6 +2,7 @@ import { UseSmileIDSampleAppearance } from '../model/use-smile-id-sample-appeara
 import { UseSmileIDSampleCaptureMode } from '../model/use-smile-id-sample-capture-mode';
 import { UseSmileIDSampleLanguage } from '../model/use-smile-id-sample-language';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
+import { UseSmileIDSampleSubmission } from '../model/use-smile-id-sample-submission';
 
 /// The Settings state. Three of these decide whether a step is composed into the flow at all.
 export type UseSmileIDSampleSettings = {
@@ -19,6 +20,8 @@ export type UseSmileIDSampleSettings = {
   readonly selfieFirst: boolean;
   /// A typed field rather than one of the switches: three values, not two.
   readonly captureMode: UseSmileIDSampleCaptureMode;
+  /// config.skipApiSubmission, picked from a sheet like `captureMode`; the SDK submits by default.
+  readonly submission: UseSmileIDSampleSubmission;
   /// Typed like `captureMode`; System follows the device.
   readonly appearance: UseSmileIDSampleAppearance;
   /// Typed like `appearance`; System follows the device's own language.
@@ -35,6 +38,7 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   allowSkipBack: false,
   selfieFirst: false,
   captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
+  submission: UseSmileIDSampleSubmission.Submit,
   appearance: UseSmileIDSampleAppearance.System,
   language: UseSmileIDSampleLanguage.System,
 };
