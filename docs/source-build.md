@@ -49,16 +49,15 @@ release, released versions after it (AGENTS.md, "Unreleased SDK API"). A change 
 published build has lands on `next`, the one long-lived branch the SDK repositories pin, and is
 reviewed with the linked SDK pull request's source-build lane green. This repo's own lanes build
 against the pinned SDK, so they run red on `next` while it carries such a change; the SDK repositories' source-build
-lanes are its gate. Everything else lands on `main`, which is merged
-into `next` by whoever next works on `next`, and at least weekly by whoever owns the current SDK
-release. `next` is only ever merged into, never rebased or force-pushed: released SDK versions pin
-its commits. When an SDK version ships, `next` is merged into `main` and each SDK repository moves
-its pin to the result.
+lanes are its gate. Everything else lands on `main`, which the **Sync next** workflow
+(`sync-next.yml`) merges into `next` after every push to `main`. `next` is only ever merged into,
+never rebased or force-pushed: released SDK versions pin its commits. When an SDK version ships,
+`next` is merged into `main` and each SDK repository moves its pin to the result.
 
 The **Promote next** workflow (`promote-next.yml`) opens that merge, named for the release: run it
 with the version that shipped. Its head is a copy of `next`, because merging a pull request deletes
-its head branch and `next` must never be deleted. Once it merges, merge `main` back into `next`, then
-run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
+its head branch and `next` must never be deleted. Once it merges, Sync next merges `main` back into
+`next`; then run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
 
 - A promotion held open because `next` needs a newer SDK is replaced when Promote next runs for that
   version.
@@ -67,6 +66,15 @@ run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
 - It runs in the `release` environment. Its `PROMOTE_NEXT_TOKEN` is a token for this repository alone,
   because a pull request opened with the workflow's own token starts no checks. It needs contents,
   pull requests and workflows write, the last because a promotion can carry workflow changes.
+
+Sync next pushes a clean merge straight to `next` with the run's own token, so no credential is stored
+for it. That token can't push a merge that changes `.github/workflows`, so a sync that carries a
+workflow change fails, as a conflict does, and leaves `next` as it was: merge `main` into `next` by
+hand, resolve any conflict there and push. Any other failure is tried again within the run. A run
+that still can't sync, for any of these reasons, opens a "Sync next is blocked" issue or adds to the
+open one; whoever owns the current SDK release clears it, and the next clean run, at the latest the
+daily one, closes the issue. A repository ruleset on `next` refuses a force-push or a deletion from
+anyone.
 
 ## The reserved `e2eScenario` argument
 
