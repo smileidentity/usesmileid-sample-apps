@@ -61,6 +61,7 @@ public final class UseSmileIDSampleStore {
       captureMode: settingsStorage.data(Self.captureModeKey)
         .flatMap { String(data: $0, encoding: .utf8) }
         .flatMap(UseSmileIDSampleCaptureMode.init(rawValue:)) ?? defaults.captureMode,
+      submission: settingsStorage.string(Self.submissionKey).flatMap(UseSmileIDSampleSubmission.init(rawValue:)) ?? defaults.submission,
       appearance: Self.appearance(in: settingsStorage),
       language: settingsStorage.string(Self.languageKey).flatMap(UseSmileIDSampleLanguage.init(rawValue:)) ?? defaults.language
     ).normalised()
@@ -94,6 +95,14 @@ public final class UseSmileIDSampleStore {
   }
 
   static let captureModeKey = "capture_mode"
+
+  /// Stored by its id, like the capture mode.
+  public func setSubmission(_ submission: UseSmileIDSampleSubmission) {
+    settingsStorage.setString(Self.submissionKey, submission.rawValue)
+    settings.submission = submission
+  }
+
+  static let submissionKey = "submission"
 
   /// Two writes, not one transaction; a crash between them is safe because the stored id is read first.
   public func setAppearance(_ appearance: UseSmileIDSampleAppearance) {

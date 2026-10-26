@@ -300,6 +300,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     settings = store.settings
   }
 
+  func setSubmission(_ submission: UseSmileIDSampleSubmission) {
+    store.setSubmission(submission)
+    settings = store.settings
+  }
+
   func setAppearance(_ appearance: UseSmileIDSampleAppearance) {
     store.setAppearance(appearance)
     settings = store.settings

@@ -446,6 +446,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("capture_mode_sheet") { CaptureModeSheet(selected: .autoWithFallback, onSelect: { _ in }).frame(height: 700) }
   }
 
+  func testSubmissionSheet() {
+    goldens("submission_sheet") { SubmissionSheet(selected: .submit, onSelect: { _ in }).frame(height: 700) }
+  }
+
   func testAppearanceSheet() {
     goldens("appearance_sheet") {
       UseSmileIDSampleGoldenDeviceScheme { deviceDark in

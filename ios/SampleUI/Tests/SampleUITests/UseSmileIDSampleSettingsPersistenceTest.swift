@@ -82,6 +82,18 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
     XCTAssertEqual(makeStore().settings.captureMode, .manual)
   }
 
+  func testSubmissionIsStoredByItsIdUnderTheAndroidKeyAndAnAbsentValueSubmits() {
+    XCTAssertEqual(makeStore().settings.submission, .submit)
+    makeStore().setSubmission(.skip)
+    XCTAssertEqual(rows.string("submission"), "skip")
+    XCTAssertEqual(makeStore().settings.submission, .skip)
+  }
+
+  func testAnUnknownSubmissionSubmits() {
+    rows.setString("submission", "later")
+    XCTAssertEqual(makeStore().settings.submission, .submit)
+  }
+
   func testNoStoredAppearanceFollowsTheDevice() {
     XCTAssertEqual(makeStore().settings.appearance, .system)
   }

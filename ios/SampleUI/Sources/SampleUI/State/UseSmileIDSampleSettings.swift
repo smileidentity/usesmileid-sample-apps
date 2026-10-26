@@ -17,6 +17,23 @@ public enum UseSmileIDSampleCaptureMode: String, CaseIterable, Sendable {
   }
 }
 
+/// config.skipApiSubmission, in `spec/test-ids.json`'s vocabulary: skip hands the captured job back instead of submitting it.
+public enum UseSmileIDSampleSubmission: String, CaseIterable, Sendable {
+  case submit, skip
+
+  public var label: String {
+    switch self {
+    case .submit: UseSmileIDSampleStrings.submissionSubmit
+    case .skip: UseSmileIDSampleStrings.submissionSkip
+    }
+  }
+
+  /// What the flow's config.skipApiSubmission is set to.
+  public var skipsApiSubmission: Bool {
+    self == .skip
+  }
+}
+
 /// The app's theme choice; System follows the device's own theme.
 public enum UseSmileIDSampleAppearance: String, CaseIterable, Sendable {
   case system, light, dark
@@ -91,6 +108,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var selfieFirst: Bool
   /// A typed field rather than one of the switches: three values, not two.
   public var captureMode: UseSmileIDSampleCaptureMode
+  /// config.skipApiSubmission, picked from a sheet like `captureMode`; the SDK submits by default.
+  public var submission: UseSmileIDSampleSubmission
   /// This app's own appearance; the `theme` launch argument seeds a run's SDK theme scenario, which is a different axis.
   public var appearance: UseSmileIDSampleAppearance
   /// Typed like `appearance`; System follows the device's own language.
@@ -106,6 +125,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     allowSkipBack: Bool = false,
     selfieFirst: Bool = false,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
+    submission: UseSmileIDSampleSubmission = .submit,
     appearance: UseSmileIDSampleAppearance = .system,
     language: UseSmileIDSampleLanguage = .system
   ) {
@@ -118,6 +138,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.allowSkipBack = allowSkipBack
     self.selfieFirst = selfieFirst
     self.captureMode = captureMode
+    self.submission = submission
     self.appearance = appearance
     self.language = language
   }
