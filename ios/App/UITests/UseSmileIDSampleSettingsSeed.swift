@@ -16,3 +16,13 @@ let useSmileIDSampleSettingsSeed = [
   "-allow_skip_back", "false",
   "-selfie_first", "false"
 ]
+
+extension [String] {
+  /// This seed with one store key's launch value replaced, so a launch can start with a switch the UI would otherwise turn.
+  func useSmileIDSampleSetting(_ key: String, to value: String) -> [String] {
+    guard let index = firstIndex(of: key), index + 1 < count else { return self + [key, value] }
+    var seed = self
+    seed[index + 1] = value
+    return seed
+  }
+}

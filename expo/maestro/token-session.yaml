@@ -115,6 +115,19 @@ appId: ${APP_ID}
     visible: "Exit"
     timeout: 30000
 - tapOn: "Exit"
+# The run failed on the fixture token, so it lands on the unsubmitted job's details, as on Android and iOS.
+- extendedWaitUntil:
+    visible:
+      id: "sample_verification_details_screen"
+    timeout: 30000
+# The details are the verifications tab's, so back reaches that tab's root, then the bar returns to Products.
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_verifications_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_nav_products"
 - extendedWaitUntil:
     visible:
       id: "sample_products_screen"
@@ -154,6 +167,19 @@ appId: ${APP_ID}
     visible: "Exit"
     timeout: 30000
 - tapOn: "Exit"
+# The run failed on the fixture token, so it lands on the unsubmitted job's details, as on Android and iOS.
+- extendedWaitUntil:
+    visible:
+      id: "sample_verification_details_screen"
+    timeout: 30000
+# The details are the verifications tab's, so back reaches that tab's root, then the bar returns to Products.
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_verifications_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_nav_products"
 - extendedWaitUntil:
     visible:
       id: "sample_products_screen"

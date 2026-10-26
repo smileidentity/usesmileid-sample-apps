@@ -567,13 +567,33 @@ describe('how a run ends', () => {
     return launch(path);
   };
 
-  it('goes back to products when the SDK fails or is cancelled', async () => {
+  it('goes back to products when the SDK run is cancelled', async () => {
     const { engine } = await liveRun('flow/smartSelfieEnrollment/run', true);
     expect(smileIDSampleTopKind(engine())).toBe('sdkFlowFullScreen');
     await waitFor(() => expect(mockOnResult).not.toBeNull());
     await act(async () => mockOnResult!({ status: 'cancelled' }));
     await settle();
     expect(smileIDSampleStackKinds(engine())).toEqual(['products']);
+  });
+
+  it('lands a failed run on the unsubmitted details, where its reason shows', async () => {
+    const { engine } = await liveRun('flow/smartSelfieEnrollment/run', true);
+    await waitFor(() => expect(mockOnResult).not.toBeNull());
+    await act(async () => mockOnResult!({ status: 'failure', error: new Error('network down') }));
+    await settle();
+    expect(smileIDSampleTopKind(engine())).toBe('verificationDetails');
+    expect(engine().state.entries.at(-1)?.arg).toBe('unsubmitted');
+    expect(useSmileIDSampleResultStore.getState().result.lastError).toBe('network down');
+  });
+
+  it('lands a run the SDK would refuse on the unsubmitted details, and never hands it to the SDK', async () => {
+    await act(async () => useSmileIDSampleSettingsStore.getState().setSetting('consentStep', false));
+    const { engine } = await liveRun('flow/smartSelfieEnrollment/run');
+    await waitFor(() => expect(smileIDSampleTopKind(engine())).toBe('verificationDetails'));
+    expect(engine().state.entries.at(-1)?.arg).toBe('unsubmitted');
+    expect(useSmileIDSampleResultStore.getState().result.jobStatus).toBe('failed');
+    expect(useSmileIDSampleResultStore.getState().result.lastError).not.toBeNull();
+    expect(mockOnResult).toBeNull();
   });
 
   it("sends Auth's run back for the user ID it has no value for", async () => {
