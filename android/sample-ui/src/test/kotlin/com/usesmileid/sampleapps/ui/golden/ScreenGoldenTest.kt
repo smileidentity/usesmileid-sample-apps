@@ -229,6 +229,7 @@ private fun Settings(
     onProfileClick = {},
     onNavRowClick = {},
     onCaptureModeClick = {},
+    onSubmissionClick = {},
     onAppearanceClick = {},
     onLanguageClick = {},
     onOpenScenarioDrawer = if (debug) ({ }) else null,

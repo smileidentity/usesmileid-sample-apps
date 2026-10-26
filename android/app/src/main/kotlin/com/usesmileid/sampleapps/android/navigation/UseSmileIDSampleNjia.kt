@@ -13,6 +13,7 @@ internal enum class UseSmileIDSampleStep(val wireName: String) {
     Settings("settings"),
     Licenses("licenses"),
     CaptureMode("captureMode"),
+    Submission("submission"),
     Appearance("appearance"),
     Language("language"),
     ScenarioDrawer("scenarioDrawer"),

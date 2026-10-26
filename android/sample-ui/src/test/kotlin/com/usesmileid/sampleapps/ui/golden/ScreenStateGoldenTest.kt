@@ -52,6 +52,7 @@ class ScreenStateGoldenTest {
         "captureAsSheet.default" to "sheet_capture_as",
         "genericDocumentSheet.default" to "sheet_generic_document",
         "captureModeSheet.default" to "sheet_capture_mode",
+        "submissionSheet.default" to "sheet_submission",
         "appearanceSheet.default" to "sheet_appearance",
         "languageSheet.default" to "sheet_language",
         "settings.default" to "screen_settings",

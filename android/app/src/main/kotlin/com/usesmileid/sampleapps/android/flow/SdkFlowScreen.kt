@@ -23,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.usesmileid.core.models.UseSmileIDResult
+import com.usesmileid.data.model.CapturedJob
 import com.usesmileid.data.model.JobSubmissionResponse
 import com.usesmileid.presentation.flow.dsl.UseSmileIDBuilder
 import com.usesmileid.presentation.flow.validation.ValidationState
@@ -39,6 +40,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleCameraHold
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
+import java.io.File
 
 /** The step hosting the SDK flow, in both presentations (R3); the SDK owns everything inside it (R2): no host BackHandler, no host chrome. */
 @Composable
@@ -155,7 +157,11 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
                                 // A repeated delivery is stale once the run's entry has gone, so it stacks no second landing screen.
                                 engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = result.value.jobId)
                             }
-                            is UseSmileIDResult.Failure, is UseSmileIDResult.Captured ->
+                            is UseSmileIDResult.Captured -> {
+                                app.storeScope.launch { result.job.deleteFiles() }
+                                engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
+                            }
+                            is UseSmileIDResult.Failure ->
                                 engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
                             UseSmileIDResult.Cancelled ->
                                 if (composed.value) engine.leaveToProducts()
@@ -167,7 +173,8 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
     }
 }
 
-private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmileIDResult<JobSubmissionResponse>) {
+/** What the result card records for a terminal result. */
+internal fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmileIDResult<JobSubmissionResponse>) {
     when (result) {
         is UseSmileIDResult.Success -> flowResult.recordResultCallback(
             status = UseSmileIDSampleFlowStatus.Succeeded,
@@ -179,12 +186,14 @@ private fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmil
             error = result.error.message ?: result.error::class.java.simpleName,
         )
         UseSmileIDResult.Cancelled -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Cancelled)
-        // Never expected: this app does not set skipApiSubmission.
-        is UseSmileIDResult.Captured -> flowResult.recordResultCallback(
-            status = UseSmileIDSampleFlowStatus.Failed,
-            error = CAPTURED_NOT_SUBMITTED,
-        )
+        is UseSmileIDResult.Captured -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Captured)
     }
+}
+
+/** Deletes every file the job lists, then its session directory: this sample forwards nothing, and the SDK never deletes them. */
+internal fun CapturedJob.deleteFiles() {
+    (listOfNotNull(selfieImage, frontDocument, backDocument, visaDocument) + livenessImages).forEach(File::delete)
+    sessionDirectory.deleteRecursively()
 }
 
 private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionResponse) = UseSmileIDSampleJob(
@@ -201,8 +210,5 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
     partnerId = snapshot.liveSession?.partnerId,
 )
 
-/** A failed run has no server-issued job id, so the landing route carries a stable non-id. */
+/** A failed or captured run has no server-issued job id, so the landing route carries a stable non-id. */
 private const val UNSUBMITTED_JOB_ID = "unsubmitted"
-
-/** Recorded when the SDK hands back a captured job instead of submitting it. */
-private const val CAPTURED_NOT_SUBMITTED = "Captured, not submitted"

@@ -30,6 +30,7 @@ internal val UseSmileIDSampleSteps: NjiaSteps<UseSmileIDSampleStep, UseSmileIDSa
     step(UseSmileIDSampleStep.Settings) { SettingsScreen(this) }
     step(UseSmileIDSampleStep.Licenses) { LicensesScreen(this) }
     step(UseSmileIDSampleStep.CaptureMode) { CaptureModeSheet(this) }
+    step(UseSmileIDSampleStep.Submission) { SubmissionSheet(this) }
     step(UseSmileIDSampleStep.Appearance) { AppearanceSheet(this) }
     step(UseSmileIDSampleStep.Language) { LanguageSheet(this) }
     step(UseSmileIDSampleStep.ScenarioDrawer) { ScenarioDrawerSheet(this) }

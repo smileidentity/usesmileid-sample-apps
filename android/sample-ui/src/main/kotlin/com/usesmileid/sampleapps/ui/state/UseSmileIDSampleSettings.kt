@@ -24,6 +24,8 @@ data class UseSmileIDSampleSettings(
     val selfieFirst: Boolean = false,
     /** A typed field rather than one of the switches: three values, not two. */
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
+    /** config.skipApiSubmission, picked from a sheet like [captureMode]; the SDK submits by default. */
+    val submission: UseSmileIDSampleSubmission = UseSmileIDSampleSubmission.Submit,
     /** Typed like [captureMode]; System follows the device. */
     val appearance: UseSmileIDSampleAppearance = UseSmileIDSampleAppearance.System,
     /** Typed like [appearance]; System follows the device's own language. */
@@ -78,6 +80,12 @@ enum class UseSmileIDSampleCaptureMode(val id: String) {
     Auto("auto"),
     Manual("manual"),
     AutoWithFallback("autoWithFallback"),
+}
+
+/** config.skipApiSubmission, in `spec/test-ids.json`'s vocabulary: Skip hands the captured job back instead of submitting it. */
+enum class UseSmileIDSampleSubmission(val id: String, val skipsApiSubmission: Boolean) {
+    Submit("submit", skipsApiSubmission = false),
+    Skip("skip", skipsApiSubmission = true),
 }
 
 /** The app's theme choice; System follows the device's own theme. */
