@@ -188,8 +188,9 @@ appId: ${APP_ID}
     checked: true
 
 # --- the consent switch, and the validation failure it is meant to demonstrate -------------------
-# No consent screen and no bound consent: the SDK's builder refuses the flow and delivers a typed
-# Failure, and the card is where the message lands. The host's own pre-flight cannot see this one.
+# No consent screen and no bound consent: the flow is refused, and the card is where the message
+# lands. The host's pre-flight sees it, since the builder's validate() returns build()'s verdict, and
+# lands on the same card as the SDK's typed Failure would.
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:

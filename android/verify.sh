@@ -2,8 +2,8 @@
 # The definition of done for the Android app: tokens, notices, lint, unit tests, release assemble.
 #
 # Device flows need a device and are not run here:
-#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android.debug android/maestro
-#   maestro --device <serial> test -e APP_ID=com.usesmileid.sampleapps.android       android/maestro
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android.debug android/maestro
+#   maestro --device <serial> test -e APP_ID=com.usesmileid.sample.android       android/maestro
 set -euo pipefail
 
 cd "$(dirname "$0")"

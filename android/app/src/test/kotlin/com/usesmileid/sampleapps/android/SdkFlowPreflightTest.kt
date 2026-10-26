@@ -1,5 +1,6 @@
 package com.usesmileid.sampleapps.android
 
+import com.usesmileid.core.exception.AgentModeWithEnhancedLivenessException
 import com.usesmileid.core.exception.InvalidFieldValueException
 import com.usesmileid.core.exception.UseSmileIDValidationException
 import com.usesmileid.sampleapps.android.flow.BOUND_COUNTRY
@@ -29,8 +30,17 @@ import java.util.Base64
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
-/** Narrower than "the SDK accepts this flow": `validate()` reports no error raised inside `screens { }`. */
+/**
+ * Preflight's last gate is `validate()`, which returns the verdict the SDK's `build()` reaches, so a
+ * flow it passes is one the SDK accepts. Under Robolectric because the SDK reads the token's bindings
+ * with `android.util.Base64`, which a plain JVM test stubs out.
+ */
+@RunWith(RobolectricTestRunner::class)
+@Config(sdk = [36])
 class SdkFlowPreflightTest {
 
     @Test
@@ -185,8 +195,7 @@ class SdkFlowPreflightTest {
         assertEquals("0000000", params.idNumber)
     }
 
-    // The forbidden pair is absent because no host can catch it: `validate()` is `validateBuilder`,
-    // and the rule runs inside the SDK's `build()`. The mutex is tested in `sample-ui`.
+    // The UI never persists agent mode with enhanced liveness; the mutex is tested in `sample-ui`.
     @Test
     fun `every capture combination the UI can persist reaches the SDK`() {
         val allowed = listOf(false to true, true to false, false to false)
@@ -205,9 +214,19 @@ class SdkFlowPreflightTest {
         }
     }
 
-    // The SDK refuses the Green Book on Enhanced Document Verification inside `screens { }`, which validate() cannot see.
     @Test
-    fun `every document setting passes preflight`() {
+    fun `agent mode with enhanced liveness is refused before the SDK on every product that captures`() {
+        UseSmileIDSampleProduct.entries.filter { it.capture }.forEach { product ->
+            val verdict = preflight(snapshotFor(product).copy(allowAgentMode = true, enableEnhancedLiveness = true))
+            assertTrue(
+                "$product should be refused for the pair, got $verdict",
+                verdict is FlowPreflight.Misconfigured && verdict.issues.any { it is AgentModeWithEnhancedLivenessException },
+            )
+        }
+    }
+
+    @Test
+    fun `every document setting passes preflight, except the Green Book the SDK refuses on Enhanced Document Verification`() {
         listOf(
             UseSmileIDSampleProduct.DocumentVerification,
             UseSmileIDSampleProduct.EnhancedDocumentVerification,
@@ -221,7 +240,13 @@ class SdkFlowPreflightTest {
                         allowSkipBack = !flag,
                         selfieFirst = flag,
                     )
-                    assertEquals("$product $captureAs flag=$flag", FlowPreflight.Ready, preflight(snapshot))
+                    val verdict = preflight(snapshot)
+                    val refused = product == UseSmileIDSampleProduct.EnhancedDocumentVerification &&
+                        captureAs == UseSmileIDSampleCaptureAs.GreenBook
+                    assertTrue(
+                        "$product $captureAs flag=$flag, got $verdict",
+                        if (refused) verdict is FlowPreflight.Misconfigured else verdict == FlowPreflight.Ready,
+                    )
                 }
             }
         }

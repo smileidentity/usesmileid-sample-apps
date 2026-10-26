@@ -166,7 +166,7 @@ describe('what the SDK is handed', () => {
     expect(built(snapshot()).userId).toBeUndefined();
   });
 
-  // `validate()` is weaker than the build: a missing consent icon passes one and fails the other.
+  // The build itself, whose verdict `validate()` returns without building.
   it('every product builds a configuration the SDK accepts', () => {
     for (const product of smileIDSampleProducts) {
       const result = built(

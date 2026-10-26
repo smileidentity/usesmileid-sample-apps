@@ -66,9 +66,11 @@ struct SdkFlowScreen: View {
       app.interruptedRun = UseSmileIDSampleRunIntent(productId: snapshot.product.id, route: snapshot.route)
       exit.leave(landing: .scanToken)
     case .misconfigured(let issues):
-      // Says why first: a silent return to the product list reads as a dead tap.
+      // Lands where the SDK's own failure does, on the unsubmitted job's details, so the reason is on
+      // screen: a flow the SDK would refuse stops here, and a silent return to the product list reads
+      // as a dead tap.
       app.flowResult.recordBlocked(reason: issues.joined(separator: "; "), environment: snapshot.environment)
-      exit.leave()
+      exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
     case .ready:
       app.flowResult.startFlow(environment: snapshot.environment)
       let handler = SdkFlowResultHandler(app: app, exit: exit, snapshot: snapshot)

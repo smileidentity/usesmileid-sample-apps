@@ -48,7 +48,8 @@ func useSmileIDSamplePreflight(_ snapshot: FlowLaunchSnapshot) -> FlowPreflight 
   if !payloadIssues.isEmpty {
     return .needsDetails(issues: payloadIssues.map(\.useSmileIDSampleReason))
   }
-  // The structural list the SDK applies when it renders; warnings do not block a run.
+  // The screen and structural rules, which need no network or ML block; the SDK's build also runs the
+  // job rules. Warnings do not block a run.
   let structural = validator
     .validate(configuration: useSmileIDSampleConfiguration(snapshot, params: params))
     .errors
