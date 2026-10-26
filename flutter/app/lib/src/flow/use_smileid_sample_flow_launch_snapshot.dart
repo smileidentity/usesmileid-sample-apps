@@ -28,6 +28,7 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     this.galleryUpload = false,
     this.allowSkipBack = false,
     this.selfieFirst = false,
+    this.skipApiSubmission = false,
     this.session,
     this.sessionExpired = false,
   });
@@ -79,6 +80,9 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// Whether the document products capture the selfie first.
   final bool selfieFirst;
+
+  /// Whether the SDK hands the captured job back instead of submitting it.
+  final bool skipApiSubmission;
 
   /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   final String userId;

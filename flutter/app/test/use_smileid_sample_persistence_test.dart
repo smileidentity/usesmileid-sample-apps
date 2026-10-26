@@ -71,6 +71,31 @@ void main() {
     expect(reread.galleryUpload, isTrue);
   });
 
+  test(
+    'the submission survives a restart under the key the four apps share',
+    () async {
+      await (await restart()).setSubmission(UseSmileIDSampleSubmission.skip);
+
+      final SharedPreferences raw = await SharedPreferences.getInstance();
+      expect(UseSmileIDSampleSettingsKeys.submission, 'submission');
+      expect(raw.getString(UseSmileIDSampleSettingsKeys.submission), 'skip');
+      expect(
+        (await (await restart()).read()).submission,
+        UseSmileIDSampleSubmission.skip,
+      );
+    },
+  );
+
+  test('an unknown submission submits', () async {
+    SharedPreferences.setMockInitialValues(<String, Object>{
+      UseSmileIDSampleSettingsKeys.submission: 'later',
+    });
+    expect(
+      (await (await restart()).read()).submission,
+      UseSmileIDSampleSubmission.submit,
+    );
+  });
+
   test('the document switches survive a restart', () async {
     final UseSmileIDSamplePreferencesSettingsRepository store = await restart();
     await store.setSetting(UseSmileIDSampleSetting.allowSkipBack, true);

@@ -34,6 +34,33 @@ class UseSmileIDSampleCaptureModeStep extends ConsumerWidget {
       );
 }
 
+/// The API submission sheet over settings; a pick is kept and closes it.
+class UseSmileIDSampleSubmissionStep extends ConsumerWidget {
+  /// The sheet for [scope]'s entry.
+  const UseSmileIDSampleSubmissionStep({required this.scope, super.key});
+
+  /// The sheet's entry, which a pick goes back from.
+  final UseSmileIDSampleStepScope scope;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      UseSmileIDSamplePartialSheetBody(
+        title: context.strings.submissionTitle,
+        testId: UseSmileIDSampleTestIds.submissionSheet,
+        child: UseSmileIDSampleSubmissionSheet(
+          selected: ref.watch(useSmileIDSampleSettingsProvider).submission,
+          onSelect: (UseSmileIDSampleSubmission submission) {
+            unawaited(
+              ref
+                  .read(useSmileIDSampleSettingsProvider.notifier)
+                  .setSubmission(submission),
+            );
+            unawaited(scope.navigator.back());
+          },
+        ),
+      );
+}
+
 /// The appearance sheet over settings; a pick is kept and closes it.
 class UseSmileIDSampleAppearanceStep extends ConsumerWidget {
   /// The sheet for [scope]'s entry.

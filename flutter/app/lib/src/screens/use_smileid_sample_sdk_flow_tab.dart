@@ -6,6 +6,7 @@ import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid/usesmileid.dart';
 
 import '../catalogue/use_smileid_sample_catalogue_providers.dart';
+import '../flow/use_smileid_sample_captured_job.dart';
 import '../flow/use_smileid_sample_flow_builder_config.dart';
 import '../flow/use_smileid_sample_flow_launch_snapshot.dart';
 import '../flow/use_smileid_sample_flow_preflight.dart';
@@ -130,7 +131,7 @@ class _UseSmileIDSampleSdkFlowTabState
         }
         builder.onResult = (UseSmileIDResult<JobSubmissionResponse> result) {
           // Before the throw: the throwing scenario still delivered, and the count must say so.
-          _record(result);
+          _run!.deliverResult(result);
           if (snapshot.scenario == UseSmileIDSampleScenario.throwingCallback) {
             throw StateError(
               'throwingCallback scenario: the host result callback throws',
@@ -203,6 +204,7 @@ class _UseSmileIDSampleSdkFlowTabState
       galleryUpload: settings.galleryUpload,
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
+      skipApiSubmission: settings.submission.skipsApiSubmission,
       userId: forms.authUserId.trim(),
       partnerId: profiles.partnerId,
       partnerName: profiles.partnerName,
@@ -267,37 +269,12 @@ class _UseSmileIDSampleSdkFlowTabState
         unawaited(_jobs.addJob(_processingJob(snapshot, value)));
         _land(value.jobId);
       case UseSmileIDFailure<JobSubmissionResponse>():
-      case UseSmileIDCaptured<JobSubmissionResponse>():
+        _land(unsubmittedJobId);
+      case UseSmileIDCaptured<JobSubmissionResponse>(:final CapturedJob job):
+        unawaited(job.deleteFiles());
         _land(unsubmittedJobId);
       case UseSmileIDCancelled<JobSubmissionResponse>():
         _leave();
-    }
-  }
-
-  void _record(UseSmileIDResult<JobSubmissionResponse> result) {
-    final UseSmileIDSampleRunRecorder run = _run!;
-    switch (result) {
-      case UseSmileIDSuccess<JobSubmissionResponse>(
-        :final JobSubmissionResponse value,
-      ):
-        run.deliver(
-          UseSmileIDSampleFlowStatus.succeeded,
-          jobId: value.jobId,
-          userId: value.userId,
-        );
-      case UseSmileIDFailure<JobSubmissionResponse>(:final Exception error):
-        run.deliver(
-          UseSmileIDSampleFlowStatus.failed,
-          error: error is UseSmileIDException ? error.message : '$error',
-        );
-      case UseSmileIDCancelled<JobSubmissionResponse>():
-        run.deliver(UseSmileIDSampleFlowStatus.cancelled);
-      // Never expected: this app does not set skipApiSubmission.
-      case UseSmileIDCaptured<JobSubmissionResponse>():
-        run.deliver(
-          UseSmileIDSampleFlowStatus.failed,
-          error: _capturedNotSubmitted,
-        );
     }
   }
 
@@ -337,9 +314,6 @@ class _UseSmileIDSampleSdkFlowTabState
   );
 
   static const int _acceptedCode = 202;
-
-  /// Recorded when the SDK hands back a captured job instead of submitting it.
-  static const String _capturedNotSubmitted = 'Captured, not submitted';
 }
 
 /// The SDK themes itself from the platform brightness, so this hands it the host theme's instead.

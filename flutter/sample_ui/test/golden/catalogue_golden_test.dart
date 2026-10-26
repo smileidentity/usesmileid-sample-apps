@@ -245,6 +245,17 @@ void main() {
     );
   });
 
+  testWidgets('submission', (WidgetTester tester) async {
+    await goldens(
+      tester,
+      'sheet_submission',
+      () => UseSmileIDSampleSubmissionSheet(
+        selected: UseSmileIDSampleSubmission.submit,
+        onSelect: (UseSmileIDSampleSubmission _) {},
+      ),
+    );
+  });
+
   testWidgets('appearance', (WidgetTester tester) async {
     await goldens(
       tester,

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid/usesmileid.dart';
 
 import '../flow/use_smileid_sample_flow_launch_snapshot.dart';
 import 'use_smileid_sample_providers.dart';
@@ -102,6 +103,29 @@ class UseSmileIDSampleRunRecorder {
     }
     _started = true;
     _result.start(_snapshot);
+  }
+
+  /// What the card records for the SDK's terminal result.
+  void deliverResult(UseSmileIDResult<JobSubmissionResponse> result) {
+    switch (result) {
+      case UseSmileIDSuccess<JobSubmissionResponse>(
+        :final JobSubmissionResponse value,
+      ):
+        deliver(
+          UseSmileIDSampleFlowStatus.succeeded,
+          jobId: value.jobId,
+          userId: value.userId,
+        );
+      case UseSmileIDFailure<JobSubmissionResponse>(:final Exception error):
+        deliver(
+          UseSmileIDSampleFlowStatus.failed,
+          error: error is UseSmileIDException ? error.message : '$error',
+        );
+      case UseSmileIDCancelled<JobSubmissionResponse>():
+        deliver(UseSmileIDSampleFlowStatus.cancelled);
+      case UseSmileIDCaptured<JobSubmissionResponse>():
+        deliver(UseSmileIDSampleFlowStatus.captured);
+    }
   }
 
   /// One host result callback, counted against this run.

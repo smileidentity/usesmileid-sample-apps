@@ -118,6 +118,7 @@ Widget _settings({
     onSettingChanged: _ignoreSetting,
     onProfileTap: () {},
     onCaptureModeTap: () {},
+    onSubmissionTap: () {},
     onAppearanceTap: () {},
     onLanguageTap: () {},
     onNavRowTap: _ignoreRow,

@@ -111,6 +111,9 @@ abstract final class UseSmileIDSampleRoutes {
   /// The capture-mode sheet over settings.
   static const String captureMode = '/settings/capture-mode';
 
+  /// The API submission sheet over settings.
+  static const String submission = '/settings/submission';
+
   /// The appearance sheet over settings.
   static const String appearance = '/settings/appearance';
 

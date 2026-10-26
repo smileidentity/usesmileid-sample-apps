@@ -402,6 +402,16 @@ abstract final class UseSmileIDSampleTestIds {
   static String captureModeOption(String modeId) =>
       'sample_capture_mode_option_$modeId';
 
+  /// The Settings row that opens the API submission sheet.
+  static const String settingSubmission = 'sample_setting_submission';
+
+  /// The API submission sheet.
+  static const String submissionSheet = 'sample_submission_sheet';
+
+  /// One API submission row, suffixed with its id.
+  static String submissionOption(String submissionId) =>
+      'sample_submission_option_$submissionId';
+
   /// The gallery-upload switch.
   static const String settingGalleryUpload = 'sample_setting_gallery_upload';
 
@@ -558,6 +568,8 @@ abstract final class UseSmileIDSampleTestIds {
     genericDocumentDone,
     settingCaptureMode,
     captureModeSheet,
+    settingSubmission,
+    submissionSheet,
     settingGalleryUpload,
     settingAllowSkipBack,
     settingSelfieFirst,

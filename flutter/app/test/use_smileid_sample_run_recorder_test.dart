@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid/usesmileid.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_flow_launch_snapshot.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 
@@ -58,5 +59,29 @@ void main() {
     run.ensureStarted();
     expect(result().resultCallbackCount, 1);
     expect(result().jobStatus, UseSmileIDSampleFlowStatus.cancelled);
+  });
+
+  test('a captured job is recorded as captured, not as a failure', () {
+    run.deliverResult(
+      const UseSmileIDCaptured<JobSubmissionResponse>(
+        CapturedJob(
+          jobType: JobType.smartSelfieEnrollment,
+          sessionId: 'session',
+          sessionDirectory: null,
+          selfieImage: null,
+          livenessImages: <String>[],
+          frontDocument: null,
+          backDocument: null,
+          headers: <String, String>{},
+          encryptedPackage: '00',
+          packageNonce: '00',
+          packageTag: '00',
+        ),
+      ),
+    );
+    expect(result().jobStatus, UseSmileIDSampleFlowStatus.captured);
+    expect(result().lastError, isNull);
+    expect(result().jobId, isNull, reason: 'nothing was submitted');
+    expect(result().resultCallbackCount, 1);
   });
 }

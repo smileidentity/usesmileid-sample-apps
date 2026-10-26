@@ -106,6 +106,33 @@ void main() {
     }
   });
 
+  test('the API submission setting reaches the SDK', () {
+    for (final bool skip in <bool>[false, true]) {
+      final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+      useSmileIDSampleApplying(
+        builder,
+        _snapshot(
+          const UseSmileIDSampleIdDetails(
+            country: UseSmileIDSampleCountry('KE', 'Kenya'),
+            document: UseSmileIDSampleDocument(
+              code: 'PASSPORT',
+              name: 'Passport',
+              hasBack: false,
+              format: 3,
+            ),
+          ),
+          skipApiSubmission: skip,
+        ),
+      );
+      // The SDK says to inspect this, then marks it internal.
+      // ignore: invalid_use_of_internal_member
+      final dynamic result = builder.build();
+      // The result's type is unexported, hence the dynamic read.
+      // ignore: avoid_dynamic_calls
+      expect(result.configuration.skipApiSubmission, skip);
+    }
+  });
+
   test('the SDK captures a passport front only, whether matched or chosen', () {
     for (final UseSmileIDSampleCaptureAs? captureAs
         in <UseSmileIDSampleCaptureAs?>[
@@ -259,6 +286,7 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
       UseSmileIDSampleCaptureMode.autoWithFallback,
   bool galleryUpload = false,
   bool allowSkipBack = false,
+  bool skipApiSubmission = false,
 }) => UseSmileIDSampleFlowLaunchSnapshot(
   product: product,
   route: UseSmileIDSampleFlowRoute.fullscreen,
@@ -279,6 +307,7 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   captureMode: captureMode,
   galleryUpload: galleryUpload,
   allowSkipBack: allowSkipBack,
+  skipApiSubmission: skipApiSubmission,
   userId: 'user_1',
   partnerId: 'profile-1',
   partnerName: 'Kobo Bank',

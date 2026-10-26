@@ -75,6 +75,24 @@ void main() {
     expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.settings);
   });
 
+  testWidgets('a submission picked is kept, and the sheet closes', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(tester, UseSmileIDSampleRoutes.submission);
+    expect(byId(UseSmileIDSampleTestIds.submissionSheet), findsOne);
+
+    await pick(
+      tester,
+      UseSmileIDSampleTestIds.submissionOption(
+        UseSmileIDSampleSubmission.skip.id,
+      ),
+    );
+
+    expect(settings().submission, UseSmileIDSampleSubmission.skip);
+    expect(byId(UseSmileIDSampleTestIds.submissionSheet), findsNothing);
+    expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.settings);
+  });
+
   testWidgets('an appearance picked is kept, and the sheet closes', (
     WidgetTester tester,
   ) async {

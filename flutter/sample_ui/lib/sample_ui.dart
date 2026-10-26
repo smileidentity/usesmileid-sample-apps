@@ -66,6 +66,7 @@ export 'src/screens/use_smileid_sample_profiles_screen.dart';
 export 'src/screens/use_smileid_sample_scan_token_screen.dart';
 export 'src/screens/use_smileid_sample_scenario_drawer.dart';
 export 'src/screens/use_smileid_sample_settings_screen.dart';
+export 'src/screens/use_smileid_sample_submission_sheet.dart';
 export 'src/screens/use_smileid_sample_user_details_screen.dart';
 export 'src/screens/use_smileid_sample_verification_details_screen.dart';
 export 'src/screens/use_smileid_sample_verifications_screen.dart';

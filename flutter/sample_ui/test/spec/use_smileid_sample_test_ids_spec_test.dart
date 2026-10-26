@@ -56,6 +56,7 @@ void main() {
         UseSmileIDSampleTestIds.documentOption('x'),
         UseSmileIDSampleTestIds.captureAsOption('x'),
         UseSmileIDSampleTestIds.captureModeOption('x'),
+        UseSmileIDSampleTestIds.submissionOption('x'),
         UseSmileIDSampleTestIds.appearanceOption('x'),
         UseSmileIDSampleTestIds.languageOption('x'),
         UseSmileIDSampleTestIds.genericDocumentOrientation('x'),

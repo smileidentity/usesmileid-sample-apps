@@ -61,6 +61,7 @@ class _UseSmileIDSampleSettingsTabState
       onProfileTap: () => _go(UseSmileIDSampleStep.profiles),
       onNavRowTap: _openNavRow,
       onCaptureModeTap: () => _go(UseSmileIDSampleStep.captureMode),
+      onSubmissionTap: () => _go(UseSmileIDSampleStep.submission),
       onAppearanceTap: () => _go(UseSmileIDSampleStep.appearance),
       onLanguageTap: () => _go(UseSmileIDSampleStep.language),
       // Debug builds only; every flow reaches the drawer by its deep link instead.
