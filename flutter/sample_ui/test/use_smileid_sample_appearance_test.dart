@@ -29,7 +29,6 @@ void main() {
         onNavRowTap: (UseSmileIDSampleNavRow _) {},
         onSignOut: () {},
         onCaptureModeTap: () {},
-        onSubmissionTap: () {},
         onAppearanceTap: () => opened = true,
         onLanguageTap: () {},
       ),

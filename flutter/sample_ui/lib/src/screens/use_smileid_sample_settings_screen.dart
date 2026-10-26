@@ -156,7 +156,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required this.onNavRowTap,
     required this.onSignOut,
     required this.onCaptureModeTap,
-    required this.onSubmissionTap,
     required this.onAppearanceTap,
     required this.onLanguageTap,
     this.onOpenScenarioDrawer,
@@ -183,9 +182,6 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
 
   /// Opens the capture-mode sheet.
   final VoidCallback onCaptureModeTap;
-
-  /// Opens the API submission sheet.
-  final VoidCallback onSubmissionTap;
 
   /// Opens the appearance sheet.
   final VoidCallback onAppearanceTap;
@@ -378,18 +374,11 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
           _Section(
             label: context.strings.settingsSectionSubmission,
             children: <Widget>[
-              UseSmileIDSampleSettingRow(
-                title: context.strings.settingsSubmission,
-                supportingText: state.settings.submission.label(
-                  context.strings,
-                ),
-                onTap: onSubmissionTap,
-                leading: (Color tint) => UseSmileIDSampleIcon(
-                  asset: SmileIcons.verifications,
-                  tint: tint,
-                ),
-                trailing: const UseSmileIDSampleSettingRowChevron(),
-                testId: UseSmileIDSampleTestIds.settingSubmission,
+              _switchRow(
+                title: context.strings.settingsSkipApiSubmission,
+                icon: SmileIcons.verifications,
+                supportingText: context.strings.settingsSkipApiSubmissionBody,
+                setting: UseSmileIDSampleSetting.skipApiSubmission,
               ),
             ],
           ),

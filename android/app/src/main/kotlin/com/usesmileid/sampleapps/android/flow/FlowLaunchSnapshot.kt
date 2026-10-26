@@ -74,7 +74,7 @@ fun buildSnapshot(
         galleryUpload = app.settings.galleryUpload,
         allowSkipBack = app.settings.allowSkipBack,
         selfieFirst = app.settings.selfieFirst,
-        skipApiSubmission = app.settings.submission.skipsApiSubmission,
+        skipApiSubmission = app.settings.skipApiSubmission,
         userId = app.forms.authUserId.trim(),
         partnerId = app.profiles.partnerId,
         partnerName = app.profiles.partnerName,

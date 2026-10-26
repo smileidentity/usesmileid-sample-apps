@@ -8,7 +8,6 @@ enum UseSmileIDSampleStep: String, CaseIterable {
   case settings
   case licenses
   case captureMode
-  case submission
   case appearance
   case language
   case scenarioDrawer

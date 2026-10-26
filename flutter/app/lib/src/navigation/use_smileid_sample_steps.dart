@@ -53,11 +53,6 @@ useSmileIDSampleSteps = NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampleFact>(
           UseSmileIDSampleCaptureModeStep(scope: scope),
     )
     ..step(
-      UseSmileIDSampleStep.submission,
-      (_, UseSmileIDSampleStepScope scope) =>
-          UseSmileIDSampleSubmissionStep(scope: scope),
-    )
-    ..step(
       UseSmileIDSampleStep.appearance,
       (_, UseSmileIDSampleStepScope scope) =>
           UseSmileIDSampleAppearanceStep(scope: scope),

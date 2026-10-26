@@ -22,10 +22,10 @@ data class UseSmileIDSampleSettings(
     val allowSkipBack: Boolean = false,
     /** The document products capture the selfie before the document. */
     val selfieFirst: Boolean = false,
+    /** config.skipApiSubmission; off, as the SDK defaults it. */
+    val skipApiSubmission: Boolean = false,
     /** A typed field rather than one of the switches: three values, not two. */
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
-    /** config.skipApiSubmission, picked from a sheet like [captureMode]; the SDK submits by default. */
-    val submission: UseSmileIDSampleSubmission = UseSmileIDSampleSubmission.Submit,
     /** Typed like [captureMode]; System follows the device. */
     val appearance: UseSmileIDSampleAppearance = UseSmileIDSampleAppearance.System,
     /** Typed like [appearance]; System follows the device's own language. */
@@ -41,6 +41,7 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.GalleryUpload -> galleryUpload
         UseSmileIDSampleSetting.AllowSkipBack -> allowSkipBack
         UseSmileIDSampleSetting.SelfieFirst -> selfieFirst
+        UseSmileIDSampleSetting.SkipApiSubmission -> skipApiSubmission
     }
 
     /** Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses. */
@@ -60,6 +61,7 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.GalleryUpload -> copy(galleryUpload = enabled)
             UseSmileIDSampleSetting.AllowSkipBack -> copy(allowSkipBack = enabled)
             UseSmileIDSampleSetting.SelfieFirst -> copy(selfieFirst = enabled)
+            UseSmileIDSampleSetting.SkipApiSubmission -> copy(skipApiSubmission = enabled)
         }
 }
 
@@ -73,6 +75,7 @@ enum class UseSmileIDSampleSetting {
     GalleryUpload,
     AllowSkipBack,
     SelfieFirst,
+    SkipApiSubmission,
 }
 
 /** DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary. */
@@ -80,12 +83,6 @@ enum class UseSmileIDSampleCaptureMode(val id: String) {
     Auto("auto"),
     Manual("manual"),
     AutoWithFallback("autoWithFallback"),
-}
-
-/** config.skipApiSubmission, in `spec/test-ids.json`'s vocabulary: Skip hands the captured job back instead of submitting it. */
-enum class UseSmileIDSampleSubmission(val id: String, val skipsApiSubmission: Boolean) {
-    Submit("submit", skipsApiSubmission = false),
-    Skip("skip", skipsApiSubmission = true),
 }
 
 /** The app's theme choice; System follows the device's own theme. */

@@ -55,6 +55,7 @@ void main() {
         UseSmileIDSampleSettingsKeys.galleryUpload,
         UseSmileIDSampleSettingsKeys.allowSkipBack,
         UseSmileIDSampleSettingsKeys.selfieFirst,
+        UseSmileIDSampleSettingsKeys.skipApiSubmission,
       ]),
     );
   });
@@ -71,29 +72,20 @@ void main() {
     expect(reread.galleryUpload, isTrue);
   });
 
-  test(
-    'the submission survives a restart under the key the four apps share',
-    () async {
-      await (await restart()).setSubmission(UseSmileIDSampleSubmission.skip);
-
-      final SharedPreferences raw = await SharedPreferences.getInstance();
-      expect(UseSmileIDSampleSettingsKeys.submission, 'submission');
-      expect(raw.getString(UseSmileIDSampleSettingsKeys.submission), 'skip');
-      expect(
-        (await (await restart()).read()).submission,
-        UseSmileIDSampleSubmission.skip,
-      );
-    },
-  );
-
-  test('an unknown submission submits', () async {
-    SharedPreferences.setMockInitialValues(<String, Object>{
-      UseSmileIDSampleSettingsKeys.submission: 'later',
-    });
-    expect(
-      (await (await restart()).read()).submission,
-      UseSmileIDSampleSubmission.submit,
+  test('the Skip API submission switch survives a restart', () async {
+    expect((await (await restart()).read()).skipApiSubmission, isFalse);
+    await (await restart()).setSetting(
+      UseSmileIDSampleSetting.skipApiSubmission,
+      true,
     );
+
+    final SharedPreferences raw = await SharedPreferences.getInstance();
+    expect(
+      UseSmileIDSampleSettingsKeys.skipApiSubmission,
+      'skip_api_submission',
+    );
+    expect(raw.getBool(UseSmileIDSampleSettingsKeys.skipApiSubmission), isTrue);
+    expect((await (await restart()).read()).skipApiSubmission, isTrue);
   });
 
   test('the document switches survive a restart', () async {

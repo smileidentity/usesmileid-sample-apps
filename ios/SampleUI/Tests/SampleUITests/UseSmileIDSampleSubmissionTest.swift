@@ -1,18 +1,19 @@
 @testable import SampleUI
 import XCTest
 
-/// config.skipApiSubmission's two values, picked from a sheet like the capture mode.
+/// The Skip API submission switch: config.skipApiSubmission, off as the SDK defaults it.
 final class UseSmileIDSampleSubmissionTest: XCTestCase {
-  func testOnlySkipTurnsOnSkipApiSubmissionAndTheDefaultSubmits() {
-    XCTAssertEqual(UseSmileIDSampleSettings().submission, .submit)
-    XCTAssertFalse(UseSmileIDSampleSubmission.submit.skipsApiSubmission)
-    XCTAssertTrue(UseSmileIDSampleSubmission.skip.skipsApiSubmission)
+  func testTheSdkSubmitsByDefaultAndTheSwitchMovesNoOtherRow() {
+    let defaults = UseSmileIDSampleSettings()
+    XCTAssertFalse(defaults.skipApiSubmission)
+
+    var expected = defaults
+    expected.skipApiSubmission = true
+    XCTAssertEqual(defaults.with(.skipApiSubmission, true), expected)
   }
 
-  func testEachChoiceIsNamedAsTheSpecSaysAndKeyedByItsTestId() {
-    XCTAssertEqual(UseSmileIDSampleSubmission.allCases.map(\.rawValue), ["submit", "skip"])
-    XCTAssertEqual(UseSmileIDSampleSubmission.submit.label, "Submit to Smile ID")
-    XCTAssertEqual(UseSmileIDSampleSubmission.skip.label, "Skip API submission")
-    XCTAssertEqual(UseSmileIDSampleTestIds.submissionOption("skip"), "sample_submission_option_skip")
+  func testTheSwitchIsStoredUnderTheAndroidKey() {
+    XCTAssertEqual(UseSmileIDSampleSetting.skipApiSubmission.storageKey, "skip_api_submission")
+    XCTAssertEqual(UseSmileIDSampleTestIds.settingSkipApiSubmission, "sample_setting_skip_api_submission")
   }
 }

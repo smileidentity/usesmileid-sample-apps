@@ -3,7 +3,6 @@ import {
   CaptureModeSheet,
   LanguageSheet,
   ScenarioDrawerSheet,
-  SubmissionSheet,
   useSmileIDSampleDeviceLanguages,
   useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
@@ -21,22 +20,6 @@ export const UseSmileIDSampleCaptureModeStep = ({ scope }: { scope: UseSmileIDSa
       selected={selected}
       onSelect={(mode) => {
         void setCaptureMode(mode);
-        scope.navigator.back();
-      }}
-      onDismiss={() => scope.navigator.back()}
-    />
-  );
-};
-
-/// The API submission sheet over settings; a link opens it with settings beneath.
-export const UseSmileIDSampleSubmissionStep = ({ scope }: { scope: UseSmileIDSampleStepScope }) => {
-  const selected = useSmileIDSampleSettingsStore((state) => state.settings.submission);
-  const setSubmission = useSmileIDSampleSettingsStore((state) => state.setSubmission);
-  return (
-    <SubmissionSheet
-      selected={selected}
-      onSelect={(submission) => {
-        void setSubmission(submission);
         scope.navigator.back();
       }}
       onDismiss={() => scope.navigator.back()}

@@ -237,7 +237,6 @@ struct UseSmileIDSampleDestination: View {
         onProfile: { navigator.go(.profiles) },
         onNavRow: { row in open(row) },
         onCaptureMode: { navigator.go(.captureMode) },
-        onSubmission: { navigator.go(.submission) },
         onAppearance: { navigator.go(.appearance) },
         onLanguage: { navigator.go(.language) },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
@@ -259,11 +258,6 @@ struct UseSmileIDSampleDestination: View {
     case .captureMode:
       CaptureModeSheet(selected: app.settings.captureMode) { mode in
         app.setCaptureMode(mode)
-        navigator.back()
-      }
-    case .submission:
-      SubmissionSheet(selected: app.settings.submission) { submission in
-        app.setSubmission(submission)
         navigator.back()
       }
     case .appearance:

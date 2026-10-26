@@ -116,7 +116,6 @@ public struct SettingsScreen: View {
   private let onProfile: () -> Void
   private let onNavRow: (UseSmileIDSampleNavRow) -> Void
   private let onCaptureMode: () -> Void
-  private let onSubmission: () -> Void
   private let onAppearance: () -> Void
   private let onLanguage: () -> Void
   /// `nil` hides the DEBUG section: `sample-ui` may not read a host's build configuration.
@@ -134,7 +133,6 @@ public struct SettingsScreen: View {
     onProfile: @escaping () -> Void,
     onNavRow: @escaping (UseSmileIDSampleNavRow) -> Void,
     onCaptureMode: @escaping () -> Void = {},
-    onSubmission: @escaping () -> Void = {},
     onAppearance: @escaping () -> Void = {},
     onLanguage: @escaping () -> Void = {},
     onOpenScenarioDrawer: (() -> Void)? = nil,
@@ -146,7 +144,6 @@ public struct SettingsScreen: View {
     self.onProfile = onProfile
     self.onNavRow = onNavRow
     self.onCaptureMode = onCaptureMode
-    self.onSubmission = onSubmission
     self.onAppearance = onAppearance
     self.onLanguage = onLanguage
     self.onOpenScenarioDrawer = onOpenScenarioDrawer
@@ -339,16 +336,13 @@ public struct SettingsScreen: View {
   /// The design draws no such section either; it sits on its own, as APPEARANCE does.
   private var submissionSection: some View {
     UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionSubmission) {
-      UseSmileIDSampleSettingRow(
-        title: UseSmileIDSampleStrings.settingsSubmission,
-        supportingText: state.settings.submission.label,
-        testId: UseSmileIDSampleTestIds.settingSubmission,
-        onTap: onSubmission
-      ) {
-        UseSmileIDSampleIcon(SmileIcons.verifications, tint: colors.textTitle, size: SmileSpacing.sizeIconMd)
-      } trailing: {
-        UseSmileIDSampleSettingRowChevron()
-      }
+      switchRow(
+        title: UseSmileIDSampleStrings.settingsSkipApiSubmission,
+        icon: SmileIcons.verifications,
+        supporting: UseSmileIDSampleStrings.settingsSkipApiSubmissionBody,
+        setting: .skipApiSubmission,
+        testId: UseSmileIDSampleTestIds.settingSkipApiSubmission
+      )
     }
   }
 

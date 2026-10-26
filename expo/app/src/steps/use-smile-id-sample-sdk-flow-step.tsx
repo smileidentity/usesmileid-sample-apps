@@ -19,7 +19,6 @@ import {
   type UseSmileIDSampleRunIntent,
   USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
   smileIDSamplePartnerName,
-  smileIDSampleSkipsApiSubmission,
 } from '@smileid/sample-ui';
 import {
   UseSmileIDBuilder,
@@ -115,7 +114,7 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
       galleryUpload: settings.galleryUpload,
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
-      skipApiSubmission: smileIDSampleSkipsApiSubmission(settings.submission),
+      skipApiSubmission: settings.skipApiSubmission,
       userId: authUserId.trim(),
       partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
       partnerName: smileIDSamplePartnerName(profile),

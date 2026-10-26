@@ -18,9 +18,6 @@ enum UseSmileIDSampleStep {
   /// The capture-mode sheet over settings.
   captureMode,
 
-  /// The API submission sheet over settings.
-  submission,
-
   /// The appearance sheet over settings.
   appearance,
 

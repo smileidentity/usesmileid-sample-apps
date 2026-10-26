@@ -11,7 +11,7 @@ final class UseSmileIDSampleTestIdUsageTest: XCTestCase {
     "scenarioItemPrefix", "themeItemPrefix",
     "jobRowPrefix", "filterChipPrefix", "filterCountPrefix", "selectionCheckboxPrefix",
     "licenseRowPrefix", "licenseTextPrefix", "licenseLinkPrefix",
-    "documentOptionPrefix", "captureAsOptionPrefix", "captureModeOptionPrefix", "submissionOptionPrefix", "appearanceOptionPrefix", "languageOptionPrefix",
+    "documentOptionPrefix", "captureAsOptionPrefix", "captureModeOptionPrefix", "appearanceOptionPrefix", "languageOptionPrefix",
     "genericDocumentOrientationPrefix", "genericDocumentAspectRatioPrefix",
     // Attached by an SDK repo's source build, never by this app.
     "showDiagnostics"

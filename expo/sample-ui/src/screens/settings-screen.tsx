@@ -23,7 +23,6 @@ import {
 import { smileIDSampleAppearanceLabel } from '../model/use-smile-id-sample-appearance';
 import { smileIDSampleLanguageLabel } from '../model/use-smile-id-sample-language';
 import { smileIDSampleCaptureModeLabel } from '../model/use-smile-id-sample-capture-mode';
-import { smileIDSampleSubmissionLabel } from '../model/use-smile-id-sample-submission';
 import { UseSmileIDSampleSetting } from '../model/use-smile-id-sample-setting';
 import type { SmileIconName } from '../smile-icons';
 import { smileProfileHues } from '../smile-product-hues';
@@ -140,8 +139,6 @@ type Props = {
   onNavRowPress: (row: UseSmileIDSampleNavRow) => void;
   /// Opens the capture-mode sheet.
   onCaptureModePress: () => void;
-  /// Opens the API submission sheet.
-  onSubmissionPress: () => void;
   /// Opens the appearance sheet.
   onAppearancePress: () => void;
   onLanguagePress: () => void;
@@ -162,7 +159,6 @@ export const SettingsScreen = ({
   onProfilePress,
   onNavRowPress,
   onCaptureModePress,
-  onSubmissionPress,
   onAppearancePress,
   onLanguagePress,
   onOpenScenarioDrawer,
@@ -343,13 +339,14 @@ export const SettingsScreen = ({
 
       {/* The design draws no such section either; it sits on its own, as APPEARANCE does. */}
       <Section label={strings.settingsSectionSubmission}>
-        <UseSmileIDSampleSettingRow
-          title={strings.settingsSubmission}
-          supportingText={smileIDSampleSubmissionLabel(settings.submission, strings)}
-          onPress={onSubmissionPress}
-          leading={(tint) => <UseSmileIDSampleIcon name="verifications" tint={tint} />}
-          trailing={<UseSmileIDSampleSettingRowChevron />}
-          testID={UseSmileIDSampleTestIds.SETTING_SUBMISSION}
+        <SwitchRow
+          title={strings.settingsSkipApiSubmission}
+          supportingText={strings.settingsSkipApiSubmissionBody}
+          icon="verifications"
+          setting={UseSmileIDSampleSetting.SkipApiSubmission}
+          checked={settings.skipApiSubmission}
+          testID={UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION}
+          onSettingChange={onSettingChange}
         />
       </Section>
 

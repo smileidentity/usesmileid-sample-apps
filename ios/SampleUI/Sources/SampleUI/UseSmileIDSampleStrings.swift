@@ -1139,8 +1139,12 @@ public enum UseSmileIDSampleStrings {
     text("settings_section_submission")
   }
 
-  public static var settingsSubmission: String {
-    text("settings_submission")
+  public static var settingsSkipApiSubmission: String {
+    text("settings_skip_api_submission")
+  }
+
+  public static var settingsSkipApiSubmissionBody: String {
+    text("settings_skip_api_submission_body")
   }
 
   public static var settingsSectionAbout: String {
@@ -1217,18 +1221,6 @@ public enum UseSmileIDSampleStrings {
 
   public static var captureModeAutoWithFallbackBody: String {
     text("capture_mode_auto_with_fallback_body")
-  }
-
-  public static var submissionTitle: String {
-    text("submission_title")
-  }
-
-  public static var submissionSubmit: String {
-    text("submission_submit")
-  }
-
-  public static var submissionSkip: String {
-    text("submission_skip")
   }
 
   public static var appearanceTitle: String {

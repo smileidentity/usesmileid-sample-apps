@@ -16,11 +16,6 @@ abstract interface class UseSmileIDSampleSettingsRepository {
     UseSmileIDSampleCaptureMode mode,
   );
 
-  /// Stores the API submission choice and returns what was stored.
-  Future<UseSmileIDSampleSettings> setSubmission(
-    UseSmileIDSampleSubmission submission,
-  );
-
   /// Stores the appearance and returns what was stored.
   Future<UseSmileIDSampleSettings> setAppearance(
     UseSmileIDSampleAppearance appearance,
@@ -62,11 +57,11 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the document products capture the selfie first.
   static const String selfieFirst = 'selfie_first';
 
+  /// Whether the SDK hands the captured job back instead of submitting it.
+  static const String skipApiSubmission = 'skip_api_submission';
+
   /// The capture mode, stored by its id.
   static const String captureMode = 'capture_mode';
-
-  /// The API submission choice, stored by its id.
-  static const String submission = 'submission';
 
   /// The appearance, stored by its id.
   static const String appearance = 'appearance';
@@ -84,6 +79,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.galleryUpload => galleryUpload,
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
+    UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
   };
 }
 
@@ -110,11 +106,6 @@ class UseSmileIDSampleMemorySettingsRepository
   Future<UseSmileIDSampleSettings> setCaptureMode(
     UseSmileIDSampleCaptureMode mode,
   ) async => _settings = _settings.withCaptureMode(mode);
-
-  @override
-  Future<UseSmileIDSampleSettings> setSubmission(
-    UseSmileIDSampleSubmission submission,
-  ) async => _settings = _settings.withSubmission(submission);
 
   @override
   Future<UseSmileIDSampleSettings> setAppearance(

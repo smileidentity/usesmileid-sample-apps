@@ -43,7 +43,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.usesmileid.sampleapps.ui.screens.AppearanceSheet as AppearanceContent
 import com.usesmileid.sampleapps.ui.screens.CaptureModeSheet as CaptureModeContent
-import com.usesmileid.sampleapps.ui.screens.SubmissionSheet as SubmissionContent
 import com.usesmileid.sampleapps.ui.screens.LanguageSheet as LanguageContent
 import com.usesmileid.sampleapps.ui.screens.LicensesScreen as LicensesContent
 import com.usesmileid.sampleapps.ui.screens.SettingsScreen as SettingsContent
@@ -72,7 +71,6 @@ internal fun SettingsScreen(scope: UseSmileIDSampleStepScope) {
         // The row opens the list: configuring any profile and creating one are both reached from there.
         onProfileClick = { scope.navigator.go(UseSmileIDSampleStep.Profiles) },
         onCaptureModeClick = { scope.navigator.go(UseSmileIDSampleStep.CaptureMode) },
-        onSubmissionClick = { scope.navigator.go(UseSmileIDSampleStep.Submission) },
         onAppearanceClick = { scope.navigator.go(UseSmileIDSampleStep.Appearance) },
         onLanguageClick = { scope.navigator.go(UseSmileIDSampleStep.Language) },
         // Every row but Open-source licenses opens externally; that one is a screen in this app.
@@ -127,20 +125,6 @@ internal fun CaptureModeSheet(scope: UseSmileIDSampleStepScope) {
         selected = app.settings.captureMode,
         onSelect = { mode ->
             app.storeScope.launch { app.store.setCaptureMode(mode) }
-            scope.navigator.back()
-        },
-        onDismissRequest = scope.navigator::back,
-    )
-}
-
-/** The API submission picker over Settings. */
-@Composable
-internal fun SubmissionSheet(scope: UseSmileIDSampleStepScope) {
-    val app = LocalUseSmileIDSampleAppState.current
-    SubmissionContent(
-        selected = app.settings.submission,
-        onSelect = { submission ->
-            app.storeScope.launch { app.store.setSubmission(submission) }
             scope.navigator.back()
         },
         onDismissRequest = scope.navigator::back,

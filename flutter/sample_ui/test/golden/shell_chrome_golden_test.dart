@@ -91,7 +91,6 @@ Widget _overSettings() => _shell(
     onProfileTap: () {},
     onNavRowTap: _ignoreNavRow,
     onCaptureModeTap: () {},
-    onSubmissionTap: () {},
     onAppearanceTap: () {},
     onLanguageTap: () {},
     onSignOut: () {},

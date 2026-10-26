@@ -39661,36 +39661,6 @@ exports[`settings dark agentModeOn 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -39707,7 +39677,6 @@ exports[`settings dark agentModeOn 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -39838,7 +39807,7 @@ exports[`settings dark agentModeOn 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -39857,69 +39826,40 @@ exports[`settings dark agentModeOn 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#4d88ff"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#272a35"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -44457,36 +44397,6 @@ exports[`settings dark consentBoundByToken 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -44503,7 +44413,6 @@ exports[`settings dark consentBoundByToken 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -44634,7 +44543,7 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -44653,69 +44562,40 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#4d88ff"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#272a35"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -49253,36 +49133,6 @@ exports[`settings dark default 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -49299,7 +49149,6 @@ exports[`settings dark default 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -49430,7 +49279,7 @@ exports[`settings dark default 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -49449,69 +49298,40 @@ exports[`settings dark default 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#4d88ff"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#272a35"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -54049,36 +53869,6 @@ exports[`settings dark withDebugSection 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -54095,7 +53885,6 @@ exports[`settings dark withDebugSection 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -54226,7 +54015,7 @@ exports[`settings dark withDebugSection 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -54245,69 +54034,40 @@ exports[`settings dark withDebugSection 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#4d88ff"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#272a35"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -59190,36 +58950,6 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
             }
           >
             <View
-              accessibilityRole="button"
-              accessibilityState={
-                {
-                  "busy": undefined,
-                  "checked": undefined,
-                  "disabled": undefined,
-                  "expanded": undefined,
-                  "selected": undefined,
-                }
-              }
-              accessibilityValue={
-                {
-                  "max": undefined,
-                  "min": undefined,
-                  "now": undefined,
-                  "text": undefined,
-                }
-              }
-              accessible={true}
-              collapsable={false}
-              focusable={true}
-              onBlur={[Function]}
-              onClick={[Function]}
-              onFocus={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
               style={
                 [
                   {
@@ -59236,7 +58966,6 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                   undefined,
                 ]
               }
-              testID="sample_setting_submission"
             >
               <View
                 style={
@@ -59367,7 +59096,7 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                     ]
                   }
                 >
-                  الإرسال إلى واجهة API
+                  تخطي الإرسال إلى واجهة API
                 </Text>
                 <Text
                   style={
@@ -59386,81 +59115,40 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                     ]
                   }
                 >
-                  الإرسال إلى Smile ID
+                  تعود المهمة الملتقطة دون إرسال
                 </Text>
               </View>
-              <View
+              <RCTSwitch
+                accessibilityRole="switch"
+                disabled={false}
+                onChange={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                onTintColor="#151f72"
                 style={
-                  {
-                    "transform": [
+                  [
+                    {
+                      "alignSelf": "flex-start",
+                    },
+                    [
+                      [
+                        {
+                          "alignSelf": "center",
+                        },
+                        undefined,
+                      ],
                       {
-                        "scaleX": -1,
+                        "backgroundColor": "#eaecf0",
+                        "borderRadius": 16,
                       },
                     ],
-                  }
+                  ]
                 }
-              >
-                <RNSVGSvgView
-                  align="xMidYMid"
-                  bbHeight={14}
-                  bbWidth={14}
-                  fill="none"
-                  focusable={false}
-                  height={14}
-                  meetOrSlice={0}
-                  minX={0}
-                  minY={0}
-                  style={
-                    [
-                      {
-                        "backgroundColor": "transparent",
-                        "borderWidth": 0,
-                      },
-                      {
-                        "flex": 0,
-                        "height": 14,
-                        "width": 14,
-                      },
-                    ]
-                  }
-                  vbHeight={14}
-                  vbWidth={14}
-                  width={14}
-                >
-                  <RNSVGGroup
-                    fill={null}
-                    propList={
-                      [
-                        "fill",
-                      ]
-                    }
-                  >
-                    <RNSVGPath
-                      d="M5.25 3.5L8.75 7L5.25 10.5"
-                      fill={null}
-                      opacity={1}
-                      propList={
-                        [
-                          "fill",
-                          "stroke",
-                          "strokeWidth",
-                          "strokeLinecap",
-                          "strokeLinejoin",
-                        ]
-                      }
-                      stroke={
-                        {
-                          "payload": 4286874242,
-                          "type": 0,
-                        }
-                      }
-                      strokeLinecap={1}
-                      strokeLinejoin={1}
-                      strokeWidth={1.16667}
-                    />
-                  </RNSVGGroup>
-                </RNSVGSvgView>
-              </View>
+                testID="sample_setting_skip_api_submission"
+                thumbTintColor="#ffffff"
+                tintColor="#eaecf0"
+                value={false}
+              />
             </View>
           </View>
         </View>
@@ -64059,36 +63747,6 @@ exports[`settings light agentModeOn 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -64105,7 +63763,6 @@ exports[`settings light agentModeOn 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -64236,7 +63893,7 @@ exports[`settings light agentModeOn 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -64255,69 +63912,40 @@ exports[`settings light agentModeOn 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#151f72"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#ffffff"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -68855,36 +68483,6 @@ exports[`settings light consentBoundByToken 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -68901,7 +68499,6 @@ exports[`settings light consentBoundByToken 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -69032,7 +68629,7 @@ exports[`settings light consentBoundByToken 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -69051,69 +68648,40 @@ exports[`settings light consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#151f72"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#ffffff"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -73651,36 +73219,6 @@ exports[`settings light default 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -73697,7 +73235,6 @@ exports[`settings light default 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -73828,7 +73365,7 @@ exports[`settings light default 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -73847,69 +73384,40 @@ exports[`settings light default 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#151f72"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#ffffff"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>
@@ -78447,36 +77955,6 @@ exports[`settings light withDebugSection 1`] = `
           }
         >
           <View
-            accessibilityRole="button"
-            accessibilityState={
-              {
-                "busy": undefined,
-                "checked": undefined,
-                "disabled": undefined,
-                "expanded": undefined,
-                "selected": undefined,
-              }
-            }
-            accessibilityValue={
-              {
-                "max": undefined,
-                "min": undefined,
-                "now": undefined,
-                "text": undefined,
-              }
-            }
-            accessible={true}
-            collapsable={false}
-            focusable={true}
-            onBlur={[Function]}
-            onClick={[Function]}
-            onFocus={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
@@ -78493,7 +77971,6 @@ exports[`settings light withDebugSection 1`] = `
                 undefined,
               ]
             }
-            testID="sample_setting_submission"
           >
             <View
               style={
@@ -78624,7 +78101,7 @@ exports[`settings light withDebugSection 1`] = `
                   ]
                 }
               >
-                API submission
+                Skip API submission
               </Text>
               <Text
                 style={
@@ -78643,69 +78120,40 @@ exports[`settings light withDebugSection 1`] = `
                   ]
                 }
               >
-                Submit to Smile ID
+                The captured job comes back unsubmitted
               </Text>
             </View>
-            <RNSVGSvgView
-              align="xMidYMid"
-              bbHeight={14}
-              bbWidth={14}
-              fill="none"
-              focusable={false}
-              height={14}
-              meetOrSlice={0}
-              minX={0}
-              minY={0}
+            <RCTSwitch
+              accessibilityRole="switch"
+              disabled={false}
+              onChange={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              onTintColor="#151f72"
               style={
                 [
                   {
-                    "backgroundColor": "transparent",
-                    "borderWidth": 0,
+                    "alignSelf": "flex-start",
                   },
-                  {
-                    "flex": 0,
-                    "height": 14,
-                    "width": 14,
-                  },
+                  [
+                    [
+                      {
+                        "alignSelf": "center",
+                      },
+                      undefined,
+                    ],
+                    {
+                      "backgroundColor": "#eaecf0",
+                      "borderRadius": 16,
+                    },
+                  ],
                 ]
               }
-              vbHeight={14}
-              vbWidth={14}
-              width={14}
-            >
-              <RNSVGGroup
-                fill={null}
-                propList={
-                  [
-                    "fill",
-                  ]
-                }
-              >
-                <RNSVGPath
-                  d="M5.25 3.5L8.75 7L5.25 10.5"
-                  fill={null}
-                  opacity={1}
-                  propList={
-                    [
-                      "fill",
-                      "stroke",
-                      "strokeWidth",
-                      "strokeLinecap",
-                      "strokeLinejoin",
-                    ]
-                  }
-                  stroke={
-                    {
-                      "payload": 4286874242,
-                      "type": 0,
-                    }
-                  }
-                  strokeLinecap={1}
-                  strokeLinejoin={1}
-                  strokeWidth={1.16667}
-                />
-              </RNSVGGroup>
-            </RNSVGSvgView>
+              testID="sample_setting_skip_api_submission"
+              thumbTintColor="#ffffff"
+              tintColor="#eaecf0"
+              value={false}
+            />
           </View>
         </View>
       </View>

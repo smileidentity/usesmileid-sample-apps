@@ -30,7 +30,6 @@ void main() {
               onNavRowTap: (UseSmileIDSampleNavRow _) {},
               onSignOut: () {},
               onCaptureModeTap: () {},
-              onSubmissionTap: () {},
               onAppearanceTap: () {},
               onLanguageTap: () {},
             ),

@@ -203,7 +203,6 @@ describe('the tabs', () => {
 describe('the settings sheets', () => {
   it.each([
     ['capture mode', UseSmileIDSampleTestIds.SETTING_CAPTURE_MODE, 'captureMode', UseSmileIDSampleTestIds.CAPTURE_MODE_SHEET],
-    ['API submission', UseSmileIDSampleTestIds.SETTING_SUBMISSION, 'submission', UseSmileIDSampleTestIds.SUBMISSION_SHEET],
     ['appearance', UseSmileIDSampleTestIds.SETTING_APPEARANCE, 'appearance', UseSmileIDSampleTestIds.APPEARANCE_SHEET],
     ['language', UseSmileIDSampleTestIds.SETTING_LANGUAGE, 'language', UseSmileIDSampleTestIds.LANGUAGE_SHEET],
   ] as const)('opens the %s sheet over settings, and its scrim closes it', async (_name, row, kind, sheet) => {
@@ -224,14 +223,6 @@ describe('the settings sheets', () => {
     await tap(screen, UseSmileIDSampleSuffixedTestIds.appearanceOption('dark'));
     expect(smileIDSampleStackKinds(engine())).toEqual(['settings']);
     expect(useSmileIDSampleSettingsStore.getState().settings.appearance).toBe('dark');
-  });
-
-  it('keeps an API submission pick and closes the sheet', async () => {
-    const { screen, engine } = await launch('settings/submission');
-    expect(smileIDSampleStackKinds(engine())).toEqual(['settings', 'submission']);
-    await tap(screen, UseSmileIDSampleSuffixedTestIds.submissionOption('skip'));
-    expect(smileIDSampleStackKinds(engine())).toEqual(['settings']);
-    expect(useSmileIDSampleSettingsStore.getState().settings.submission).toBe('skip');
   });
 
   it('opens the scenario drawer from settings, and a pick changes what later runs take but not the launch', async () => {

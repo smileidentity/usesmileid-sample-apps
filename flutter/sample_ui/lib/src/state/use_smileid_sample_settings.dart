@@ -27,7 +27,10 @@ enum UseSmileIDSampleSetting {
   allowSkipBack(UseSmileIDSampleTestIds.settingAllowSkipBack),
 
   /// The document products capture the selfie before the document.
-  selfieFirst(UseSmileIDSampleTestIds.settingSelfieFirst);
+  selfieFirst(UseSmileIDSampleTestIds.settingSelfieFirst),
+
+  /// config.skipApiSubmission; off, as the SDK defaults it.
+  skipApiSubmission(UseSmileIDSampleTestIds.settingSkipApiSubmission);
 
   const UseSmileIDSampleSetting(this.testId);
 
@@ -57,29 +60,6 @@ enum UseSmileIDSampleCaptureMode {
     UseSmileIDSampleCaptureMode.manual => strings.captureModeManual,
     UseSmileIDSampleCaptureMode.autoWithFallback =>
       strings.captureModeAutoWithFallback,
-  };
-}
-
-/// config.skipApiSubmission, in `spec/test-ids.json`'s vocabulary: skip hands the captured job back instead of submitting it.
-enum UseSmileIDSampleSubmission {
-  /// The SDK submits the job, as it does by default.
-  submit('submit', skipsApiSubmission: false),
-
-  /// The SDK hands the captured job back instead.
-  skip('skip', skipsApiSubmission: true);
-
-  const UseSmileIDSampleSubmission(this.id, {required this.skipsApiSubmission});
-
-  /// The id that suffixes this row's test id and is what the store keeps.
-  final String id;
-
-  /// What the flow's config.skipApiSubmission is set to.
-  final bool skipsApiSubmission;
-
-  /// What the row and the Settings line say.
-  String label(UseSmileIDSampleStrings strings) => switch (this) {
-    UseSmileIDSampleSubmission.submit => strings.submissionSubmit,
-    UseSmileIDSampleSubmission.skip => strings.submissionSkip,
   };
 }
 
@@ -185,8 +165,8 @@ class UseSmileIDSampleSettings {
     this.galleryUpload = false,
     this.allowSkipBack = false,
     this.selfieFirst = false,
+    this.skipApiSubmission = false,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
-    this.submission = UseSmileIDSampleSubmission.submit,
     this.appearance = UseSmileIDSampleAppearance.system,
     this.language = UseSmileIDSampleLanguage.system,
   });
@@ -215,11 +195,11 @@ class UseSmileIDSampleSettings {
   /// Whether the document products capture the selfie first.
   final bool selfieFirst;
 
+  /// Whether the SDK hands the captured job back instead of submitting it.
+  final bool skipApiSubmission;
+
   /// A typed field rather than one of the switches: three values, not two.
   final UseSmileIDSampleCaptureMode captureMode;
-
-  /// config.skipApiSubmission, picked from a sheet like [captureMode]; the SDK submits by default.
-  final UseSmileIDSampleSubmission submission;
 
   /// Typed like [captureMode]; System follows the device.
   final UseSmileIDSampleAppearance appearance;
@@ -237,6 +217,7 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.galleryUpload => galleryUpload,
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
+    UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -266,17 +247,15 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.galleryUpload => _copy(galleryUpload: enabled),
     UseSmileIDSampleSetting.allowSkipBack => _copy(allowSkipBack: enabled),
     UseSmileIDSampleSetting.selfieFirst => _copy(selfieFirst: enabled),
+    UseSmileIDSampleSetting.skipApiSubmission => _copy(
+      skipApiSubmission: enabled,
+    ),
   };
 
   /// A copy with [captureMode] chosen.
   UseSmileIDSampleSettings withCaptureMode(
     UseSmileIDSampleCaptureMode captureMode,
   ) => _copy(captureMode: captureMode);
-
-  /// A copy with [submission] chosen.
-  UseSmileIDSampleSettings withSubmission(
-    UseSmileIDSampleSubmission submission,
-  ) => _copy(submission: submission);
 
   /// A copy with [appearance] chosen.
   UseSmileIDSampleSettings withAppearance(
@@ -296,8 +275,8 @@ class UseSmileIDSampleSettings {
     bool? galleryUpload,
     bool? allowSkipBack,
     bool? selfieFirst,
+    bool? skipApiSubmission,
     UseSmileIDSampleCaptureMode? captureMode,
-    UseSmileIDSampleSubmission? submission,
     UseSmileIDSampleAppearance? appearance,
     UseSmileIDSampleLanguage? language,
   }) => UseSmileIDSampleSettings(
@@ -309,8 +288,8 @@ class UseSmileIDSampleSettings {
     galleryUpload: galleryUpload ?? this.galleryUpload,
     allowSkipBack: allowSkipBack ?? this.allowSkipBack,
     selfieFirst: selfieFirst ?? this.selfieFirst,
+    skipApiSubmission: skipApiSubmission ?? this.skipApiSubmission,
     captureMode: captureMode ?? this.captureMode,
-    submission: submission ?? this.submission,
     appearance: appearance ?? this.appearance,
     language: language ?? this.language,
   );
@@ -326,8 +305,8 @@ class UseSmileIDSampleSettings {
       other.galleryUpload == galleryUpload &&
       other.allowSkipBack == allowSkipBack &&
       other.selfieFirst == selfieFirst &&
+      other.skipApiSubmission == skipApiSubmission &&
       other.captureMode == captureMode &&
-      other.submission == submission &&
       other.appearance == appearance &&
       other.language == language;
 
@@ -341,8 +320,8 @@ class UseSmileIDSampleSettings {
     galleryUpload,
     allowSkipBack,
     selfieFirst,
+    skipApiSubmission,
     captureMode,
-    submission,
     appearance,
     language,
   );

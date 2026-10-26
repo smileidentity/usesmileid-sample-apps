@@ -102,7 +102,6 @@ class StoreArtTest {
             onProfileClick = {},
             onNavRowClick = {},
             onCaptureModeClick = {},
-            onSubmissionClick = {},
             onAppearanceClick = {},
             onLanguageClick = {},
             onOpenScenarioDrawer = null,

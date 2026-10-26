@@ -291,7 +291,8 @@ type Key =
   | 'settings_selfie_first'
   | 'settings_selfie_first_body'
   | 'settings_section_submission'
-  | 'settings_submission'
+  | 'settings_skip_api_submission'
+  | 'settings_skip_api_submission_body'
   | 'settings_section_about'
   | 'settings_documentation'
   | 'settings_support'
@@ -311,9 +312,6 @@ type Key =
   | 'capture_mode_auto_body'
   | 'capture_mode_manual_body'
   | 'capture_mode_auto_with_fallback_body'
-  | 'submission_title'
-  | 'submission_submit'
-  | 'submission_skip'
   | 'appearance_title'
   | 'appearance_system_light'
   | 'appearance_system_dark'
@@ -1481,8 +1479,12 @@ export class UseSmileIDSampleStrings {
     return this.values.settings_section_submission;
   }
 
-  get settingsSubmission(): string {
-    return this.values.settings_submission;
+  get settingsSkipApiSubmission(): string {
+    return this.values.settings_skip_api_submission;
+  }
+
+  get settingsSkipApiSubmissionBody(): string {
+    return this.values.settings_skip_api_submission_body;
   }
 
   get settingsSectionAbout(): string {
@@ -1559,18 +1561,6 @@ export class UseSmileIDSampleStrings {
 
   get captureModeAutoWithFallbackBody(): string {
     return this.values.capture_mode_auto_with_fallback_body;
-  }
-
-  get submissionTitle(): string {
-    return this.values.submission_title;
-  }
-
-  get submissionSubmit(): string {
-    return this.values.submission_submit;
-  }
-
-  get submissionSkip(): string {
-    return this.values.submission_skip;
   }
 
   get appearanceTitle(): string {
@@ -1928,7 +1918,8 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_selfie_first: 'Selfie first',
     settings_selfie_first_body: 'The selfie before the document',
     settings_section_submission: 'SUBMISSION',
-    settings_submission: 'API submission',
+    settings_skip_api_submission: 'Skip API submission',
+    settings_skip_api_submission_body: 'The captured job comes back unsubmitted',
     settings_section_about: 'ABOUT',
     settings_documentation: 'Documentation',
     settings_support: 'Support',
@@ -1948,9 +1939,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     capture_mode_auto_body: 'Captures when the document is held steady',
     capture_mode_manual_body: 'The shutter shows at once',
     capture_mode_auto_with_fallback_body: 'The shutter shows after 10 seconds',
-    submission_title: 'API submission',
-    submission_submit: 'Submit to Smile ID',
-    submission_skip: 'Skip API submission',
     appearance_title: 'Theme',
     appearance_system_light: 'System (Light)',
     appearance_system_dark: 'System (Dark)',
@@ -2254,7 +2242,8 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_selfie_first: 'Selfie d’abord',
     settings_selfie_first_body: 'Le selfie avant le document',
     settings_section_submission: 'SOUMISSION',
-    settings_submission: 'Soumission à l’API',
+    settings_skip_api_submission: 'Ignorer la soumission à l’API',
+    settings_skip_api_submission_body: 'La tâche capturée revient sans être soumise',
     settings_section_about: 'À PROPOS',
     settings_documentation: 'Documentation',
     settings_support: 'Assistance',
@@ -2274,9 +2263,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     capture_mode_auto_body: 'Capture dès que le document est stable',
     capture_mode_manual_body: 'Le déclencheur s\'affiche immédiatement',
     capture_mode_auto_with_fallback_body: 'Le déclencheur s\'affiche après 10 secondes',
-    submission_title: 'Soumission à l’API',
-    submission_submit: 'Soumettre à Smile ID',
-    submission_skip: 'Ignorer la soumission à l’API',
     appearance_title: 'Thème',
     appearance_system_light: 'Système (clair)',
     appearance_system_dark: 'Système (sombre)',
@@ -2580,7 +2566,8 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_selfie_first: 'الصورة الذاتية أولًا',
     settings_selfie_first_body: 'الصورة الذاتية قبل المستند',
     settings_section_submission: 'الإرسال',
-    settings_submission: 'الإرسال إلى واجهة API',
+    settings_skip_api_submission: 'تخطي الإرسال إلى واجهة API',
+    settings_skip_api_submission_body: 'تعود المهمة الملتقطة دون إرسال',
     settings_section_about: 'حول',
     settings_documentation: 'الوثائق',
     settings_support: 'الدعم',
@@ -2600,9 +2587,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     capture_mode_auto_body: 'يلتقط الصورة عند ثبات المستند',
     capture_mode_manual_body: 'يظهر زر الالتقاط فورًا',
     capture_mode_auto_with_fallback_body: 'يظهر زر الالتقاط بعد 10 ثوانٍ',
-    submission_title: 'الإرسال إلى واجهة API',
-    submission_submit: 'الإرسال إلى Smile ID',
-    submission_skip: 'تخطي الإرسال إلى واجهة API',
     appearance_title: 'السمة',
     appearance_system_light: 'النظام (فاتح)',
     appearance_system_dark: 'النظام (داكن)',
@@ -2906,7 +2890,8 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_selfie_first: 'סלפי קודם',
     settings_selfie_first_body: 'הסלפי לפני המסמך',
     settings_section_submission: 'שליחה',
-    settings_submission: 'שליחה ל-API',
+    settings_skip_api_submission: 'דילוג על שליחה ל-API',
+    settings_skip_api_submission_body: 'המשימה שצולמה חוזרת בלי שליחה',
     settings_section_about: 'אודות',
     settings_documentation: 'תיעוד',
     settings_support: 'תמיכה',
@@ -2926,9 +2911,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     capture_mode_auto_body: 'מצלם כשהמסמך מוחזק יציב',
     capture_mode_manual_body: 'כפתור הצילום מופיע מיד',
     capture_mode_auto_with_fallback_body: 'כפתור הצילום מופיע אחרי 10 שניות',
-    submission_title: 'שליחה ל-API',
-    submission_submit: 'שליחה ל-Smile ID',
-    submission_skip: 'דילוג על שליחה ל-API',
     appearance_title: 'ערכת נושא',
     appearance_system_light: 'מערכת (בהירה)',
     appearance_system_dark: 'מערכת (כהה)',

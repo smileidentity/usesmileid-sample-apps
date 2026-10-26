@@ -738,8 +738,7 @@
         "idTypePickerSheet",
         "documentPickerSheet",
         "captureAsSheet",
-        "captureModeSheet",
-        "submissionSheet"
+        "captureModeSheet"
       ],
       "notes": "Country rows lead with a flag; ID-type rows do not. Selected rows carry a check. CORRECTED 2026-08-12: the selected row takes a pale-blue fill as well as the check. CORRECTED 2026-08-17 against node 5206:2835. The selected row takes SURFACE-2 as its fill plus a 20 check; an UNSELECTED row is TRANSPARENT, not white — this is the selected-surface treatment that has no token. Label is Body Strong at its real 14; a country row leads with a 19 flag emoji.",
       "selectedTreatment": "pale-blue FILLED row highlight + trailing check (not check-only)",
@@ -1096,7 +1095,7 @@
     "Gallery upload": "DocumentCaptureConfig.allowGalleryUpload = true. OFF by default, the SDK's default. Every platform's picker is the system one, which asks for no runtime permission; the iOS targets already declare NSPhotoLibraryUsageDescription.",
     "Skip the back": "DocumentCaptureConfig.allowSkipBack: a Skip button on the back-side capture. OFF by default, the SDK's default.",
     "Selfie first": "Orders the two captures of the document products. OFF by default: document, then selfie, for both Document Verification and Enhanced Document Verification. The SDK accepts either order.",
-    "API submission": "config.skipApiSubmission: submit → false (the default, the SDK submits the job), skip → true (the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored)."
+    "Skip API submission": "config.skipApiSubmission = true. OFF by default, the SDK's default: the SDK submits the job. On, the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

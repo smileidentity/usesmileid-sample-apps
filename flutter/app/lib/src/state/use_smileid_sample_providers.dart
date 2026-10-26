@@ -96,18 +96,6 @@ class UseSmileIDSampleSettingsNotifier
     }
   }
 
-  /// Chooses whether the SDK submits the job or hands it back.
-  Future<void> setSubmission(UseSmileIDSampleSubmission submission) async {
-    final UseSmileIDSampleSettings previous = state;
-    try {
-      state = await ref
-          .read(useSmileIDSampleSettingsRepositoryProvider)
-          .setSubmission(submission);
-    } on Object {
-      state = previous;
-    }
-  }
-
   /// Chooses the app's appearance.
   Future<void> setAppearance(UseSmileIDSampleAppearance appearance) async {
     final UseSmileIDSampleSettings previous = state;

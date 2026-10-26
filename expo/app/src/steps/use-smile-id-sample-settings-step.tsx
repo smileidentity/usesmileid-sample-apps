@@ -80,7 +80,6 @@ export const UseSmileIDSampleSettingsStep = ({ scope }: { scope: UseSmileIDSampl
       onProfilePress={() => scope.navigator.go('profiles')}
       onNavRowPress={onNavRowPress}
       onCaptureModePress={() => scope.navigator.go('captureMode')}
-      onSubmissionPress={() => scope.navigator.go('submission')}
       onAppearancePress={() => scope.navigator.go('appearance')}
       onLanguagePress={() => scope.navigator.go('language')}
       onSignOut={() => {

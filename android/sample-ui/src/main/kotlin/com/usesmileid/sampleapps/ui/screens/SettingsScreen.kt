@@ -87,7 +87,6 @@ fun SettingsScreen(
     onProfileClick: () -> Unit,
     onNavRowClick: (UseSmileIDSampleNavRow) -> Unit,
     onCaptureModeClick: () -> Unit,
-    onSubmissionClick: () -> Unit,
     onAppearanceClick: () -> Unit,
     onLanguageClick: () -> Unit,
     /** Null hides the DEBUG section: `sample-ui` may not read a host's BuildConfig. */
@@ -266,13 +265,14 @@ fun SettingsScreen(
 
         // The design draws no such section either; it sits on its own, as APPEARANCE does.
         section(R.string.sample_settings_section_submission) {
-            UseSmileIDSampleSettingRow(
-                title = UseSmileIDSampleStrings.settingsSubmission,
-                supportingText = state.settings.submission.label(),
-                onClick = onSubmissionClick,
-                leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_verifications, tint = tint) },
-                trailing = { UseSmileIDSampleSettingRowChevron() },
-                testId = UseSmileIDSampleTestIds.SETTING_SUBMISSION,
+            SwitchRow(
+                title = UseSmileIDSampleStrings.settingsSkipApiSubmission,
+                icon = R.drawable.sample_ic_verifications,
+                supportingText = UseSmileIDSampleStrings.settingsSkipApiSubmissionBody,
+                checked = state.settings.skipApiSubmission,
+                setting = UseSmileIDSampleSetting.SkipApiSubmission,
+                testId = UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION,
+                onSettingChange = onSettingChange,
             )
         }
 

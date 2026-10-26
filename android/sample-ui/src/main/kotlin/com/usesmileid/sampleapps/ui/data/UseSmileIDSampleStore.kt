@@ -10,7 +10,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSubmission
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleLanguage
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesCodec
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
@@ -69,11 +68,6 @@ class UseSmileIDSampleStore(
     /** Stored by id, so a renamed constant still reads the device's choice. */
     suspend fun setCaptureMode(mode: UseSmileIDSampleCaptureMode) {
         store.edit { prefs -> prefs[CAPTURE_MODE] = mode.id }
-    }
-
-    /** Stored by id, like [setCaptureMode]. */
-    suspend fun setSubmission(submission: UseSmileIDSampleSubmission) {
-        store.edit { prefs -> prefs[SUBMISSION] = submission.id }
     }
 
     /** Retires the legacy Dark mode key in the same edit, so it never decides again. */
@@ -139,10 +133,9 @@ class UseSmileIDSampleStore(
             galleryUpload = prefs[GALLERY_UPLOAD] ?: defaults.galleryUpload,
             allowSkipBack = prefs[ALLOW_SKIP_BACK] ?: defaults.allowSkipBack,
             selfieFirst = prefs[SELFIE_FIRST] ?: defaults.selfieFirst,
+            skipApiSubmission = prefs[SKIP_API_SUBMISSION] ?: defaults.skipApiSubmission,
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
                 ?: defaults.captureMode,
-            submission = UseSmileIDSampleSubmission.entries.firstOrNull { it.id == prefs[SUBMISSION] }
-                ?: defaults.submission,
             appearance = appearanceIn(prefs),
             language = UseSmileIDSampleLanguage.entries.firstOrNull { it.id == prefs[LANGUAGE] } ?: defaults.language,
         ).normalised()
@@ -162,6 +155,7 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.GalleryUpload -> GALLERY_UPLOAD
         UseSmileIDSampleSetting.AllowSkipBack -> ALLOW_SKIP_BACK
         UseSmileIDSampleSetting.SelfieFirst -> SELFIE_FIRST
+        UseSmileIDSampleSetting.SkipApiSubmission -> SKIP_API_SUBMISSION
     }
 
     private companion object {
@@ -169,7 +163,6 @@ class UseSmileIDSampleStore(
         val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")
         val AGENT_MODE = booleanPreferencesKey("agent_mode")
         val APPEARANCE = stringPreferencesKey("appearance")
-        val SUBMISSION = stringPreferencesKey("submission")
         val LANGUAGE = stringPreferencesKey("language")
         // The switch that APPEARANCE replaced, read only to carry an installed choice over.
         val DARK_MODE = booleanPreferencesKey("dark_mode")
@@ -179,6 +172,7 @@ class UseSmileIDSampleStore(
         val GALLERY_UPLOAD = booleanPreferencesKey("gallery_upload")
         val ALLOW_SKIP_BACK = booleanPreferencesKey("allow_skip_back")
         val SELFIE_FIRST = booleanPreferencesKey("selfie_first")
+        val SKIP_API_SUBMISSION = booleanPreferencesKey("skip_api_submission")
         val CAPTURE_MODE = stringPreferencesKey("capture_mode")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")

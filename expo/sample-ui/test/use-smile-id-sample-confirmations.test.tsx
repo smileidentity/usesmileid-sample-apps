@@ -31,7 +31,6 @@ describe('sign-out', () => {
         onProfilePress={noop}
         onNavRowPress={noop}
         onCaptureModePress={noop}
-        onSubmissionPress={noop}
         onAppearancePress={noop}
         onLanguagePress={noop}
         onSignOut={signOut}

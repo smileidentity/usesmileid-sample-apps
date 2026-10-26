@@ -8,7 +8,6 @@ import {
   UseSmileIDSampleAppearance,
 } from '../model/use-smile-id-sample-appearance';
 import { smileIDSampleLanguages, type UseSmileIDSampleLanguage } from '../model/use-smile-id-sample-language';
-import { smileIDSampleSubmissions, type UseSmileIDSampleSubmission } from '../model/use-smile-id-sample-submission';
 import {
   smileIDSampleSettingsDefaults,
   smileIDSampleSettingsNormalised,
@@ -28,7 +27,6 @@ type Actions = {
   load: () => Promise<void>;
   setSetting: (setting: UseSmileIDSampleSetting, enabled: boolean) => Promise<void>;
   setCaptureMode: (mode: UseSmileIDSampleCaptureMode) => Promise<void>;
-  setSubmission: (submission: UseSmileIDSampleSubmission) => Promise<void>;
   setAppearance: (appearance: UseSmileIDSampleAppearance) => Promise<void>;
   setLanguage: (language: UseSmileIDSampleLanguage) => Promise<void>;
   reset: () => void;
@@ -37,8 +35,6 @@ type Actions = {
 const key = (setting: UseSmileIDSampleSetting) => `${KEY_PREFIX}${setting}`;
 
 const CAPTURE_MODE_KEY = `${KEY_PREFIX}captureMode`;
-
-const SUBMISSION_KEY = `${KEY_PREFIX}submission`;
 
 const APPEARANCE_KEY = `${KEY_PREFIX}appearance`;
 
@@ -49,9 +45,6 @@ const LEGACY_DARK_MODE_KEY = `${KEY_PREFIX}darkMode`;
 
 /// Whether the capture mode moved while `load` was reading.
 let captureModeMovedDuringLoad = false;
-
-/// Whether the API submission choice moved while `load` was reading.
-let submissionMovedDuringLoad = false;
 
 /// Whether the appearance moved while `load` was reading.
 let appearanceMovedDuringLoad = false;
@@ -73,7 +66,6 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
       const pairs = await AsyncStorage.multiGet([
         ...smileIDSampleSettings.map(key),
         CAPTURE_MODE_KEY,
-        SUBMISSION_KEY,
         APPEARANCE_KEY,
         LANGUAGE_KEY,
         LEGACY_DARK_MODE_KEY,
@@ -85,10 +77,6 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
         if (storedKey === CAPTURE_MODE_KEY) {
           // An id this build does not know keeps the default rather than reaching the SDK.
           if (smileIDSampleCaptureModes.some((mode) => mode.id === value)) stored.captureMode = value;
-          continue;
-        }
-        if (storedKey === SUBMISSION_KEY) {
-          if (smileIDSampleSubmissions.some((submission) => submission.id === value)) stored.submission = value;
           continue;
         }
         if (storedKey === LANGUAGE_KEY) {
@@ -115,12 +103,10 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     const live = get().settings;
     for (const setting of movedDuringLoad) stored[setting] = live[setting];
     if (captureModeMovedDuringLoad) stored.captureMode = live.captureMode;
-    if (submissionMovedDuringLoad) stored.submission = live.submission;
     if (appearanceMovedDuringLoad) stored.appearance = live.appearance;
     if (languageMovedDuringLoad) stored.language = live.language;
     movedDuringLoad.clear();
     captureModeMovedDuringLoad = false;
-    submissionMovedDuringLoad = false;
     appearanceMovedDuringLoad = false;
     languageMovedDuringLoad = false;
     // Normalised on read, because a device may already hold the pair the SDK refuses.
@@ -131,12 +117,6 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
     set({ settings: { ...get().settings, captureMode: mode } });
     if (!get().loaded) captureModeMovedDuringLoad = true;
     await AsyncStorage.setItem(CAPTURE_MODE_KEY, mode);
-  },
-
-  setSubmission: async (submission) => {
-    set({ settings: { ...get().settings, submission } });
-    if (!get().loaded) submissionMovedDuringLoad = true;
-    await AsyncStorage.setItem(SUBMISSION_KEY, submission);
   },
 
   // Two writes, not one transaction; a crash between them is safe because the stored id is read first.
@@ -168,7 +148,6 @@ export const useSmileIDSampleSettingsStore = create<State & Actions>((set, get) 
   reset: () => {
     movedDuringLoad.clear();
     captureModeMovedDuringLoad = false;
-    submissionMovedDuringLoad = false;
     appearanceMovedDuringLoad = false;
     languageMovedDuringLoad = false;
     set({ settings: smileIDSampleSettingsDefaults, loaded: false });

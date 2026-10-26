@@ -14,7 +14,8 @@ let useSmileIDSampleSettingsSeed = [
   "-preview_step", "true",
   "-gallery_upload", "false",
   "-allow_skip_back", "false",
-  "-selfie_first", "false"
+  "-selfie_first", "false",
+  "-skip_api_submission", "false"
 ]
 
 extension [String] {

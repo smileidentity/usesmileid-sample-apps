@@ -56,6 +56,10 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.selfieFirst,
         defaults.selfieFirst,
       ),
+      skipApiSubmission: stored(
+        UseSmileIDSampleSettingsKeys.skipApiSubmission,
+        defaults.skipApiSubmission,
+      ),
       captureMode:
           UseSmileIDSampleCaptureMode.values
               .where(
@@ -67,17 +71,6 @@ class UseSmileIDSamplePreferencesSettingsRepository
               )
               .firstOrNull ??
           defaults.captureMode,
-      submission:
-          UseSmileIDSampleSubmission.values
-              .where(
-                (UseSmileIDSampleSubmission submission) =>
-                    submission.id ==
-                    _preferences.getString(
-                      UseSmileIDSampleSettingsKeys.submission,
-                    ),
-              )
-              .firstOrNull ??
-          defaults.submission,
       appearance: _appearance(),
       language:
           UseSmileIDSampleLanguage.values
@@ -151,26 +144,6 @@ class UseSmileIDSamplePreferencesSettingsRepository
           await _preferences.setString(
             UseSmileIDSampleSettingsKeys.captureMode,
             mode.id,
-          );
-          done.complete(await read());
-        })
-        .catchError((Object error, StackTrace stack) {
-          if (!done.isCompleted) done.completeError(error, stack);
-        });
-    return done.future;
-  }
-
-  @override
-  Future<UseSmileIDSampleSettings> setSubmission(
-    UseSmileIDSampleSubmission submission,
-  ) {
-    final Completer<UseSmileIDSampleSettings> done =
-        Completer<UseSmileIDSampleSettings>();
-    _writes = _writes
-        .then((_) async {
-          await _preferences.setString(
-            UseSmileIDSampleSettingsKeys.submission,
-            submission.id,
           );
           done.complete(await read());
         })

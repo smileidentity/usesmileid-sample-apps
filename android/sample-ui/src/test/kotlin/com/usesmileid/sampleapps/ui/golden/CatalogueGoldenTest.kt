@@ -16,7 +16,6 @@ import com.usesmileid.sampleapps.ui.screens.CountryPickerSheet
 import com.usesmileid.sampleapps.ui.screens.GenericDocumentSheet
 import com.usesmileid.sampleapps.ui.screens.DocumentPickerSheet
 import com.usesmileid.sampleapps.ui.screens.IdTypePickerSheet
-import com.usesmileid.sampleapps.ui.screens.SubmissionSheet
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCaptureMode
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCatalogue
@@ -25,7 +24,6 @@ import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleCountry
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleGenericDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleDocument
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleKycIdType
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSubmission
 import com.usesmileid.sampleapps.ui.state.resolvedCaptureAs
 import org.junit.Before
 import org.junit.Test
@@ -135,11 +133,6 @@ class CatalogueGoldenTest : GoldenTest() {
     @Test
     fun capture_mode_sheet() = sheetGoldens("sheet_capture_mode") {
         CaptureModeSheet(selected = UseSmileIDSampleCaptureMode.AutoWithFallback, onSelect = {}, onDismissRequest = {})
-    }
-
-    @Test
-    fun submission_sheet() = sheetGoldens("sheet_submission") {
-        SubmissionSheet(selected = UseSmileIDSampleSubmission.Submit, onSelect = {}, onDismissRequest = {})
     }
 
     @Test

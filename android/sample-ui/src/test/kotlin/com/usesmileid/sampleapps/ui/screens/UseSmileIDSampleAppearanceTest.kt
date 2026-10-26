@@ -47,7 +47,6 @@ class UseSmileIDSampleAppearanceTest {
                     onProfileClick = {},
                     onNavRowClick = {},
                     onCaptureModeClick = {},
-                    onSubmissionClick = {},
                     onAppearanceClick = { opened = true },
                     onLanguageClick = {},
                     onOpenScenarioDrawer = null,

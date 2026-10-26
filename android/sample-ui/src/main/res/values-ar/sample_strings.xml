@@ -285,7 +285,8 @@
     <string name="sample_settings_selfie_first">الصورة الذاتية أولًا</string>
     <string name="sample_settings_selfie_first_body">الصورة الذاتية قبل المستند</string>
     <string name="sample_settings_section_submission">الإرسال</string>
-    <string name="sample_settings_submission">الإرسال إلى واجهة API</string>
+    <string name="sample_settings_skip_api_submission">تخطي الإرسال إلى واجهة API</string>
+    <string name="sample_settings_skip_api_submission_body">تعود المهمة الملتقطة دون إرسال</string>
     <string name="sample_settings_section_about">حول</string>
     <string name="sample_settings_documentation">الوثائق</string>
     <string name="sample_settings_support">الدعم</string>
@@ -305,9 +306,6 @@
     <string name="sample_capture_mode_auto_body">يلتقط الصورة عند ثبات المستند</string>
     <string name="sample_capture_mode_manual_body">يظهر زر الالتقاط فورًا</string>
     <string name="sample_capture_mode_auto_with_fallback_body">يظهر زر الالتقاط بعد 10 ثوانٍ</string>
-    <string name="sample_submission_title">الإرسال إلى واجهة API</string>
-    <string name="sample_submission_submit">الإرسال إلى Smile ID</string>
-    <string name="sample_submission_skip">تخطي الإرسال إلى واجهة API</string>
     <string name="sample_appearance_title">السمة</string>
     <string name="sample_appearance_system_light">النظام (فاتح)</string>
     <string name="sample_appearance_system_dark">النظام (داكن)</string>

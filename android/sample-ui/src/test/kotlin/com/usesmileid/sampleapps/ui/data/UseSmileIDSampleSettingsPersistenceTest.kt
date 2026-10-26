@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleAppearance
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSubmission
 import java.io.File
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -148,27 +147,16 @@ class UseSmileIDSampleSettingsPersistenceTest {
     }
 
     @Test
-    fun `no stored submission submits`() = runTest {
-        assertEquals(UseSmileIDSampleSubmission.Submit, store.settings.first().submission)
-    }
+    fun `the Skip API submission switch is stored under the key the four apps share`() = runTest {
+        assertFalse(store.settings.first().skipApiSubmission)
 
-    @Test
-    fun `choosing a submission stores its id under the key the four apps share`() = runTest {
-        store.setSubmission(UseSmileIDSampleSubmission.Skip)
+        store.setSetting(UseSmileIDSampleSetting.SkipApiSubmission, true)
 
-        assertEquals("skip", prefs.data.first()[SUBMISSION])
-        assertEquals(UseSmileIDSampleSubmission.Skip, store.settings.first().submission)
-    }
-
-    @Test
-    fun `an unknown submission submits`() = runTest {
-        prefs.edit { it[SUBMISSION] = "later" }
-
-        assertEquals(UseSmileIDSampleSubmission.Submit, store.settings.first().submission)
+        assertEquals(true, prefs.data.first()[booleanPreferencesKey("skip_api_submission")])
+        assertTrue(store.settings.first().skipApiSubmission)
     }
 
     private companion object {
-        val SUBMISSION = stringPreferencesKey("submission")
         val APPEARANCE = stringPreferencesKey("appearance")
         val DARK_MODE = booleanPreferencesKey("dark_mode")
         val ENHANCED_SMART_SELFIE = booleanPreferencesKey("enhanced_smart_selfie")

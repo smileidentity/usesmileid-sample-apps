@@ -283,7 +283,8 @@
 "settings_selfie_first" = "Selfie first";
 "settings_selfie_first_body" = "The selfie before the document";
 "settings_section_submission" = "SUBMISSION";
-"settings_submission" = "API submission";
+"settings_skip_api_submission" = "Skip API submission";
+"settings_skip_api_submission_body" = "The captured job comes back unsubmitted";
 "settings_section_about" = "ABOUT";
 "settings_documentation" = "Documentation";
 "settings_support" = "Support";
@@ -303,9 +304,6 @@
 "capture_mode_auto_body" = "Captures when the document is held steady";
 "capture_mode_manual_body" = "The shutter shows at once";
 "capture_mode_auto_with_fallback_body" = "The shutter shows after 10 seconds";
-"submission_title" = "API submission";
-"submission_submit" = "Submit to Smile ID";
-"submission_skip" = "Skip API submission";
 "appearance_title" = "Theme";
 "appearance_system_light" = "System (Light)";
 "appearance_system_dark" = "System (Dark)";

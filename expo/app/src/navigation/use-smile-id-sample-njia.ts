@@ -15,7 +15,6 @@ export const smileIDSampleSteps = [
   'licenses',
   /// The capture-mode sheet over settings.
   'captureMode',
-  'submission',
   /// The appearance sheet over settings.
   'appearance',
   /// The language sheet over settings.
