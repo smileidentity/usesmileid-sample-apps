@@ -29,12 +29,12 @@ camerax = "1.6.1"
 mlkit-barcode = "17.3.0"
 # Pinned to the SDK's own client version so the APK carries one Retrofit and one OkHttp.
 retrofit = "3.0.0"
-kotlinx-serialization = "1.11.0"
+kotlinx-serialization = "1.12.0"
 
 junit = "4.13.2"
 kotlinx-coroutines = "1.11.0"
 robolectric = "4.17"
-roborazzi = "1.76.0"
+roborazzi = "1.77.0"
 
 [libraries]
 njia = { module = "com.usesmileid:njia", version.ref = "njia" }
