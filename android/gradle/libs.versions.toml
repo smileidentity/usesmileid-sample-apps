@@ -10,17 +10,17 @@ usesmileid-bridge = "12.3.0-20261026.002955-290"
 # The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
 njia = "0.0.1-20261025.232953-11"
 
-android-gradle-plugin = "9.3.1"
+android-gradle-plugin = "9.4.1"
 kotlin = "2.4.21"
 ksp = "2.3.12"
 
 androidx-activity = "1.13.0"
 # Custom Tabs for the Settings links: the page keeps the user's own browser rather than a WebView.
-androidx-browser = "1.9.0"
-androidx-compose-bom = "2026.06.01"
-androidx-core = "1.16.0"
-androidx-datastore = "1.2.1"
-androidx-room = "2.8.4"
+androidx-browser = "1.10.0"
+androidx-compose-bom = "2026.09.00"
+androidx-core = "1.19.1"
+androidx-datastore = "1.3.0"
+androidx-room = "2.8.5"
 # Debug builds only: the in-app network log, the Android twin of the iOS app's Loupe.
 chucker = "4.3.1"
 # Pinned to what the SDK resolves at runtime; a divergence is a finding, never something Gradle reconciles in silence.
@@ -29,12 +29,12 @@ camerax = "1.6.1"
 mlkit-barcode = "17.3.0"
 # Pinned to the SDK's own client version so the APK carries one Retrofit and one OkHttp.
 retrofit = "3.0.0"
-kotlinx-serialization = "1.11.0"
+kotlinx-serialization = "1.12.0"
 
 junit = "4.13.2"
 kotlinx-coroutines = "1.11.0"
 robolectric = "4.17"
-roborazzi = "1.76.0"
+roborazzi = "1.77.0"
 
 [libraries]
 njia = { module = "com.usesmileid:njia", version.ref = "njia" }
