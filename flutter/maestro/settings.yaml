@@ -1,0 +1,77 @@
+appId: ${APP_ID}
+---
+# The consent switch, and the validation failure it is meant to demonstrate. Android's twin is
+# ../../android/maestro/settings.yaml; Expo's is ../../expo/maestro/settings.yaml.
+#
+# No consent screen and no bound consent: the flow is refused before the SDK mounts, since the
+# builder's validate() returns build()'s verdict. The run lands on the unsubmitted job's details,
+# where the SDK's own failure lands, with the reason on its result card. A return to the product
+# list instead reads as a dead tap, which is what this flow exists to catch.
+#
+# The switch persists, so the flow turns it back on, and proves the pair: with consent on, the
+# same link reaches the SDK's consent screen.
+
+- clearState
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      # `probes` puts the result card on a release build, which is what this lane installs.
+      LINK: "usesmileid-sample-flutter://?probes=true&catalogue=fixture"
+      LANDS_ON: "sample_products_screen"
+- runFlow: subflows/link-session.yaml
+
+# --- consent off: the run is refused, and the reason is on screen ---------------------------------
+- tapOn:
+    id: "sample_nav_settings"
+- extendedWaitUntil:
+    visible:
+      id: "sample_settings_screen"
+    timeout: 30000
+# Settled before the tap: the tab animates in, and a tap measured mid-animation lands on no row.
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible:
+    id: "sample_setting_consent_step"
+    checked: false
+# A cold link straight at the run: no form to type through, and the product needs no ID details.
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://flow/smartSelfieEnrollment/run?probes=true&catalogue=fixture"
+      LANDS_ON: "sample_verification_details_screen"
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "failed"
+- assertVisible:
+    id: "sample_result_last_error"
+- assertNotVisible:
+    id: "si_consent_screen"
+
+# --- consent back on: the same link reaches the SDK ------------------------------------------------
+- runFlow:
+    file: subflows/cold-start.yaml
+    env:
+      LINK: "usesmileid-sample-flutter://?probes=true&catalogue=fixture"
+      LANDS_ON: "sample_products_screen"
+- tapOn:
+    id: "sample_nav_settings"
+- extendedWaitUntil:
+    visible:
+      id: "sample_settings_screen"
+    timeout: 30000
+# Settled before the tap: the tab animates in, and a tap measured mid-animation lands on no row.
+- waitForAnimationToEnd:
+    timeout: 3000
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible:
+    id: "sample_setting_consent_step"
+    checked: true
+- stopApp
+- openLink: "usesmileid-sample-flutter://flow/smartSelfieEnrollment/run?probes=true&catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "si_consent_screen"
+    timeout: 30000

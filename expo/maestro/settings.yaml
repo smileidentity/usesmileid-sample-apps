@@ -1,0 +1,68 @@
+appId: ${APP_ID}
+---
+# The consent switch, and the validation failure it is meant to demonstrate. Android's twin is
+# ../../android/maestro/settings.yaml; Flutter's is ../../flutter/maestro/settings.yaml.
+#
+# No consent screen and no bound consent: the flow is refused before the SDK mounts, since the
+# builder's validate() returns build()'s verdict. The run lands on the unsubmitted job's details,
+# where the SDK's own failure lands, with the reason on its result card. A return to the product
+# list instead reads as a dead tap, which is what this flow exists to catch.
+#
+# The switch persists, so the flow turns it back on, and proves the pair: with consent on, the
+# same link reaches the SDK's consent screen. It types nothing, for the reason sdk-flow.yaml gives.
+# Launch arguments arrive as a LINK on this platform — see ./README.md "Traps".
+
+- clearState
+- stopApp
+- openLink: "usesmileid-sample-expo://?probes=true&catalogue=fixture"
+- runFlow: subflows/warm-start.yaml
+- runFlow: subflows/link-session.yaml
+
+# --- consent off: the run is refused, and the reason is on screen ---------------------------------
+- tapOn:
+    id: "sample_nav_settings"
+- extendedWaitUntil:
+    visible:
+      id: "sample_settings_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible:
+    id: "sample_setting_consent_step"
+    checked: false
+# A cold link straight at the run: no form to type through, and the product needs no ID details.
+- stopApp
+- openLink: "usesmileid-sample-expo:///flow/smartSelfieEnrollment/run?probes=true&catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "sample_verification_details_screen"
+    timeout: 60000
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "failed"
+- assertVisible:
+    id: "sample_result_last_error"
+- assertNotVisible:
+    id: "si_consent_screen"
+
+# --- consent back on: the same link reaches the SDK ------------------------------------------------
+- stopApp
+- openLink: "usesmileid-sample-expo://?probes=true&catalogue=fixture"
+- runFlow: subflows/warm-start.yaml
+- tapOn:
+    id: "sample_nav_settings"
+- extendedWaitUntil:
+    visible:
+      id: "sample_settings_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_setting_consent_step"
+- assertVisible:
+    id: "sample_setting_consent_step"
+    checked: true
+- stopApp
+- openLink: "usesmileid-sample-expo:///flow/smartSelfieEnrollment/run?catalogue=fixture"
+- extendedWaitUntil:
+    visible:
+      id: "si_consent_screen"
+    timeout: 60000

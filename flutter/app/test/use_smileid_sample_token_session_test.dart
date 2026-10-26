@@ -14,9 +14,13 @@ import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_token_bind
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_navigation.dart';
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia_facts.dart';
+import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_sdk_flow_tab.dart';
+import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
+import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_session_providers.dart';
 import 'package:usesmileid_sample_flutter/src/status/use_smileid_sample_http_job_status_source.dart';
 import 'support/use_smileid_sample_test_njia.dart';
+import 'support/use_smileid_sample_test_session.dart';
 
 /// The token session on the host side.
 void main() {
@@ -497,6 +501,7 @@ void main() {
           const UseSmileIDSampleSessionRecord(),
       String? at,
       int Function()? clock,
+      UseSmileIDSampleSettings settings = const UseSmileIDSampleSettings(),
     }) async {
       await tester.pumpWidget(
         ProviderScope(
@@ -506,6 +511,7 @@ void main() {
               UseSmileIDSampleMemorySessionRepository(stored),
             ),
             useSmileIDSampleStoredSessionProvider.overrideWithValue(stored),
+            useSmileIDSampleStoredSettingsProvider.overrideWithValue(settings),
             if (clock != null)
               useSmileIDSampleWallClockProvider.overrideWithValue(clock),
           ],
@@ -664,6 +670,37 @@ void main() {
         expect(record.live, isNull);
         expect(record.ended?.id, lapsed.id);
         expect(byId(UseSmileIDSampleTestIds.sessionEndedBanner), findsOne);
+      },
+    );
+
+    testWidgets(
+      'a run the SDK would refuse lands on the unsubmitted details, and never reaches the SDK',
+      (WidgetTester tester) async {
+        final ProviderContainer container = await pump(
+          tester,
+          settings: const UseSmileIDSampleSettings(consentStep: false),
+          stored: UseSmileIDSampleSessionRecord(
+            live: useSmileIDSampleTestSession(),
+          ),
+          at: UseSmileIDSampleRoutes.sdkFlow(
+            UseSmileIDSampleProduct.smartSelfieEnrollment.id,
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        expect(
+          useSmileIDSampleTestTop(tester),
+          UseSmileIDSampleStep.verificationDetails,
+        );
+        expect(
+          useSmileIDSampleTestEngine(tester).state.top!.arg,
+          unsubmittedJobId,
+        );
+        final UseSmileIDSampleResult result = container.read(
+          useSmileIDSampleFlowResultProvider,
+        );
+        expect(result.jobStatus, UseSmileIDSampleFlowStatus.failed);
+        expect(result.lastError, isNotNull);
       },
     );
 

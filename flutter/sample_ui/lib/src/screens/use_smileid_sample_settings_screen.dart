@@ -439,14 +439,20 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     required String icon,
     required String supportingText,
     required UseSmileIDSampleSetting setting,
-  }) => UseSmileIDSampleSettingRow(
-    title: title,
-    supportingText: supportingText,
-    leading: (Color tint) => UseSmileIDSampleIcon(asset: icon, tint: tint),
-    testId: setting.testId,
-    trailing: UseSmileIDSampleSwitch(
-      value: state.settings[setting],
-      onChanged: (bool enabled) => onSettingChanged(setting, enabled),
+  }) => GestureDetector(
+    // The whole row flips the switch; hidden from semantics, so the row still reads as the switch it merges.
+    behavior: HitTestBehavior.opaque,
+    excludeFromSemantics: true,
+    onTap: () => onSettingChanged(setting, !state.settings[setting]),
+    child: UseSmileIDSampleSettingRow(
+      title: title,
+      supportingText: supportingText,
+      leading: (Color tint) => UseSmileIDSampleIcon(asset: icon, tint: tint),
+      testId: setting.testId,
+      trailing: UseSmileIDSampleSwitch(
+        value: state.settings[setting],
+        onChanged: (bool enabled) => onSettingChanged(setting, enabled),
+      ),
     ),
   );
 

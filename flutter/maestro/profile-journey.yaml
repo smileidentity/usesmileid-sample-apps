@@ -43,7 +43,7 @@ appId: ${APP_ID}
 - tapOn: "Deny"
 - extendedWaitUntil:
     visible:
-      id: "sample_products_screen"
+      id: "sample_verification_details_screen"
     timeout: 30000
 
 - runFlow:

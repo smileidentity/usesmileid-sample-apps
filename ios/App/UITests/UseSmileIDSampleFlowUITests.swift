@@ -62,6 +62,17 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(element("sample_user_details_screen").waitForNonExistence(timeout: 5), "the form is still stacked")
   }
 
+  /// With no consent screen and no bound consent the SDK refuses the run, which lands where its own failure does, never on products.
+  func testARunTheSdkWouldRefuseLandsOnTheUnsubmittedDetailsAndNeverMountsIt() {
+    launch(seed: useSmileIDSampleLaunchSeed.useSmileIDSampleSetting("-consent_step", to: "false"))
+    app.useSmileIDSampleOpen("flow/smartSelfieEnrollment/run")
+
+    XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10), "the refused run did not land on its details")
+    XCTAssertEqual(element("sample_result_job_status").label, "failed", "a refusal is a failure, not a cancel")
+    XCTAssertTrue(element("sample_result_last_error").exists, "the refusal's reason is not on screen")
+    XCTAssertFalse(element("si_consent_screen").exists, "a refused run reached the SDK")
+  }
+
   /// Needs a consent-binding token, since only instructions carries the SDK's back control; XCUITest cannot drive the edge swipe.
   func testBackingOutOfTheSdksFirstScreenCancelsAndCreatesNoJob() {
     launch()
@@ -352,8 +363,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   }
 
   /// Signs out whatever a previous test left, then links a plain session unless told not to: every run needs one.
-  private func launch(arguments: [String] = [], linking: Bool = true) {
-    app.launchArguments = useSmileIDSampleLaunchSeed + arguments
+  private func launch(seed: [String] = useSmileIDSampleLaunchSeed, arguments: [String] = [], linking: Bool = true) {
+    app.launchArguments = seed + arguments
     app.launch()
     atATabRoot()
     if element("sample_session_card").exists || element("sample_session_ended_banner").exists {

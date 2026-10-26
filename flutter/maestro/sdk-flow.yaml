@@ -67,9 +67,24 @@ appId: ${APP_ID}
 - assertNotVisible:
     id: "sample_nav_products"
 
-# Deny is the failure exit, and the back gesture is the cancel one. Both return to the originating
-# tab rather than into the wizard beneath, which is what `go` past the stack buys.
+# Deny is the failure exit: it lands on the unsubmitted job's details, as on Android and iOS, with the
+# reason on the result card. The back gesture is the cancel exit, which returns to the originating tab.
 - tapOn: "Deny"
+- extendedWaitUntil:
+    visible:
+      id: "sample_verification_details_screen"
+    timeout: 30000
+- assertVisible:
+    id: "sample_result_job_status"
+    text: "failed"
+# The details are the verifications tab's, so back reaches that tab's root, then the bar returns to Products.
+- back
+- extendedWaitUntil:
+    visible:
+      id: "sample_verifications_screen"
+    timeout: 30000
+- tapOn:
+    id: "sample_nav_products"
 - extendedWaitUntil:
     visible:
       id: "sample_products_screen"
