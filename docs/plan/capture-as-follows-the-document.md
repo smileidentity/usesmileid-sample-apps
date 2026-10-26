@@ -228,14 +228,9 @@ cases:
 - Expo: `use-smile-id-sample-document-capture-mapping.test.ts`
 
 A new test proves that Match never produces a flow the SDK refuses, for every row in the fixture on both
-document products. The builder's `validate()` cannot prove it on any platform: it checks the builder's
-own state and never runs the job-type rules, which is why `SdkFlowPreflightTest` as written passes
-either way. The rules run in `build()`, which is public on Flutter and React Native and internal on
-Android and iOS. On those two the public path is the dispatching validator,
-`FlowValidator.validate(configuration, …)` on Android and
-`FlowValidator.validate(configuration:mlAnalyzerRegistry:networkClient:)` on iOS, given a
-`FlowConfiguration` built from the sample's own steps, which the iOS preflight already constructs. The
-same call makes the Android and iOS preflights see job-type refusals, which they cannot today.
+document products. The builder's `validate()` proves it on every platform: it returns the verdict
+`build()` reaches, job-type rules included, so `SdkFlowPreflightTest` sees the Green Book refusal on
+Enhanced Document Verification.
 
 **Goldens.** Re-record the form (trigger in Match, override and Generic-sheet states, one-sided and
 two-sided rows), the "Capture as" sheet, and the document picker on Enhanced Document Verification,

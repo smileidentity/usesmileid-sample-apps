@@ -256,36 +256,32 @@ void main() {
       );
     });
 
-    // `validate()` is weaker than `build()`, whose result type is unexported — hence the name read.
+    // `validate()` gives the verdict `build()` reaches, without building.
     test('every product builds a configuration the SDK accepts', () {
       for (final UseSmileIDSampleProduct product
           in UseSmileIDSampleProduct.values) {
-        final dynamic result =
-            builderFor(
-                  snapshotFor(
-                    product,
-                    // Both families filled, so each product finds the field it submits.
-                    idDetails: const UseSmileIDSampleIdDetails(
-                      country: kenya,
-                      idType: kenyaNationalId,
-                      document: UseSmileIDSampleDocument(
-                        code: 'PASSPORT',
-                        name: 'Passport',
-                        hasBack: false,
-                        format: 3,
-                      ),
-                      idNumber: '11111111',
-                    ),
-                  ),
-                )
-                // The SDK says to inspect this, then marks it internal — a finding for the SDK.
-                // ignore: invalid_use_of_internal_member
-                .build();
+        final ValidationState state = builderFor(
+          snapshotFor(
+            product,
+            // Both families filled, so each product finds the field it submits.
+            idDetails: const UseSmileIDSampleIdDetails(
+              country: kenya,
+              idType: kenyaNationalId,
+              document: UseSmileIDSampleDocument(
+                code: 'PASSPORT',
+                name: 'Passport',
+                hasBack: false,
+                format: 3,
+              ),
+              idNumber: '11111111',
+            ),
+          ),
+        ).validate();
 
         expect(
-          result.runtimeType.toString(),
-          contains('Success'),
-          reason: '${product.id}: ${_issuesOf(result)}',
+          state,
+          isA<ValidationStateValid>(),
+          reason: '${product.id}: ${_issuesOf(state)}',
         );
       }
     });
@@ -410,13 +406,14 @@ void main() {
   });
 }
 
-/// The rejected build's own words, so a red names the rule rather than only the product.
-String _issuesOf(dynamic result) {
-  try {
-    return (result.validation.issues as List<dynamic>)
-        .map((dynamic issue) => '${issue.runtimeType}: ${issue.message}')
-        .join('; ');
-  } on Object {
-    return 'no issues reported';
-  }
-}
+/// The rejected flow's own words, so a red names the rule rather than only the product.
+String _issuesOf(ValidationState state) => switch (state) {
+  ValidationStateValid() => 'no issues reported',
+  final ValidationStateInvalid invalid =>
+    invalid.issues
+        .map(
+          (UseSmileIDValidationException issue) =>
+              '${issue.runtimeType}: ${issue.message}',
+        )
+        .join('; '),
+};

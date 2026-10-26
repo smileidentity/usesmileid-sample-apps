@@ -84,8 +84,10 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
             }
             return
         }
-        // No form fixes this, so it exits like a mistyped product id — but says why first: a silent
-        // return to the product list is indistinguishable from a dead tap.
+        // No form fixes this. It lands where the SDK's own Failure does, on the unsubmitted job's
+        // details, so the reason is on screen: the builder's validate() returns build()'s verdict,
+        // so a flow the SDK would refuse stops here, and a silent return to the product list would
+        // read as a dead tap.
         is FlowPreflight.Misconfigured -> {
             val issues = preflight.issues
             LaunchedEffect(Unit) {
@@ -94,7 +96,7 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
                         .ifBlank { "The flow did not validate" },
                     snapshot.environment,
                 )
-                engine.leaveToProducts()
+                engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
             }
             return
         }
