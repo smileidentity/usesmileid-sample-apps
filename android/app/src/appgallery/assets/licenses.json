@@ -2230,7 +2230,7 @@
     },
     {
       "artifact": "org.jetbrains.kotlinx:kotlinx-serialization-core-jvm",
-      "version": "1.11.0",
+      "version": "1.12.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -2241,7 +2241,7 @@
     },
     {
       "artifact": "org.jetbrains.kotlinx:kotlinx-serialization-json-jvm",
-      "version": "1.11.0",
+      "version": "1.12.0",
       "licenses": [
         {
           "id": "Apache-2.0",
