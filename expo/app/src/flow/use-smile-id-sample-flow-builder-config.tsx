@@ -27,6 +27,7 @@ import {
   type ScreensBuilder,
   type SelfieCaptureConfigBuilder,
   type ThemeConfigBuilder,
+  type UseSmileIDConfigBuilder,
   type UseSmileIDFlowBuilder,
   type UseSmileIDMLBuilder,
   type UseSmileIDNetworkBuilder,
@@ -75,6 +76,9 @@ export const smileIDSampleApplying = (
   if (snapshot.product.id === 'smartSelfieAuth') builder.userId = snapshot.userId;
   applyIdParams(builder, snapshot);
   builder.screens((screens: ScreensBuilder) => journeyFor(screens, snapshot));
+  builder.config((config: UseSmileIDConfigBuilder) => {
+    config.skipApiSubmission = snapshot.skipApiSubmission;
+  });
   if (snapshot.product.capture) {
     builder.ml((ml: UseSmileIDMLBuilder) =>
       ml.analyzers((analyzers: AnalyzerRegistryBuilder) => {

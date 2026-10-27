@@ -282,6 +282,9 @@
 "settings_skip_back_body" = "زر تخطٍّ عند التقاط الوجه الخلفي";
 "settings_selfie_first" = "الصورة الذاتية أولًا";
 "settings_selfie_first_body" = "الصورة الذاتية قبل المستند";
+"settings_section_submission" = "الإرسال";
+"settings_skip_api_submission" = "تخطي الإرسال إلى واجهة API";
+"settings_skip_api_submission_body" = "تعود المهمة الملتقطة دون إرسال";
 "settings_section_about" = "حول";
 "settings_documentation" = "الوثائق";
 "settings_support" = "الدعم";

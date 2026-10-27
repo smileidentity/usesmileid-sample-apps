@@ -146,6 +146,16 @@ class UseSmileIDSampleSettingsPersistenceTest {
         assertEquals(UseSmileIDSampleAppearance.Light, store.settings.first().appearance)
     }
 
+    @Test
+    fun `the Skip API submission switch is stored under the key the four apps share`() = runTest {
+        assertFalse(store.settings.first().skipApiSubmission)
+
+        store.setSetting(UseSmileIDSampleSetting.SkipApiSubmission, true)
+
+        assertEquals(true, prefs.data.first()[booleanPreferencesKey("skip_api_submission")])
+        assertTrue(store.settings.first().skipApiSubmission)
+    }
+
     private companion object {
         val APPEARANCE = stringPreferencesKey("appearance")
         val DARK_MODE = booleanPreferencesKey("dark_mode")

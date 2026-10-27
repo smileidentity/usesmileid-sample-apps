@@ -1,10 +1,11 @@
-/// Cancelled and failed stay separate: a screenshot cannot tell a user backing out from a failure.
+/// Cancelled and failed stay separate: a screenshot cannot tell a user backing out from a failure; captured is a skipped submission.
 public enum UseSmileIDSampleFlowStatus: String, CaseIterable, Sendable {
   case idle
   case running
   case succeeded
   case cancelled
   case failed
+  case captured
 
   public var id: String {
     rawValue

@@ -290,6 +290,9 @@ type Key =
   | 'settings_skip_back_body'
   | 'settings_selfie_first'
   | 'settings_selfie_first_body'
+  | 'settings_section_submission'
+  | 'settings_skip_api_submission'
+  | 'settings_skip_api_submission_body'
   | 'settings_section_about'
   | 'settings_documentation'
   | 'settings_support'
@@ -1472,6 +1475,18 @@ export class UseSmileIDSampleStrings {
     return this.values.settings_selfie_first_body;
   }
 
+  get settingsSectionSubmission(): string {
+    return this.values.settings_section_submission;
+  }
+
+  get settingsSkipApiSubmission(): string {
+    return this.values.settings_skip_api_submission;
+  }
+
+  get settingsSkipApiSubmissionBody(): string {
+    return this.values.settings_skip_api_submission_body;
+  }
+
   get settingsSectionAbout(): string {
     return this.values.settings_section_about;
   }
@@ -1902,6 +1917,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_back_body: 'A Skip button on the back-side capture',
     settings_selfie_first: 'Selfie first',
     settings_selfie_first_body: 'The selfie before the document',
+    settings_section_submission: 'SUBMISSION',
+    settings_skip_api_submission: 'Skip API submission',
+    settings_skip_api_submission_body: 'The captured job comes back unsubmitted',
     settings_section_about: 'ABOUT',
     settings_documentation: 'Documentation',
     settings_support: 'Support',
@@ -2223,6 +2241,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_back_body: 'Un bouton Ignorer lors de la capture du verso',
     settings_selfie_first: 'Selfie d’abord',
     settings_selfie_first_body: 'Le selfie avant le document',
+    settings_section_submission: 'SOUMISSION',
+    settings_skip_api_submission: 'Ignorer la soumission à l’API',
+    settings_skip_api_submission_body: 'La tâche capturée revient sans être soumise',
     settings_section_about: 'À PROPOS',
     settings_documentation: 'Documentation',
     settings_support: 'Assistance',
@@ -2544,6 +2565,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_back_body: 'زر تخطٍّ عند التقاط الوجه الخلفي',
     settings_selfie_first: 'الصورة الذاتية أولًا',
     settings_selfie_first_body: 'الصورة الذاتية قبل المستند',
+    settings_section_submission: 'الإرسال',
+    settings_skip_api_submission: 'تخطي الإرسال إلى واجهة API',
+    settings_skip_api_submission_body: 'تعود المهمة الملتقطة دون إرسال',
     settings_section_about: 'حول',
     settings_documentation: 'الوثائق',
     settings_support: 'الدعم',
@@ -2865,6 +2889,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_back_body: 'כפתור דילוג בצילום הצד האחורי',
     settings_selfie_first: 'סלפי קודם',
     settings_selfie_first_body: 'הסלפי לפני המסמך',
+    settings_section_submission: 'שליחה',
+    settings_skip_api_submission: 'דילוג על שליחה ל-API',
+    settings_skip_api_submission_body: 'המשימה שצולמה חוזרת בלי שליחה',
     settings_section_about: 'אודות',
     settings_documentation: 'תיעוד',
     settings_support: 'תמיכה',

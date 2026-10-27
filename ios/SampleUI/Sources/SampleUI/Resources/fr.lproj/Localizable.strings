@@ -282,6 +282,9 @@
 "settings_skip_back_body" = "Un bouton Ignorer lors de la capture du verso";
 "settings_selfie_first" = "Selfie d’abord";
 "settings_selfie_first_body" = "Le selfie avant le document";
+"settings_section_submission" = "SOUMISSION";
+"settings_skip_api_submission" = "Ignorer la soumission à l’API";
+"settings_skip_api_submission_body" = "La tâche capturée revient sans être soumise";
 "settings_section_about" = "À PROPOS";
 "settings_documentation" = "Documentation";
 "settings_support" = "Assistance";

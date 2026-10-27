@@ -337,6 +337,19 @@ export const SettingsScreen = ({
         />
       </Section>
 
+      {/* The design draws no such section either; it sits on its own, as APPEARANCE does. */}
+      <Section label={strings.settingsSectionSubmission}>
+        <SwitchRow
+          title={strings.settingsSkipApiSubmission}
+          supportingText={strings.settingsSkipApiSubmissionBody}
+          icon="verifications"
+          setting={UseSmileIDSampleSetting.SkipApiSubmission}
+          checked={settings.skipApiSubmission}
+          testID={UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION}
+          onSettingChange={onSettingChange}
+        />
+      </Section>
+
       {/* The design draws no control for the drawer, so this placement is ours, and debug-only. */}
       {onOpenScenarioDrawer || debugRows ? (
         <Section label="DEBUG">

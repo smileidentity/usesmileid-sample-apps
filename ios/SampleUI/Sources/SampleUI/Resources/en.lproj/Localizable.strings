@@ -282,6 +282,9 @@
 "settings_skip_back_body" = "A Skip button on the back-side capture";
 "settings_selfie_first" = "Selfie first";
 "settings_selfie_first_body" = "The selfie before the document";
+"settings_section_submission" = "SUBMISSION";
+"settings_skip_api_submission" = "Skip API submission";
+"settings_skip_api_submission_body" = "The captured job comes back unsubmitted";
 "settings_section_about" = "ABOUT";
 "settings_documentation" = "Documentation";
 "settings_support" = "Support";

@@ -284,6 +284,9 @@
     <string name="sample_settings_skip_back_body">زر تخطٍّ عند التقاط الوجه الخلفي</string>
     <string name="sample_settings_selfie_first">الصورة الذاتية أولًا</string>
     <string name="sample_settings_selfie_first_body">الصورة الذاتية قبل المستند</string>
+    <string name="sample_settings_section_submission">الإرسال</string>
+    <string name="sample_settings_skip_api_submission">تخطي الإرسال إلى واجهة API</string>
+    <string name="sample_settings_skip_api_submission_body">تعود المهمة الملتقطة دون إرسال</string>
     <string name="sample_settings_section_about">حول</string>
     <string name="sample_settings_documentation">الوثائق</string>
     <string name="sample_settings_support">الدعم</string>

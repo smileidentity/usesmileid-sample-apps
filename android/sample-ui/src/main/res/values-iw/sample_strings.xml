@@ -284,6 +284,9 @@
     <string name="sample_settings_skip_back_body">כפתור דילוג בצילום הצד האחורי</string>
     <string name="sample_settings_selfie_first">סלפי קודם</string>
     <string name="sample_settings_selfie_first_body">הסלפי לפני המסמך</string>
+    <string name="sample_settings_section_submission">שליחה</string>
+    <string name="sample_settings_skip_api_submission">דילוג על שליחה ל-API</string>
+    <string name="sample_settings_skip_api_submission_body">המשימה שצולמה חוזרת בלי שליחה</string>
     <string name="sample_settings_section_about">אודות</string>
     <string name="sample_settings_documentation">תיעוד</string>
     <string name="sample_settings_support">תמיכה</string>

@@ -420,6 +420,10 @@
         "description": "Selfie first switch: the document products capture the selfie before the document. OFF by default."
       },
       {
+        "id": "sample_setting_skip_api_submission",
+        "description": "Skip API submission switch → config.skipApiSubmission: the SDK hands the captured job back instead of submitting it. OFF by default."
+      },
+      {
         "id": "sample_setting_nav",
         "description": "One ABOUT/LEGAL navigation row; suffixed with the row id."
       },

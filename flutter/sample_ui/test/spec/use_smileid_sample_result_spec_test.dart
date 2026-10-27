@@ -100,12 +100,19 @@ void main() {
     },
   );
 
-  test('cancelled and failed stay separate terminal statuses', () {
+  test('cancelled, failed and captured stay separate terminal statuses', () {
     expect(
       UseSmileIDSampleFlowStatus.values.map(
         (UseSmileIDSampleFlowStatus it) => it.id,
       ),
-      <String>['idle', 'running', 'succeeded', 'cancelled', 'failed'],
+      <String>[
+        'idle',
+        'running',
+        'succeeded',
+        'cancelled',
+        'failed',
+        'captured',
+      ],
     );
   });
 }

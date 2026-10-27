@@ -84,6 +84,22 @@ describe('the document capture settings', () => {
   });
 });
 
+describe('the Skip API submission switch', () => {
+  it('starts off, as the SDK defaults it', async () => {
+    await store().load();
+    expect(store().settings.skipApiSubmission).toBe(false);
+  });
+
+  it('keeps its value across a reload, under its own key', async () => {
+    await store().setSetting(UseSmileIDSampleSetting.SkipApiSubmission, true);
+    expect(await AsyncStorage.getItem('sample.setting.skipApiSubmission')).toBe('true');
+
+    store().reset();
+    await store().load();
+    expect(store().settings.skipApiSubmission).toBe(true);
+  });
+});
+
 describe('the appearance', () => {
   const loadWith = async (stored: Record<string, string>) => {
     await AsyncStorage.multiSet(Object.entries(stored));

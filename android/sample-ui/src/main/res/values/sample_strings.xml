@@ -284,6 +284,9 @@
     <string name="sample_settings_skip_back_body">A Skip button on the back-side capture</string>
     <string name="sample_settings_selfie_first">Selfie first</string>
     <string name="sample_settings_selfie_first_body">The selfie before the document</string>
+    <string name="sample_settings_section_submission">SUBMISSION</string>
+    <string name="sample_settings_skip_api_submission">Skip API submission</string>
+    <string name="sample_settings_skip_api_submission_body">The captured job comes back unsubmitted</string>
     <string name="sample_settings_section_about">ABOUT</string>
     <string name="sample_settings_documentation">Documentation</string>
     <string name="sample_settings_support">Support</string>

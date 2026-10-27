@@ -101,31 +101,20 @@ struct SdkFlowResultHandler {
   let snapshot: FlowLaunchSnapshot
 
   func deliver(_ result: UseSmileIDResult<JobSubmissionResponse>) {
-    record(result)
+    app.flowResult.record(result)
+    if case .captured(let job) = result {
+      Task.detached { job.deleteFiles() }
+    }
     switch result {
     case .success(let response):
       app.addJob(processingJob(response), bindings: snapshot.liveSession?.bindings)
       exit.leave(landing: .verificationDetails, arg: response.jobId)
-    // Same destination: a failed run has no server-issued job id, so the route carries a non-id.
+    // Same destination: a failed or captured run has no server-issued job id, so the route carries a non-id.
     case .failure, .captured:
       exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
     // Popping the flow *is* the cancel, so the host fires none of its own.
     case .cancelled:
       exit.leave()
-    }
-  }
-
-  private func record(_ result: UseSmileIDResult<JobSubmissionResponse>) {
-    switch result {
-    case .success(let response):
-      app.flowResult.recordResultCallback(status: .succeeded, jobId: response.jobId, userId: response.userId)
-    case .failure(let error):
-      app.flowResult.recordResultCallback(status: .failed, error: error.useSmileIDSampleMessage)
-    case .cancelled:
-      app.flowResult.recordResultCallback(status: .cancelled)
-    // Never expected: this app does not set skipApiSubmission.
-    case .captured:
-      app.flowResult.recordResultCallback(status: .failed, error: capturedNotSubmitted)
     }
   }
 
@@ -169,6 +158,32 @@ struct SdkFlowExit {
   }
 }
 
+extension UseSmileIDSampleFlowResult {
+  /// What the result card records for a terminal result.
+  mutating func record(_ result: UseSmileIDResult<JobSubmissionResponse>) {
+    switch result {
+    case .success(let response):
+      recordResultCallback(status: .succeeded, jobId: response.jobId, userId: response.userId)
+    case .failure(let error):
+      recordResultCallback(status: .failed, error: error.useSmileIDSampleMessage)
+    case .cancelled:
+      recordResultCallback(status: .cancelled)
+    case .captured:
+      recordResultCallback(status: .captured)
+    }
+  }
+}
+
+extension CapturedJob {
+  /// Deletes every file the job lists, then its session directory: this sample forwards nothing, and the SDK never deletes them.
+  func deleteFiles() {
+    let files = [selfieImage, frontDocument, backDocument, visaDocument].compactMap(\.self) + livenessImages
+    for file in files + [sessionDirectory] {
+      try? FileManager.default.removeItem(at: file)
+    }
+  }
+}
+
 extension Error {
   /// What the card reports, falling back to the type when an error carries no message.
   var useSmileIDSampleMessage: String {
@@ -181,6 +196,3 @@ extension Error {
 
 /// The landing route for a run with no server-issued job id.
 private let unsubmittedJobId = "unsubmitted"
-
-/// Recorded when the SDK hands back a captured job instead of submitting it.
-private let capturedNotSubmitted = "Captured, not submitted"

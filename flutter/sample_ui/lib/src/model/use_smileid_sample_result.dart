@@ -36,7 +36,10 @@ enum UseSmileIDSampleFlowStatus {
   cancelled('cancelled'),
 
   /// The flow failed.
-  failed('failed');
+  failed('failed'),
+
+  /// The SDK handed the captured job back instead of submitting it.
+  captured('captured');
 
   const UseSmileIDSampleFlowStatus(this.id);
 

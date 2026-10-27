@@ -1135,6 +1135,18 @@ public enum UseSmileIDSampleStrings {
     text("settings_selfie_first_body")
   }
 
+  public static var settingsSectionSubmission: String {
+    text("settings_section_submission")
+  }
+
+  public static var settingsSkipApiSubmission: String {
+    text("settings_skip_api_submission")
+  }
+
+  public static var settingsSkipApiSubmissionBody: String {
+    text("settings_skip_api_submission_body")
+  }
+
   public static var settingsSectionAbout: String {
     text("settings_section_about")
   }

@@ -68,6 +68,16 @@ class UseSmileIDSampleFlowResultTest {
     }
 
     @Test
+    fun a_captured_job_is_its_own_outcome_and_survives_recreation() {
+        val flow = UseSmileIDSampleFlowResult()
+        flow.recordResultCallback(UseSmileIDSampleFlowStatus.Captured)
+
+        assertEquals("captured", flow.snapshot.jobStatus.id)
+        assertNull("nothing failed", flow.lastError)
+        assertEquals(UseSmileIDSampleFlowStatus.Captured, flow.recreate().status)
+    }
+
+    @Test
     fun a_scenario_this_build_no_longer_has_restores_as_the_default() {
         val restored = UseSmileIDSampleFlowResult.Saver.restore(
             listOf("retiredScenario", "brandDefault", "fullscreen", "sandbox", "idle", "", "", "", "0", "0"),

@@ -52,6 +52,15 @@ final class UseSmileIDSampleFlowResultTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).snapshot, flow.snapshot)
   }
 
+  func testACapturedJobIsItsOwnOutcomeAndSurvivesRecreation() {
+    var flow = UseSmileIDSampleFlowResult()
+    flow.recordResultCallback(status: .captured)
+
+    XCTAssertEqual(flow.snapshot.jobStatus.id, "captured")
+    XCTAssertNil(flow.lastError, "nothing failed")
+    XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).status, .captured)
+  }
+
   func testAScenarioThisBuildNoLongerHasRestoresAsTheDefault() {
     let restored = UseSmileIDSampleFlowResult(
       saved: ["retiredScenario", "brandDefault", "fullscreen", "sandbox", "idle", "", "", "", "0", "0"]

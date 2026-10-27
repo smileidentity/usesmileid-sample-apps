@@ -41,6 +41,10 @@ void useSmileIDSampleApplying(
   }
   _applyIdParams(builder, snapshot);
   builder.screens((ScreensBuilder screens) => _journeyFor(screens, snapshot));
+  builder.config(
+    (UseSmileIDConfigBuilder config) =>
+        config.skipApiSubmission = snapshot.skipApiSubmission,
+  );
   if (snapshot.product.capture) {
     builder.ml(
       (UseSmileIDMLBuilder ml) => ml.analyzers((AnalyzerConfigBuilder a) {

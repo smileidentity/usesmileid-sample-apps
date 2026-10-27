@@ -35,6 +35,7 @@ import {
   smileIDSampleAnalyzersReady,
   smileIDSampleAnalyzersSettled,
 } from '../flow/use-smile-id-sample-flow-builder-config';
+import { smileIDSampleDeleteCapturedFiles, smileIDSampleRecordResult } from '../flow/use-smile-id-sample-captured-job';
 import {
   smileIDSampleSnapshotSession,
   type UseSmileIDSampleFlowLaunchSnapshot,
@@ -113,6 +114,7 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
       galleryUpload: settings.galleryUpload,
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
+      skipApiSubmission: settings.skipApiSubmission,
       userId: authUserId.trim(),
       partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
       partnerName: smileIDSamplePartnerName(profile),
@@ -201,7 +203,9 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
         if (snapshot.scenario === 'noCallback') return;
         builder.onResult = (result: UseSmileIDResult<JobSubmissionResponse>) => {
           // Before the throw: the throwing scenario still delivered, and the count must say so.
-          if (recorder !== null) recordResult(recorder, result);
+          if (recorder !== null) smileIDSampleRecordResult(recorder, result);
+          // Before the throw: a callback that throws must not leave the captured images on disk.
+          if (result.status === 'captured') smileIDSampleDeleteCapturedFiles(result.job);
           if (snapshot.scenario === 'throwingCallback') {
             throw new Error('throwingCallback scenario: the host result callback throws');
           }
@@ -243,43 +247,12 @@ const acceptedCode = 202;
 /// The details entry for a run that never produced a job: the screen shows the run's result instead.
 const unsubmittedJobId = 'unsubmitted';
 
-/// Recorded when the SDK hands back a captured job instead of submitting it.
-const capturedNotSubmitted = 'Captured, not submitted';
-
 const runOf = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): UseSmileIDSampleRunContext => ({
   scenario: snapshot.scenario,
   theme: snapshot.theme,
   route: snapshot.route,
   environment: snapshot.sandbox ? 'sandbox' : 'production',
 });
-
-const recordResult = (
-  recorder: ReturnType<typeof smileIDSampleRunRecorder>,
-  result: UseSmileIDResult<JobSubmissionResponse>,
-): void => {
-  switch (result.status) {
-    case 'success':
-      recorder.deliver('succeeded', { jobId: result.value.jobId, userId: result.value.userId });
-      return;
-    case 'failure':
-      recorder.deliver('failed', {
-        error: result.error instanceof Error ? result.error.message : String(result.error),
-      });
-      return;
-    case 'cancelled':
-      recorder.deliver('cancelled');
-      return;
-    // Never expected: this app does not set skipApiSubmission.
-    case 'captured':
-      recorder.deliver('failed', { error: capturedNotSubmitted });
-      return;
-    default: {
-      // A status the SDK adds fails the build here, as in a partner's app.
-      const unhandled: never = result;
-      return unhandled;
-    }
-  }
-};
 
 /// Records the refusal, then leaves.
 const RecordBlocked = ({

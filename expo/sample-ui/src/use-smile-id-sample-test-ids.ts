@@ -53,6 +53,7 @@ export const UseSmileIDSampleTestIds = {
   SETTING_GALLERY_UPLOAD: 'sample_setting_gallery_upload',
   SETTING_ALLOW_SKIP_BACK: 'sample_setting_allow_skip_back',
   SETTING_SELFIE_FIRST: 'sample_setting_selfie_first',
+  SETTING_SKIP_API_SUBMISSION: 'sample_setting_skip_api_submission',
   JOB_ROW: 'sample_job_row',
   JOB_ROW_STATUS: 'sample_job_row_status',
   SELECT_TOGGLE: 'sample_select_toggle',
