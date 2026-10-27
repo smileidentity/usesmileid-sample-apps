@@ -33,32 +33,32 @@ importers:
         specifier: 2.2.0
         version: 2.2.0(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))
       '@smileid/njia':
-        specifier: 0.0.1-SNAPSHOT.11
-        version: 0.0.1-SNAPSHOT.11(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 0.0.1-SNAPSHOT.12
+        version: 0.0.1-SNAPSHOT.12(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/sample-ui':
         specifier: workspace:*
         version: link:../sample-ui
       '@smileid/usesmileid':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(ycgiwysypdbmznuexfmpcmusfm)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(ycgiwysypdbmznuexfmpcmusfm)
       '@smileid/usesmileid_huawei_document':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/usesmileid_huawei_face':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/usesmileid_mlkit_document':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/usesmileid_mlkit_face':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/usesmileid_vision_document':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       '@smileid/usesmileid_vision_face':
-        specifier: 12.3.1-SNAPSHOT.73
-        version: 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+        specifier: 12.3.1-SNAPSHOT.75
+        version: 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo:
         specifier: 57.0.23
         version: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
@@ -145,8 +145,8 @@ importers:
         specifier: 0.86.3
         version: 0.86.3(@babel/core@7.29.7)(react@19.2.3)
       '@smileid/njia-testing':
-        specifier: 0.0.1-SNAPSHOT.11
-        version: 0.0.1-SNAPSHOT.11(@smileid/njia@0.0.1-SNAPSHOT.11(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))
+        specifier: 0.0.1-SNAPSHOT.12
+        version: 0.0.1-SNAPSHOT.12(@smileid/njia@0.0.1-SNAPSHOT.12(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))
       '@testing-library/react-native':
         specifier: 14.0.1
         version: 14.0.1(jest@29.7.0(@types/node@22.20.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(test-renderer@1.2.0(@types/react@19.2.18)(react@19.2.3))
@@ -1585,19 +1585,24 @@ packages:
       react: '>=19.2.0'
       react-native: '>=0.83.0'
 
-  '@smileid/njia-testing@0.0.1-SNAPSHOT.11':
-    resolution: {integrity: sha512-/kcser7o4YopHeIZaKwzfbfaROpFylL72INvyo1KlWaUfHOgGK1nJpTAfI1nk/bp6ZKEZ0G7p/64X7yrRHTAGw==}
+  '@smileid/njia-testing@0.0.1-SNAPSHOT.12':
+    resolution: {integrity: sha512-x2gKgazWL+IFT3+VawX7GWc/ZXrNwaZvZ8b7Po4Tc/1U8lBiX1ck8cAf79+yLyne/91ksDf5q8JDBl4uYVEPXA==}
     peerDependencies:
-      '@smileid/njia': 0.0.1-SNAPSHOT.11
+      '@smileid/njia': 0.0.1-SNAPSHOT.12
 
-  '@smileid/njia@0.0.1-SNAPSHOT.11':
-    resolution: {integrity: sha512-MhiLbdQvlvOyY+u+EVUVd6dCMDaKOmjvh9VsWN50dw+UNaikcXPLlfL7hGivaCekpgRFxnTxN4zdldnF7Q3HnQ==}
+  '@smileid/njia@0.0.1-SNAPSHOT.12':
+    resolution: {integrity: sha512-a9ojk2TPyIvmcfCvf8ay51Knw3GmnaJZ7a1fQNv61iNPsPyvWZcJV0QqdPt/benkvZYeqvrL/7es1TfGQ/jdMA==}
     peerDependencies:
       react: '>=19.2.0'
       react-native: '>=0.83.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-native:
+        optional: true
 
-  '@smileid/usesmileid@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-gTOS2KSCOMtl1jv6MYPj7wZLpwsz++tDSGjMpa6GBn+igqM1jcEGpjYAuDwV2OWextwfoEJAB9V+xMTV6V+yxA==}
+  '@smileid/usesmileid@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-jL3BpmmysQ/T6VLq9c7rkRY+wteMS5YGjFRDWMEgQ8Vzrcz4VXvAkYJlqtN1TCXzV46Qa8hSgPZ74SytlvTBcg==}
     peerDependencies:
       '@react-native-async-storage/async-storage': '>=1.21.0'
       expo: '>=56.0.0'
@@ -1637,56 +1642,56 @@ packages:
       expo-sensors:
         optional: true
 
-  '@smileid/usesmileid_bridge@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-igcrP2SiNf9jSwmildF2Z7r7xgYlSluxbyDYaYGs27A2QEc0e9FNenkf5abnQJCvCEtfKPO+R95uO421cQP9kg==}
+  '@smileid/usesmileid_bridge@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-Yo0FrsZKXnZFqJKz6mA5n6AeY3l2jjHU84ikopQSGSQlhvo0ikyv/szAZhgVTIAxYsGiSkSlF0jhdQeihbhoUA==}
     peerDependencies:
       expo: '>=56.0.0'
       react: '>=19.2.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_huawei_document@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-c68IszGnlNSjbASQjfN6OId4tSdTMOnjYnz81exbTwRw2rKDC0Ni8sByO/q38ItAS6guJVxK+Vqm542lDJj4Mw==}
+  '@smileid/usesmileid_huawei_document@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-hzkdpe+hBqA+KIdPSOCpNNrZ8ve31PLrsSh3yTnWcKekklMIzofiewr+8QD4xWI9j0cSIVDiZiBmLuFGWfOCDQ==}
     peerDependencies:
       expo: '>=56.0.0'
       expo-modules-core: '>=56.0.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_huawei_face@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-DiKGR2Z9iGhsuHNpjDzOSadvJDNjC2OCkyMgsFKpA/dO7ZWQftGgeJ960iG2Xv8wBIYa50ckeCCb4rhep6dfKg==}
+  '@smileid/usesmileid_huawei_face@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-7WC27lCT5jRopOIKYpKOakT38oMnFgmnxO27O4ld+zO5gP6Jp3Pa2BPnbL/kE8A2wUk5QgonhU9+oVTGDaNgvw==}
     peerDependencies:
       expo: '>=56.0.0'
       expo-modules-core: '>=56.0.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_mlkit_document@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-O5B0mYPNQyxZWuORVqIrauUcy4acgmctmZBijcjLf9QK5A6ShfD3hGKCan2PN/9WF1ErndvVhRfVQCIJ2O820w==}
+  '@smileid/usesmileid_mlkit_document@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-BbmeypigoH8Ut2V5D5p+QfJTjMIsV3vD5+cwTKjUYNH2vzNO3DG+52nFqM2/2arMMPYP51gh5WdG4NRyrT5fBw==}
     peerDependencies:
       expo: '>=56.0.0'
       expo-modules-core: '>=56.0.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_mlkit_face@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-rFrKn7A6I7JzybrfeCprvg3cRRRr/PZiNEzyLfv54E1aoakAra5aqcr1NUpcLBCZ2l7I9Q8lU1Lk8EU/aAhUTQ==}
+  '@smileid/usesmileid_mlkit_face@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-io4N1A6jHSYQ9CAwrJVchZ98hfdPrf5OYB3sBXOOut7QDmsvRh7e8yZiOwGZpqi4g4LHDf60fa+ZgDnEadA4xA==}
     peerDependencies:
       expo: '>=56.0.0'
       expo-modules-core: '>=56.0.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_platform_interface@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-woY+m5MDk35oW074KR1ql9BOuHSYP8FAD8hnuY5gnbuyElfGaThlClKkRAN8HhHiGGX/k+B54pdmgCiW/VDWJw==}
+  '@smileid/usesmileid_platform_interface@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-C58AJIiC/nYVYjbnbECydR9E5nE3AECeOLmBy6DDA5IuKRmOJDicCyhfnD+AByUUk3oBlfrirbaaCpqaA/DoWw==}
     peerDependencies:
       expo-modules-core: '>=56.0.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_vision_document@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-0+aWhTYkO8wOGVmwjk6XWfjn5eeybJ90wjK1+ZCJ+pc6rfpxxxvjylFNW97+iCXOIezRXUj93hJxXMU6aRPe6g==}
+  '@smileid/usesmileid_vision_document@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-zXXxyRu9i9urgqz98Y5GbozCAT9/3A3VOZzZjQcm1+E/JmaajMZ6F2HIEcVvVvV1Mx14WscdxHF4CYdffJzC5w==}
     peerDependencies:
       expo: '>=56.0.0'
       expo-modules-core: '>=56.0.0'
       react-native: '>=0.83.0'
 
-  '@smileid/usesmileid_vision_face@12.3.1-SNAPSHOT.73':
-    resolution: {integrity: sha512-PR3+JDAo0X2ki7uVBlFZD+BlUASRw1wVLOVcLwdQaLPeB/lqMqOgDOH07GeyM7IKLG5mn8MkY2svC5Jeqduglg==}
+  '@smileid/usesmileid_vision_face@12.3.1-SNAPSHOT.75':
+    resolution: {integrity: sha512-keCuUEcrY05YMmP9AmTtDQXz3B3hUENNfzhAn1Di6Z3I8TeYpXGd34RJjMgvdZHvu+I0x5HGcWG4ZH/YvMhU3Q==}
     peerDependencies:
       expo: '>=56.0.0'
       expo-modules-core: '>=56.0.0'
@@ -6845,21 +6850,21 @@ snapshots:
       react: 19.2.3
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
 
-  '@smileid/njia-testing@0.0.1-SNAPSHOT.11(@smileid/njia@0.0.1-SNAPSHOT.11(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))':
+  '@smileid/njia-testing@0.0.1-SNAPSHOT.12(@smileid/njia@0.0.1-SNAPSHOT.12(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))':
     dependencies:
-      '@smileid/njia': 0.0.1-SNAPSHOT.11(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/njia': 0.0.1-SNAPSHOT.12(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
 
-  '@smileid/njia@0.0.1-SNAPSHOT.11(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
-    dependencies:
+  '@smileid/njia@0.0.1-SNAPSHOT.12(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+    optionalDependencies:
       react: 19.2.3
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
 
-  '@smileid/usesmileid@12.3.1-SNAPSHOT.73(ycgiwysypdbmznuexfmpcmusfm)':
+  '@smileid/usesmileid@12.3.1-SNAPSHOT.75(ycgiwysypdbmznuexfmpcmusfm)':
     dependencies:
       '@smileid/kamera': 1.2.1-SNAPSHOT.35(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/njia': 0.0.1-SNAPSHOT.11(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/njia': 0.0.1-SNAPSHOT.12(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-brightness: 57.0.2(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))
       expo-file-system: 57.0.7(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))
@@ -6881,7 +6886,7 @@ snapshots:
     transitivePeerDependencies:
       - react-router
 
-  '@smileid/usesmileid_bridge@12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_bridge@12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
       '@sentry/react': 11.9.0(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
@@ -6891,10 +6896,10 @@ snapshots:
     transitivePeerDependencies:
       - react-router
 
-  '@smileid/usesmileid_huawei_document@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_huawei_document@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
@@ -6902,10 +6907,10 @@ snapshots:
       - react
       - react-router
 
-  '@smileid/usesmileid_huawei_face@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_huawei_face@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
@@ -6913,10 +6918,10 @@ snapshots:
       - react
       - react-router
 
-  '@smileid/usesmileid_mlkit_document@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_mlkit_document@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
@@ -6924,10 +6929,10 @@ snapshots:
       - react
       - react-router
 
-  '@smileid/usesmileid_mlkit_face@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_mlkit_face@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
@@ -6935,9 +6940,9 @@ snapshots:
       - react
       - react-router
 
-  '@smileid/usesmileid_platform_interface@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_platform_interface@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
     transitivePeerDependencies:
@@ -6945,10 +6950,10 @@ snapshots:
       - react
       - react-router
 
-  '@smileid/usesmileid_vision_document@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_vision_document@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)
@@ -6956,10 +6961,10 @@ snapshots:
       - react
       - react-router
 
-  '@smileid/usesmileid_vision_face@12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
+  '@smileid/usesmileid_vision_face@12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)':
     dependencies:
-      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.73(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
-      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.73(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_bridge': 12.3.1-SNAPSHOT.75(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
+      '@smileid/usesmileid_platform_interface': 12.3.1-SNAPSHOT.75(expo-modules-core@57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(expo@57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3))(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo: 57.0.23(@babel/core@7.29.7)(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
       expo-modules-core: 57.0.18(react-native@0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       react-native: 0.86.3(@react-native/jest-preset@0.86.3(@babel/core@7.29.7)(react@19.2.3))(@types/react@19.2.18)(react@19.2.3)

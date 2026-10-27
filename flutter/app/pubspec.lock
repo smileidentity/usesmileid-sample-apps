@@ -1053,34 +1053,34 @@ packages:
     dependency: "direct main"
     description:
       name: usesmileid
-      sha256: "84088602e885d5fc879771fcadceaf94ef14a4aced9215b02e8aaa9902b30c82"
+      sha256: "8e918e99e879f7c856aa227fe35ce7ee3b65aa5a3100ef96386f74fa1d6334e2"
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_bridge:
     dependency: transitive
     description:
       name: usesmileid_bridge
-      sha256: "7804188323ec2e52527a3b7d3eac6c7b64e7878bf1160e390cb03999eeb58a1a"
+      sha256: "2c9b8857a0ed053dc1c679827f9a1cc9758a42ac01968639b33f68ed358786e1"
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_huawei_document:
     dependency: "direct main"
     description:
       name: usesmileid_huawei_document
-      sha256: "70564337739f416d49c29d5114359432c4ac7cff1c0cb35f00070894bc01f9aa"
+      sha256: "9281ecaeb0f999341031f9016c53bbcca344b5e8244e4f6a0ad2b84f58ce16a1"
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_huawei_face:
     dependency: "direct main"
     description:
       name: usesmileid_huawei_face
-      sha256: "3bdeb0c2e7988e4b2ecf141f84008e4506b2155391e4199e1d6d20b22d0c23aa"
+      sha256: "01796ca94c8010e13c0153112a3c6d999f55f7e4ef68bec0413e1df37cfa46cc"
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_kamera:
     dependency: transitive
     description:
@@ -1093,58 +1093,58 @@ packages:
     dependency: "direct main"
     description:
       name: usesmileid_mlkit_document
-      sha256: c91856bb06c729bf63f4e93bd9350d54ffd09aa598294d0cb9359a072ddeba81
+      sha256: b236fb8ddd3f5567691a746e8bca4a151a8d6c38b62068e208aa0690586c9af6
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_mlkit_face:
     dependency: "direct main"
     description:
       name: usesmileid_mlkit_face
-      sha256: d15fe5d84b9766f54d19ad4401ae93f3cfbd3f655f882ae57d47446725fb3290
+      sha256: "256f110ceb774745dca3f0c17311abe5beced81f7be3dd79e10f71738fb65d31"
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_njia:
     dependency: "direct main"
     description:
       name: usesmileid_njia
-      sha256: e8c036022fd3f28c1727ae9c27a3f2f2d9ff33f7485eed87e3ca5a36b8afefb3
+      sha256: "037da0be1272714183b5ba84c633b8fdce9855cce269310ee5a3b31ea3f40ed2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-SNAPSHOT.11"
+    version: "0.0.1-SNAPSHOT.12"
   usesmileid_njia_testing:
     dependency: "direct dev"
     description:
       name: usesmileid_njia_testing
-      sha256: f3c9c787a810020ba7bc113b7d47b9e0504d8b9a964d39f56f3c05d97f3e9b91
+      sha256: bb0ef59bd724c39ff5f1de662dcdad2ce627e644bf7712e0d281d0a45867dafe
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.1-SNAPSHOT.11"
+    version: "0.0.1-SNAPSHOT.12"
   usesmileid_platform_interface:
     dependency: transitive
     description:
       name: usesmileid_platform_interface
-      sha256: "4358fcf9c14f0107e75fa3be64303926e59f0a0141113f44e8aed2cb08616a08"
+      sha256: e9617de8d2d7c5f0ab432ececd00636465d8bb75217a2637e757f2cf1247f947
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_vision_document:
     dependency: "direct main"
     description:
       name: usesmileid_vision_document
-      sha256: b282ec9de7337b50524e7359db9c7fa543a98c7c985517248effe9fba2adc0bf
+      sha256: "2f410ed044eec94bd0f5bcc25da6bd9e2ae3f4b675284c8ef4c485a4b5d1ade4"
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   usesmileid_vision_face:
     dependency: "direct main"
     description:
       name: usesmileid_vision_face
-      sha256: "4cc2e2dee2839d3b8a7fdf22504f3b59082b324df8c557ee00cf1deb6b8a8a80"
+      sha256: ca20b9f72baa0b02a521e2cb41a2f98c07d6450cd1cef0ccde09472b4c163aea
       url: "https://pub.dev"
     source: hosted
-    version: "12.3.1-SNAPSHOT.29"
+    version: "12.3.1-SNAPSHOT.31"
   uuid:
     dependency: transitive
     description:

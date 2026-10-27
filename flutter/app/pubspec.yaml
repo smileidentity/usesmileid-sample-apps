@@ -20,17 +20,17 @@ dependencies:
   # The SDK from pub.dev, pinned EXACT rather than with a caret. A bump arrives as a PR, which is
   # what makes every bump a free consumption test; a caret lets a fresh resolve move to a release
   # no PR ever exercised. Registry-only, permanently: no path dependency, no dependency_overrides.
-  usesmileid: 12.3.1-SNAPSHOT.29
+  usesmileid: 12.3.1-SNAPSHOT.31
 
   # The federated ML providers, pinned exactly for the same reason as the SDK above. A capture
   # screen with none of these registered falls back to a Pigeon call no plugin answers, so the flow
   # dies on the device; the four are what the Expo app and the SDK's own sample both carry.
-  usesmileid_mlkit_face: 12.3.1-SNAPSHOT.29
-  usesmileid_mlkit_document: 12.3.1-SNAPSHOT.29
-  usesmileid_huawei_face: 12.3.1-SNAPSHOT.29
-  usesmileid_huawei_document: 12.3.1-SNAPSHOT.29
-  usesmileid_vision_face: 12.3.1-SNAPSHOT.29
-  usesmileid_vision_document: 12.3.1-SNAPSHOT.29
+  usesmileid_mlkit_face: 12.3.1-SNAPSHOT.31
+  usesmileid_mlkit_document: 12.3.1-SNAPSHOT.31
+  usesmileid_huawei_face: 12.3.1-SNAPSHOT.31
+  usesmileid_huawei_document: 12.3.1-SNAPSHOT.31
+  usesmileid_vision_face: 12.3.1-SNAPSHOT.31
+  usesmileid_vision_document: 12.3.1-SNAPSHOT.31
 
   # The navigation engine the shell draws from spec/njia-graph.json, at the exact version the SDK pins, which pub unifies with it.
   usesmileid_njia: 0.0.1-SNAPSHOT.12
