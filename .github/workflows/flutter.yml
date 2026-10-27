@@ -21,10 +21,8 @@ permissions:
 
 jobs:
   verify:
-    # macOS, not ubuntu: a Flutter golden is host-rasterised, so a baseline recorded on a Mac and
-    # verified on Linux reds the lane for reasons that have nothing to do with the UI. The same
-    # runner also builds the iOS release, which verify.sh skips loudly anywhere else.
-    runs-on: blacksmith-6vcpu-macos-27
+    # A Mac because Flutter goldens are host-rasterised; xcode-27 because only that image always has select-xcode's Xcode.
+    runs-on: xcode-27
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7

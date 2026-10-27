@@ -18,7 +18,8 @@ permissions:
 
 jobs:
   publish:
-    runs-on: blacksmith-6vcpu-macos-27
+    # The image release-check archives on, and the only one that always has select-xcode's Xcode.
+    runs-on: xcode-27
     # Store credentials are scoped to this environment, and its reviewers approve every run.
     environment: release
     timeout-minutes: 60
