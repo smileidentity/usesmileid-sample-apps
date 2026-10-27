@@ -33,7 +33,7 @@ dependencies:
   usesmileid_vision_document: 12.3.1-SNAPSHOT.29
 
   # The navigation engine the shell draws from spec/njia-graph.json, at the exact version the SDK pins, which pub unifies with it.
-  usesmileid_njia: 0.0.1-SNAPSHOT.11
+  usesmileid_njia: 0.0.1-SNAPSHOT.12
 
   # The shared journey, by path. Never published, and the SDK repo maps the same source into its
   # own development sample.
@@ -65,7 +65,7 @@ dev_dependencies:
     sdk: flutter
 
   # njia's reducer in Dart, so the graph's routing runs in a test where no native core does.
-  usesmileid_njia_testing: 0.0.1-SNAPSHOT.11
+  usesmileid_njia_testing: 0.0.1-SNAPSHOT.12
 
   # The published lint set, so a partner reading this app sees the rules they already have.
   flutter_lints: ^6.0.0
