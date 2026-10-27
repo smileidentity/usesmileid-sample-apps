@@ -8,13 +8,14 @@ enum class UseSmileIDSampleFlowRoute(val id: String) {
     Shell("shell"),
 }
 
-/** Cancelled and Failed stay separate: a screenshot cannot tell a user backing out from a failure. */
+/** Cancelled and Failed stay separate: a screenshot cannot tell a user backing out from a failure; Captured is a skipped submission. */
 enum class UseSmileIDSampleFlowStatus(val id: String) {
     Idle("idle"),
     Running("running"),
     Succeeded("succeeded"),
     Cancelled("cancelled"),
     Failed("failed"),
+    Captured("captured"),
 }
 
 /** A snapshot of what the SDK did, mirroring `spec/result-card.schema.json` field for field. */

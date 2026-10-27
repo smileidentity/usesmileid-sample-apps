@@ -56,6 +56,10 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.selfieFirst,
         defaults.selfieFirst,
       ),
+      skipApiSubmission: stored(
+        UseSmileIDSampleSettingsKeys.skipApiSubmission,
+        defaults.skipApiSubmission,
+      ),
       captureMode:
           UseSmileIDSampleCaptureMode.values
               .where(

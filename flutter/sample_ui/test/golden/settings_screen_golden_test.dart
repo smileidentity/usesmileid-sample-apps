@@ -40,6 +40,7 @@ void main() {
         'SmartSelfie\u2122',
         'Documentation',
         'docs.usesmileid.com',
+        'submission',
       },
     );
   });

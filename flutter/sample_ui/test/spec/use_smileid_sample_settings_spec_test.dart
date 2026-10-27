@@ -41,6 +41,7 @@ void main() {
         'sample_setting_gallery_upload',
         'sample_setting_allow_skip_back',
         'sample_setting_selfie_first',
+        'sample_setting_skip_api_submission',
       ],
     );
   });

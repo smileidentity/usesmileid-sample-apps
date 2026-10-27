@@ -284,6 +284,9 @@
     <string name="sample_settings_skip_back_body">Un bouton Ignorer lors de la capture du verso</string>
     <string name="sample_settings_selfie_first">Selfie d’abord</string>
     <string name="sample_settings_selfie_first_body">Le selfie avant le document</string>
+    <string name="sample_settings_section_submission">SOUMISSION</string>
+    <string name="sample_settings_skip_api_submission">Ignorer la soumission à l’API</string>
+    <string name="sample_settings_skip_api_submission_body">La tâche capturée revient sans être soumise</string>
     <string name="sample_settings_section_about">À PROPOS</string>
     <string name="sample_settings_documentation">Documentation</string>
     <string name="sample_settings_support">Assistance</string>

@@ -55,6 +55,7 @@ void main() {
         UseSmileIDSampleSettingsKeys.galleryUpload,
         UseSmileIDSampleSettingsKeys.allowSkipBack,
         UseSmileIDSampleSettingsKeys.selfieFirst,
+        UseSmileIDSampleSettingsKeys.skipApiSubmission,
       ]),
     );
   });
@@ -69,6 +70,22 @@ void main() {
     final UseSmileIDSampleSettings reread = await (await restart()).read();
     expect(reread.captureMode, UseSmileIDSampleCaptureMode.manual);
     expect(reread.galleryUpload, isTrue);
+  });
+
+  test('the Skip API submission switch survives a restart', () async {
+    expect((await (await restart()).read()).skipApiSubmission, isFalse);
+    await (await restart()).setSetting(
+      UseSmileIDSampleSetting.skipApiSubmission,
+      true,
+    );
+
+    final SharedPreferences raw = await SharedPreferences.getInstance();
+    expect(
+      UseSmileIDSampleSettingsKeys.skipApiSubmission,
+      'skip_api_submission',
+    );
+    expect(raw.getBool(UseSmileIDSampleSettingsKeys.skipApiSubmission), isTrue);
+    expect((await (await restart()).read()).skipApiSubmission, isTrue);
   });
 
   test('the document switches survive a restart', () async {

@@ -258,6 +258,12 @@ the SDK's default: gallery upload off, and skip the back off (`allowSkipBack`). 
 switch: Capture as matches the document, and the SDK decides from its type whether to ask for a back. Selfie first, off by default,
 orders the two captures: every document product runs document then selfie unless it is on.
 
+**The SUBMISSION setting.** Skip API submission is a switch, off by default as the SDK defaults it,
+and sets `config.skipApiSubmission`. On, the SDK seals the job and hands it back through `onResult`
+instead of submitting it. The result card records that as `captured`, the run lands on the unsubmitted
+job's details, and no verification is stored. This app forwards nothing, so it deletes every file the
+captured job lists and then its session folder, which the SDK leaves to the host.
+
 **Loading.** The lists have no design frames, so this is the design of record, built from components the
 app already has. The form never waits: while a country's list is still arriving, its second trigger stays
 enabled and reads "Loading ID types…" in its muted placeholder style. A sheet opened before its data

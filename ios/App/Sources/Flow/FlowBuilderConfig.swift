@@ -27,6 +27,9 @@ func useSmileIDSampleApply(
   builder.screens { screens in
     replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
+  builder.config { config in
+    config.skipApiSubmission = snapshot.skipApiSubmission
+  }
   if snapshot.product.capture {
     builder.ml { useSmileIDSampleAnalyzers($0, snapshot.product) }
   }

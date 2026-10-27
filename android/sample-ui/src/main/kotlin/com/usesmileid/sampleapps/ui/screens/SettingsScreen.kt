@@ -263,6 +263,19 @@ fun SettingsScreen(
             )
         }
 
+        // The design draws no such section either; it sits on its own, as APPEARANCE does.
+        section(R.string.sample_settings_section_submission) {
+            SwitchRow(
+                title = UseSmileIDSampleStrings.settingsSkipApiSubmission,
+                icon = R.drawable.sample_ic_verifications,
+                supportingText = UseSmileIDSampleStrings.settingsSkipApiSubmissionBody,
+                checked = state.settings.skipApiSubmission,
+                setting = UseSmileIDSampleSetting.SkipApiSubmission,
+                testId = UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION,
+                onSettingChange = onSettingChange,
+            )
+        }
+
         // The design draws no control for the drawer, so this placement is ours, and debug-only.
         if (onOpenScenarioDrawer != null) {
             section(label = { DEBUG_SECTION }) {

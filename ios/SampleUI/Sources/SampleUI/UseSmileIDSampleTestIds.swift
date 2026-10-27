@@ -197,6 +197,7 @@ public enum UseSmileIDSampleTestIds {
   public static let settingGalleryUpload = "sample_setting_gallery_upload"
   public static let settingAllowSkipBack = "sample_setting_allow_skip_back"
   public static let settingSelfieFirst = "sample_setting_selfie_first"
+  public static let settingSkipApiSubmission = "sample_setting_skip_api_submission"
   public static let documentOptionPrefix = "sample_document_option"
   public static let captureAsOptionPrefix = "sample_capture_as_option"
   public static let captureModeOptionPrefix = "sample_capture_mode_option"
@@ -297,7 +298,7 @@ public enum UseSmileIDSampleTestIds {
     kycFormScreen, countryTrigger, idTypeTrigger, idNumberInput, kycContinue, tokenFloat,
     countrySheet, countrySearch, countryEmpty, countryOptionPrefix,
     idTypeSheet, idTypeSearch, idTypeEmpty, idTypeOptionPrefix,
-    documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, genericDocumentSheet, genericDocumentName, genericDocumentBackSide, genericDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, settingAllowSkipBack, settingSelfieFirst, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, genericDocumentOrientationPrefix, genericDocumentAspectRatioPrefix,
+    documentEmpty, catalogueLoading, catalogueError, catalogueRetry, idNumberError, documentTrigger, captureAsTrigger, documentSheet, documentSearch, captureAsSheet, genericDocumentSheet, genericDocumentName, genericDocumentBackSide, genericDocumentDone, settingCaptureMode, captureModeSheet, settingGalleryUpload, settingAllowSkipBack, settingSelfieFirst, settingSkipApiSubmission, documentOptionPrefix, captureAsOptionPrefix, captureModeOptionPrefix, genericDocumentOrientationPrefix, genericDocumentAspectRatioPrefix,
     profileAvatarButton, profileSummary,
     profilesScreen, profileRowPrefix, createProfile,
     profileConfigScreen, profileConfigFieldPrefix, profileConfigCallbackUrl, profileConfigSave,

@@ -407,6 +407,12 @@ final class UseSmileIDSampleStrings {
   String get settingsSkipBackBody => _values['settings_skip_back_body']!;
   String get settingsSelfieFirst => _values['settings_selfie_first']!;
   String get settingsSelfieFirstBody => _values['settings_selfie_first_body']!;
+  String get settingsSectionSubmission =>
+      _values['settings_section_submission']!;
+  String get settingsSkipApiSubmission =>
+      _values['settings_skip_api_submission']!;
+  String get settingsSkipApiSubmissionBody =>
+      _values['settings_skip_api_submission_body']!;
   String get settingsSectionAbout => _values['settings_section_about']!;
   String get settingsDocumentation => _values['settings_documentation']!;
   String get settingsSupport => _values['settings_support']!;
@@ -762,6 +768,10 @@ final class UseSmileIDSampleStrings {
       'settings_skip_back_body': 'A Skip button on the back-side capture',
       'settings_selfie_first': 'Selfie first',
       'settings_selfie_first_body': 'The selfie before the document',
+      'settings_section_submission': 'SUBMISSION',
+      'settings_skip_api_submission': 'Skip API submission',
+      'settings_skip_api_submission_body':
+          'The captured job comes back unsubmitted',
       'settings_section_about': 'ABOUT',
       'settings_documentation': 'Documentation',
       'settings_support': 'Support',
@@ -1129,6 +1139,10 @@ final class UseSmileIDSampleStrings {
           'Un bouton Ignorer lors de la capture du verso',
       'settings_selfie_first': 'Selfie d’abord',
       'settings_selfie_first_body': 'Le selfie avant le document',
+      'settings_section_submission': 'SOUMISSION',
+      'settings_skip_api_submission': 'Ignorer la soumission à l’API',
+      'settings_skip_api_submission_body':
+          'La tâche capturée revient sans être soumise',
       'settings_section_about': 'À PROPOS',
       'settings_documentation': 'Documentation',
       'settings_support': 'Assistance',
@@ -1476,6 +1490,9 @@ final class UseSmileIDSampleStrings {
       'settings_skip_back_body': 'زر تخطٍّ عند التقاط الوجه الخلفي',
       'settings_selfie_first': 'الصورة الذاتية أولًا',
       'settings_selfie_first_body': 'الصورة الذاتية قبل المستند',
+      'settings_section_submission': 'الإرسال',
+      'settings_skip_api_submission': 'تخطي الإرسال إلى واجهة API',
+      'settings_skip_api_submission_body': 'تعود المهمة الملتقطة دون إرسال',
       'settings_section_about': 'حول',
       'settings_documentation': 'الوثائق',
       'settings_support': 'الدعم',
@@ -1816,6 +1833,9 @@ final class UseSmileIDSampleStrings {
       'settings_skip_back_body': 'כפתור דילוג בצילום הצד האחורי',
       'settings_selfie_first': 'סלפי קודם',
       'settings_selfie_first_body': 'הסלפי לפני המסמך',
+      'settings_section_submission': 'שליחה',
+      'settings_skip_api_submission': 'דילוג על שליחה ל-API',
+      'settings_skip_api_submission_body': 'המשימה שצולמה חוזרת בלי שליחה',
       'settings_section_about': 'אודות',
       'settings_documentation': 'תיעוד',
       'settings_support': 'תמיכה',

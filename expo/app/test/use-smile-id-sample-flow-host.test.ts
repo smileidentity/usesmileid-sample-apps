@@ -69,6 +69,7 @@ const snapshot = (
   galleryUpload: false,
   allowSkipBack: false,
   selfieFirst: false,
+  skipApiSubmission: false,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
@@ -259,6 +260,14 @@ describe('what the SDK is handed', () => {
     const selfie = built(snapshot()).build();
     expect(selfie.kind).toBe('success');
     if (selfie.kind === 'success') expect(selfie.configuration.ml?.analyzers.document).toBeUndefined();
+  });
+
+  it('hands the SDK the API submission setting', () => {
+    for (const skipApiSubmission of [false, true]) {
+      const result = built(snapshot({ skipApiSubmission })).build();
+      expect(result.kind).toBe('success');
+      if (result.kind === 'success') expect(result.configuration.config?.skipApiSubmission).toBe(skipApiSubmission);
+    }
   });
 
   // The regression check for the import that took the whole JS bundle down on Android.

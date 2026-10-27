@@ -411,6 +411,10 @@ abstract final class UseSmileIDSampleTestIds {
   /// The Selfie first switch.
   static const String settingSelfieFirst = 'sample_setting_selfie_first';
 
+  /// The Skip API submission switch.
+  static const String settingSkipApiSubmission =
+      'sample_setting_skip_api_submission';
+
   /// The scenario drawer, a debug affordance the design does not cover.
   static const String scenarioDrawer = 'sample_scenario_drawer';
 
@@ -561,6 +565,7 @@ abstract final class UseSmileIDSampleTestIds {
     settingGalleryUpload,
     settingAllowSkipBack,
     settingSelfieFirst,
+    settingSkipApiSubmission,
     scenarioDrawer,
     scenarioDrawerButton,
     showDiagnostics,

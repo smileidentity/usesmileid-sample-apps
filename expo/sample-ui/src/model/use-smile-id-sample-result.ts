@@ -6,8 +6,8 @@ export const smileIDSampleEnvironments = ['sandbox', 'production'] as const;
 
 export type UseSmileIDSampleEnvironment = (typeof smileIDSampleEnvironments)[number];
 
-/// Cancelled and Failed stay separate: a screenshot cannot tell a user backing out from a failure.
-export type UseSmileIDSampleFlowStatus = 'idle' | 'running' | 'succeeded' | 'cancelled' | 'failed';
+/// Cancelled and Failed stay separate: a screenshot cannot tell a user backing out from a failure; captured is a skipped submission.
+export type UseSmileIDSampleFlowStatus = 'idle' | 'running' | 'succeeded' | 'cancelled' | 'failed' | 'captured';
 
 /// A snapshot of what the SDK did, mirroring `spec/result-card.schema.json` field for field.
 export type UseSmileIDSampleResult = {

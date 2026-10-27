@@ -57,6 +57,9 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the document products capture the selfie first.
   static const String selfieFirst = 'selfie_first';
 
+  /// Whether the SDK hands the captured job back instead of submitting it.
+  static const String skipApiSubmission = 'skip_api_submission';
+
   /// The capture mode, stored by its id.
   static const String captureMode = 'capture_mode';
 
@@ -76,6 +79,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.galleryUpload => galleryUpload,
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
+    UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
   };
 }
 

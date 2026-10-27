@@ -370,6 +370,18 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
+          // The design draws no such section either; it sits on its own, as APPEARANCE does.
+          _Section(
+            label: context.strings.settingsSectionSubmission,
+            children: <Widget>[
+              _switchRow(
+                title: context.strings.settingsSkipApiSubmission,
+                icon: SmileIcons.verifications,
+                supportingText: context.strings.settingsSkipApiSubmissionBody,
+                setting: UseSmileIDSampleSetting.skipApiSubmission,
+              ),
+            ],
+          ),
           if (onOpenScenarioDrawer != null)
             _Section(
               label: 'DEBUG',

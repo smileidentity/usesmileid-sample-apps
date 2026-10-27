@@ -164,6 +164,7 @@ public struct SettingsScreen: View {
         languageSection
         sdkScreensSection
         documentCaptureSection
+        submissionSection
         debugSection
         navSection(UseSmileIDSampleStrings.settingsSectionAbout, rows: aboutRows)
         navSection(UseSmileIDSampleStrings.settingsSectionLegal, rows: legalRows)
@@ -328,6 +329,19 @@ public struct SettingsScreen: View {
         supporting: UseSmileIDSampleStrings.settingsSelfieFirstBody,
         setting: .selfieFirst,
         testId: UseSmileIDSampleTestIds.settingSelfieFirst
+      )
+    }
+  }
+
+  /// The design draws no such section either; it sits on its own, as APPEARANCE does.
+  private var submissionSection: some View {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionSubmission) {
+      switchRow(
+        title: UseSmileIDSampleStrings.settingsSkipApiSubmission,
+        icon: SmileIcons.verifications,
+        supporting: UseSmileIDSampleStrings.settingsSkipApiSubmissionBody,
+        setting: .skipApiSubmission,
+        testId: UseSmileIDSampleTestIds.settingSkipApiSubmission
       )
     }
   }

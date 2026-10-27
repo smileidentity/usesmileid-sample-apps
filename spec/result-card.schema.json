@@ -44,7 +44,7 @@
     },
     "jobStatus": {
       "type": "string",
-      "description": "Current status, including the terminal distinction between cancelled and failed."
+      "description": "Current status, including the terminal distinction between cancelled and failed, and captured when skipApiSubmission hands the job back instead of submitting it."
     },
     "resultCallbackCount": {
       "type": "integer",

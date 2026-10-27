@@ -55,11 +55,12 @@ final class UseSmileIDSampleSettingsTest: XCTestCase {
       previewStep: false,
       galleryUpload: true,
       allowSkipBack: true,
-      selfieFirst: true
+      selfieFirst: true,
+      skipApiSubmission: true
     )
     XCTAssertEqual(
       UseSmileIDSampleSetting.allCases.map { settings[$0] },
-      [false, true, false, true, false, true, true, true]
+      [false, true, false, true, false, true, true, true, true]
     )
   }
 
