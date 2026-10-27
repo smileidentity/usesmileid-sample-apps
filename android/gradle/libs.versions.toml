@@ -1,14 +1,14 @@
 [versions]
 # The SDK snapshot builds made against njia's pinned build; a bare -SNAPSHOT can resolve a build made against another njia.
-usesmileid = "12.3.0-20261027.044030-306"
-usesmileid-bom = "12.3.0-20261027.044030-307"
-usesmileid-mlkit-face = "12.3.0-20261027.044030-303"
-usesmileid-mlkit-document = "12.3.0-20261027.044030-304"
-usesmileid-huawei-face = "12.3.0-20261027.044030-304"
-usesmileid-huawei-document = "12.3.0-20261027.044030-305"
-usesmileid-bridge = "12.3.0-20261027.044030-305"
+usesmileid = "12.3.0-20261027.143404-309"
+usesmileid-bom = "12.3.0-20261027.143404-310"
+usesmileid-mlkit-face = "12.3.0-20261027.143404-306"
+usesmileid-mlkit-document = "12.3.0-20261027.143404-307"
+usesmileid-huawei-face = "12.3.0-20261027.143404-307"
+usesmileid-huawei-document = "12.3.0-20261027.143404-308"
+usesmileid-bridge = "12.3.0-20261027.143404-308"
 # The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
-njia = "0.0.1-20261025.232953-11"
+njia = "0.0.1-20261027.133612-12"
 
 android-gradle-plugin = "9.4.1"
 kotlin = "2.4.21"

@@ -14,11 +14,11 @@ packages:
   # the two on package identity, so a drift here fails resolution instead of building two SDKs.
   UseSmileID:
     url: https://github.com/smileidentity/ios-spm.git
-    exactVersion: 12.3.0-SNAPSHOT.20261027060949.40458103924
+    exactVersion: 12.3.0-SNAPSHOT.20261027143531.40521300431
   # The navigation engine the shell draws from spec/njia-graph.json; the exact version the SDK's package pins, which SwiftPM unifies with it.
   Njia:
     url: https://github.com/smileidentity/njia-spm
-    exactVersion: 0.0.1-SNAPSHOT.11
+    exactVersion: 0.0.1-SNAPSHOT.12
 
 settings:
   base:
