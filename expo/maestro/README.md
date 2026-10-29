@@ -5,12 +5,12 @@ maestro --device <serial> test -e APP_ID=com.usesmileid.sample.expo expo/maestro
 ```
 
 Run against the release APK, which is minified and resource-shrunk with no app-side keep rules —
-where a consumption defect in the published SDK surfaces. Build it with the bundle forced, because a
-release APK can otherwise ship the previous JS even when the build says it rebuilt one:
+where a consumption defect in the published SDK surfaces. `app.config.ts` turns both on through
+`expo-build-properties`. Build it with the bundle forced, because a release APK can otherwise ship the
+previous JS even when the build says it rebuilt one:
 
 ```bash
-cd expo/app/android && ./gradlew :app:createBundleReleaseJsAndAssets --rerun :app:assembleRelease \
-  -Pandroid.enableMinifyInReleaseBuilds=true -Pandroid.enableShrinkResourcesInReleaseBuilds=true
+cd expo/app/android && ./gradlew :app:createBundleReleaseJsAndAssets --rerun :app:assembleRelease
 ```
 
 ## Traps

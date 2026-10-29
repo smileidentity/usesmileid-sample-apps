@@ -91,6 +91,12 @@ const config: ExpoConfig = {
     },
   },
   plugins: [
+    // A partner's release build runs R8, so this shell does too: the SDK's consumer rules are proven
+    // on the app a partner copies, not only in the SDK repos' own test hosts.
+    [
+      'expo-build-properties',
+      { android: { enableMinifyInReleaseBuilds: true, enableShrinkResourcesInReleaseBuilds: true } },
+    ],
     'expo-status-bar',
     'expo-font',
     // No supportsRTL: with it the module resets forceRTL from the device's locale on every launch.
