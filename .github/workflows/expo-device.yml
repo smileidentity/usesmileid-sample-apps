@@ -96,9 +96,7 @@ jobs:
       - name: Build the release APK
         run: |
           ./gradlew :app:createBundleReleaseJsAndAssets --rerun :app:assembleRelease \
-            -PreactNativeArchitectures=x86_64 \
-            -Pandroid.enableMinifyInReleaseBuilds=true \
-            -Pandroid.enableShrinkResourcesInReleaseBuilds=true
+            -PreactNativeArchitectures=x86_64
         working-directory: expo/app/android
 
       # The daemon holds a heap this runner needs back before an emulator will fit beside it.

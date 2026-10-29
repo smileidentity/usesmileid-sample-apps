@@ -143,12 +143,9 @@ if runs native; then
   # Prebuild is regenerated rather than committed, so a hand-patched Podfile or Gradle file cannot
   # survive a run — which is the property this repository exists to keep.
   "$PNPM" --filter usesmileid-sample-expo exec expo prebuild --platform android --clean
-  # Both default to false in Expo's template, so an unflagged release APK is neither minified nor
-  # shrunk — 184 MB of it, measured — and proves none of what this lane exists to prove. Passed as
-  # project properties rather than through a build-properties plugin, which would be a new dependency.
-  (cd app/android && ./gradlew assembleRelease \
-    -Pandroid.enableMinifyInReleaseBuilds=true \
-    -Pandroid.enableShrinkResourcesInReleaseBuilds=true)
+  # Minified and resource-shrunk through expo-build-properties in app.config.ts, as a partner's
+  # release is; Expo's template leaves both off, which proves none of what this lane exists to prove.
+  (cd app/android && ./gradlew assembleRelease)
 fi
 
 echo "OK"
