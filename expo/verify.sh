@@ -145,6 +145,13 @@ if runs native; then
   "$PNPM" --filter usesmileid-sample-expo exec expo prebuild --platform android --clean
   # Minified and resource-shrunk through expo-build-properties in app.config.ts, as a partner's
   # release is; Expo's template leaves both off, which proves none of what this lane exists to prove.
+  # Checked, because without them assembleRelease still succeeds and the lane stays green.
+  for key in enableMinifyInReleaseBuilds enableShrinkResourcesInReleaseBuilds; do
+    if ! grep -qx "android.$key=true" app/android/gradle.properties; then
+      echo "verify.sh native: prebuild did not set android.$key=true; check expo-build-properties in app.config.ts." >&2
+      exit 1
+    fi
+  done
   (cd app/android && ./gradlew assembleRelease)
 fi
 
