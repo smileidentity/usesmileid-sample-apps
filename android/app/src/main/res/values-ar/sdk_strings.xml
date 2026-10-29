@@ -48,7 +48,6 @@
     <string name="si_capture_rotate_device">يرجى إمساك جهازك بشكل عمودي</string>
     <string name="si_capture_smile">ابتسم من فضلك…</string>
     <string name="si_capture_start_button">بدء الالتقاط</string>
-    <string name="si_capture_warning_text">تجنب الإضاءة الضعيفة أو الإكسسوارات أو النظر بعيدًا، فقد يؤدي ذلك إلى رفض صورتك.</string>
     <string name="si_capture_hold_steady">حافظ على ثباتك…</string>
     <string name="si_capture_timeout">انتهت مهلة الالتقاط. يرجى المحاولة مرة أخرى.</string>
     <string name="si_capture_camera_unavailable">لم يتم استلام أي إطارات من الكاميرا. أغلق التطبيقات الأخرى التي تستخدم الكاميرا ثم حاول مرة أخرى.</string>
@@ -90,7 +89,6 @@
     <string name="si_cd_success">نجاح</string>
     <string name="si_cd_failure">فشل</string>
     <string name="si_cd_powered_by_smile_id">مدعوم من Smile ID</string>
-    <string name="si_cd_add">إضافة</string>
     <string name="si_cd_guideline_allowed">مسموح</string>
     <string name="si_cd_guideline_blocked">غير مسموح</string>
     <string name="si_cd_document_capture_shutter">التقاط المستند</string>

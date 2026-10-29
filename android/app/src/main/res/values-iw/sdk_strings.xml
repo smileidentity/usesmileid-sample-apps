@@ -48,7 +48,6 @@
     <string name="si_capture_rotate_device">החזק את המכשיר בצורה אנכית</string>
     <string name="si_capture_smile">חייך בבקשה…</string>
     <string name="si_capture_start_button">התחל צילום</string>
-    <string name="si_capture_warning_text">המנע מתאורה חלשה, מאביזרים או מהבטה הצידה — הדבר עלול לגרום לדחיית הסלפי שלך.</string>
     <string name="si_capture_hold_steady">שמור על יציבות…</string>
     <string name="si_capture_timeout">פג הזמן הקצוב לצילום. נסה שוב.</string>
     <string name="si_capture_camera_unavailable">לא התקבלו פריימים מהמצלמה. סגור אפליקציות אחרות שמשתמשות במצלמה ונסה שוב.</string>
@@ -90,7 +89,6 @@
     <string name="si_cd_success">הצלחה</string>
     <string name="si_cd_failure">כשל</string>
     <string name="si_cd_powered_by_smile_id">מופעל על־ידי Smile ID</string>
-    <string name="si_cd_add">הוסף</string>
     <string name="si_cd_guideline_allowed">מותר</string>
     <string name="si_cd_guideline_blocked">אסור</string>
     <string name="si_cd_document_capture_shutter">צילום מסמך</string>
