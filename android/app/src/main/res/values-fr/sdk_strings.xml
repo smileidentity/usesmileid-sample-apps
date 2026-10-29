@@ -48,7 +48,6 @@
     <string name="si_capture_rotate_device">Veuillez tenir votre appareil à la verticale</string>
     <string name="si_capture_smile">Souriez, s’il vous plaît…</string>
     <string name="si_capture_start_button">Démarrer la capture</string>
-    <string name="si_capture_warning_text">Évitez un mauvais éclairage, les accessoires ou de détourner le regard, au risque de voir votre selfie rejeté.</string>
     <string name="si_capture_hold_steady">Ne bougez plus…</string>
     <string name="si_capture_timeout">Délai de capture dépassé. Veuillez réessayer.</string>
     <string name="si_capture_camera_unavailable">Aucune image reçue de la caméra. Fermez les autres applications qui utilisent la caméra, puis réessayez.</string>
@@ -81,7 +80,6 @@
     <string name="si_cd_success">Succès</string>
     <string name="si_cd_failure">Échec</string>
     <string name="si_cd_powered_by_smile_id">Propulsé par Smile ID</string>
-    <string name="si_cd_add">Ajouter</string>
     <string name="si_cd_guideline_allowed">Autorisé</string>
     <string name="si_cd_guideline_blocked">Non autorisé</string>
     <string name="si_cd_document_capture_shutter">Capturer le document</string>
