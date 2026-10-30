@@ -8,7 +8,7 @@ usesmileid-huawei-face = "12.3.0-20261027.143404-307"
 usesmileid-huawei-document = "12.3.0-20261027.143404-308"
 usesmileid-bridge = "12.3.0-20261027.143404-308"
 # The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
-njia = "0.0.1-20261027.133612-12"
+njia = "0.0.1-20261030.012141-13"
 
 android-gradle-plugin = "9.4.1"
 kotlin = "2.4.21"
