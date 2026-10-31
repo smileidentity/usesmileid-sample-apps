@@ -74,7 +74,9 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "verifications.swipeToDelete":
       "the reveal is @GestureState, which rests at zero so there is no half-open row; the device suite drags one",
     "verifications.refreshing":
-      "the list's own pull is deferred, and a system-drawn refresh control is not in a static render"
+      "the list's own pull is deferred, and a system-drawn refresh control is not in a static render",
+    "launchIntro.locked": "the launch intro is built on Android first; this platform follows (docs/plan/backlog.md)",
+    "launchIntro.logo": "the launch intro is built on Android first; this platform follows (docs/plan/backlog.md)"
   ]
 
   func testEverySpecScreenStateHasAGoldenOrADeclaredReason() throws {

@@ -321,3 +321,4 @@
 "licenses_text_ships_with_component" = "The text ships with the component itself.";
 "licenses_text_ships_with_component_at" = "The text ships with the component itself, at %1$@";
 "licenses_open" = "Open %1$@";
+"launch_intro_label" = "Smile ID";
