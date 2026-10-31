@@ -29,8 +29,8 @@ jobs:
 
       - name: Open the next into main pull request
         env:
-          # A pull request opened with GITHUB_TOKEN starts no checks, so this one uses its own token.
-          GH_TOKEN: ${{ secrets.PROMOTE_NEXT_TOKEN }}
+          # A pull request opened with GITHUB_TOKEN starts no checks, so this one uses GH_PAT.
+          GH_TOKEN: ${{ secrets.GH_PAT }}
           REPO: ${{ github.repository }}
           RELEASE: ${{ inputs.release }}
         run: python3 scripts/promote_next.py
