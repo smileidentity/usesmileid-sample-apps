@@ -63,9 +63,9 @@ its head branch and `next` must never be deleted. Once it merges, Sync next merg
   version.
 - Conflicts are resolved on `next`, by merging `main` into it, and then Promote next runs again; never
   on the promotion branch.
-- It runs in the `release` environment. Its `PROMOTE_NEXT_TOKEN` is a token for this repository alone,
-  because a pull request opened with the workflow's own token starts no checks. It needs contents,
-  pull requests and workflows write, the last because a promotion can carry workflow changes.
+- It runs in the `release` environment, with the repository's `GH_PAT`, because a pull request opened
+  with the workflow's own token starts no checks. It needs contents, pull requests and workflows write
+  here, the last because a promotion can carry workflow changes.
 
 Sync next pushes a clean merge straight to `next` with the run's own token, so no credential is stored
 for it. That token can't push a merge that changes `.github/workflows`, so a sync that carries a
