@@ -328,7 +328,8 @@ type Key =
   | 'licenses_huawei_section'
   | 'licenses_text_ships_with_component'
   | 'licenses_text_ships_with_component_at'
-  | 'licenses_open';
+  | 'licenses_open'
+  | 'launch_intro_label';
 
 /** The sample's own copy, one accessor per key in `spec/l10n/app/en.json`. */
 export class UseSmileIDSampleStrings {
@@ -1630,6 +1631,10 @@ export class UseSmileIDSampleStrings {
   licensesOpen(args: { license: string }): string {
     return this.format('licenses_open', args);
   }
+
+  get launchIntroLabel(): string {
+    return this.values.launch_intro_label;
+  }
 }
 
 const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>> = {
@@ -1956,6 +1961,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     licenses_text_ships_with_component: 'The text ships with the component itself.',
     licenses_text_ships_with_component_at: 'The text ships with the component itself, at {url}',
     licenses_open: 'Open {license}',
+    launch_intro_label: 'Smile ID',
   },
   fr: {
     common_cancel: 'Annuler',
@@ -2280,6 +2286,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     licenses_text_ships_with_component: 'Le texte est fourni avec le composant.',
     licenses_text_ships_with_component_at: 'Le texte est fourni avec le composant lui-même, à l\'adresse {url}',
     licenses_open: 'Ouvrir {license}',
+    launch_intro_label: 'Smile ID',
   },
   ar: {
     common_cancel: 'إلغاء',
@@ -2604,6 +2611,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     licenses_text_ships_with_component: 'يُرفق النص مع المكوّن نفسه.',
     licenses_text_ships_with_component_at: 'يأتي النص مع المكوّن نفسه، على {url}',
     licenses_open: 'فتح {license}',
+    launch_intro_label: 'Smile ID',
   },
   he: {
     common_cancel: 'ביטול',
@@ -2928,5 +2936,6 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     licenses_text_ships_with_component: 'הטקסט מצורף לרכיב עצמו.',
     licenses_text_ships_with_component_at: 'הטקסט מצורף לרכיב עצמו, בכתובת {url}',
     licenses_open: 'פתיחת {license}',
+    launch_intro_label: 'Smile ID',
   },
 };

@@ -321,3 +321,4 @@
 "licenses_text_ships_with_component" = "يُرفق النص مع المكوّن نفسه.";
 "licenses_text_ships_with_component_at" = "يأتي النص مع المكوّن نفسه، على %1$@";
 "licenses_open" = "فتح %1$@";
+"launch_intro_label" = "Smile ID";

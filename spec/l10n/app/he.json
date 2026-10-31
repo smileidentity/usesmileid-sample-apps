@@ -335,5 +335,6 @@
   "licenses_huawei_section": "בכפוף לתנאים של Huawei — {count}",
   "licenses_text_ships_with_component": "הטקסט מצורף לרכיב עצמו.",
   "licenses_text_ships_with_component_at": "הטקסט מצורף לרכיב עצמו, בכתובת {url}",
-  "licenses_open": "פתיחת {license}"
+  "licenses_open": "פתיחת {license}",
+  "launch_intro_label": "Smile ID"
 }

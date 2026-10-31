@@ -939,6 +939,26 @@
         "sample_theme_item"
       ],
       "note": "A debug affordance, not a designed screen. AGENTS.md mandates it; the design does not cover it."
+    },
+    {
+      "id": "launchIntro",
+      "title": "Launch intro",
+      "owner": "sample",
+      "board": "none",
+      "route": "overlay",
+      "states": [
+        {
+          "state": "locked",
+          "note": "NO DESIGN FRAME: the SmileID logo at its own size on the dark scheme's background, its orange shackle hopped left onto the body so the lock reads as shut, with the name part-way out of it."
+        },
+        {
+          "state": "logo",
+          "note": "The last frame: the SmileID logo as the brand draws it, shackle back in its open position, the name in the dark scheme's title colour."
+        }
+      ],
+      "components": [],
+      "testIds": [],
+      "note": "Plays once on a cold start from the launcher icon, over the products screen, then fades out; a tap or back skips it. The name unrolls out of the lock, and on the way the shackle hops onto the body with a click and back off again. A link, any launch argument, a restored task or system animations turned off skip it entirely, so automation never waits on it. The logo is drawn from the SDK attribution drawable's path data, without its 'Powered by', always on the dark scheme."
     }
   ],
   "openQuestions": [

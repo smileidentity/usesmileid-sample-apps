@@ -139,6 +139,12 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
 
 /// States with no baseline, each with the reason it has none.
 const Map<String, String> useSmileIDSampleGoldenExempt = <String, String>{
+  'launchIntro.locked':
+      'The launch intro is built on Android first; this platform follows '
+      '(docs/plan/backlog.md).',
+  'launchIntro.logo':
+      'The launch intro is built on Android first; this platform follows '
+      '(docs/plan/backlog.md).',
   'products.supersededListLayout':
       'Kept in the spec only so nobody re-implements it; the app never draws it.',
   'verifications.swipeToDelete':

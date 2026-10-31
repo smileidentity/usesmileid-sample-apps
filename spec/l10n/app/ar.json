@@ -335,5 +335,6 @@
   "licenses_huawei_section": "بموجب شروط Huawei الخاصة — {count}",
   "licenses_text_ships_with_component": "يُرفق النص مع المكوّن نفسه.",
   "licenses_text_ships_with_component_at": "يأتي النص مع المكوّن نفسه، على {url}",
-  "licenses_open": "فتح {license}"
+  "licenses_open": "فتح {license}",
+  "launch_intro_label": "Smile ID"
 }

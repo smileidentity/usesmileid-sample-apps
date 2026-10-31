@@ -321,3 +321,4 @@
 "licenses_text_ships_with_component" = "הטקסט מצורף לרכיב עצמו.";
 "licenses_text_ships_with_component_at" = "הטקסט מצורף לרכיב עצמו, בכתובת %1$@";
 "licenses_open" = "פתיחת %1$@";
+"launch_intro_label" = "Smile ID";

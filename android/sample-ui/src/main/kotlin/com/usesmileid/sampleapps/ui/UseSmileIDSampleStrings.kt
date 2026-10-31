@@ -328,4 +328,5 @@ object UseSmileIDSampleStrings {
     val licensesTextShipsWithComponent: String @Composable get() = stringResource(R.string.sample_licenses_text_ships_with_component)
     @Composable fun licensesTextShipsWithComponentAt(url: String): String = stringResource(R.string.sample_licenses_text_ships_with_component_at, url)
     @Composable fun licensesOpen(license: String): String = stringResource(R.string.sample_licenses_open, license)
+    val launchIntroLabel: String @Composable get() = stringResource(R.string.sample_launch_intro_label)
 }

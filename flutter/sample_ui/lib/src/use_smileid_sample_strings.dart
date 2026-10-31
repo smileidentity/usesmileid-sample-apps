@@ -459,6 +459,7 @@ final class UseSmileIDSampleStrings {
       _format('licenses_text_ships_with_component_at', {'url': url});
   String licensesOpen({required String license}) =>
       _format('licenses_open', {'license': license});
+  String get launchIntroLabel => _values['launch_intro_label']!;
 
   static const Map<String, Map<String, String>> _byLanguage = {
     'en': {
@@ -813,6 +814,7 @@ final class UseSmileIDSampleStrings {
       'licenses_text_ships_with_component_at':
           'The text ships with the component itself, at {url}',
       'licenses_open': 'Open {license}',
+      'launch_intro_label': 'Smile ID',
     },
     'fr': {
       'common_cancel': 'Annuler',
@@ -1187,6 +1189,7 @@ final class UseSmileIDSampleStrings {
       'licenses_text_ships_with_component_at':
           'Le texte est fourni avec le composant lui-même, à l\'adresse {url}',
       'licenses_open': 'Ouvrir {license}',
+      'launch_intro_label': 'Smile ID',
     },
     'ar': {
       'common_cancel': 'إلغاء',
@@ -1533,6 +1536,7 @@ final class UseSmileIDSampleStrings {
       'licenses_text_ships_with_component_at':
           'يأتي النص مع المكوّن نفسه، على {url}',
       'licenses_open': 'فتح {license}',
+      'launch_intro_label': 'Smile ID',
     },
     'he': {
       'common_cancel': 'ביטול',
@@ -1875,6 +1879,7 @@ final class UseSmileIDSampleStrings {
       'licenses_text_ships_with_component_at':
           'הטקסט מצורף לרכיב עצמו, בכתובת {url}',
       'licenses_open': 'פתיחת {license}',
+      'launch_intro_label': 'Smile ID',
     },
   };
 }
