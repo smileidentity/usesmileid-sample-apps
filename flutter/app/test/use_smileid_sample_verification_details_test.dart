@@ -240,7 +240,9 @@ void main() {
     await tester.pump();
 
     expect(find.text('Job ID could not be copied'), findsOne);
+
     await tester.pump(useSmileIDSampleNoticeWindow);
+    expect(find.text('Job ID could not be copied'), findsNothing);
   });
 
   for (final (int? sdk, bool confirms) in <(int?, bool)>[

@@ -447,7 +447,7 @@ class UseSmileIDSampleRemovalNoticeNotifier extends Notifier<int?> {
 /// How long a transient confirmation stands, which the twin sets at five seconds.
 const Duration useSmileIDSampleNoticeWindow = Duration(seconds: 5);
 
-/// The window a confirmation stands for; only automation passes one, and without it this is the product's.
+/// How long a confirmation stands, which only automation overrides.
 final Provider<Duration> useSmileIDSampleNoticeWindowProvider =
     Provider<Duration>((Ref ref) {
       final int? seconds = ref
