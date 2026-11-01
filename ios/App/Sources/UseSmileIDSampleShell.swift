@@ -112,7 +112,8 @@ final class UseSmileIDSampleChrome: ObservableObject {
       message: count == 1
         ? UseSmileIDSampleStrings.verificationsHiddenOne
         : UseSmileIDSampleStrings.verificationsHiddenMany(count: count),
-      actionLabel: UseSmileIDSampleStrings.commonUndo
+      actionLabel: UseSmileIDSampleStrings.commonUndo,
+      showing: UUID()
     )
   }
 }

@@ -437,7 +437,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       guard await loaded(jobId)?.status == .processing else { return }
       // Silent unless something happened: "still processing" on every check is noise.
       guard let outcome = await app.refreshJobUntilSettled(jobId), outcome != .stillProcessing else { return }
-      notice = UseSmileIDSampleTransientNotice(message: label(outcome))
+      notice = UseSmileIDSampleTransientNotice(message: label(outcome), showing: UUID())
     }
     .overlay(alignment: .bottom) {
       UseSmileIDSampleTransientNoticeHost(notice: notice, onDismiss: { notice = nil })
@@ -462,7 +462,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
   /// A pull, which always answers, "still processing" included.
   private func refresh() async {
     guard let outcome = await app.refreshJob(jobId) else { return }
-    notice = UseSmileIDSampleTransientNotice(message: label(outcome))
+    notice = UseSmileIDSampleTransientNotice(message: label(outcome), showing: UUID())
   }
 
   /// One line per outcome, in the other three apps' words: a flow keys off these strings.
