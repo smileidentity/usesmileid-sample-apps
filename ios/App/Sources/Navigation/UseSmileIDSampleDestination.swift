@@ -478,9 +478,10 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     }
   }
 
-  /// `UIPasteboard` has no clip label, so only the value crosses.
-  private func copy(_: String, _ value: String) {
+  /// Confirms the copy itself, as iOS shows nothing when the pasteboard changes; the label names the field.
+  private func copy(_ label: String, _ value: String) {
     UIPasteboard.general.string = value
+    notice = UseSmileIDSampleTransientNotice(message: UseSmileIDSampleStrings.detailsCopied(label: label))
   }
 }
 
