@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -432,17 +433,7 @@ class UseSmileIDSampleRemovalNoticeNotifier extends Notifier<int?> {
   void show(int count) {
     _timer?.cancel();
     state = count;
-    _timer = Timer(_window, dismiss);
-  }
-
-  /// Only automation passes one; without it this is the product's window.
-  Duration get _window {
-    final int? seconds = ref
-        .read(useSmileIDSampleLaunchArgsProvider)
-        .noticeWindow;
-    return seconds == null
-        ? useSmileIDSampleNoticeWindow
-        : Duration(seconds: seconds);
+    _timer = Timer(ref.read(useSmileIDSampleNoticeWindowProvider), dismiss);
   }
 
   /// Withdraws the confirmation, which is what taking its action also does.
@@ -455,6 +446,33 @@ class UseSmileIDSampleRemovalNoticeNotifier extends Notifier<int?> {
 
 /// How long a transient confirmation stands, which the twin sets at five seconds.
 const Duration useSmileIDSampleNoticeWindow = Duration(seconds: 5);
+
+/// The window a confirmation stands for; only automation passes one, and without it this is the product's.
+final Provider<Duration> useSmileIDSampleNoticeWindowProvider =
+    Provider<Duration>((Ref ref) {
+      final int? seconds = ref
+          .watch(useSmileIDSampleLaunchArgsProvider)
+          .noticeWindow;
+      return seconds == null
+          ? useSmileIDSampleNoticeWindow
+          : Duration(seconds: seconds);
+    });
+
+/// The Android API level the app runs on; null off Android.
+final FutureProvider<int?> useSmileIDSampleAndroidSdkProvider =
+    FutureProvider<int?>(
+      (Ref ref) async => defaultTargetPlatform == TargetPlatform.android
+          ? (await DeviceInfoPlugin().androidInfo).version.sdkInt
+          : null,
+    );
+
+/// Whether the platform confirms a copy itself, which Android does from 13 (API 33) and iOS never does.
+final FutureProvider<bool> useSmileIDSampleSystemConfirmsCopyProvider =
+    FutureProvider<bool>(
+      (Ref ref) async =>
+          (await ref.watch(useSmileIDSampleAndroidSdkProvider.future) ?? 0) >=
+          33,
+    );
 
 /// Which scenarios a run carries, seeded from the launch arguments and changed by the drawer.
 final NotifierProvider<

@@ -60,6 +60,9 @@ dependencies:
   # Settings' link rows: Custom Tabs / SFSafariViewController in app, the system browser for PDFs.
   url_launcher: ^6.3.2
 
+  # The Android API level, since Android 13 confirms a copy itself; already in the graph through the SDK.
+  device_info_plus: ^13.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

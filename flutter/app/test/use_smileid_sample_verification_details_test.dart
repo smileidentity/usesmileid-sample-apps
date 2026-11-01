@@ -1,4 +1,6 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
@@ -50,11 +52,15 @@ void main() {
     String location, {
     List<UseSmileIDSampleJob>? stored,
     UseSmileIDSampleJobsRepository? repository,
+    bool systemConfirmsCopy = false,
   }) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           ...useSmileIDSampleTestNjia(),
+          useSmileIDSampleSystemConfirmsCopyProvider.overrideWith(
+            (Ref ref) async => systemConfirmsCopy,
+          ),
           useSmileIDSampleJobsRepositoryProvider.overrideWithValue(
             repository ??
                 UseSmileIDSampleMemoryJobsRepository(
@@ -157,6 +163,115 @@ void main() {
     expect(byId(UseSmileIDSampleTestIds.detailCopy('userId')), findsOne);
     expect(byId(UseSmileIDSampleTestIds.detailCopy('message')), findsNothing);
     expect(byId(UseSmileIDSampleTestIds.detailCopy('status')), findsNothing);
+  });
+
+  /// Answers the platform's clipboard calls, recording what was set; [refuse] fails the write.
+  List<String> mockClipboard(WidgetTester tester, {bool refuse = false}) {
+    final List<String> copied = <String>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (MethodCall call) async {
+        if (call.method != 'Clipboard.setData') {
+          return null;
+        }
+        if (refuse) {
+          throw PlatformException(code: 'denied');
+        }
+        copied.add(
+          (call.arguments as Map<Object?, Object?>)['text']! as String,
+        );
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+    return copied;
+  }
+
+  testWidgets(
+    'a copy takes the full id and says so where the system shows nothing',
+    (WidgetTester tester) async {
+      final List<String> copied = mockClipboard(tester);
+      await pumpAt(tester, UseSmileIDSampleRoutes.verificationDetails(job.id));
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.detailCopy('jobId')));
+      await tester.pump();
+
+      expect(copied, <String>[job.id]);
+      expect(find.text('Job ID copied'), findsOne);
+
+      await tester.pump(useSmileIDSampleNoticeWindow);
+      expect(find.text('Job ID copied'), findsNothing);
+    },
+  );
+
+  testWidgets('a copy adds nothing where the system confirms it itself', (
+    WidgetTester tester,
+  ) async {
+    final List<String> copied = mockClipboard(tester);
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(job.id),
+      systemConfirmsCopy: true,
+    );
+
+    await tester.tap(byId(UseSmileIDSampleTestIds.detailCopy('userId')));
+    await tester.pump();
+
+    expect(copied, <String>[job.userId]);
+    expect(find.text('User ID copied'), findsNothing);
+  });
+
+  testWidgets('a refused copy says so, rather than failing silently', (
+    WidgetTester tester,
+  ) async {
+    mockClipboard(tester, refuse: true);
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(job.id),
+      systemConfirmsCopy: true,
+    );
+
+    await tester.tap(byId(UseSmileIDSampleTestIds.detailCopy('jobId')));
+    await tester.pump();
+
+    expect(find.text('Job ID could not be copied'), findsOne);
+    await tester.pump(useSmileIDSampleNoticeWindow);
+  });
+
+  for (final (int? sdk, bool confirms) in <(int?, bool)>[
+    (null, false),
+    (32, false),
+    (33, true),
+  ]) {
+    test('at API level $sdk the system confirms a copy: $confirms', () async {
+      final ProviderContainer probe = ProviderContainer(
+        overrides: [
+          useSmileIDSampleAndroidSdkProvider.overrideWith(
+            (Ref ref) async => sdk,
+          ),
+        ],
+      );
+      addTearDown(probe.dispose);
+
+      expect(
+        await probe.read(useSmileIDSampleSystemConfirmsCopyProvider.future),
+        confirms,
+      );
+    });
+  }
+
+  test('off Android there is no API level to read', () async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    addTearDown(() => debugDefaultTargetPlatformOverride = null);
+    final ProviderContainer probe = ProviderContainer();
+    addTearDown(probe.dispose);
+
+    expect(await probe.read(useSmileIDSampleAndroidSdkProvider.future), isNull);
   });
 
   // A deep link can name a job this build never stored, which is a reachable state rather than an
