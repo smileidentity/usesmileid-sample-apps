@@ -28,7 +28,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     this.onDelete,
     this.onRefresh,
     this.onCopy,
-    this.refreshNotice,
+    this.notice,
     this.result,
     super.key,
   });
@@ -51,8 +51,8 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
   /// Puts a field's full value on the clipboard, with the label a paste target would show.
   final void Function(String label, String value)? onCopy;
 
-  /// Why the last pull could not re-read the job, shown until it is withdrawn.
-  final String? refreshNotice;
+  /// What the last pull or copy reported, shown until the host withdraws it.
+  final String? notice;
 
   /// The last run's result card; null hides it, which is the host's probes decision.
   final UseSmileIDSampleResult? result;
@@ -115,7 +115,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
         ],
       ),
     );
-    if (refreshNotice == null) {
+    if (notice == null) {
       return page;
     }
     // The app's own toast rather than a Material snackbar: a refresh that cannot succeed still
@@ -128,7 +128,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
           right: SmileDimens.spacingMd,
           // Past the system bar: under edge to edge this page reaches the bottom edge.
           bottom: MediaQuery.paddingOf(context).bottom + SmileDimens.spacingMd,
-          child: UseSmileIDSampleToast(message: refreshNotice!),
+          child: UseSmileIDSampleToast(message: notice!),
         ),
       ],
     );
