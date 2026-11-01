@@ -147,6 +147,14 @@ The capture-mode checks match the manual shutter by its accessibility label, "Ca
 the SDK publishes no `si_*` id for the shutter or the gallery button. When an SDK release publishes them,
 swap the flows over to the ids and add a check that the gallery button appears with gallery upload on.
 
+### iOS: drop the SDK's old ids for Deny and Exit
+
+The iOS SDK renames its consent Deny button from `si_deny_button` to `si_consent_deny_button`, and the
+Exit on a failed run from `si_button_exit` to `si_processing_exit_button`, the ids every SDK shares. The
+UI tests find either id through `UITests/UseSmileIDSampleSdkControls.swift`, so they pass on the pinned
+SDK and on the first build that renames them. Done when `ios-spm` pins a build with the new ids and the
+helper looks up only those.
+
 ### iOS: shutter timing on a device
 
 The capture-mode behaviour (shutter at once under manual, after 10 seconds under the default, never under
