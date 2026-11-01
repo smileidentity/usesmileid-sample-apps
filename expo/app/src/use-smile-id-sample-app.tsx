@@ -16,8 +16,8 @@ import {
 import { useFonts } from 'expo-font';
 import { NavigationBar } from 'expo-navigation-bar';
 import { setStatusBarStyle, StatusBar } from 'expo-status-bar';
-import { useEffect, useMemo, useRef } from 'react';
-import { Appearance, Platform, useColorScheme, View } from 'react-native';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { AccessibilityInfo, Appearance, Platform, useColorScheme, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
@@ -31,6 +31,7 @@ import {
 import { useSmileIDSampleAppLanguage } from './use-smile-id-sample-app-language';
 import { useSmileIDSampleDeviceScheme } from './use-smile-id-sample-device-scheme';
 import { useLaunchArgsAsLaunched, useLaunchArgsLoaded, useLaunchFailure, useLaunchUrl } from './use-smile-id-sample-launch';
+import { smileIDSamplePlaysLaunchIntro, UseSmileIDSampleLaunchIntroOverlay } from './use-smile-id-sample-launch-intro';
 import { smileIDSampleSecureProfilesStorage } from './use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from './use-smile-id-sample-secure-session-storage';
 import { UseSmileIDSampleSelectModeProvider } from './use-smile-id-sample-select-mode';
@@ -43,8 +44,8 @@ const reassertSystemBars = (dark: boolean) => {
   NavigationBar.setStyle(dark ? 'light' : 'dark');
 };
 
-/// The app's root: settings, session and launch arguments load, then njia's shell draws `spec/njia-graph.json`.
-export const UseSmileIDSampleApp = () => {
+/// The app's root: settings, session and launch arguments load, then njia's shell draws `spec/njia-graph.json`; `playsLaunchIntro` lets the intro cover its first seconds.
+export const UseSmileIDSampleApp = ({ playsLaunchIntro = false }: { playsLaunchIntro?: boolean }) => {
   const scheme = useColorScheme();
   const appearance = useSmileIDSampleSettingsStore((state) => state.settings.appearance);
   const settingsLoaded = useSmileIDSampleSettingsStore((state) => state.loaded);
@@ -115,7 +116,16 @@ export const UseSmileIDSampleApp = () => {
     if (args.seedJobs) seedFixtures(Date.now()).catch(() => undefined);
   }, [args, argsLoaded, loadProfiles, seedFixtures]);
 
-  const ready = fontsLoaded && sessionLoaded && argsLoaded && profilesLoaded;
+  // Read before the first frame, so the intro never flashes in and out for someone who has motion turned down.
+  const [reduceMotion, setReduceMotion] = useState<boolean | null>(null);
+  useEffect(() => {
+    AccessibilityInfo.isReduceMotionEnabled()
+      .catch(() => false)
+      .then(setReduceMotion);
+  }, []);
+
+  const ready = fontsLoaded && sessionLoaded && argsLoaded && profilesLoaded && reduceMotion !== null;
+  const playsIntro = playsLaunchIntro && smileIDSamplePlaysLaunchIntro({ launchUrl, reduceMotion: reduceMotion === true });
   const routing = useMemo(
     () => ({ currentLink: smileIDSampleCurrentLink, reopen: (link: string) => smileIDSampleOpenLink(link, args) }),
     [args],
@@ -151,6 +161,7 @@ export const UseSmileIDSampleApp = () => {
             <UseSmileIDSampleSelectModeProvider>
               <UseSmileIDSampleShell args={args} />
             </UseSmileIDSampleSelectModeProvider>
+            <UseSmileIDSampleLaunchIntroOverlay plays={playsIntro} />
           </UseSmileIDSampleNoticeWindowProvider>
         </UseSmileIDSampleThemeProvider>
       </UseSmileIDSampleStringsProvider>
@@ -158,3 +169,6 @@ export const UseSmileIDSampleApp = () => {
     </GestureHandlerRootView>
   );
 };
+
+/// The root a device launches: the app with its intro.
+export const UseSmileIDSampleLaunchedApp = () => <UseSmileIDSampleApp playsLaunchIntro />;
