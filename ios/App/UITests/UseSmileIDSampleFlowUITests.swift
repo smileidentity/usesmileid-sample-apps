@@ -39,14 +39,14 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
       element("si_consent_screen").waitForExistence(timeout: 20),
       "the SDK did not mount — check that the XCFramework and its analyzers shipped with this build"
     )
-    XCTAssertTrue(app.buttons["si_deny_button"].exists, "the SDK's own controls are not queryable")
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.exists, "the SDK's own controls are not queryable")
   }
 
   func testDenyingConsentDeliversOneResultAndReplacesTheFlow() {
     launch()
     startEnrollment()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
-    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20))
+    app.useSmileIDSampleDenyButton.tap()
 
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "the flow is still mounted")
@@ -100,18 +100,18 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   func testRotatingWhileTheFlowIsMountedKeepsTheSameRun() {
     launch()
     startEnrollment()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20))
 
     XCUIDevice.shared.orientation = .landscapeLeft
     defer { XCUIDevice.shared.orientation = .portrait }
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 10), "the flow did not survive the rotation")
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 10), "the flow did not survive the rotation")
     // The SDK's mask is portrait outside document capture, and the app delegate returns it: a
     // window that went landscape here means the hook is no longer wired.
     let window = app.windows.element(boundBy: 0).frame
     XCTAssertLessThan(window.width, window.height, "the app rotated, so the SDK's orientation mask is not being honoured")
 
     // The same run, not a second one: a restart would have re-run the gate and the counters with it.
-    app.buttons["si_deny_button"].tap()
+    app.useSmileIDSampleDenyButton.tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertEqual(element("sample_result_result_count").label, "1", "the rotation started a second run")
   }
@@ -164,7 +164,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     app.launch()
     // Straight to the SDK: the API, not the app, says which user details a job needs.
     XCTAssertTrue(
-      app.buttons["si_deny_button"].waitForExistence(timeout: 20),
+      app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20),
       "the argument did not open the flow route"
     )
     XCTAssertFalse(element("sample_products_screen").exists)
@@ -174,8 +174,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   func testHoldingTheCameraDoesNotStopTheRun() {
     launch(arguments: ["-holdCamera", "500"])
     startEnrollment()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20), "the hold blocked the run")
-    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20), "the hold blocked the run")
+    app.useSmileIDSampleDenyButton.tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertEqual(element("sample_result_result_count").label, "1")
   }
@@ -183,8 +183,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
   func testTheInShellPresentationRunsAndReportsItsRoute() {
     launch(arguments: ["-route", "shell"])
     startEnrollment()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20), "the in-shell flow did not mount")
-    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20), "the in-shell flow did not mount")
+    app.useSmileIDSampleDenyButton.tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertEqual(element("sample_result_route").label, "shell")
   }
@@ -200,8 +200,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     target.tap()
     target.tap()
 
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
-    app.buttons["si_deny_button"].tap()
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20))
+    app.useSmileIDSampleDenyButton.tap()
     XCTAssertTrue(element("sample_verification_details_screen").waitForExistence(timeout: 10))
     XCTAssertEqual(element("sample_result_result_count").label, "1", "two taps started two runs")
     XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "a second flow is still stacked")
@@ -325,7 +325,7 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
 
     // A refusal parks on the SDK's failure state, still `si_processing_screen`, until Exit is tapped.
     let details = element("sample_verification_details_screen")
-    let exit = app.buttons["si_button_exit"]
+    let exit = app.useSmileIDSampleExitButton
     // Whichever comes first; `XCTWaiter.wait(for:)` would wait for both.
     let deadline = Date().addingTimeInterval(180)
     while Date() < deadline, !details.exists, !exit.exists {
