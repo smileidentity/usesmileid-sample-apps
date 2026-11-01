@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../components/use_smileid_sample_logo.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../use_smileid_sample_strings_scope.dart';
+import '../use_smileid_sample_test_ids.dart';
 
 /// The cold-start intro: "SmileID" unrolls out of the logo's lock, which shuts and opens again on the way; a tap skips to [onFinished].
 class UseSmileIDSampleLaunchIntroScreen extends StatefulWidget {
@@ -53,10 +54,13 @@ class _UseSmileIDSampleLaunchIntroScreenState
   }
 
   @override
-  Widget build(BuildContext context) => GestureDetector(
-    behavior: HitTestBehavior.opaque,
-    onTap: _finish,
-    child: UseSmileIDSampleLaunchIntroFrame(progress: _progress),
+  Widget build(BuildContext context) => Semantics(
+    identifier: UseSmileIDSampleTestIds.launchIntro,
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _finish,
+      child: UseSmileIDSampleLaunchIntroFrame(progress: _progress),
+    ),
   );
 }
 

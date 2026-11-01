@@ -9,6 +9,8 @@ export const UseSmileIDSampleTestIds = {
   SCENARIO_DRAWER_BUTTON: 'sample_scenario_drawer_button',
   /// Rendered only by an SDK repo's source build, in the Settings DEBUG section.
   SHOW_DIAGNOSTICS: 'sample_show_diagnostics',
+  /// Present only while the cold-start intro covers the app.
+  LAUNCH_INTRO: 'sample_launch_intro',
   SCENARIO_ITEM: 'sample_scenario_item',
   THEME_ITEM: 'sample_theme_item',
   // products

@@ -25,11 +25,14 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.util.lerp
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
+import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleLogo
+import com.usesmileid.sampleapps.ui.components.publishTestTags
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import kotlin.math.PI
 import kotlin.math.sin
@@ -45,7 +48,10 @@ fun LaunchIntroScreen(onFinished: () -> Unit, modifier: Modifier = Modifier) {
     }
     LaunchIntroFrame(
         progress = { progress.value },
-        modifier = modifier.pointerInput(Unit) { detectTapGestures { finish() } },
+        modifier = modifier
+            .publishTestTags()
+            .testTag(UseSmileIDSampleTestIds.LAUNCH_INTRO)
+            .pointerInput(Unit) { detectTapGestures { finish() } },
     )
 }
 

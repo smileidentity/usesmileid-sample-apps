@@ -6,6 +6,7 @@ import { UseSmileIDSampleLogo } from '../components/use-smile-id-sample-logo';
 import { smileDarkColors } from '../theme/smile-colors';
 import { darkColors, tokens } from '../tokens';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
+import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 
 /// Where every part of the logo is at one instant; `shackleLock` runs from 0, the logo's own open shackle, to 1, seated on the body.
 export type LaunchIntroPose = {
@@ -246,7 +247,7 @@ export const LaunchIntroScreen = ({ onFinished, style }: ScreenProps) => {
   }, [finish]);
 
   return (
-    <Pressable style={[StyleSheet.absoluteFill, style]} onPress={finish}>
+    <Pressable style={[StyleSheet.absoluteFill, style]} onPress={finish} testID={UseSmileIDSampleTestIds.LAUNCH_INTRO}>
       <LaunchIntroFrame progress={progress} size={size} style={StyleSheet.absoluteFill} />
     </Pressable>
   );

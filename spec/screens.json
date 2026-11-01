@@ -957,7 +957,9 @@
         }
       ],
       "components": [],
-      "testIds": [],
+      "testIds": [
+        "sample_launch_intro"
+      ],
       "note": "Plays once on a cold start from the launcher icon, over the products screen, then fades out; a tap or back skips it. The name unrolls out of the lock, and on the way the shackle hops onto the body with a click and back off again. A link, any launch argument, a restored task or system animations turned off skip it entirely, so automation never waits on it. The logo is drawn from the SDK attribution drawable's path data, without its 'Powered by', always on the dark scheme."
     }
   ],

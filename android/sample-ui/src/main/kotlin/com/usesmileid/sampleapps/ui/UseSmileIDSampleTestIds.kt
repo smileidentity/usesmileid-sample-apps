@@ -54,6 +54,9 @@ object UseSmileIDSampleTestIds {
     /** Rendered only by an SDK repo's source build, in the Settings DEBUG section. */
     const val SHOW_DIAGNOSTICS = "sample_show_diagnostics"
 
+    /** Present only while the cold-start intro covers the app. */
+    const val LAUNCH_INTRO = "sample_launch_intro"
+
     const val PROFILE_SUMMARY = "sample_profile_summary"
     const val SETTING_ENHANCED_SMART_SELFIE = "sample_setting_enhanced_smart_selfie"
     const val SETTING_AGENT_MODE = "sample_setting_agent_mode"
@@ -193,6 +196,7 @@ object UseSmileIDSampleTestIds {
         TOKEN_PORTAL_LINK,
         SCENARIO_DRAWER_BUTTON,
         SHOW_DIAGNOSTICS,
+        LAUNCH_INTRO,
         PROFILE_SUMMARY,
         SETTING_ENHANCED_SMART_SELFIE,
         SETTING_AGENT_MODE,
