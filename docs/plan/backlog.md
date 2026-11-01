@@ -109,6 +109,12 @@ frame, because iOS used to launch the engine at `/`. The runner's `SceneDelegate
 the initial route, so the listener runs only after an icon launch and does nothing a test relies on.
 Done looks like the listener, its provider and its test removed, with the cold link proven on iOS first.
 
+### Flutter: a refresh outcome on verification details that times out
+
+Android, iOS and Expo show a refresh outcome on verification details for the notice window, then
+withdraw it. Flutter keeps it on screen until the page is left. Done looks like Flutter's refresh
+outcome on the same timer its copy confirmation uses, with its widget tests pumping past the window.
+
 ### Flutter iOS: profiles and the token session outlive an uninstall
 
 Profiles and the token session are kept in the Keychain, which iOS keeps when the app is deleted. A
