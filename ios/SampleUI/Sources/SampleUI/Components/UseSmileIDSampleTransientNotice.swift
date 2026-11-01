@@ -4,6 +4,8 @@ import SwiftUI
 public struct UseSmileIDSampleTransientNotice: Equatable, Sendable {
   public let message: String
   public let actionLabel: String?
+  /// Tells two showings of the same words apart, so each restarts the host's window.
+  private let id = UUID()
 
   public init(message: String, actionLabel: String? = nil) {
     self.message = message
