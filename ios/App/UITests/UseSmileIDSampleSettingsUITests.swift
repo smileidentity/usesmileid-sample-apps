@@ -141,7 +141,7 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     type("sample_user_details_field_email", "kwame@uptech.example")
     XCTAssertTrue(app.staticTexts["Save as a new profile"].waitForExistence(timeout: 5))
     app.buttons["sample_user_details_continue"].tap()
-    XCTAssertTrue(app.buttons["si_deny_button"].waitForExistence(timeout: 20))
+    XCTAssertTrue(app.useSmileIDSampleDenyButton.waitForExistence(timeout: 20))
 
     relaunch(arguments: useSmileIDSampleLaunchSeed)
     XCTAssertTrue(element("sample_products_screen").waitForExistence(timeout: 10))
