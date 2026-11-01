@@ -61,7 +61,7 @@ dependencies:
   url_launcher: ^6.3.2
 
   # The Android API level, since Android 13 confirms a copy itself.
-  device_info_plus: ^13.2.0
+  device_info_plus: '>=11.0.0 <15.0.0'
 
 dev_dependencies:
   flutter_test:
