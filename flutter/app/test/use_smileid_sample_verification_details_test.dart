@@ -267,6 +267,33 @@ void main() {
     });
   }
 
+  test(
+    'an API level Android cannot report leaves the app to confirm',
+    () async {
+      const MethodChannel deviceInfo = MethodChannel(
+        'dev.fluttercommunity.plus/device_info',
+      );
+      debugDefaultTargetPlatformOverride = TargetPlatform.android;
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(
+            deviceInfo,
+            (MethodCall call) async => throw PlatformException(code: 'gone'),
+          );
+      addTearDown(() {
+        debugDefaultTargetPlatformOverride = null;
+        TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+            .setMockMethodCallHandler(deviceInfo, null);
+      });
+      final ProviderContainer probe = ProviderContainer();
+      addTearDown(probe.dispose);
+
+      expect(
+        await probe.read(useSmileIDSampleSystemConfirmsCopyProvider.future),
+        isFalse,
+      );
+    },
+  );
+
   test('off Android there is no API level to read', () async {
     debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
     addTearDown(() => debugDefaultTargetPlatformOverride = null);

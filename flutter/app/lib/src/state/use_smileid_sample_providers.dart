@@ -458,13 +458,18 @@ final Provider<Duration> useSmileIDSampleNoticeWindowProvider =
           : Duration(seconds: seconds);
     });
 
-/// The Android API level the app runs on; null off Android.
+/// The Android API level the app runs on; null off Android or when the platform cannot say.
 final FutureProvider<int?> useSmileIDSampleAndroidSdkProvider =
-    FutureProvider<int?>(
-      (Ref ref) async => defaultTargetPlatform == TargetPlatform.android
-          ? (await DeviceInfoPlugin().androidInfo).version.sdkInt
-          : null,
-    );
+    FutureProvider<int?>((Ref ref) async {
+      if (defaultTargetPlatform != TargetPlatform.android) {
+        return null;
+      }
+      try {
+        return (await DeviceInfoPlugin().androidInfo).version.sdkInt;
+      } on Object {
+        return null;
+      }
+    });
 
 /// Whether the platform confirms a copy itself, which Android does from 13 (API 33) and iOS never does.
 final FutureProvider<bool> useSmileIDSampleSystemConfirmsCopyProvider =
