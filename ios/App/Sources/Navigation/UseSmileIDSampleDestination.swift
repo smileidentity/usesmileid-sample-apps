@@ -481,7 +481,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
   /// Confirms the copy itself, as iOS shows nothing when the pasteboard changes.
   private func copy(_ label: String, _ value: String) {
     UIPasteboard.general.string = value
-    notice = UseSmileIDSampleTransientNotice(message: UseSmileIDSampleStrings.detailsCopied(label: label))
+    notice = UseSmileIDSampleTransientNotice(message: UseSmileIDSampleStrings.detailsCopied(label: label), showing: UUID())
   }
 }
 
