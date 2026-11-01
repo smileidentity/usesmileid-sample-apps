@@ -111,12 +111,12 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
         onCopy={(label, value) => {
           Clipboard.setStringAsync(value)
             .then(() => {
-              // Android 13 shows its own confirmation; below it there is none, and iOS shows none natively.
-              if (Platform.OS === 'android' && Number(Platform.Version) < 33) {
-                show({ message: `${label} copied` });
+              // Android 13 confirms a copy itself; iOS and older Android show nothing.
+              if (Platform.OS !== 'android' || Number(Platform.Version) < 33) {
+                show({ message: strings.detailsCopied({ label }) });
               }
             })
-            .catch(() => show({ message: `${label} could not be copied` }));
+            .catch(() => show({ message: strings.detailsCopyFailed({ label }) }));
         }}
       />
       <UseSmileIDSampleTransientNoticeHost state={notice} style={noticeStyle} />

@@ -33,7 +33,7 @@ void main() {
         jobId: 'job_1',
         job: const UseSmileIDSampleJobLookup.none(),
         onBack: () {},
-        refreshNotice: 'Clear — Job completed',
+        notice: 'Clear — Job completed',
       ),
     );
     expect(

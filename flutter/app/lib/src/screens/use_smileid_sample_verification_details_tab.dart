@@ -33,7 +33,11 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleVerificationDetailsTabState
     extends ConsumerState<UseSmileIDSampleVerificationDetailsTab> {
-  String? _refreshNotice;
+  /// The last refresh outcome, or a copy's confirmation while its window stands.
+  String? _notice;
+
+  /// Withdraws a copy's confirmation once its window closes; a refresh outcome has none.
+  Timer? _noticeExpiry;
 
   @override
   void initState() {
@@ -41,6 +45,12 @@ class _UseSmileIDSampleVerificationDetailsTabState
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => unawaited(_refreshOnEntry()),
     );
+  }
+
+  @override
+  void dispose() {
+    _noticeExpiry?.cancel();
+    super.dispose();
   }
 
   Future<void> _refreshOnEntry() async {
@@ -113,9 +123,8 @@ class _UseSmileIDSampleVerificationDetailsTabState
               useSmileIDSampleRemoveJobs(ref, <String>{found.id});
             },
       onRefresh: _refresh,
-      onCopy: (String label, String value) =>
-          Clipboard.setData(ClipboardData(text: value)),
-      refreshNotice: _refreshNotice,
+      onCopy: (String label, String value) => unawaited(_copy(label, value)),
+      notice: _notice,
     );
   }
 
@@ -163,8 +172,40 @@ class _UseSmileIDSampleVerificationDetailsTabState
   }
 
   /// Puts [outcome] in the notice, in the other three apps' words.
-  void _say(UseSmileIDSampleStatusRefresh outcome) => setState(
-    () =>
-        _refreshNotice = useSmileIDSampleRefreshLabel(outcome, context.strings),
-  );
+  void _say(UseSmileIDSampleStatusRefresh outcome) {
+    _noticeExpiry?.cancel();
+    setState(
+      () => _notice = useSmileIDSampleRefreshLabel(outcome, context.strings),
+    );
+  }
+
+  /// Copies [value], confirming it only where the platform does not, as the other three apps do.
+  Future<void> _copy(String label, String value) async {
+    final UseSmileIDSampleStrings strings = context.strings;
+    try {
+      await Clipboard.setData(ClipboardData(text: value));
+    } on Object {
+      _flash(strings.detailsCopyFailed(label: label));
+      return;
+    }
+    if (!mounted ||
+        await ref.read(useSmileIDSampleSystemConfirmsCopyProvider.future)) {
+      return;
+    }
+    _flash(strings.detailsCopied(label: label));
+  }
+
+  /// Shows [message] for the notice window, restarting it if one already stands.
+  void _flash(String message) {
+    if (!mounted) {
+      return;
+    }
+    _noticeExpiry?.cancel();
+    setState(() => _notice = message);
+    _noticeExpiry = Timer(ref.read(useSmileIDSampleNoticeWindowProvider), () {
+      if (mounted) {
+        setState(() => _notice = null);
+      }
+    });
+  }
 }

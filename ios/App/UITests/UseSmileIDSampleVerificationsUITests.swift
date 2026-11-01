@@ -191,6 +191,14 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].waitForExistence(timeout: 10))
   }
 
+  /// iOS shows nothing when the pasteboard changes, so without the app's own notice a copy looks like a dead tap.
+  func testCopyingAnIdSaysSo() {
+    element("sample_job_row_0").tap()
+    XCTAssertTrue(element("sample_detail_copy_jobId").waitForExistence(timeout: 10))
+    element("sample_detail_copy_jobId").tap()
+    XCTAssertTrue(app.staticTexts["Job ID copied"].waitForExistence(timeout: 5))
+  }
+
   func testEnteringASettledRowRefreshesNothingUntilItIsPulled() {
     element("sample_job_row_0").tap()
     XCTAssertTrue(element("sample_details_refresh").waitForExistence(timeout: 10))
