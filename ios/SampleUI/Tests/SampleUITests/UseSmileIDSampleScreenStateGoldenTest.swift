@@ -63,7 +63,9 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "licenses.default": "licenses",
     "licenses.empty": "licenses_empty",
     "scenarioDrawer.flowScenarios": "scenario_drawer",
-    "scenarioDrawer.themeScenarios": "scenario_drawer_theme"
+    "scenarioDrawer.themeScenarios": "scenario_drawer_theme",
+    "launchIntro.locked": "launch_intro_locked",
+    "launchIntro.logo": "launch_intro_logo"
   ]
 
   private static let exempt: [String: String] = [
@@ -74,9 +76,7 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "verifications.swipeToDelete":
       "the reveal is @GestureState, which rests at zero so there is no half-open row; the device suite drags one",
     "verifications.refreshing":
-      "the list's own pull is deferred, and a system-drawn refresh control is not in a static render",
-    "launchIntro.locked": "the launch intro is built on Android first; this platform follows (docs/plan/backlog.md)",
-    "launchIntro.logo": "the launch intro is built on Android first; this platform follows (docs/plan/backlog.md)"
+      "the list's own pull is deferred, and a system-drawn refresh control is not in a static render"
   ]
 
   func testEverySpecScreenStateHasAGoldenOrADeclaredReason() throws {

@@ -22,6 +22,8 @@ public enum UseSmileIDSampleTestIds {
   public static let scenarioDrawerButton = "sample_scenario_drawer_button"
   /// Rendered only by an SDK repo's source build, in the Settings DEBUG section.
   public static let showDiagnostics = "sample_show_diagnostics"
+  /// Present only while the cold-start intro covers the app.
+  public static let launchIntro = "sample_launch_intro"
   public static let signOut = "sample_sign_out"
   public static let signOutConfirm = "sample_sign_out_confirm"
   public static let versionLabel = "sample_version_label"
@@ -308,7 +310,7 @@ public enum UseSmileIDSampleTestIds {
     sessionCard, sessionCountdown, sessionEndedBanner,
     licensesScreen, licensesEmpty, licenseRowPrefix, licenseTextPrefix, licenseLinkPrefix,
     scanTokenScreen, tokenManualEntry, tokenPaste, tokenSimulate, tokenPortalLink, tokenEnvironmentPrefix,
-    showDiagnostics,
+    showDiagnostics, launchIntro,
     scenarioDrawerButton, scenarioDrawer, scenarioItemPrefix, themeItemPrefix, signOut, signOutConfirm, versionLabel,
     resultCard, resultActiveScenario, resultActiveTheme, resultRoute, resultEnvironment,
     resultJobId, resultUserId, resultJobStatus, resultResultCount, resultRefreshCount,
