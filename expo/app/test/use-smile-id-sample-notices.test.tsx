@@ -13,7 +13,7 @@ import {
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native';
 import * as Clipboard from 'expo-clipboard';
 import type { ReactElement } from 'react';
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { UseSmileIDSampleProfilesStep } from '../src/steps/use-smile-id-sample-profiles-step';
 import { UseSmileIDSampleVerificationDetailsStep } from '../src/steps/use-smile-id-sample-verification-details-step';
@@ -101,6 +101,38 @@ describe('a notice on a screen with no nav bar', () => {
       fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
     });
     expect(Clipboard.setStringAsync).toHaveBeenCalledWith('job_notice');
+  });
+
+  it.each([
+    ['ios', '27.0', true],
+    ['android', 32, true],
+    ['android', 33, false],
+  ] as const)('confirms a copy on %s %s only where the system shows nothing: %s', async (os, version, shown) => {
+    const replacedOS = jest.replaceProperty(Platform, 'OS', os);
+    const replacedVersion = jest.spyOn(Platform, 'Version', 'get').mockReturnValue(version);
+    try {
+      await useSmileIDSampleJobStore.getState().load();
+      await useSmileIDSampleJobStore.getState().add({
+        id: 'job_notice',
+        userId: 'user_1',
+        product: smileIDSampleProducts[0]!,
+        status: UseSmileIDSampleStatus.Clear,
+        createdAtMillis: Date.now(),
+        message: 'Job completed',
+        httpStatus: 200,
+        sandbox: true,
+        sessionId: null,
+        partnerId: null,
+      });
+      const screen = await inTheme(<VerificationDetails />);
+      await act(async () => {
+        fireEvent.press(screen.getByTestId('sample_detail_copy_jobId'));
+      });
+      expect(screen.queryByText('Job ID copied') !== null).toBe(shown);
+    } finally {
+      replacedOS.restore();
+      replacedVersion.mockRestore();
+    }
   });
 
   it('says so when the clipboard refuses a copy, rather than failing silently', async () => {
