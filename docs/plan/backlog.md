@@ -63,22 +63,6 @@ pin in `ios/App/project.yml` to that release and apply the pick at once as the o
   no relaunch; pick ar → sample and SDK screens are right to left, noting which chrome does not mirror
   (navigation bars, the camera alert, the gallery picker); System → the device language.
 
-### The launch intro on iOS, Flutter and Expo
-
-Android plays the `launchIntro` screen in `spec/screens.json` on a cold start from the launcher: the
-SmileID name unrolls out of the logo's lock, which shuts with a click and opens again on the way. The other three apps
-exempt both of its states in their golden coverage tests. Port it from the Android shape:
-
-- the logo's path data, the SDK attribution drawable's own without "Powered by", split into the
-  wordmark, the lock body and the shackle;
-- one pure timeline from progress to pose, so a golden can stop on any frame;
-- the same gate: launcher cold start only, never after a link, a launch argument or a restored state,
-  and never when the system's reduce-motion setting is on;
-- the `launch_intro_label` string as the screen's accessibility label, which every platform already has.
-
-Done when each app records `launchIntro.locked` and `launchIntro.logo` in light and dark and drops
-the two exemptions.
-
 ## Tests and structural checks
 
 ### Words that cannot fit the narrowest phone at the largest type
@@ -147,6 +131,13 @@ in the release bump:
 - **iOS and Expo:** `ios-spm` and `@smileid/usesmileid*` back to released versions.
 
 Done when `main` pins only released SDKs and no build reads a snapshot repository.
+
+### A dark launch window under the launch intro
+
+The launch intro draws on the dark scheme, but each app's launch window follows the device, so on a
+phone in light mode a cold start from the icon shows a light window before the dark intro. Done looks
+like a launch window in the dark background token on all four apps when the intro is going to play, and
+no change to a launch that skips it.
 
 ### Android: a launch screen that matches a pinned appearance
 
