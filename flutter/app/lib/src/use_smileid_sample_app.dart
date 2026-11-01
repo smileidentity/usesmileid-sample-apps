@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
@@ -14,11 +15,18 @@ import 'use_smileid_sample_system_bars.dart';
 
 /// The app: the shared theme, and the router that hands platform links to the njia shell.
 class UseSmileIDSampleApp extends ConsumerStatefulWidget {
-  /// An app launched at [launchLink], or from the icon when it is null.
-  const UseSmileIDSampleApp({this.launchLink, super.key});
+  /// An app launched at [launchLink], or from the icon when it is null; [playsLaunchIntro] lays the intro over its first seconds.
+  const UseSmileIDSampleApp({
+    this.launchLink,
+    this.playsLaunchIntro = false,
+    super.key,
+  });
 
   /// The link the app launched at.
   final Uri? launchLink;
+
+  /// Whether the intro plays over the app as it starts.
+  final bool playsLaunchIntro;
 
   @override
   ConsumerState<UseSmileIDSampleApp> createState() =>
@@ -37,6 +45,34 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp>
 
   /// The device's languages, re-read when they change.
   List<String> _deviceLanguages = _readDeviceLanguages();
+
+  /// Whether the intro still covers the app.
+  late bool _introShowing = widget.playsLaunchIntro;
+
+  void _endIntro() {
+    if (_introShowing) {
+      setState(() => _introShowing = false);
+    }
+  }
+
+  /// Back skips the intro rather than leaving the app beneath it.
+  @override
+  Future<bool> didPopRoute() async {
+    if (!_introShowing) {
+      return false;
+    }
+    _endIntro();
+    return true;
+  }
+
+  /// A link that arrives during the intro skips it, so the link lands at once; the router still takes it.
+  @override
+  Future<bool> didPushRouteInformation(
+    RouteInformation routeInformation,
+  ) async {
+    _endIntro();
+    return false;
+  }
 
   static List<String> _readDeviceLanguages() => WidgetsBinding
       .instance
@@ -118,8 +154,26 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp>
               textDirection: shown.rightToLeft
                   ? TextDirection.rtl
                   : TextDirection.ltr,
-              child: UseSmileIDSampleSystemBars(
-                child: child ?? const SizedBox.shrink(),
+              child: Stack(
+                children: <Widget>[
+                  ExcludeSemantics(
+                    excluding: _introShowing,
+                    child: UseSmileIDSampleSystemBars(
+                      child: child ?? const SizedBox.shrink(),
+                    ),
+                  ),
+                  AnimatedSwitcher(
+                    duration: SmileMotion.durationSlow,
+                    child: _introShowing
+                        ? AnnotatedRegion<SystemUiOverlayStyle>(
+                            value: SystemUiOverlayStyle.light,
+                            child: UseSmileIDSampleLaunchIntroScreen(
+                              onFinished: _endIntro,
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                ],
               ),
             ),
           ),
