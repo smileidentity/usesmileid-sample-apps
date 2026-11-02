@@ -13,9 +13,9 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
+import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.Robolectric
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowDialog
@@ -25,6 +25,8 @@ import org.robolectric.shadows.ShadowLooper
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
 class UseSmileIDSampleSystemBarsTest {
+    @get:Rule
+    val activities = UseSmileIDSampleActivities()
 
     @Test
     @Config(qualifiers = "night")
@@ -73,7 +75,7 @@ class UseSmileIDSampleSystemBarsTest {
     }
 
     private fun shippedActivity(): ComponentActivity =
-        Robolectric.buildActivity(UseSmileIDSampleActivity::class.java).setup().get().also { ShadowLooper.idleMainLooper() }
+        activities.build(UseSmileIDSampleActivity::class.java).setup().get().also { ShadowLooper.idleMainLooper() }
 
     private fun shell(dark: Boolean): Window = compose(dark) { }.window
 
@@ -84,7 +86,7 @@ class UseSmileIDSampleSystemBarsTest {
     }
 
     private fun compose(dark: Boolean, content: @Composable () -> Unit): ComponentActivity {
-        val activity = Robolectric.buildActivity(ComponentActivity::class.java).setup().get()
+        val activity = activities.build(ComponentActivity::class.java).setup().get()
         activity.setContent {
             UseSmileIDSampleTheme(darkTheme = dark) {
                 UseSmileIDSampleSystemBars(dark)

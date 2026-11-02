@@ -256,6 +256,9 @@ deterministic.
 - **Golden/screenshot tests** per platform for each screen, light and dark.
 - **An Android JVM test that builds an SDK flow runs under Robolectric.** Outside its sandbox the SDK
   state it creates leaks into the shell tests that share the JVM (#243).
+- **An Android JVM test that starts an activity builds it through `UseSmileIDSampleActivities`**, which
+  closes it and drains the main looper when the test ends. Robolectric drops the main looper's queue
+  between tests, and a Compose dispatch dropped there stalls every later test's first frame in that JVM.
 - **Device flows** (Maestro on Android, XCUITest on iOS) asserting on `si_*` and `sample_*` IDs and
   on the result card — never on screenshots or coordinates. Public flows in this repo drive up to
   the capture screen; completing a capture needs frame injection, which is deliberately not part of
