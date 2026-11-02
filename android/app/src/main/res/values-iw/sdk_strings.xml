@@ -91,9 +91,6 @@
     <string name="si_cd_expanded">מורחב</string>
     <string name="si_cd_collapsed">מכווץ</string>
     <string name="si_cd_smile_id">Smile ID</string>
-    <string name="si_camera_error_title">שגיאת מצלמה</string>
-    <string name="si_camera_error_body">המצלמה אינה זמינה. נסה שוב.</string>
-    <string name="si_label_ok">אישור</string>
     <string name="si_document_center">מרכז את המסמך במסגרת</string>
     <string name="si_document_too_far">התקרב למסמך</string>
     <string name="si_document_too_close">התרחק מהמסמך</string>

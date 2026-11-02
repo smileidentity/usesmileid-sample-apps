@@ -91,9 +91,6 @@
     <string name="si_cd_expanded">موسّع</string>
     <string name="si_cd_collapsed">مطوي</string>
     <string name="si_cd_smile_id">Smile ID</string>
-    <string name="si_camera_error_title">خطأ في الكاميرا</string>
-    <string name="si_camera_error_body">الكاميرا غير متاحة. يرجى المحاولة مرة أخرى.</string>
-    <string name="si_label_ok">موافق</string>
     <string name="si_document_center">ضع المستند في منتصف الإطار</string>
     <string name="si_document_too_far">اقترب أكثر من المستند</string>
     <string name="si_document_too_close">ابتعد قليلًا عن المستند</string>
