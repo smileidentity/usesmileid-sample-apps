@@ -49,7 +49,9 @@ class UseSmileIDSampleLargeScreenFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final EdgeInsets padding = MediaQuery.paddingOf(context);
+    final MediaQueryData media = MediaQuery.of(context);
+    // The system bars' padding, which a keyboard doesn't change, so the frame keeps still as one opens.
+    final EdgeInsets padding = media.viewPadding;
     final Color background = UseSmileIDSampleTheme.colorsOf(context).background;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints constraints) {
@@ -64,25 +66,22 @@ class UseSmileIDSampleLargeScreenFrame extends StatelessWidget {
                 defaultTargetPlatform,
               )
             : null;
-        final bool large = frame != null;
         return ColoredBox(
-          color: large ? background : Colors.transparent,
+          color: frame != null ? background : Colors.transparent,
           child: Padding(
-            padding: large ? padding : EdgeInsets.zero,
+            padding: frame != null ? padding : EdgeInsets.zero,
             child: Center(
               child: SizedBox(
                 width: frame?.width ?? double.infinity,
                 height: frame?.height ?? double.infinity,
                 child: ClipRect(
-                  clipBehavior: large ? Clip.hardEdge : Clip.none,
-                  child: MediaQuery.removePadding(
-                    context: context,
-                    removeLeft: large,
-                    removeTop: large,
-                    removeRight: large,
-                    removeBottom: large,
-                    child: child,
-                  ),
+                  clipBehavior: frame != null ? Clip.hardEdge : Clip.none,
+                  child: frame == null
+                      ? MediaQuery(data: media, child: child)
+                      : MediaQuery(
+                          data: _insideFrame(media, window, padding, frame),
+                          child: child,
+                        ),
                 ),
               ),
             ),
@@ -90,5 +89,36 @@ class UseSmileIDSampleLargeScreenFrame extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// What the screens inside a [frame] centred in [window] see: no safe area padding, which stays outside it, and only the part of a keyboard that covers the frame.
+  static MediaQueryData _insideFrame(
+    MediaQueryData media,
+    Size window,
+    EdgeInsets padding,
+    Size frame,
+  ) {
+    final double frameBottom =
+        padding.top +
+        (window.height - padding.vertical - frame.height) / 2 +
+        frame.height;
+    final double keyboard = math.max(
+      0,
+      media.viewInsets.bottom - (window.height - frameBottom),
+    );
+    return media
+        .removePadding(
+          removeLeft: true,
+          removeTop: true,
+          removeRight: true,
+          removeBottom: true,
+        )
+        .removeViewPadding(
+          removeLeft: true,
+          removeTop: true,
+          removeRight: true,
+          removeBottom: true,
+        )
+        .copyWith(viewInsets: EdgeInsets.only(bottom: keyboard));
   }
 }

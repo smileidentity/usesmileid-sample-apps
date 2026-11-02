@@ -116,6 +116,43 @@ void main() {
     expect(await drawn(tester, window, framed: false), Offset.zero & window);
   });
 
+  testWidgets('a keyboard over the frame takes only the part it covers', (
+    WidgetTester tester,
+  ) async {
+    const Size window = Size(800, 1280);
+    EdgeInsets? keyboard;
+    tester.view.devicePixelRatio = 1;
+    tester.view.physicalSize = window;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      MediaQuery(
+        data: const MediaQueryData(
+          size: window,
+          viewInsets: EdgeInsets.only(bottom: 500),
+        ),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: UseSmileIDSampleLargeScreenFrame(
+            framed: true,
+            child: Builder(
+              builder: (BuildContext context) {
+                keyboard = MediaQuery.viewInsetsOf(context);
+                return const SizedBox.expand(key: screen);
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    final double belowFrame = (window.height - frame.height) / 2;
+
+    expect(keyboard, EdgeInsets.only(bottom: 500 - belowFrame));
+    expect(
+      tester.getRect(find.byKey(screen)).top,
+      (window.height - frame.height) / 2,
+    );
+  });
+
   testWidgets('a phone fills its window', (WidgetTester tester) async {
     final Size window = Size(frame.width, frame.height);
 
