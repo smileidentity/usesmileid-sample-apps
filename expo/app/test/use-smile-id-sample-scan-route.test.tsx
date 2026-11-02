@@ -36,6 +36,7 @@ let mockClipboard = '';
 jest.mock('expo-clipboard', () => ({ getStringAsync: jest.fn(async () => mockClipboard) }));
 jest.mock('expo-camera', () => ({ CameraView: () => null, useCameraPermissions: () => [null, jest.fn()] }));
 jest.mock('react-native-safe-area-context', () => ({
+  ...jest.requireActual('react-native-safe-area-context'),
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
 }));
 jest.mock('@smileid/usesmileid', () => ({
