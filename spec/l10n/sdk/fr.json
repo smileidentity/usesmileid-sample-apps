@@ -60,8 +60,6 @@
   "si_preview_accessibility_image": "Image capturée. Vérifiez-la, puis appuyez sur Confirmer pour continuer ou sur Reprendre pour la capturer à nouveau.",
   "si_processing_submitting": "Envoi en cours…",
   "si_processing_submitting_subtitle": "Cela peut prendre un moment…\nNe fermez pas et n’actualisez pas cette page",
-  "si_progress_caption": "{step} · {stage}",
-  "si_progress_caption_spoken": "{step}, {stage}",
   "si_processing_success_title": "Envoi terminé",
   "si_processing_success_message": "Merci pour votre envoi. Nous vérifions actuellement vos informations.",
   "si_processing_failed_title": "Échec de l’envoi",

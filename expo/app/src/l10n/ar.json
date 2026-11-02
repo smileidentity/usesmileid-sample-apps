@@ -60,8 +60,6 @@
   "si_preview_accessibility_image": "الصورة الملتقطة. راجعها، ثم اضغط على تأكيد للمتابعة أو إعادة الالتقاط لالتقاطها مرة أخرى.",
   "si_processing_submitting": "جارٍ الإرسال…",
   "si_processing_submitting_subtitle": "قد يستغرق هذا لحظة…\nلا تغلق هذه الصفحة أو تعيد تحميلها",
-  "si_progress_caption": "{step} · {stage}",
-  "si_progress_caption_spoken": "{step}، {stage}",
   "si_processing_success_title": "اكتمل الإرسال",
   "si_processing_success_message": "شكرًا لإرسالك. نحن نتحقق حاليًا من بياناتك.",
   "si_processing_failed_title": "فشل الإرسال",
