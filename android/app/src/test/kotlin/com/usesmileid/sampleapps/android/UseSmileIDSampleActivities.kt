@@ -20,10 +20,14 @@ class UseSmileIDSampleActivities : ExternalResource() {
     }
 
     override fun after() {
-        controllers.forEach { it.close() }
+        val failures = controllers.asReversed().mapNotNull { controller -> runCatching { controller.close() }.exceptionOrNull() }
         controllers.clear()
         // Robolectric drops the main looper's queue between tests, and a Compose dispatch dropped there stalls every later first frame in this JVM.
         ShadowLooper.idleMainLooper(DRAIN_MILLIS, TimeUnit.MILLISECONDS)
+        failures.firstOrNull()?.let { first ->
+            failures.drop(1).forEach(first::addSuppressed)
+            throw first
+        }
     }
 
     private companion object {
