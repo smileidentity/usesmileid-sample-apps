@@ -100,9 +100,6 @@
     <string name="si_cd_expanded">Développé</string>
     <string name="si_cd_collapsed">Réduit</string>
     <string name="si_cd_smile_id">Smile ID</string>
-    <string name="si_camera_error_title">Erreur de caméra</string>
-    <string name="si_camera_error_body">La caméra n’est pas disponible. Veuillez réessayer.</string>
-    <string name="si_label_ok">OK</string>
     <string name="si_document_center">Centrez le document dans le cadre</string>
     <string name="si_document_too_far">Rapprochez-vous du document</string>
     <string name="si_document_too_close">Éloignez-vous du document</string>
