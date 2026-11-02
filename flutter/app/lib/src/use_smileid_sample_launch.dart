@@ -95,3 +95,9 @@ class UseSmileIDSampleColdLink with WidgetsBindingObserver {
     return false;
   }
 }
+
+/// Whether a launch plays the intro: one from the icon does; a link, which also carries every launch argument, or animations turned off go straight in.
+bool useSmileIDSamplePlaysLaunchIntro(
+  UseSmileIDSampleLaunch launch, {
+  required bool animationsDisabled,
+}) => launch.link == null && !animationsDisabled;

@@ -193,6 +193,14 @@ export {
 } from './use-smile-id-sample-strings-context';
 export { useSmileIDSampleSettingsStore } from './state/use-smile-id-sample-settings-store';
 
+export {
+  LaunchIntroFrame,
+  LaunchIntroScreen,
+  LaunchIntroTimeline,
+  SMILE_ID_SAMPLE_LAUNCH_INTRO_FADE_MS,
+  launchIntroRest,
+  type LaunchIntroPose,
+} from './screens/launch-intro-screen';
 export { LicensesScreen, type UseSmileIDSampleLicence } from './screens/licenses-screen';
 
 export {

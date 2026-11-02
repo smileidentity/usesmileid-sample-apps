@@ -57,6 +57,7 @@ export 'src/model/use_smileid_sample_status.dart';
 export 'src/screens/use_smileid_sample_auth_user_id_screen.dart';
 export 'src/screens/use_smileid_sample_document_sheets.dart';
 export 'src/screens/use_smileid_sample_kyc_form_screen.dart';
+export 'src/screens/use_smileid_sample_launch_intro_screen.dart';
 export 'src/screens/use_smileid_sample_licenses_screen.dart';
 export 'src/screens/use_smileid_sample_picker_sheets.dart';
 export 'src/screens/use_smileid_sample_products_screen.dart';

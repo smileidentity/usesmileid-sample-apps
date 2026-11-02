@@ -40,6 +40,10 @@
       {
         "id": "sample_show_diagnostics",
         "description": "The Show diagnostics switch an SDK repo's source build adds to the Settings DEBUG section. Registry builds never render it."
+      },
+      {
+        "id": "sample_launch_intro",
+        "description": "The cold-start intro, present only while it covers the app; a flow from a launch with no arguments waits for it to go before it taps."
       }
     ],
     "products": [

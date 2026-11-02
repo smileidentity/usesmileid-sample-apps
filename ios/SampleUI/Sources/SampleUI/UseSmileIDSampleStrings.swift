@@ -1291,6 +1291,10 @@ public enum UseSmileIDSampleStrings {
     String(format: text("licenses_open"), license)
   }
 
+  public static var launchIntroLabel: String {
+    text("launch_intro_label")
+  }
+
   /// Where the strings are read from; a right-to-left golden points it at one language's folder.
   nonisolated(unsafe) static var bundle: Bundle = .module
 

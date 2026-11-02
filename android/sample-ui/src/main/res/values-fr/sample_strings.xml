@@ -323,4 +323,5 @@
     <string name="sample_licenses_text_ships_with_component">Le texte est fourni avec le composant.</string>
     <string name="sample_licenses_text_ships_with_component_at">Le texte est fourni avec le composant lui-même, à l\'adresse %1$s</string>
     <string name="sample_licenses_open">Ouvrir %1$s</string>
+    <string name="sample_launch_intro_label">Smile ID</string>
 </resources>

@@ -63,7 +63,9 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "licenses.default": "licenses",
     "licenses.empty": "licenses_empty",
     "scenarioDrawer.flowScenarios": "scenario_drawer",
-    "scenarioDrawer.themeScenarios": "scenario_drawer_theme"
+    "scenarioDrawer.themeScenarios": "scenario_drawer_theme",
+    "launchIntro.locked": "launch_intro_locked",
+    "launchIntro.logo": "launch_intro_logo"
   ]
 
   private static let exempt: [String: String] = [

@@ -70,6 +70,8 @@ class ScreenStateGoldenTest {
         "licenses.empty" to "screen_licenses_empty",
         "scenarioDrawer.flowScenarios" to "sheet_scenario_drawer_flow",
         "scenarioDrawer.themeScenarios" to "sheet_scenario_drawer_theme",
+        "launchIntro.locked" to "screen_launch_intro_locked",
+        "launchIntro.logo" to "screen_launch_intro_logo",
     )
 
     private val exempt = mapOf(

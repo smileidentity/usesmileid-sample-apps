@@ -165,6 +165,8 @@ final class UseSmileIDSampleSettingsUITests: XCTestCase {
     app.terminate()
     app.launchArguments = arguments
     app.launch()
+    // A launch with no arguments plays the intro, and a tap before it ends only skips it.
+    XCTAssertTrue(element("sample_launch_intro").waitForNonExistence(timeout: 10), "the intro never handed over")
   }
 
   private func openSettings() {

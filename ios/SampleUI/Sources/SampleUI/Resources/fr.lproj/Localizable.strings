@@ -321,3 +321,4 @@
 "licenses_text_ships_with_component" = "Le texte est fourni avec le composant.";
 "licenses_text_ships_with_component_at" = "Le texte est fourni avec le composant lui-même, à l'adresse %1$@";
 "licenses_open" = "Ouvrir %1$@";
+"launch_intro_label" = "Smile ID";

@@ -90,7 +90,16 @@ Future<void> useSmileIDSampleBootstrap({
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: UseSmileIDSampleApp(launchLink: launch.link),
+      child: UseSmileIDSampleApp(
+        launchLink: launch.link,
+        playsLaunchIntro: useSmileIDSamplePlaysLaunchIntro(
+          launch,
+          animationsDisabled: PlatformDispatcher
+              .instance
+              .accessibilityFeatures
+              .disableAnimations,
+        ),
+      ),
     ),
   );
 }

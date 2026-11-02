@@ -138,6 +138,13 @@ in the release bump:
 
 Done when `main` pins only released SDKs and no build reads a snapshot repository.
 
+### A dark launch window under the launch intro
+
+The launch intro draws on the dark scheme, but each app's launch window follows the device, so on a
+phone in light mode a cold start from the icon shows a light window before the dark intro. Done looks
+like a launch window in the dark background token on all four apps when the intro is going to play, and
+no change to a launch that skips it.
+
 ### Android: a launch screen that matches a pinned appearance
 
 With Light or Dark pinned against the device, the launch window still follows the device, so a cold

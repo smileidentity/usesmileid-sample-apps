@@ -323,4 +323,5 @@
     <string name="sample_licenses_text_ships_with_component">يُرفق النص مع المكوّن نفسه.</string>
     <string name="sample_licenses_text_ships_with_component_at">يأتي النص مع المكوّن نفسه، على %1$s</string>
     <string name="sample_licenses_open">فتح %1$s</string>
+    <string name="sample_launch_intro_label">Smile ID</string>
 </resources>

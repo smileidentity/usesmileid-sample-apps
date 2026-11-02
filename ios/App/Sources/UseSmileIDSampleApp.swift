@@ -15,7 +15,9 @@ struct UseSmileIDSampleApp: App {
 
   var body: some Scene {
     WindowGroup {
-      UseSmileIDSampleShell()
+      UseSmileIDSampleLaunchIntroHost {
+        UseSmileIDSampleShell()
+      }
     }
   }
 }

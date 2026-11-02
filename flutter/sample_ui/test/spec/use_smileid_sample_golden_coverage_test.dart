@@ -135,6 +135,8 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
   'scenarioDrawer.themeScenarios': 'sheet_scenario_drawer_themes',
   'scanToken.default': 'screen_scan_token',
   'scanToken.redirected': 'screen_scan_token_redirected',
+  'launchIntro.locked': 'screen_launch_intro_locked',
+  'launchIntro.logo': 'screen_launch_intro_logo',
 };
 
 /// States with no baseline, each with the reason it has none.

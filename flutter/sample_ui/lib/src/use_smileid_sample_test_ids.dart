@@ -424,6 +424,9 @@ abstract final class UseSmileIDSampleTestIds {
   /// Rendered only by an SDK repo's source build, in the Settings DEBUG section.
   static const String showDiagnostics = 'sample_show_diagnostics';
 
+  /// Present only while the cold-start intro covers the app.
+  static const String launchIntro = 'sample_launch_intro';
+
   /// One flow-scenario row, suffixed with the scenario id.
   static String scenarioItem(String scenarioId) =>
       'sample_scenario_item_$scenarioId';
@@ -569,6 +572,7 @@ abstract final class UseSmileIDSampleTestIds {
     scenarioDrawer,
     scenarioDrawerButton,
     showDiagnostics,
+    launchIntro,
     licensesScreen,
     licensesEmpty,
     selectionBar,
