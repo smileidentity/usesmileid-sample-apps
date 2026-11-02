@@ -12,6 +12,7 @@ import 'navigation/use_smileid_sample_njia.dart';
 import 'navigation/use_smileid_sample_steps.dart';
 import 'state/use_smileid_sample_providers.dart';
 import 'use_smileid_sample_journey.dart';
+import 'use_smileid_sample_large_screen_frame.dart';
 import 'use_smileid_sample_launch.dart';
 
 /// The window's root: njia draws the three tabs' stacks from `spec/njia-graph.json`, and the shell opens links.
@@ -43,6 +44,9 @@ class _UseSmileIDSampleShellState extends ConsumerState<UseSmileIDSampleShell> {
 
   /// The engine drawn, so a transition doesn't rebuild the host, only a replaced flow does.
   UseSmileIDSampleEngine? _drawn;
+
+  /// Whether the full-screen SDK run is on top, where the app's frame steps aside.
+  bool _fullScreenRun = false;
 
   StreamSubscription<Uri>? _links;
 
@@ -158,9 +162,20 @@ class _UseSmileIDSampleShellState extends ConsumerState<UseSmileIDSampleShell> {
       unawaited(model.restart());
       return;
     }
-    if (!identical(engine, _drawn)) {
-      setState(() => _drawn = engine);
+    final bool fullScreenRun = _isFullScreenRun(engine);
+    if (!identical(engine, _drawn) || fullScreenRun != _fullScreenRun) {
+      setState(() {
+        _drawn = engine;
+        _fullScreenRun = fullScreenRun;
+      });
     }
+  }
+
+  /// Whether [engine]'s top step is the full-screen SDK run.
+  static bool _isFullScreenRun(UseSmileIDSampleEngine engine) {
+    final NjiaEntry? top = engine.state.entries.lastOrNull;
+    return top != null &&
+        engine.graph.stepOf(top).kind == UseSmileIDSampleStep.sdkFlowFullScreen;
   }
 
   @override
@@ -175,17 +190,21 @@ class _UseSmileIDSampleShellState extends ConsumerState<UseSmileIDSampleShell> {
     }
     return UseSmileIDSampleNavigationScope(
       model: model,
-      child: NjiaHost<UseSmileIDSampleStep, UseSmileIDSampleFact>.withSteps(
-        key: ObjectKey(engine),
-        engine: engine,
-        steps: useSmileIDSampleSteps,
-        // Each screen names itself `sample_*`, and a second identifier on its element would replace the first.
-        stepIds: false,
-        // The design's own scrim and corners, which njia's default sheet style would replace.
-        sheetStyle: NjiaSheetStyle(
-          scrim: colors.overlayScrim,
-          shape: RoundedRectangleBorder(
-            borderRadius: UseSmileIDSampleShapes.sheet,
+      // The full-screen SDK run draws in the SDK's own large-screen frame, so the app's frame steps aside for it.
+      child: UseSmileIDSampleLargeScreenFrame(
+        framed: !_fullScreenRun,
+        child: NjiaHost<UseSmileIDSampleStep, UseSmileIDSampleFact>.withSteps(
+          key: ObjectKey(engine),
+          engine: engine,
+          steps: useSmileIDSampleSteps,
+          // Each screen names itself `sample_*`, and a second identifier on its element would replace the first.
+          stepIds: false,
+          // The design's own scrim and corners, which njia's default sheet style would replace.
+          sheetStyle: NjiaSheetStyle(
+            scrim: colors.overlayScrim,
+            shape: RoundedRectangleBorder(
+              borderRadius: UseSmileIDSampleShapes.sheet,
+            ),
           ),
         ),
       ),
