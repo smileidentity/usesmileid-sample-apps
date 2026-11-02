@@ -102,37 +102,40 @@ fun UseSmileIDSampleShell() {
     // The fullscreen flow handles its own insets, so the host contributes none (R3).
     val fullscreenFlow = top?.kind == UseSmileIDSampleStep.SdkFlowFullScreen
 
-    Scaffold(
-        // UI automation only sees Compose test tags once they are published as resource ids.
-        modifier = Modifier.semantics { testTagsAsResourceId = true },
-        contentWindowInsets = if (fullscreenFlow) WindowInsets(0) else ScaffoldDefaults.contentWindowInsets,
-        bottomBar = {
-            // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
-            chrome.selection?.let { selection ->
-                UseSmileIDSampleSelectionBar(selectedCount = selection.count, onRemove = selection.onRemove)
-            }
-        },
-    ) { contentPadding ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            CompositionLocalProvider(
-                LocalUseSmileIDSampleChrome provides chrome,
-                LocalUseSmileIDSampleEngine provides engine,
-                // Only automation passes one; without it the local's default is the product's.
-                LocalUseSmileIDSampleNoticeWindow provides noticeWindowMillis,
-            ) {
-                ProvideUseSmileIDSampleUrlOpener {
-                    if (galleryOpen) {
-                        BackHandler { galleryOpen = false }
-                        Box(Modifier.padding(contentPadding).consumeWindowInsets(contentPadding)) { ComponentGalleryScreen() }
-                    } else {
-                        NjiaHost(
-                            engine = engine,
-                            steps = UseSmileIDSampleSteps,
-                            // The design's own scrim and corners, which njia's default sheet style would replace.
-                            sheetStyle = NjiaSheetStyle(UseSmileIDSampleTheme.colors.overlayScrim, UseSmileIDSampleTheme.shapes.sheet),
-                            // Consumed, or every screen and the SDK under the shell pad the same inset again.
-                            modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
-                        )
+    // The full-screen SDK run draws in the SDK's own large-screen frame, so the app's frame steps aside for it.
+    UseSmileIDSampleLargeScreenFrame(framed = !fullscreenFlow, modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            // UI automation only sees Compose test tags once they are published as resource ids.
+            modifier = Modifier.semantics { testTagsAsResourceId = true },
+            contentWindowInsets = if (fullscreenFlow) WindowInsets(0) else ScaffoldDefaults.contentWindowInsets,
+            bottomBar = {
+                // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
+                chrome.selection?.let { selection ->
+                    UseSmileIDSampleSelectionBar(selectedCount = selection.count, onRemove = selection.onRemove)
+                }
+            },
+        ) { contentPadding ->
+            Box(modifier = Modifier.fillMaxSize()) {
+                CompositionLocalProvider(
+                    LocalUseSmileIDSampleChrome provides chrome,
+                    LocalUseSmileIDSampleEngine provides engine,
+                    // Only automation passes one; without it the local's default is the product's.
+                    LocalUseSmileIDSampleNoticeWindow provides noticeWindowMillis,
+                ) {
+                    ProvideUseSmileIDSampleUrlOpener {
+                        if (galleryOpen) {
+                            BackHandler { galleryOpen = false }
+                            Box(Modifier.padding(contentPadding).consumeWindowInsets(contentPadding)) { ComponentGalleryScreen() }
+                        } else {
+                            NjiaHost(
+                                engine = engine,
+                                steps = UseSmileIDSampleSteps,
+                                // The design's own scrim and corners, which njia's default sheet style would replace.
+                                sheetStyle = NjiaSheetStyle(UseSmileIDSampleTheme.colors.overlayScrim, UseSmileIDSampleTheme.shapes.sheet),
+                                // Consumed, or every screen and the SDK under the shell pad the same inset again.
+                                modifier = Modifier.padding(contentPadding).consumeWindowInsets(contentPadding),
+                            )
+                        }
                     }
                 }
             }

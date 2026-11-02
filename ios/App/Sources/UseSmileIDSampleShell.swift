@@ -16,35 +16,38 @@ struct UseSmileIDSampleShell: View {
   @State private var autostarted = false
 
   var body: some View {
-    // No njia step ids: each screen names itself `sample_*`, and a second id on its element replaces the first.
-    NjiaHost(engine: navigation.engine, steps: steps, stepIds: false)
-      // Full height, as the shell's own sheets opened, where njia's default rests a sheet at half first.
-      .njiaSheetStyle(NjiaSheetStyle(heights: [.full]))
-      .environmentObject(navigation)
-      .environmentObject(app)
-      .environmentObject(chrome)
-      .modifier(UseSmileIDSampleShellEnvironment(app: app))
-      .modifier(UseSmileIDSampleDeviceScheme(app: app))
-      .onOpenURL(perform: open)
-      // On dismissal, not on open: the one point every path goes through, including a swipe.
-      .onChange(of: topIsSheet) { isSheet in
-        if !isSheet {
-          app.clearSheetState()
-        }
+    // The full-screen SDK run draws in the SDK's own large-screen frame, so the app's frame steps aside for it.
+    UseSmileIDSampleLargeScreenFrame(framed: !topIsFullScreenRun) {
+      // No njia step ids: each screen names itself `sample_*`, and a second id on its element replaces the first.
+      NjiaHost(engine: navigation.engine, steps: steps, stepIds: false)
+        // Full height, as the shell's own sheets opened, where njia's default rests a sheet at half first.
+        .njiaSheetStyle(NjiaSheetStyle(heights: [.full]))
+    }
+    .environmentObject(navigation)
+    .environmentObject(app)
+    .environmentObject(chrome)
+    .modifier(UseSmileIDSampleShellEnvironment(app: app))
+    .modifier(UseSmileIDSampleDeviceScheme(app: app))
+    .onOpenURL(perform: open)
+    // On dismissal, not on open: the one point every path goes through, including a swipe.
+    .onChange(of: topIsSheet) { isSheet in
+      if !isSheet {
+        app.clearSheetState()
       }
-      .onAppear {
-        navigation.restore(from: storedNavigation)
-        autostart()
-      }
-      .onChange(of: app.lastJobRemoval) { count in chrome.showRemoval(count, app: app) }
-      .onChange(of: navigation.state.entries.first?.step) { _ in
-        // Select mode and its confirmation belong to the list, so neither follows you to another tab.
-        app.verifications.changeSelectMode(false)
-        chrome.removalNotice = nil
-      }
-      .onChange(of: navigation.state) { _ in storedNavigation = navigation.encodedState() }
-      // Debug only: shake to read the app's own traffic.
-      .modifier(UseSmileIDSampleLoupeAccess())
+    }
+    .onAppear {
+      navigation.restore(from: storedNavigation)
+      autostart()
+    }
+    .onChange(of: app.lastJobRemoval) { count in chrome.showRemoval(count, app: app) }
+    .onChange(of: navigation.state.entries.first?.step) { _ in
+      // Select mode and its confirmation belong to the list, so neither follows you to another tab.
+      app.verifications.changeSelectMode(false)
+      chrome.removalNotice = nil
+    }
+    .onChange(of: navigation.state) { _ in storedNavigation = navigation.encodedState() }
+    // Debug only: shake to read the app's own traffic.
+    .modifier(UseSmileIDSampleLoupeAccess())
   }
 
   /// Every step drawn by the one destination switch, with the shell's objects, the tab roots' bottom chrome and full-height sheets.
@@ -71,6 +74,10 @@ struct UseSmileIDSampleShell: View {
 
   private var topIsSheet: Bool {
     navigation.state.top.map { navigation.engine.stepOf($0).presentation == .sheet } ?? false
+  }
+
+  private var topIsFullScreenRun: Bool {
+    navigation.state.top.map { navigation.engine.stepOf($0).kind == .sdkFlowFullScreen } ?? false
   }
 
   /// A link opens as a new flow, under the facts its product runs with.
