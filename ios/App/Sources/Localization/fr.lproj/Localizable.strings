@@ -89,9 +89,6 @@
 "si_cd_expanded" = "Développé";
 "si_cd_collapsed" = "Réduit";
 "si_cd_smile_id" = "Smile ID";
-"si_camera_error_title" = "Erreur de caméra";
-"si_camera_error_body" = "La caméra n’est pas disponible. Veuillez réessayer.";
-"si_label_ok" = "OK";
 "si_document_center" = "Centrez le document dans le cadre";
 "si_document_too_far" = "Rapprochez-vous du document";
 "si_document_too_close" = "Éloignez-vous du document";
