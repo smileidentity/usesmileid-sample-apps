@@ -14,7 +14,7 @@ Rules:
 3. **`si_*` IDs belong to the SDK.** Reference them, never define them here. This repo owns
    `sample_*` IDs only.
 4. **No design values copied from the SDK.** `design-tokens.json` references the SDK's public theme
-   tokens and carries only genuine additions. A duplicated palette drifts silently ×4.
+   tokens and carries only genuine additions. A duplicated palette drifts silently ×4. The one exception is `large-screen-frame.json`, which mirrors the frame the SDK draws its flow in on a large screen, because the SDK keeps that frame internal; it changes with the SDK's.
 
 ## Files
 
@@ -31,6 +31,7 @@ Rules:
 | `components.json` | All 34 components with owner, design-system contract, tokens, states, reuse, and the build order | **filled 2026-08-12** |
 | `design-tokens.json` | The design-system source, per-platform consumption, and the verified deltas between the design file and the token source | **filled 2026-08-12** |
 | `bundled-assets.json` | Third-party assets bundled in the tree (the DM Sans font, the Material Symbols icons), which every licences screen lists alongside the registry dependencies | settled |
+| `large-screen-frame.json` | The largest phone's frame, per platform, that each app draws its own screens in on a large screen, centred, and the shorter side a large screen starts at; the SDK's own values, mirrored | added 2026-11-02 |
 | `store-art.json` | The made-up organisation, initials and session the store screenshots show, read by the Android and iOS store-art tests | settled |
 | `catalogue-fixture.json` | The country, ID-type and document lists a device flow sees under `catalogue=fixture` or on a simulated session, in the API's response shape, including the partner configuration Enhanced Document Verification reads. A UI test input of about a dozen rows, not a copy of the API | added 2026-09-28 |
 | `catalogue-rules.json` | Test cases for turning an API response into the form's rows: which ID types the form can satisfy, repeated types, sub-types, the countries each product offers, the partner's enabled documents, the error line, and how "Capture as" becomes `DocumentCaptureConfig` | added 2026-09-28 |

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "description": "On a large screen, one whose shorter side is largeScreenMinSide or more (a tablet, an iPad, an unfolded foldable), each app draws its own screens in the frame of the largest phone on its platform, centred on the screen background, so they look as they do on that phone. Each side is the safe area's where that is shorter than the frame, and a phone draws as before. Flutter and React Native take the frame of the platform they run on. The full-screen SDK run is left to the SDK, which draws its flow in the same frame, so the frame steps aside while that run is on top. These are the SDK's own large-screen values, mirrored here because the SDK keeps them internal: change them together.",
+  "largeScreenMinSide": 600,
+  "frames": {
+    "ios": {
+      "width": 440,
+      "height": 956,
+      "phone": "iPhone 18 Pro Max"
+    },
+    "android": {
+      "width": 384,
+      "height": 832,
+      "phone": "Galaxy S26 Ultra, at its default display size"
+    }
+  }
+}
