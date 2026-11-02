@@ -64,6 +64,7 @@ jest.mock('expo-clipboard', () => ({ getStringAsync: jest.fn(async () => ''), se
 jest.mock('expo-camera', () => ({ CameraView: () => null, useCameraPermissions: () => [null, jest.fn()] }));
 jest.mock('expo-web-browser', () => ({ openBrowserAsync: jest.fn(async () => undefined) }));
 jest.mock('react-native-safe-area-context', () => ({
+  ...jest.requireActual('react-native-safe-area-context'),
   SafeAreaProvider: ({ children }: { children?: unknown }) => children,
   useSafeAreaInsets: () => ({ top: 44, bottom: 34, left: 0, right: 0 }),
 }));
