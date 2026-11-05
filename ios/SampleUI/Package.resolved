@@ -1,13 +1,13 @@
 {
-  "originHash" : "4c447bf2ff252fa35a12336e30c69ba0df18648ffd27426da44dc5d0b34be18c",
+  "originHash" : "d69e86399ff3152d96761223a40e4770c4fc60d2f05c64ba07cdb06075af90b9",
   "pins" : [
     {
       "identity" : "ios-spm",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/ios-spm.git",
       "state" : {
-        "revision" : "55758c66be93b8d9b9ec17e1af4f8b9770f2c772",
-        "version" : "12.3.0-SNAPSHOT.20261030042724.41001470272"
+        "revision" : "f54fce5c8a4d8108231a9f84172193b7d532023b",
+        "version" : "12.3.0-SNAPSHOT.20261105170959.42067755315"
       }
     },
     {
