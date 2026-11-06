@@ -15,7 +15,7 @@
   "dependencies": {
     "@expo/ui": "~57.0.18",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@smileid/njia": "0.0.1-SNAPSHOT.13",
+    "@smileid/njia": "1.0.0",
     "@smileid/sample-ui": "workspace:*",
     "@smileid/usesmileid": "12.3.1-SNAPSHOT.77",
     "@smileid/usesmileid_huawei_document": "12.3.1-SNAPSHOT.77",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "@react-native/jest-preset": "0.86.3",
-    "@smileid/njia-testing": "0.0.1-SNAPSHOT.13",
+    "@smileid/njia-testing": "1.0.0",
     "@testing-library/react-native": "14.0.1",
     "@types/jest": "29.5.14",
     "expo-doctor": "1.20.4",
