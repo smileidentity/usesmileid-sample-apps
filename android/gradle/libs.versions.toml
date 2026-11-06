@@ -7,8 +7,8 @@ usesmileid-mlkit-document = "12.3.0-20261030.021402-367"
 usesmileid-huawei-face = "12.3.0-20261030.021402-367"
 usesmileid-huawei-document = "12.3.0-20261030.021402-368"
 usesmileid-bridge = "12.3.0-20261030.021402-368"
-# The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
-njia = "0.0.1-20261030.012141-13"
+# The four apps' navigation engine: the njia release, pinned exactly to the SDKs' own pin.
+njia = "1.0.0"
 
 android-gradle-plugin = "9.5.0"
 kotlin = "2.4.21"
