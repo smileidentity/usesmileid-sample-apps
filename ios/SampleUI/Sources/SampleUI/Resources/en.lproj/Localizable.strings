@@ -285,6 +285,8 @@
 "settings_section_submission" = "SUBMISSION";
 "settings_skip_api_submission" = "Skip API submission";
 "settings_skip_api_submission_body" = "The captured job comes back unsubmitted";
+"settings_allow_offline_mode" = "Allow offline mode";
+"settings_allow_offline_mode_body" = "With no connection, the job comes back to send later";
 "settings_section_about" = "ABOUT";
 "settings_documentation" = "Documentation";
 "settings_support" = "Support";

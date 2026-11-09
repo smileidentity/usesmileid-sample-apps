@@ -100,6 +100,22 @@ describe('the Skip API submission switch', () => {
   });
 });
 
+describe('the Allow offline mode switch', () => {
+  it('starts off, as the SDK defaults it', async () => {
+    await store().load();
+    expect(store().settings.allowOfflineMode).toBe(false);
+  });
+
+  it('keeps its value across a reload, under its own key', async () => {
+    await store().setSetting(UseSmileIDSampleSetting.AllowOfflineMode, true);
+    expect(await AsyncStorage.getItem('sample.setting.allowOfflineMode')).toBe('true');
+
+    store().reset();
+    await store().load();
+    expect(store().settings.allowOfflineMode).toBe(true);
+  });
+});
+
 describe('the appearance', () => {
   const loadWith = async (stored: Record<string, string>) => {
     await AsyncStorage.multiSet(Object.entries(stored));

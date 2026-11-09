@@ -60,6 +60,9 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the SDK hands the captured job back instead of submitting it.
   static const String skipApiSubmission = 'skip_api_submission';
 
+  /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
+  static const String allowOfflineMode = 'allow_offline_mode';
+
   /// The capture mode, stored by its id.
   static const String captureMode = 'capture_mode';
 
@@ -80,6 +83,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
     UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
+    UseSmileIDSampleSetting.allowOfflineMode => allowOfflineMode,
   };
 }
 

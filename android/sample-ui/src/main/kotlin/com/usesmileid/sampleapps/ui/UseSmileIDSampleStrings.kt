@@ -292,6 +292,8 @@ object UseSmileIDSampleStrings {
     val settingsSectionSubmission: String @Composable get() = stringResource(R.string.sample_settings_section_submission)
     val settingsSkipApiSubmission: String @Composable get() = stringResource(R.string.sample_settings_skip_api_submission)
     val settingsSkipApiSubmissionBody: String @Composable get() = stringResource(R.string.sample_settings_skip_api_submission_body)
+    val settingsAllowOfflineMode: String @Composable get() = stringResource(R.string.sample_settings_allow_offline_mode)
+    val settingsAllowOfflineModeBody: String @Composable get() = stringResource(R.string.sample_settings_allow_offline_mode_body)
     val settingsSectionAbout: String @Composable get() = stringResource(R.string.sample_settings_section_about)
     val settingsDocumentation: String @Composable get() = stringResource(R.string.sample_settings_documentation)
     val settingsSupport: String @Composable get() = stringResource(R.string.sample_settings_support)

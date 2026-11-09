@@ -415,6 +415,10 @@ abstract final class UseSmileIDSampleTestIds {
   static const String settingSkipApiSubmission =
       'sample_setting_skip_api_submission';
 
+  /// The Allow offline mode switch.
+  static const String settingAllowOfflineMode =
+      'sample_setting_allow_offline_mode';
+
   /// The scenario drawer, a debug affordance the design does not cover.
   static const String scenarioDrawer = 'sample_scenario_drawer';
 
@@ -566,6 +570,7 @@ abstract final class UseSmileIDSampleTestIds {
     settingAllowSkipBack,
     settingSelfieFirst,
     settingSkipApiSubmission,
+    settingAllowOfflineMode,
     scenarioDrawer,
     scenarioDrawerButton,
     showDiagnostics,

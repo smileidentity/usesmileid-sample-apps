@@ -124,6 +124,7 @@ describe('the settings rows match spec/test-ids.json', () => {
       UseSmileIDSampleTestIds.SETTING_ALLOW_SKIP_BACK,
       UseSmileIDSampleTestIds.SETTING_SELFIE_FIRST,
       UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION,
+      UseSmileIDSampleTestIds.SETTING_ALLOW_OFFLINE_MODE,
     ];
     expect(switchIds.length).toBe(smileIDSampleSettings.length);
     expect(switchIds.filter((id) => !specIds.includes(id))).toEqual([]);
