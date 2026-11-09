@@ -156,6 +156,16 @@ class UseSmileIDSampleSettingsPersistenceTest {
         assertTrue(store.settings.first().skipApiSubmission)
     }
 
+    @Test
+    fun `the Allow offline mode switch is stored under the key the four apps share`() = runTest {
+        assertFalse(store.settings.first().allowOfflineMode)
+
+        store.setSetting(UseSmileIDSampleSetting.AllowOfflineMode, true)
+
+        assertEquals(true, prefs.data.first()[booleanPreferencesKey("allow_offline_mode")])
+        assertTrue(store.settings.first().allowOfflineMode)
+    }
+
     private companion object {
         val APPEARANCE = stringPreferencesKey("appearance")
         val DARK_MODE = booleanPreferencesKey("dark_mode")

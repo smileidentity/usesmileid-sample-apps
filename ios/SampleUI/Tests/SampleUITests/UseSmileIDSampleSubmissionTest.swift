@@ -1,7 +1,7 @@
 @testable import SampleUI
 import XCTest
 
-/// The Skip API submission switch: config.skipApiSubmission, off as the SDK defaults it.
+/// The SUBMISSION section's switches: config.skipApiSubmission and config.allowOfflineMode, off as the SDK defaults them.
 final class UseSmileIDSampleSubmissionTest: XCTestCase {
   func testTheSdkSubmitsByDefaultAndTheSwitchMovesNoOtherRow() {
     let defaults = UseSmileIDSampleSettings()
@@ -15,5 +15,19 @@ final class UseSmileIDSampleSubmissionTest: XCTestCase {
   func testTheSwitchIsStoredUnderTheAndroidKey() {
     XCTAssertEqual(UseSmileIDSampleSetting.skipApiSubmission.storageKey, "skip_api_submission")
     XCTAssertEqual(UseSmileIDSampleTestIds.settingSkipApiSubmission, "sample_setting_skip_api_submission")
+  }
+
+  func testOfflineModeIsOffByDefaultAndItsSwitchMovesNoOtherRow() {
+    let defaults = UseSmileIDSampleSettings()
+    XCTAssertFalse(defaults.allowOfflineMode)
+
+    var expected = defaults
+    expected.allowOfflineMode = true
+    XCTAssertEqual(defaults.with(.allowOfflineMode, true), expected)
+  }
+
+  func testTheOfflineSwitchIsStoredUnderTheAndroidKey() {
+    XCTAssertEqual(UseSmileIDSampleSetting.allowOfflineMode.storageKey, "allow_offline_mode")
+    XCTAssertEqual(UseSmileIDSampleTestIds.settingAllowOfflineMode, "sample_setting_allow_offline_mode")
   }
 }

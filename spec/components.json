@@ -1095,7 +1095,8 @@
     "Gallery upload": "DocumentCaptureConfig.allowGalleryUpload = true. OFF by default, the SDK's default. Every platform's picker is the system one, which asks for no runtime permission; the iOS targets already declare NSPhotoLibraryUsageDescription.",
     "Skip the back": "DocumentCaptureConfig.allowSkipBack: a Skip button on the back-side capture. OFF by default, the SDK's default.",
     "Selfie first": "Orders the two captures of the document products. OFF by default: document, then selfie, for both Document Verification and Enhanced Document Verification. The SDK accepts either order.",
-    "Skip API submission": "config.skipApiSubmission = true. OFF by default, the SDK's default: the SDK submits the job. On, the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored."
+    "Skip API submission": "config.skipApiSubmission = true. OFF by default, the SDK's default: the SDK submits the job. On, the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored.",
+    "Allow offline mode": "config.allowOfflineMode = true. OFF by default, the SDK's default. On, a submission that can't connect to Smile ID is sealed as with Skip API submission and handed back through onResult as a captured job with reason offline, which the result card records as `captured`; a submission the server answers is shown as usual. With Skip API submission on too, the job is never submitted, so this switch changes nothing."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

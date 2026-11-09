@@ -274,6 +274,15 @@ fun SettingsScreen(
                 testId = UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION,
                 onSettingChange = onSettingChange,
             )
+            SwitchRow(
+                title = UseSmileIDSampleStrings.settingsAllowOfflineMode,
+                icon = R.drawable.sample_ic_verifications,
+                supportingText = UseSmileIDSampleStrings.settingsAllowOfflineModeBody,
+                checked = state.settings.allowOfflineMode,
+                setting = UseSmileIDSampleSetting.AllowOfflineMode,
+                testId = UseSmileIDSampleTestIds.SETTING_ALLOW_OFFLINE_MODE,
+                onSettingChange = onSettingChange,
+            )
         }
 
         // The design draws no control for the drawer, so this placement is ours, and debug-only.

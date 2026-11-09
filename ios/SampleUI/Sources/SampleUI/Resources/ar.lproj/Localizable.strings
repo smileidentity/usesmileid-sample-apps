@@ -285,6 +285,8 @@
 "settings_section_submission" = "الإرسال";
 "settings_skip_api_submission" = "تخطي الإرسال إلى واجهة API";
 "settings_skip_api_submission_body" = "تعود المهمة الملتقطة دون إرسال";
+"settings_allow_offline_mode" = "السماح بوضع عدم الاتصال";
+"settings_allow_offline_mode_body" = "بدون اتصال، تعود المهمة لإرسالها لاحقًا";
 "settings_section_about" = "حول";
 "settings_documentation" = "الوثائق";
 "settings_support" = "الدعم";

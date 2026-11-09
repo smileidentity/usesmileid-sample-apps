@@ -413,6 +413,10 @@ final class UseSmileIDSampleStrings {
       _values['settings_skip_api_submission']!;
   String get settingsSkipApiSubmissionBody =>
       _values['settings_skip_api_submission_body']!;
+  String get settingsAllowOfflineMode =>
+      _values['settings_allow_offline_mode']!;
+  String get settingsAllowOfflineModeBody =>
+      _values['settings_allow_offline_mode_body']!;
   String get settingsSectionAbout => _values['settings_section_about']!;
   String get settingsDocumentation => _values['settings_documentation']!;
   String get settingsSupport => _values['settings_support']!;
@@ -772,6 +776,9 @@ final class UseSmileIDSampleStrings {
       'settings_skip_api_submission': 'Skip API submission',
       'settings_skip_api_submission_body':
           'The captured job comes back unsubmitted',
+      'settings_allow_offline_mode': 'Allow offline mode',
+      'settings_allow_offline_mode_body':
+          'With no connection, the job comes back to send later',
       'settings_section_about': 'ABOUT',
       'settings_documentation': 'Documentation',
       'settings_support': 'Support',
@@ -1143,6 +1150,9 @@ final class UseSmileIDSampleStrings {
       'settings_skip_api_submission': 'Ignorer la soumission à l’API',
       'settings_skip_api_submission_body':
           'La tâche capturée revient sans être soumise',
+      'settings_allow_offline_mode': 'Autoriser le mode hors ligne',
+      'settings_allow_offline_mode_body':
+          'Sans connexion, la tâche revient pour être envoyée plus tard',
       'settings_section_about': 'À PROPOS',
       'settings_documentation': 'Documentation',
       'settings_support': 'Assistance',
@@ -1493,6 +1503,9 @@ final class UseSmileIDSampleStrings {
       'settings_section_submission': 'الإرسال',
       'settings_skip_api_submission': 'تخطي الإرسال إلى واجهة API',
       'settings_skip_api_submission_body': 'تعود المهمة الملتقطة دون إرسال',
+      'settings_allow_offline_mode': 'السماح بوضع عدم الاتصال',
+      'settings_allow_offline_mode_body':
+          'بدون اتصال، تعود المهمة لإرسالها لاحقًا',
       'settings_section_about': 'حول',
       'settings_documentation': 'الوثائق',
       'settings_support': 'الدعم',
@@ -1836,6 +1849,9 @@ final class UseSmileIDSampleStrings {
       'settings_section_submission': 'שליחה',
       'settings_skip_api_submission': 'דילוג על שליחה ל-API',
       'settings_skip_api_submission_body': 'המשימה שצולמה חוזרת בלי שליחה',
+      'settings_allow_offline_mode': 'אפשר מצב לא מקוון',
+      'settings_allow_offline_mode_body':
+          'בלי חיבור, המשימה חוזרת לשליחה מאוחר יותר',
       'settings_section_about': 'אודות',
       'settings_documentation': 'תיעוד',
       'settings_support': 'תמיכה',

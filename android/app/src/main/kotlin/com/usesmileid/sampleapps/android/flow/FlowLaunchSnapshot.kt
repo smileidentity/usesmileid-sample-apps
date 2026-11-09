@@ -31,6 +31,7 @@ data class FlowLaunchSnapshot(
     val allowSkipBack: Boolean = false,
     val selfieFirst: Boolean = false,
     val skipApiSubmission: Boolean = false,
+    val allowOfflineMode: Boolean = false,
     /** SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues. */
     val userId: String,
     val partnerId: String,
@@ -75,6 +76,7 @@ fun buildSnapshot(
         allowSkipBack = app.settings.allowSkipBack,
         selfieFirst = app.settings.selfieFirst,
         skipApiSubmission = app.settings.skipApiSubmission,
+        allowOfflineMode = app.settings.allowOfflineMode,
         userId = app.forms.authUserId.trim(),
         partnerId = app.profiles.partnerId,
         partnerName = app.profiles.partnerName,
