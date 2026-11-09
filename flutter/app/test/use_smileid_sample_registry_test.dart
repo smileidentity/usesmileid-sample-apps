@@ -17,10 +17,7 @@ void main() {
       (String line) => line.startsWith('usesmileid:'),
     );
     expect(sdk, hasLength(1));
-    expect(
-      sdk.single,
-      matches(RegExp(r'^usesmileid: \d+\.\d+\.\d+(-SNAPSHOT\.\d+)?$')),
-    );
+    expect(sdk.single, matches(RegExp(r'^usesmileid: \d+\.\d+\.\d+$')));
     expect(
       lines.where((String line) => line.startsWith('dependency_overrides:')),
       isEmpty,
