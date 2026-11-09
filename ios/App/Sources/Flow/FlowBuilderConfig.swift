@@ -29,6 +29,7 @@ func useSmileIDSampleApply(
   }
   builder.config { config in
     config.skipApiSubmission = snapshot.skipApiSubmission
+    config.allowScreenCapture = snapshot.allowScreenCapture
   }
   if snapshot.product.capture {
     builder.ml { useSmileIDSampleAnalyzers($0, snapshot.product) }

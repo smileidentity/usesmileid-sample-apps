@@ -30,7 +30,10 @@ enum UseSmileIDSampleSetting {
   selfieFirst(UseSmileIDSampleTestIds.settingSelfieFirst),
 
   /// config.skipApiSubmission; off, as the SDK defaults it.
-  skipApiSubmission(UseSmileIDSampleTestIds.settingSkipApiSubmission);
+  skipApiSubmission(UseSmileIDSampleTestIds.settingSkipApiSubmission),
+
+  /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
+  allowScreenCapture(UseSmileIDSampleTestIds.settingAllowScreenCapture);
 
   const UseSmileIDSampleSetting(this.testId);
 
@@ -166,6 +169,7 @@ class UseSmileIDSampleSettings {
     this.allowSkipBack = false,
     this.selfieFirst = false,
     this.skipApiSubmission = false,
+    this.allowScreenCapture = true,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
     this.appearance = UseSmileIDSampleAppearance.system,
     this.language = UseSmileIDSampleLanguage.system,
@@ -198,6 +202,9 @@ class UseSmileIDSampleSettings {
   /// Whether the SDK hands the captured job back instead of submitting it.
   final bool skipApiSubmission;
 
+  /// Whether screenshots and recordings can show the flow.
+  final bool allowScreenCapture;
+
   /// A typed field rather than one of the switches: three values, not two.
   final UseSmileIDSampleCaptureMode captureMode;
 
@@ -218,6 +225,7 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
     UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
+    UseSmileIDSampleSetting.allowScreenCapture => allowScreenCapture,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -250,6 +258,9 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.skipApiSubmission => _copy(
       skipApiSubmission: enabled,
     ),
+    UseSmileIDSampleSetting.allowScreenCapture => _copy(
+      allowScreenCapture: enabled,
+    ),
   };
 
   /// A copy with [captureMode] chosen.
@@ -276,6 +287,7 @@ class UseSmileIDSampleSettings {
     bool? allowSkipBack,
     bool? selfieFirst,
     bool? skipApiSubmission,
+    bool? allowScreenCapture,
     UseSmileIDSampleCaptureMode? captureMode,
     UseSmileIDSampleAppearance? appearance,
     UseSmileIDSampleLanguage? language,
@@ -289,6 +301,7 @@ class UseSmileIDSampleSettings {
     allowSkipBack: allowSkipBack ?? this.allowSkipBack,
     selfieFirst: selfieFirst ?? this.selfieFirst,
     skipApiSubmission: skipApiSubmission ?? this.skipApiSubmission,
+    allowScreenCapture: allowScreenCapture ?? this.allowScreenCapture,
     captureMode: captureMode ?? this.captureMode,
     appearance: appearance ?? this.appearance,
     language: language ?? this.language,
@@ -306,6 +319,7 @@ class UseSmileIDSampleSettings {
       other.allowSkipBack == allowSkipBack &&
       other.selfieFirst == selfieFirst &&
       other.skipApiSubmission == skipApiSubmission &&
+      other.allowScreenCapture == allowScreenCapture &&
       other.captureMode == captureMode &&
       other.appearance == appearance &&
       other.language == language;
@@ -321,6 +335,7 @@ class UseSmileIDSampleSettings {
     allowSkipBack,
     selfieFirst,
     skipApiSubmission,
+    allowScreenCapture,
     captureMode,
     appearance,
     language,

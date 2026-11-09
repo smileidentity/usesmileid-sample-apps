@@ -413,6 +413,12 @@ final class UseSmileIDSampleStrings {
       _values['settings_skip_api_submission']!;
   String get settingsSkipApiSubmissionBody =>
       _values['settings_skip_api_submission_body']!;
+  String get settingsSectionScreenCapture =>
+      _values['settings_section_screen_capture']!;
+  String get settingsAllowScreenCapture =>
+      _values['settings_allow_screen_capture']!;
+  String get settingsAllowScreenCaptureBody =>
+      _values['settings_allow_screen_capture_body']!;
   String get settingsSectionAbout => _values['settings_section_about']!;
   String get settingsDocumentation => _values['settings_documentation']!;
   String get settingsSupport => _values['settings_support']!;
@@ -772,6 +778,10 @@ final class UseSmileIDSampleStrings {
       'settings_skip_api_submission': 'Skip API submission',
       'settings_skip_api_submission_body':
           'The captured job comes back unsubmitted',
+      'settings_section_screen_capture': 'SCREEN CAPTURE',
+      'settings_allow_screen_capture': 'Allow screen capture',
+      'settings_allow_screen_capture_body':
+          'Screenshots and recordings can show the flow',
       'settings_section_about': 'ABOUT',
       'settings_documentation': 'Documentation',
       'settings_support': 'Support',
@@ -1143,6 +1153,10 @@ final class UseSmileIDSampleStrings {
       'settings_skip_api_submission': 'Ignorer la soumission à l’API',
       'settings_skip_api_submission_body':
           'La tâche capturée revient sans être soumise',
+      'settings_section_screen_capture': 'CAPTURE D’ÉCRAN',
+      'settings_allow_screen_capture': 'Autoriser la capture d’écran',
+      'settings_allow_screen_capture_body':
+          'Les captures et enregistrements d’écran peuvent montrer le parcours',
       'settings_section_about': 'À PROPOS',
       'settings_documentation': 'Documentation',
       'settings_support': 'Assistance',
@@ -1493,6 +1507,10 @@ final class UseSmileIDSampleStrings {
       'settings_section_submission': 'الإرسال',
       'settings_skip_api_submission': 'تخطي الإرسال إلى واجهة API',
       'settings_skip_api_submission_body': 'تعود المهمة الملتقطة دون إرسال',
+      'settings_section_screen_capture': 'التقاط الشاشة',
+      'settings_allow_screen_capture': 'السماح بالتقاط الشاشة',
+      'settings_allow_screen_capture_body':
+          'يمكن أن تُظهر لقطات الشاشة والتسجيلات مسار التحقق',
       'settings_section_about': 'حول',
       'settings_documentation': 'الوثائق',
       'settings_support': 'الدعم',
@@ -1836,6 +1854,10 @@ final class UseSmileIDSampleStrings {
       'settings_section_submission': 'שליחה',
       'settings_skip_api_submission': 'דילוג על שליחה ל-API',
       'settings_skip_api_submission_body': 'המשימה שצולמה חוזרת בלי שליחה',
+      'settings_section_screen_capture': 'צילום מסך',
+      'settings_allow_screen_capture': 'לאפשר צילום מסך',
+      'settings_allow_screen_capture_body':
+          'צילומי מסך והקלטות יכולים להציג את התהליך',
       'settings_section_about': 'אודות',
       'settings_documentation': 'תיעוד',
       'settings_support': 'תמיכה',

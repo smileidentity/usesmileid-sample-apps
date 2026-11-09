@@ -3,6 +3,7 @@ public enum UseSmileIDSampleSetting: String, CaseIterable, Sendable {
   case enhancedSmartSelfie, agentMode, consentStep, instructionsStep, previewStep
   case galleryUpload, allowSkipBack, selfieFirst
   case skipApiSubmission
+  case allowScreenCapture
 }
 
 /// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
@@ -92,6 +93,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var selfieFirst: Bool
   /// config.skipApiSubmission; off, as the SDK defaults it.
   public var skipApiSubmission: Bool
+  /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
+  public var allowScreenCapture: Bool
   /// A typed field rather than one of the switches: three values, not two.
   public var captureMode: UseSmileIDSampleCaptureMode
   /// This app's own appearance; the `theme` launch argument seeds a run's SDK theme scenario, which is a different axis.
@@ -109,6 +112,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     allowSkipBack: Bool = false,
     selfieFirst: Bool = false,
     skipApiSubmission: Bool = false,
+    allowScreenCapture: Bool = true,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
     appearance: UseSmileIDSampleAppearance = .system,
     language: UseSmileIDSampleLanguage = .system
@@ -122,6 +126,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.allowSkipBack = allowSkipBack
     self.selfieFirst = selfieFirst
     self.skipApiSubmission = skipApiSubmission
+    self.allowScreenCapture = allowScreenCapture
     self.captureMode = captureMode
     self.appearance = appearance
     self.language = language
@@ -138,6 +143,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .allowSkipBack: allowSkipBack
     case .selfieFirst: selfieFirst
     case .skipApiSubmission: skipApiSubmission
+    case .allowScreenCapture: allowScreenCapture
     }
   }
 
@@ -163,6 +169,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .allowSkipBack: copy.allowSkipBack = enabled
     case .selfieFirst: copy.selfieFirst = enabled
     case .skipApiSubmission: copy.skipApiSubmission = enabled
+    case .allowScreenCapture: copy.allowScreenCapture = enabled
     }
     return copy
   }

@@ -88,6 +88,25 @@ void main() {
     expect((await (await restart()).read()).skipApiSubmission, isTrue);
   });
 
+  test('the Allow screen capture switch survives a restart', () async {
+    expect((await (await restart()).read()).allowScreenCapture, isTrue);
+    await (await restart()).setSetting(
+      UseSmileIDSampleSetting.allowScreenCapture,
+      false,
+    );
+
+    final SharedPreferences raw = await SharedPreferences.getInstance();
+    expect(
+      UseSmileIDSampleSettingsKeys.allowScreenCapture,
+      'allow_screen_capture',
+    );
+    expect(
+      raw.getBool(UseSmileIDSampleSettingsKeys.allowScreenCapture),
+      isFalse,
+    );
+    expect((await (await restart()).read()).allowScreenCapture, isFalse);
+  });
+
   test('the document switches survive a restart', () async {
     final UseSmileIDSamplePreferencesSettingsRepository store = await restart();
     await store.setSetting(UseSmileIDSampleSetting.allowSkipBack, true);

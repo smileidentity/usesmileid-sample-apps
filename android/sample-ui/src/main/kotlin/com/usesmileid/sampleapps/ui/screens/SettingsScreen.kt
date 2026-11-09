@@ -276,6 +276,19 @@ fun SettingsScreen(
             )
         }
 
+        // The design draws no such section either; it sits on its own, as SUBMISSION does.
+        section(R.string.sample_settings_section_screen_capture) {
+            SwitchRow(
+                title = UseSmileIDSampleStrings.settingsAllowScreenCapture,
+                icon = R.drawable.sample_ic_setting_privacy,
+                supportingText = UseSmileIDSampleStrings.settingsAllowScreenCaptureBody,
+                checked = state.settings.allowScreenCapture,
+                setting = UseSmileIDSampleSetting.AllowScreenCapture,
+                testId = UseSmileIDSampleTestIds.SETTING_ALLOW_SCREEN_CAPTURE,
+                onSettingChange = onSettingChange,
+            )
+        }
+
         // The design draws no control for the drawer, so this placement is ours, and debug-only.
         if (onOpenScenarioDrawer != null) {
             section(label = { DEBUG_SECTION }) {

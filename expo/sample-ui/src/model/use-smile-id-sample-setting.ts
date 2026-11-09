@@ -9,6 +9,7 @@ export const UseSmileIDSampleSetting = {
   AllowSkipBack: 'allowSkipBack',
   SelfieFirst: 'selfieFirst',
   SkipApiSubmission: 'skipApiSubmission',
+  AllowScreenCapture: 'allowScreenCapture',
 } as const;
 
 export type UseSmileIDSampleSetting =
@@ -25,4 +26,5 @@ export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.AllowSkipBack,
   UseSmileIDSampleSetting.SelfieFirst,
   UseSmileIDSampleSetting.SkipApiSubmission,
+  UseSmileIDSampleSetting.AllowScreenCapture,
 ];

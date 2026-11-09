@@ -287,6 +287,9 @@
     <string name="sample_settings_section_submission">SOUMISSION</string>
     <string name="sample_settings_skip_api_submission">Ignorer la soumission à l’API</string>
     <string name="sample_settings_skip_api_submission_body">La tâche capturée revient sans être soumise</string>
+    <string name="sample_settings_section_screen_capture">CAPTURE D’ÉCRAN</string>
+    <string name="sample_settings_allow_screen_capture">Autoriser la capture d’écran</string>
+    <string name="sample_settings_allow_screen_capture_body">Les captures et enregistrements d’écran peuvent montrer le parcours</string>
     <string name="sample_settings_section_about">À PROPOS</string>
     <string name="sample_settings_documentation">Documentation</string>
     <string name="sample_settings_support">Assistance</string>

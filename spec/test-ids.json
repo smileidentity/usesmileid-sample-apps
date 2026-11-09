@@ -424,6 +424,10 @@
         "description": "Skip API submission switch → config.skipApiSubmission: the SDK hands the captured job back instead of submitting it. OFF by default."
       },
       {
+        "id": "sample_setting_allow_screen_capture",
+        "description": "Allow screen capture switch → config.allowScreenCapture: screenshots, recordings and mirroring can show the flow. ON by default in the sample; the SDK's own default is OFF."
+      },
+      {
         "id": "sample_setting_nav",
         "description": "One ABOUT/LEGAL navigation row; suffixed with the row id."
       },

@@ -60,6 +60,9 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether the SDK hands the captured job back instead of submitting it.
   static const String skipApiSubmission = 'skip_api_submission';
 
+  /// Whether screenshots and recordings can show the flow.
+  static const String allowScreenCapture = 'allow_screen_capture';
+
   /// The capture mode, stored by its id.
   static const String captureMode = 'capture_mode';
 
@@ -80,6 +83,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
     UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
+    UseSmileIDSampleSetting.allowScreenCapture => allowScreenCapture,
   };
 }
 

@@ -264,6 +264,12 @@ instead of submitting it. The result card records that as `captured`, the run la
 job's details, and no verification is stored. This app forwards nothing, so it deletes every file the
 captured job lists and then its session folder, which the SDK leaves to the host.
 
+**The SCREEN CAPTURE setting.** Allow screen capture is a switch, on by default in this app, and sets
+`config.allowScreenCapture`. The SDK defaults it off, which keeps the flow out of screenshots,
+recordings, casting and the recents thumbnail on Android and covers it while the screen is recorded or
+mirrored, and in the app switcher, on iOS. This app turns it on so a demo or a support session can show
+the flow; turn it off to see what a partner's users get by default.
+
 **Loading.** The lists have no design frames, so this is the design of record, built from components the
 app already has. The form never waits: while a country's list is still arriving, its second trigger stays
 enabled and reads "Loading ID types…" in its muted placeholder style. A sheet opened before its data

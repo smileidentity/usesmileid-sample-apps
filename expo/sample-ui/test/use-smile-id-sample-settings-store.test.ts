@@ -84,6 +84,22 @@ describe('the document capture settings', () => {
   });
 });
 
+describe('the Allow screen capture switch', () => {
+  it('starts on in the sample, where the SDK defaults it off', async () => {
+    await store().load();
+    expect(store().settings.allowScreenCapture).toBe(true);
+  });
+
+  it('keeps its value across a reload, under its own key', async () => {
+    await store().setSetting(UseSmileIDSampleSetting.AllowScreenCapture, false);
+    expect(await AsyncStorage.getItem('sample.setting.allowScreenCapture')).toBe('false');
+
+    store().reset();
+    await store().load();
+    expect(store().settings.allowScreenCapture).toBe(false);
+  });
+});
+
 describe('the Skip API submission switch', () => {
   it('starts off, as the SDK defaults it', async () => {
     await store().load();

@@ -156,6 +156,16 @@ class UseSmileIDSampleSettingsPersistenceTest {
         assertTrue(store.settings.first().skipApiSubmission)
     }
 
+    @Test
+    fun `the Allow screen capture switch starts on and is stored under the key the four apps share`() = runTest {
+        assertTrue(store.settings.first().allowScreenCapture)
+
+        store.setSetting(UseSmileIDSampleSetting.AllowScreenCapture, false)
+
+        assertEquals(false, prefs.data.first()[booleanPreferencesKey("allow_screen_capture")])
+        assertFalse(store.settings.first().allowScreenCapture)
+    }
+
     private companion object {
         val APPEARANCE = stringPreferencesKey("appearance")
         val DARK_MODE = booleanPreferencesKey("dark_mode")

@@ -1095,7 +1095,8 @@
     "Gallery upload": "DocumentCaptureConfig.allowGalleryUpload = true. OFF by default, the SDK's default. Every platform's picker is the system one, which asks for no runtime permission; the iOS targets already declare NSPhotoLibraryUsageDescription.",
     "Skip the back": "DocumentCaptureConfig.allowSkipBack: a Skip button on the back-side capture. OFF by default, the SDK's default.",
     "Selfie first": "Orders the two captures of the document products. OFF by default: document, then selfie, for both Document Verification and Enhanced Document Verification. The SDK accepts either order.",
-    "Skip API submission": "config.skipApiSubmission = true. OFF by default, the SDK's default: the SDK submits the job. On, the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored."
+    "Skip API submission": "config.skipApiSubmission = true. OFF by default, the SDK's default: the SDK submits the job. On, the SDK seals the job and hands it back through onResult as a captured job, which the result card records as `captured`; nothing is submitted, so no verification is stored.",
+    "Allow screen capture": "config.allowScreenCapture. ON by default in the sample, unlike the SDK, whose default is OFF: a demo or a support session can screenshot, record or mirror the flow. Off, the SDK keeps the flow out of screenshots, recordings, casting and the recents thumbnail on Android (FLAG_SECURE), and covers it while the screen is recorded or mirrored and in the app switcher on iOS."
   },
   "buildOrder": [
     "1. Tokens: generate the platform token source and wire light/dark (nothing else can start).",

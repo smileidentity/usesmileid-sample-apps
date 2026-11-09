@@ -287,6 +287,9 @@
     <string name="sample_settings_section_submission">SUBMISSION</string>
     <string name="sample_settings_skip_api_submission">Skip API submission</string>
     <string name="sample_settings_skip_api_submission_body">The captured job comes back unsubmitted</string>
+    <string name="sample_settings_section_screen_capture">SCREEN CAPTURE</string>
+    <string name="sample_settings_allow_screen_capture">Allow screen capture</string>
+    <string name="sample_settings_allow_screen_capture_body">Screenshots and recordings can show the flow</string>
     <string name="sample_settings_section_about">ABOUT</string>
     <string name="sample_settings_documentation">Documentation</string>
     <string name="sample_settings_support">Support</string>

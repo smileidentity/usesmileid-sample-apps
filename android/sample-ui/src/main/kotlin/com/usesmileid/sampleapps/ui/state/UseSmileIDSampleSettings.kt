@@ -24,6 +24,8 @@ data class UseSmileIDSampleSettings(
     val selfieFirst: Boolean = false,
     /** config.skipApiSubmission; off, as the SDK defaults it. */
     val skipApiSubmission: Boolean = false,
+    /** config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off. */
+    val allowScreenCapture: Boolean = true,
     /** A typed field rather than one of the switches: three values, not two. */
     val captureMode: UseSmileIDSampleCaptureMode = UseSmileIDSampleCaptureMode.AutoWithFallback,
     /** Typed like [captureMode]; System follows the device. */
@@ -42,6 +44,7 @@ data class UseSmileIDSampleSettings(
         UseSmileIDSampleSetting.AllowSkipBack -> allowSkipBack
         UseSmileIDSampleSetting.SelfieFirst -> selfieFirst
         UseSmileIDSampleSetting.SkipApiSubmission -> skipApiSubmission
+        UseSmileIDSampleSetting.AllowScreenCapture -> allowScreenCapture
     }
 
     /** Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair it refuses. */
@@ -62,6 +65,7 @@ data class UseSmileIDSampleSettings(
             UseSmileIDSampleSetting.AllowSkipBack -> copy(allowSkipBack = enabled)
             UseSmileIDSampleSetting.SelfieFirst -> copy(selfieFirst = enabled)
             UseSmileIDSampleSetting.SkipApiSubmission -> copy(skipApiSubmission = enabled)
+            UseSmileIDSampleSetting.AllowScreenCapture -> copy(allowScreenCapture = enabled)
         }
 }
 
@@ -76,6 +80,7 @@ enum class UseSmileIDSampleSetting {
     AllowSkipBack,
     SelfieFirst,
     SkipApiSubmission,
+    AllowScreenCapture,
 }
 
 /** DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary. */

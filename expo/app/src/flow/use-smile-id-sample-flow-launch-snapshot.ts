@@ -32,6 +32,8 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly selfieFirst: boolean;
   /// Whether the SDK hands the captured job back instead of submitting it.
   readonly skipApiSubmission: boolean;
+  /// config.allowScreenCapture: whether screenshots and recordings can show the flow.
+  readonly allowScreenCapture: boolean;
   /// The id this run submits under; only authentication sends it.
   /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   readonly userId: string;
