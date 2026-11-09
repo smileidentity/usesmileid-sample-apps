@@ -27,9 +27,7 @@ func useSmileIDSampleApply(
   builder.screens { screens in
     replay(useSmileIDSampleFlowSteps(snapshot), into: screens)
   }
-  builder.config { config in
-    config.skipApiSubmission = snapshot.skipApiSubmission
-  }
+  builder.config { UseSmileIDSampleSubmission(snapshot).apply(to: $0) }
   if snapshot.product.capture {
     builder.ml { useSmileIDSampleAnalyzers($0, snapshot.product) }
   }
@@ -51,7 +49,24 @@ func useSmileIDSampleApply(
 }
 
 /// Omitted when the token binds them: the forms were skipped, so these would be blanks.
+/// The SUBMISSION settings: whether the SDK submits, and whether it hands back a job that can't connect.
 @MainActor
+struct UseSmileIDSampleSubmission: Equatable {
+  let skipApiSubmission: Bool
+  let allowOfflineMode: Bool
+
+  init(_ snapshot: FlowLaunchSnapshot) {
+    skipApiSubmission = snapshot.skipApiSubmission
+    allowOfflineMode = snapshot.allowOfflineMode
+  }
+
+  /// Sets both on the SDK's config.
+  func apply(to config: UseSmileIDConfigBuilder) {
+    config.skipApiSubmission = skipApiSubmission
+    config.allowOfflineMode = allowOfflineMode
+  }
+}
+
 func useSmileIDSampleUserDetails(_ snapshot: FlowLaunchSnapshot) -> UserDetails? {
   guard snapshot.liveSession?.bindings.bindsRequiredUserDetails != true else { return nil }
   return UserDetails(

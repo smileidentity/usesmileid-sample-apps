@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The Skip API submission switch: config.skipApiSubmission, off as the SDK defaults it.
+/// The SUBMISSION section's switches: config.skipApiSubmission and config.allowOfflineMode, off as the SDK defaults them.
 void main() {
   Widget host(Widget child) => MaterialApp(
     theme: UseSmileIDSampleTheme.light(),
@@ -11,8 +11,10 @@ void main() {
 
   Finder byId(String id) => find.bySemanticsIdentifier(id);
 
-  testWidgets('the switch starts off and reports a toggle', (
+  Future<List<(UseSmileIDSampleSetting, bool)>> toggleRow(
     WidgetTester tester,
+    String id,
+    String title,
   ) async {
     final List<(UseSmileIDSampleSetting, bool)> toggles =
         <(UseSmileIDSampleSetting, bool)>[];
@@ -38,28 +40,48 @@ void main() {
       ),
     );
     await tester.scrollUntilVisible(
-      byId(UseSmileIDSampleTestIds.settingSkipApiSubmission),
+      byId(id),
       200,
       scrollable: find.byType(Scrollable).first,
     );
     // Centred: scrolled only until visible, the row can sit past the test viewport's edge.
-    await Scrollable.ensureVisible(
-      tester.element(byId(UseSmileIDSampleTestIds.settingSkipApiSubmission)),
-      alignment: 0.5,
-    );
+    await Scrollable.ensureVisible(tester.element(byId(id)), alignment: 0.5);
     await tester.pumpAndSettle();
-    expect(find.text('Skip API submission'), findsOneWidget);
-    expect(
-      tester.getSemantics(
-        byId(UseSmileIDSampleTestIds.settingSkipApiSubmission),
-      ),
-      isSemantics(isToggled: false),
-    );
+    expect(find.text(title), findsOneWidget);
+    expect(tester.getSemantics(byId(id)), isSemantics(isToggled: false));
 
-    await tester.tap(byId(UseSmileIDSampleTestIds.settingSkipApiSubmission));
-    expect(toggles, <(UseSmileIDSampleSetting, bool)>[
-      (UseSmileIDSampleSetting.skipApiSubmission, true),
-    ]);
+    await tester.tap(byId(id));
+    return toggles;
+  }
+
+  testWidgets('the switch starts off and reports a toggle', (
+    WidgetTester tester,
+  ) async {
+    expect(
+      await toggleRow(
+        tester,
+        UseSmileIDSampleTestIds.settingSkipApiSubmission,
+        'Skip API submission',
+      ),
+      <(UseSmileIDSampleSetting, bool)>[
+        (UseSmileIDSampleSetting.skipApiSubmission, true),
+      ],
+    );
+  });
+
+  testWidgets('the offline mode switch starts off and reports a toggle', (
+    WidgetTester tester,
+  ) async {
+    expect(
+      await toggleRow(
+        tester,
+        UseSmileIDSampleTestIds.settingAllowOfflineMode,
+        'Allow offline mode',
+      ),
+      <(UseSmileIDSampleSetting, bool)>[
+        (UseSmileIDSampleSetting.allowOfflineMode, true),
+      ],
+    );
   });
 
   test('the SDK submits by default, and the switch moves no other row', () {
@@ -74,6 +96,21 @@ void main() {
         in UseSmileIDSampleSetting.values) {
       if (other == UseSmileIDSampleSetting.skipApiSubmission) continue;
       expect(skipped[other], defaults[other], reason: '$other moved');
+    }
+  });
+
+  test('offline mode is off by default, and its switch moves no other row', () {
+    const UseSmileIDSampleSettings defaults = UseSmileIDSampleSettings();
+    expect(defaults.allowOfflineMode, isFalse);
+    final UseSmileIDSampleSettings offline = defaults.withSetting(
+      UseSmileIDSampleSetting.allowOfflineMode,
+      true,
+    );
+    expect(offline.allowOfflineMode, isTrue);
+    for (final UseSmileIDSampleSetting other
+        in UseSmileIDSampleSetting.values) {
+      if (other == UseSmileIDSampleSetting.allowOfflineMode) continue;
+      expect(offline[other], defaults[other], reason: '$other moved');
     }
   });
 }

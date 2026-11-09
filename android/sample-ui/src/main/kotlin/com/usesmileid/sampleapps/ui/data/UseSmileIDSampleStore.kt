@@ -134,6 +134,7 @@ class UseSmileIDSampleStore(
             allowSkipBack = prefs[ALLOW_SKIP_BACK] ?: defaults.allowSkipBack,
             selfieFirst = prefs[SELFIE_FIRST] ?: defaults.selfieFirst,
             skipApiSubmission = prefs[SKIP_API_SUBMISSION] ?: defaults.skipApiSubmission,
+            allowOfflineMode = prefs[ALLOW_OFFLINE_MODE] ?: defaults.allowOfflineMode,
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
                 ?: defaults.captureMode,
             appearance = appearanceIn(prefs),
@@ -156,6 +157,7 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.AllowSkipBack -> ALLOW_SKIP_BACK
         UseSmileIDSampleSetting.SelfieFirst -> SELFIE_FIRST
         UseSmileIDSampleSetting.SkipApiSubmission -> SKIP_API_SUBMISSION
+        UseSmileIDSampleSetting.AllowOfflineMode -> ALLOW_OFFLINE_MODE
     }
 
     private companion object {
@@ -173,6 +175,7 @@ class UseSmileIDSampleStore(
         val ALLOW_SKIP_BACK = booleanPreferencesKey("allow_skip_back")
         val SELFIE_FIRST = booleanPreferencesKey("selfie_first")
         val SKIP_API_SUBMISSION = booleanPreferencesKey("skip_api_submission")
+        val ALLOW_OFFLINE_MODE = booleanPreferencesKey("allow_offline_mode")
         val CAPTURE_MODE = stringPreferencesKey("capture_mode")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")

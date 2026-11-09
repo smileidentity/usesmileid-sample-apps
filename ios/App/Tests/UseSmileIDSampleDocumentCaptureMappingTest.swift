@@ -63,6 +63,19 @@ final class UseSmileIDSampleDocumentCaptureMappingTest: XCTestCase {
     XCTAssertFalse(defaults.allowSkipBack)
   }
 
+  func testTheSubmissionSettingsReachTheSdk() {
+    for enabled in [false, true] {
+      let submission = UseSmileIDSampleSubmission(FlowLaunchSnapshot(
+        product: .smartSelfieEnrollment,
+        route: .fullscreen,
+        skipApiSubmission: enabled,
+        allowOfflineMode: !enabled
+      ))
+      XCTAssertEqual(submission.skipApiSubmission, enabled)
+      XCTAssertEqual(submission.allowOfflineMode, !enabled)
+    }
+  }
+
   func testTheSdkCapturesAPassportFrontOnlyWhetherMatchedOrChosen() {
     let passport = UseSmileIDSampleDocument(code: "PASSPORT", name: "Passport", hasBack: false, format: 3)
     func captureBothSides(_ override: UseSmileIDSampleCaptureAs?, document: UseSmileIDSampleDocument? = passport) -> Bool {
