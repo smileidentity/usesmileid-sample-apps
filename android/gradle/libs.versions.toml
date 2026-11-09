@@ -9,7 +9,7 @@ usesmileid-huawei-document = "12.4.0"
 # The four apps' navigation engine, at the exact release the SDK depends on.
 njia = "1.0.0"
 
-android-gradle-plugin = "9.5.0"
+android-gradle-plugin = "9.5.1"
 kotlin = "2.4.21"
 ksp = "2.3.12"
 
