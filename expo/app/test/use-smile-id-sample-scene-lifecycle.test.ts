@@ -142,6 +142,16 @@ describe('scene lifecycle check', () => {
     await expect(appDelegate(commented)).resolves.toBeDefined();
   });
 
+  it('fails the prebuild when only a comment names the factory provider', async () => {
+    const dropped = templateAppDelegate.replace(
+      'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {',
+      '// SceneDelegate reads the ExpoReactNativeFactoryProvider\nclass AppDelegate: ExpoAppDelegate {',
+    );
+
+    expect(dropped).not.toBe(templateAppDelegate);
+    await expect(appDelegate(dropped)).rejects.toThrow('starts React Native itself');
+  });
+
   it('fails the prebuild when the call has a space before its parenthesis', async () => {
     const spaced = legacyAppDelegate
       .replace('factory.startReactNative(', 'factory.startReactNative (')

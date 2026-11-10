@@ -55,9 +55,9 @@ const withSceneLifecycleCheck: ConfigPlugin = (base) =>
       return plist;
     }),
     (delegate) => {
-      const source = delegate.modResults.contents;
-      const providesFactory = source.includes('ExpoReactNativeFactoryProvider');
-      if (!providesFactory || /\b(startReactNative|UIWindow)\s*\(/.test(swiftCode(source))) {
+      const code = swiftCode(delegate.modResults.contents);
+      const providesFactory = /class\s+AppDelegate\s*:[^{]*\bExpoReactNativeFactoryProvider\b/.test(code);
+      if (!providesFactory || /\b(startReactNative|UIWindow)\s*\(/.test(code)) {
         throw new Error('The AppDelegate template starts React Native itself, so iOS 27 would stop the app at launch.');
       }
       return delegate;
