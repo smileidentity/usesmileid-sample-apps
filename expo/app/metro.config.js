@@ -27,10 +27,10 @@ const withEnclosingWorkspace = (resolveRequest) => (context, moduleName, platfor
   try {
     return resolve(context, moduleName, platform);
   } catch (error) {
-    if (path.resolve(context.originModulePath) !== serverRoot || !moduleName.startsWith('./node_modules/')) throw error;
+    if (path.resolve(context.originModulePath) !== serverRoot) throw error;
     const enclosed = path.join(workspaceRoot, moduleName);
-    const fromWorkspace = path.relative(workspaceRoot, enclosed);
-    if (fromWorkspace === '..' || fromWorkspace.startsWith(`..${path.sep}`)) throw error;
+    const fromNodeModules = path.relative(path.join(workspaceRoot, 'node_modules'), enclosed);
+    if (fromNodeModules === '' || fromNodeModules === '..' || fromNodeModules.startsWith(`..${path.sep}`)) throw error;
     try {
       return resolve(context, enclosed, platform);
     } catch {

@@ -81,6 +81,14 @@ describe('metro.config in a submodule', () => {
     });
   });
 
+  it('never retries a node_modules request that climbs back out of it', () => {
+    const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
+
+    expect(() => resolve(serverRootOrigin, './node_modules/../index', anyAbsolutePath)).toThrow(
+      'Unable to resolve module ./node_modules/../index',
+    );
+  });
+
   it('never retries a server-root request outside node_modules', () => {
     const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
 
