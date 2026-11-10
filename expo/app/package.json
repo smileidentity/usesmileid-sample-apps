@@ -76,7 +76,7 @@
     "@smileid/usesmileid_vision_face": "Face analyzer for iOS, backed by the Vision framework.",
     "@testing-library/react-native": "Renders the shell wiring the three tab screens depend on, which tsc and eslint cannot check.",
     "@types/jest": "Matched to the jest 30 family below.",
-    "expo": "SDK 58, which the React Native SDK builds and is verified against after 12.4.0; the 12.4.0 packages pinned here predate it, so the release build waits on a newer SDK.",
+    "expo": "SDK 58. The 12.4.0 packages pinned here were built and verified on SDK 57, so the release build waits on a newer SDK (docs/plan/backlog.md).",
     "expo-brightness": "Required SDK peer: capture raises screen brightness so a face is lit evenly.",
     "expo-build-properties": "Turns on R8 and resource shrinking in the Android release build, as a partner's release runs them, so the SDK's consumer rules are proven on the app partners copy.",
     "expo-camera": "The token scanner's camera and QR reader, pinned by Expo to the SDK 58 wave; the host owns this camera, never the SDK's.",
