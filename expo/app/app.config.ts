@@ -44,6 +44,7 @@ const templateClass = 'class AppDelegate: ExpoAppDelegate {';
 const withSceneLifecycle: ConfigPlugin = (base) =>
   withAppDelegate(
     withInfoPlist(base, (plist) => {
+      if (plist.modResults.UIApplicationSceneManifest) return plist;
       plist.modResults.UIApplicationSceneManifest = {
         UIApplicationSupportsMultipleScenes: false,
         UISceneConfigurations: {
@@ -59,6 +60,7 @@ const withSceneLifecycle: ConfigPlugin = (base) =>
     }),
     (delegate) => {
       const source = delegate.modResults.contents;
+      if (source.includes('ExpoReactNativeFactoryProvider')) return delegate;
       if (!templateWindow.test(source) || !source.includes(templateClass)) {
         throw new Error('The AppDelegate template changed; update withSceneLifecycle.');
       }
