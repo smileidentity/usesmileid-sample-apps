@@ -133,6 +133,23 @@ describe('scene lifecycle check', () => {
     await expect(appDelegate(commented)).resolves.toBeDefined();
   });
 
+  it('accepts trailing and block comments that name those calls', async () => {
+    const commented = templateAppDelegate
+      .replace('reactNativeFactory = factory\n', 'reactNativeFactory = factory // not startReactNative(\n')
+      .replace('@main\n', '/*\n * UIWindow(frame:) moved to SceneDelegate.\n */\n@main\n');
+
+    expect(commented).not.toBe(templateAppDelegate);
+    await expect(appDelegate(commented)).resolves.toBeDefined();
+  });
+
+  it('fails the prebuild when the call has a space before its parenthesis', async () => {
+    const spaced = legacyAppDelegate
+      .replace('factory.startReactNative(', 'factory.startReactNative (')
+      .replace('class AppDelegate: ExpoAppDelegate {', 'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {');
+
+    await expect(appDelegate(spaced)).rejects.toThrow('starts React Native itself');
+  });
+
   it('fails the prebuild when the AppDelegate starts React Native in a window of its own', async () => {
     await expect(appDelegate(legacyAppDelegate)).rejects.toThrow('starts React Native itself');
   });
