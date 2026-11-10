@@ -67,18 +67,24 @@ describe('metro.config in a submodule', () => {
   it('never retries a request that climbs out of the enclosing workspace', () => {
     const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
 
-    expect(() => resolve(serverRootOrigin, './../../outside/index', anyAbsolutePath)).toThrow(
-      'Unable to resolve module ./../../outside/index',
+    expect(() => resolve(serverRootOrigin, './node_modules/../../../outside/index', anyAbsolutePath)).toThrow(
+      'Unable to resolve module ./node_modules/../../../outside/index',
     );
   });
 
-  it('retries a request into a folder whose name starts with two dots', () => {
+  it('retries a package whose folder name starts with two dots', () => {
     const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
 
-    expect(resolve(serverRootOrigin, './..cache/index', anyAbsolutePath)).toEqual({
+    expect(resolve(serverRootOrigin, './node_modules/..cache/index', anyAbsolutePath)).toEqual({
       type: 'sourceFile',
-      filePath: path.join(mockSuperproject, '..cache', 'index'),
+      filePath: path.join(mockSuperproject, 'node_modules', '..cache', 'index'),
     });
+  });
+
+  it('never retries a server-root request outside node_modules', () => {
+    const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
+
+    expect(() => resolve(serverRootOrigin, './index', anyAbsolutePath)).toThrow('Unable to resolve module ./index');
   });
 
   it('leaves a request that fails from a source file failing', () => {
