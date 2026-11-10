@@ -72,6 +72,15 @@ describe('metro.config in a submodule', () => {
     );
   });
 
+  it('retries a request into a folder whose name starts with two dots', () => {
+    const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
+
+    expect(resolve(serverRootOrigin, './..cache/index', anyAbsolutePath)).toEqual({
+      type: 'sourceFile',
+      filePath: path.join(mockSuperproject, '..cache', 'index'),
+    });
+  });
+
   it('leaves a request that fails from a source file failing', () => {
     const sourceFile = path.join(config.server.unstable_serverRoot, 'app', 'index.ts');
 
