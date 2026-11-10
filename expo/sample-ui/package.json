@@ -32,7 +32,7 @@
     "jest-expo": "58.0.14",
     "pixelmatch": "7.2.0",
     "pngjs": "7.0.0",
-    "test-renderer": "1.2.0",
+    "test-renderer": "1.3.0",
     "typescript": "6.0.3",
     "yoga-layout": "3.2.1"
   },
@@ -48,7 +48,7 @@
     "@types/react": "Matched to the react the host pins, or JSX types disagree between the two packages.",
     "jest": "30.5.2: jest-expo 58 is built on the jest 30 family (jest-snapshot, babel-jest, @jest/globals), and mixing a 29 runner with a 30 snapshot serialiser is how every golden reds at once.",
     "jest-expo": "Versioned with the Expo SDK; supplies the React Native transform and module mocks.",
-    "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer.",
+    "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer. 1.3.0 is the one jest-expo 58 brings, so tests render through one reconciler matched to React 19.3.",
     "typescript": "6.0.3, the version Expo SDK 58 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
     "@types/node": "The test files read spec/ from disk, which needs the Node globals; nothing in src/ uses them.",
     "react-native-safe-area-context": "peer; the app bar reads the real status-bar inset rather than a constant, which is the rule insets stay platform-native.",

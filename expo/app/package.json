@@ -61,7 +61,7 @@
     "expo-doctor": "1.20.4",
     "jest": "30.5.2",
     "jest-expo": "58.0.14",
-    "test-renderer": "1.2.0",
+    "test-renderer": "1.3.0",
     "typescript": "6.0.3"
   },
   "pinRationale": {
@@ -105,7 +105,7 @@
     "react-native-gesture-handler": "What gives sheets and swipes the platform's own gestures rather than hand-rolled ones; the app's root view hosts it. Held on 2.x: Expo SDK 58 recommends 3.x, which drops the Swipeable the row swipe is built on.",
     "react-native-safe-area-context": "Required SDK peer, and how bottom-chrome clearance is measured from real insets.",
     "react-native-svg": "Required SDK peer, and what the design's own marks are drawn as.",
-    "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer.",
+    "test-renderer": "The modern replacement react-test-renderer became; @testing-library/react-native 14 requires it by peer. 1.3.0 is the one jest-expo 58 brings, so tests render through one reconciler matched to React 19.3.",
     "typescript": "6.0.3, the version Expo SDK 58 expects. It also satisfies typescript-eslint 8's `>=4.8.4 <6.1.0`, so type-aware linting stays on — 7.x would not.",
     "zustand": "The app-lifetime stores, per the navigation plan's per-platform choice; screen state stays in hooks."
   }
