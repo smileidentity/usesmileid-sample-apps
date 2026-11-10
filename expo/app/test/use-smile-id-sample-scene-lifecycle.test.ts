@@ -2,8 +2,8 @@ import type { ExpoConfig } from 'expo/config';
 
 import config from '../app.config';
 
-/// The lines of Expo 57's prebuild AppDelegate the plugin rewrites.
-const templateAppDelegate = `@main
+/// The lines of Expo 57's prebuild AppDelegate, which starts React Native in a window of its own.
+const legacyAppDelegate = `@main
 class AppDelegate: ExpoAppDelegate {
   var window: UIWindow?
   var reactNativeFactory: RCTReactNativeFactory?
@@ -27,7 +27,7 @@ class AppDelegate: ExpoAppDelegate {
 }
 `;
 
-/// The scene manifest Expo 58's prebuild already writes.
+/// The scene manifest Expo 58's prebuild writes.
 const templateSceneManifest = {
   UIApplicationSupportsMultipleScenes: false,
   UISceneConfigurations: {
@@ -40,18 +40,49 @@ const templateSceneManifest = {
   },
 };
 
-/// Expo 58's prebuild AppDelegate, which already hands the factory to its scene delegate.
-const sceneAppDelegate = `@main
+/// The AppDelegate Expo 58.0.23's prebuild writes, verbatim.
+const templateAppDelegate = `internal import Expo
+import React
+import ReactAppDependencyProvider
+
+@main
 class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {
   var window: UIWindow?
+
+  var reactNativeDelegate: ExpoReactNativeFactoryDelegate?
   var reactNativeFactory: RCTReactNativeFactory?
 
   public override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
   ) -> Bool {
+    let delegate = ReactNativeDelegate()
+    let factory = ExpoReactNativeFactory(delegate: delegate)
+    delegate.dependencyProvider = RCTAppDependencyProvider()
+
+    reactNativeDelegate = delegate
     reactNativeFactory = factory
+
+    // The window is created and React Native is started by \`SceneDelegate\` under the
+    // scene-based life cycle (required by the iOS 27 SDK).
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+  }
+}
+
+class ReactNativeDelegate: ExpoReactNativeFactoryDelegate {
+  // Extension point for config-plugins
+
+  override func sourceURL(for bridge: RCTBridge) -> URL? {
+    // needed to return the correct URL for expo-dev-client.
+    bridge.bundleURL ?? bundleURL()
+  }
+
+  override func bundleURL() -> URL? {
+#if DEBUG
+    return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: ".expo/.virtual-metro-entry")
+#else
+    return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
   }
 }
 `;
@@ -64,37 +95,10 @@ const iosMod = (name: string): Mod => {
   return mod;
 };
 
-describe('scene lifecycle plugin', () => {
-  it('declares Expo scene delegate as the only window scene', async () => {
-    const { modResults } = await iosMod('infoPlist')({ modResults: {}, modRequest: {} });
+const appDelegate = (contents: string) => iosMod('appDelegate')({ modResults: { contents, language: 'swift' }, modRequest: {} });
 
-    expect(modResults).toMatchObject({
-      UIApplicationSceneManifest: {
-        UIApplicationSupportsMultipleScenes: false,
-        UISceneConfigurations: {
-          UIWindowSceneSessionRoleApplication: [
-            { UISceneDelegateClassName: 'EXExpoAppSceneDelegate' },
-          ],
-        },
-      },
-    });
-  });
-
-  it('hands the factory to the scene delegate instead of starting its own window', async () => {
-    const { modResults } = await iosMod('appDelegate')({
-      modResults: { contents: templateAppDelegate, language: 'swift' },
-      modRequest: {},
-    });
-    const contents = (modResults as { contents: string }).contents;
-
-    expect(contents).toContain(
-      'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {',
-    );
-    expect(contents).not.toContain('UIWindow(frame:');
-    expect(contents).not.toContain('startReactNative');
-  });
-
-  it('keeps the scene delegate the template already declares', async () => {
+describe('scene lifecycle check', () => {
+  it("accepts the scene manifest Expo 58's template declares", async () => {
     const { modResults } = await iosMod('infoPlist')({
       modResults: { UIApplicationSceneManifest: templateSceneManifest },
       modRequest: {},
@@ -103,31 +107,26 @@ describe('scene lifecycle plugin', () => {
     expect(modResults).toEqual({ UIApplicationSceneManifest: templateSceneManifest });
   });
 
-  it('leaves an AppDelegate that already provides the factory unchanged', async () => {
-    const { modResults } = await iosMod('appDelegate')({
-      modResults: { contents: sceneAppDelegate, language: 'swift' },
-      modRequest: {},
-    });
+  it('fails the prebuild when the Info.plist declares no scene delegate', async () => {
+    await expect(iosMod('infoPlist')({ modResults: {}, modRequest: {} })).rejects.toThrow('declares no scene delegate');
+  });
 
-    expect((modResults as { contents: string }).contents).toBe(sceneAppDelegate);
+  it("accepts Expo 58's AppDelegate unchanged", async () => {
+    const { modResults } = await appDelegate(templateAppDelegate);
+
+    expect((modResults as { contents: string }).contents).toBe(templateAppDelegate);
+  });
+
+  it('fails the prebuild when the AppDelegate starts React Native in a window of its own', async () => {
+    await expect(appDelegate(legacyAppDelegate)).rejects.toThrow('starts React Native itself');
   });
 
   it('fails the prebuild when an AppDelegate provides the factory but still starts React Native', async () => {
-    const halfAdopted = templateAppDelegate.replace(
+    const halfAdopted = legacyAppDelegate.replace(
       'class AppDelegate: ExpoAppDelegate {',
       'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {',
     );
 
-    await expect(
-      iosMod('appDelegate')({ modResults: { contents: halfAdopted, language: 'swift' }, modRequest: {} }),
-    ).rejects.toThrow('The AppDelegate template changed');
-  });
-
-  it('fails the prebuild when the template no longer matches', async () => {
-    const drifted = { contents: '@main\nclass AppDelegate {}\n', language: 'swift' };
-
-    await expect(iosMod('appDelegate')({ modResults: drifted, modRequest: {} })).rejects.toThrow(
-      'The AppDelegate template changed',
-    );
+    await expect(appDelegate(halfAdopted)).rejects.toThrow('starts React Native itself');
   });
 });

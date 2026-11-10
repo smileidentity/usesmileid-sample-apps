@@ -36,37 +36,26 @@ if (addedPlugins.length > 0) {
 /// Capture is the SDK's, but no @smileid package ships a purpose string, so the host declares it.
 const cameraUsage = 'Smile ID uses the camera to scan a session QR code and to capture your selfie and your ID document.';
 
-const templateWindow = /\n#if os\(iOS\) \|\| os\(tvOS\)\n\s*window = UIWindow\(frame: UIScreen\.main\.bounds\)\n\s*factory\.startReactNative\([^)]*\)\n#endif\n/;
+/// The window scene delegates an Info.plist names, if it declares a scene manifest.
+type SceneManifest = { UISceneConfigurations?: { UIWindowSceneSessionRoleApplication?: { UISceneDelegateClassName?: string }[] } };
 
-const templateClass = 'class AppDelegate: ExpoAppDelegate {';
-
-/// iOS 27 stops an app built on its SDK at launch unless it adopts scenes, so Expo's delegate starts React Native.
-const withSceneLifecycle: ConfigPlugin = (base) =>
+/// iOS 27 stops an app built on its SDK at launch unless it adopts scenes; Expo 58's template does, and this fails the prebuild if it stops.
+const withSceneLifecycleCheck: ConfigPlugin = (base) =>
   withAppDelegate(
     withInfoPlist(base, (plist) => {
-      if (plist.modResults.UIApplicationSceneManifest) return plist;
-      plist.modResults.UIApplicationSceneManifest = {
-        UIApplicationSupportsMultipleScenes: false,
-        UISceneConfigurations: {
-          UIWindowSceneSessionRoleApplication: [
-            {
-              UISceneConfigurationName: 'Default Configuration',
-              UISceneDelegateClassName: 'EXExpoAppSceneDelegate',
-            },
-          ],
-        },
-      };
+      const manifest = plist.modResults.UIApplicationSceneManifest as SceneManifest | undefined;
+      const scenes = manifest?.UISceneConfigurations?.UIWindowSceneSessionRoleApplication ?? [];
+      if (!scenes.some((scene) => scene.UISceneDelegateClassName)) {
+        throw new Error('The Info.plist template declares no scene delegate, so iOS 27 would stop the app at launch.');
+      }
       return plist;
     }),
     (delegate) => {
       const source = delegate.modResults.contents;
-      if (source.includes('ExpoReactNativeFactoryProvider') && !source.includes('startReactNative')) return delegate;
-      if (!templateWindow.test(source) || !source.includes(templateClass)) {
-        throw new Error('The AppDelegate template changed; update withSceneLifecycle.');
+      const providesFactory = source.includes('ExpoReactNativeFactoryProvider');
+      if (!providesFactory || source.includes('startReactNative') || source.includes('UIWindow(frame:')) {
+        throw new Error('The AppDelegate template starts React Native itself, so iOS 27 would stop the app at launch.');
       }
-      delegate.modResults.contents = source
-        .replace(templateWindow, '\n')
-        .replace(templateClass, 'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {');
       return delegate;
     },
   );
@@ -130,4 +119,4 @@ const config: ExpoConfig = {
   ],
 };
 
-export default withSceneLifecycle(config);
+export default withSceneLifecycleCheck(config);
