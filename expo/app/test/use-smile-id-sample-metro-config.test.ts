@@ -29,10 +29,16 @@ const enclosingOnly: Resolver = (_context, moduleName) => {
 };
 
 /// Resolves `moduleName` from `origin` through the config's resolver.
-const resolve = (origin: string, moduleName: string): Resolution => {
+const resolve = (origin: string, moduleName: string, metroResolver: Resolver = enclosingOnly): Resolution => {
   const resolveRequest = config.resolver.resolveRequest;
   if (!resolveRequest) throw new Error('metro.config sets no resolver in a submodule');
-  return resolveRequest({ originModulePath: origin, resolveRequest: enclosingOnly }, moduleName, 'ios');
+  return resolveRequest({ originModulePath: origin, resolveRequest: metroResolver }, moduleName, 'ios');
+};
+
+/// A resolver that finds every absolute path, so only the config's own guard can refuse one.
+const anyAbsolutePath: Resolver = (_context, moduleName) => {
+  if (path.isAbsolute(moduleName)) return { type: 'sourceFile', filePath: moduleName };
+  throw new Error(`Unable to resolve module ${moduleName}`);
 };
 
 describe('metro.config in a submodule', () => {
@@ -55,6 +61,14 @@ describe('metro.config in a submodule', () => {
 
     expect(() => resolve(serverRootOrigin, './node_modules/missing/index')).toThrow(
       'Unable to resolve module ./node_modules/missing/index',
+    );
+  });
+
+  it('never retries a request that climbs out of the enclosing workspace', () => {
+    const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
+
+    expect(() => resolve(serverRootOrigin, './../../outside/index', anyAbsolutePath)).toThrow(
+      'Unable to resolve module ./../../outside/index',
     );
   });
 

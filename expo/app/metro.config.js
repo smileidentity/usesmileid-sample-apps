@@ -28,8 +28,10 @@ const withEnclosingWorkspace = (resolveRequest) => (context, moduleName, platfor
     return resolve(context, moduleName, platform);
   } catch (error) {
     if (path.resolve(context.originModulePath) !== serverRoot || !moduleName.startsWith('./')) throw error;
+    const enclosed = path.join(workspaceRoot, moduleName);
+    if (path.relative(workspaceRoot, enclosed).startsWith('..')) throw error;
     try {
-      return resolve(context, path.join(workspaceRoot, moduleName), platform);
+      return resolve(context, enclosed, platform);
     } catch {
       throw error;
     }
