@@ -19,8 +19,21 @@ config.resolver.nodeModulesPaths = [
   path.resolve(workspaceRoot, 'node_modules'),
 ];
 
+const serverRoot = config.server.unstable_serverRoot;
+
+/** Retries a request Metro makes from the server root, as a debug build's lazy bundle does, in the enclosing workspace. */
+const withEnclosingWorkspace = (resolveRequest) => (context, moduleName, platform) => {
+  const resolve = resolveRequest ?? context.resolveRequest;
+  try {
+    return resolve(context, moduleName, platform);
+  } catch (error) {
+    if (path.resolve(context.originModulePath) !== serverRoot || !moduleName.startsWith('./')) throw error;
+    return resolve(context, path.join(workspaceRoot, moduleName), platform);
+  }
+};
+
 config.resolver.resolveRequest = withShellExtension(
-  config.resolver.resolveRequest,
+  workspaceRoot === serverRoot ? config.resolver.resolveRequest : withEnclosingWorkspace(config.resolver.resolveRequest),
   projectRoot,
   process.env.USESMILEID_SAMPLE_EXTENSION,
 );
