@@ -107,6 +107,12 @@ describe('scene lifecycle check', () => {
     expect(modResults).toEqual({ UIApplicationSceneManifest: templateSceneManifest });
   });
 
+  it('leaves the Info.plist alone when Expo introspects the config without a project', async () => {
+    const { modResults } = await iosMod('infoPlist')({ modResults: {}, modRequest: { introspect: true } });
+
+    expect(modResults).toEqual({});
+  });
+
   it('fails the prebuild when the Info.plist declares no scene delegate', async () => {
     await expect(iosMod('infoPlist')({ modResults: {}, modRequest: {} })).rejects.toThrow('declares no scene delegate');
   });
@@ -115,6 +121,16 @@ describe('scene lifecycle check', () => {
     const { modResults } = await appDelegate(templateAppDelegate);
 
     expect((modResults as { contents: string }).contents).toBe(templateAppDelegate);
+  });
+
+  it('accepts an AppDelegate whose comments name the calls it no longer makes', async () => {
+    const commented = templateAppDelegate.replace(
+      'reactNativeFactory = factory\n',
+      'reactNativeFactory = factory\n    // SceneDelegate, not factory.startReactNative(), creates the UIWindow(frame:).\n',
+    );
+
+    expect(commented).not.toBe(templateAppDelegate);
+    await expect(appDelegate(commented)).resolves.toBeDefined();
   });
 
   it('fails the prebuild when the AppDelegate starts React Native in a window of its own', async () => {

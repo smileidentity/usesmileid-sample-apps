@@ -39,10 +39,14 @@ const cameraUsage = 'Smile ID uses the camera to scan a session QR code and to c
 /// The window scene delegates an Info.plist names, if it declares a scene manifest.
 type SceneManifest = { UISceneConfigurations?: { UIWindowSceneSessionRoleApplication?: { UISceneDelegateClassName?: string }[] } };
 
+/// A line of Swift code, not a comment, that starts React Native or makes its own window.
+const startsReactNative = /^(?!\s*\/\/).*(startReactNative\(|UIWindow\(frame:)/m;
+
 /// iOS 27 stops an app built on its SDK at launch unless it adopts scenes; Expo 58's template does, and this fails the prebuild if it stops.
 const withSceneLifecycleCheck: ConfigPlugin = (base) =>
   withAppDelegate(
     withInfoPlist(base, (plist) => {
+      if (plist.modRequest.introspect) return plist;
       const manifest = plist.modResults.UIApplicationSceneManifest as SceneManifest | undefined;
       const scenes = manifest?.UISceneConfigurations?.UIWindowSceneSessionRoleApplication ?? [];
       if (!scenes.some((scene) => scene.UISceneDelegateClassName)) {
@@ -53,7 +57,7 @@ const withSceneLifecycleCheck: ConfigPlugin = (base) =>
     (delegate) => {
       const source = delegate.modResults.contents;
       const providesFactory = source.includes('ExpoReactNativeFactoryProvider');
-      if (!providesFactory || source.includes('startReactNative') || source.includes('UIWindow(frame:')) {
+      if (!providesFactory || startsReactNative.test(source)) {
         throw new Error('The AppDelegate template starts React Native itself, so iOS 27 would stop the app at launch.');
       }
       return delegate;
