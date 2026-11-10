@@ -7,7 +7,7 @@ const preset = require('jest-expo/jest-preset');
 
 module.exports = {
   preset: 'jest-expo',
-  testEnvironment: 'node',
+  testEnvironment: '<rootDir>/test/support/use-smile-id-sample-test-environment.js',
   roots: ['<rootDir>/test'],
   // The SDK and its njia dependency ship ESM, so the preset's first pattern lets both reach Babel like source files.
   transformIgnorePatterns: [
