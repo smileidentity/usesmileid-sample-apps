@@ -19,9 +19,12 @@ type MetroConfig = {
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const config = require('../metro.config') as MetroConfig;
 
+/// expo-font's entry where a submodule's install hoists it.
+const hoistedFont = path.join(mockSuperproject, 'node_modules', 'expo-font', 'build', 'index');
+
 /// Metro's own resolver in a submodule, which finds a hoisted package only by its path in the enclosing repo.
 const enclosingOnly: Resolver = (_context, moduleName) => {
-  if (moduleName.startsWith(mockSuperproject)) return { type: 'sourceFile', filePath: moduleName };
+  if (moduleName === hoistedFont) return { type: 'sourceFile', filePath: moduleName };
   throw new Error(`Unable to resolve module ${moduleName}`);
 };
 
@@ -43,8 +46,16 @@ describe('metro.config in a submodule', () => {
 
     expect(resolve(serverRootOrigin, './node_modules/expo-font/build/index')).toEqual({
       type: 'sourceFile',
-      filePath: path.join(mockSuperproject, 'node_modules', 'expo-font', 'build', 'index'),
+      filePath: hoistedFont,
     });
+  });
+
+  it('reports the request Metro made when the enclosing workspace lacks the module too', () => {
+    const serverRootOrigin = `${config.server.unstable_serverRoot}${path.sep}.`;
+
+    expect(() => resolve(serverRootOrigin, './node_modules/missing/index')).toThrow(
+      'Unable to resolve module ./node_modules/missing/index',
+    );
   });
 
   it('leaves a request that fails from a source file failing', () => {
