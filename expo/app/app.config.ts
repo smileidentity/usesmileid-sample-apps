@@ -60,7 +60,7 @@ const withSceneLifecycle: ConfigPlugin = (base) =>
     }),
     (delegate) => {
       const source = delegate.modResults.contents;
-      if (source.includes('ExpoReactNativeFactoryProvider')) return delegate;
+      if (source.includes('ExpoReactNativeFactoryProvider') && !source.includes('startReactNative')) return delegate;
       if (!templateWindow.test(source) || !source.includes(templateClass)) {
         throw new Error('The AppDelegate template changed; update withSceneLifecycle.');
       }

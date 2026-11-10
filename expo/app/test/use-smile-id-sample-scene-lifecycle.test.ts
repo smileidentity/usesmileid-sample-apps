@@ -112,6 +112,17 @@ describe('scene lifecycle plugin', () => {
     expect((modResults as { contents: string }).contents).toBe(sceneAppDelegate);
   });
 
+  it('fails the prebuild when an AppDelegate provides the factory but still starts React Native', async () => {
+    const halfAdopted = templateAppDelegate.replace(
+      'class AppDelegate: ExpoAppDelegate {',
+      'class AppDelegate: ExpoAppDelegate, ExpoReactNativeFactoryProvider {',
+    );
+
+    await expect(
+      iosMod('appDelegate')({ modResults: { contents: halfAdopted, language: 'swift' }, modRequest: {} }),
+    ).rejects.toThrow('The AppDelegate template changed');
+  });
+
   it('fails the prebuild when the template no longer matches', async () => {
     const drifted = { contents: '@main\nclass AppDelegate {}\n', language: 'swift' };
 
