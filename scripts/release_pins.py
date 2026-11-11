@@ -35,11 +35,11 @@ def catalog(text: str) -> list[tuple[str, str]]:
             versions[entry.group(1)] = entry.group(2)
             if re.match(r"(usesmileid|njia|kamera)", entry.group(1)):
                 pins.append((entry.group(1), entry.group(2)))
-        module = re.search(r'module\s*=\s*"(com\.usesmileid:[^"]+)"', line)
+        module = re.search(r'module\s*=\s*"(com\.usesmileid:[^"]+)"|group\s*=\s*"(com\.usesmileid)"', line)
         if section == "libraries" and module:
             ref = re.search(r'version\.ref\s*=\s*"([^"]+)"', line)
             inline = re.search(r'version\s*=\s*"([^"]+)"', line)
-            pins.append((module.group(1), versions.get(ref.group(1), "<missing>") if ref else inline.group(1) if inline else "<none>"))
+            pins.append((module.group(1) or module.group(2), versions.get(ref.group(1), "<missing>") if ref else inline.group(1) if inline else "<none>"))
     return pins
 
 
@@ -149,7 +149,7 @@ def pin_problems(root: Path) -> list[str]:
 
 def ref_problems(ref: str, on_main: bool) -> list[str]:
     """Why the ref isn't a v* tag on main, or nothing."""
-    if not re.fullmatch(r"refs/tags/v[^/]+", ref):
+    if not re.fullmatch(r"refs/tags/v\d+\.\d+\.\d+", ref):
         return [f"{ref or 'the ref'} is not a v* tag; production store builds run only from one"]
     return [] if on_main else [f"{ref} is not on main"]
 

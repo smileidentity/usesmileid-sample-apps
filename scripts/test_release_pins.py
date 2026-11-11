@@ -107,6 +107,11 @@ class PinTest(unittest.TestCase):
             with self.subTest(site=site, new=new):
                 self.assertTrue(any(p.startswith(site) for p in self.replaced(site, old, new)))
 
+    def test_a_library_named_by_group_is_read(self):
+        problems = self.replaced("android/gradle/libs.versions.toml", 'njia = { module = "com.usesmileid:njia", version.ref = "njia" }',
+                                 'njia = { group = "com.usesmileid", name = "njia", version = "1.0.1-SNAPSHOT" }')
+        self.assertIn("android/gradle/libs.versions.toml: com.usesmileid is 1.0.1-SNAPSHOT, not a release", problems)
+
     def test_a_snapshot_njia_fails(self):
         problems = self.replaced("android/gradle/libs.versions.toml", 'njia = "1.0.0"', 'njia = "0.0.1-20261030.012141-13"')
         self.assertTrue(any("njia" in p for p in problems))
@@ -143,7 +148,9 @@ class RefTest(unittest.TestCase):
         self.assertEqual(1, len(release_pins.ref_problems("refs/heads/main", True)))
 
     def test_another_tag_fails(self):
-        self.assertEqual(1, len(release_pins.ref_problems("refs/tags/sdk-pin/12.4.0", True)))
+        for ref in ("refs/tags/sdk-pin/12.4.0", "refs/tags/vtest", "refs/tags/v12.4.0-rc1"):
+            with self.subTest(ref=ref):
+                self.assertEqual(1, len(release_pins.ref_problems(ref, True)))
 
     def test_a_tag_off_main_fails(self):
         self.assertEqual(["refs/tags/v12.4.0 is not on main"], release_pins.ref_problems("refs/tags/v12.4.0", False))
