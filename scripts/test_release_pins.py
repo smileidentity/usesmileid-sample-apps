@@ -113,6 +113,14 @@ class PinTest(unittest.TestCase):
         problems = self.replaced("ios/App/project.yml", "exactVersion: 1.0.0", "exactVersion: 0.0.1-SNAPSHOT.13")
         self.assertTrue(any("njia-spm" in p for p in problems))
 
+    def test_an_sdk_from_the_workspace_or_a_path_fails(self):
+        problems = self.replaced("expo/app/package.json", '"@smileid/usesmileid": "12.4.0"', '"@smileid/usesmileid": "workspace:*"')
+        self.assertIn("expo/app/package.json: @smileid/usesmileid is workspace:*, not a release", problems)
+        problems = self.replaced("expo/pnpm-lock.yaml", "        version: 12.4.0(abc)", "        version: link:../../usesmileid")
+        self.assertIn("expo/pnpm-lock.yaml: @smileid/usesmileid is link:../../usesmileid, not a release", problems)
+        problems = self.replaced("flutter/app/pubspec.lock", '    source: hosted\n    version: "12.4.0"', '    source: path\n    version: "12.4.0"')
+        self.assertIn("flutter/app/pubspec.lock: usesmileid is from path, not a release", problems)
+
     def test_another_publisher_is_not_read(self):
         self.assertEqual([], self.replaced("ios/SampleUI/Package.resolved", '"8.58.4"', '"8.58.4-beta.1"'))
 

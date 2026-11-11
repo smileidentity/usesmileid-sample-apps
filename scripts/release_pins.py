@@ -16,6 +16,8 @@ from pathlib import Path
 
 RELEASE = re.compile(r"\d+\.\d+\.\d+")
 SMILE_ID_URL = re.compile(r"github\.com/smileidentity/[\w.-]+")
+# The Expo apps' own shared UI, which the workspace links; every other @smileid package comes from npm.
+WORKSPACE = "@smileid/sample-ui"
 
 
 def catalog(text: str) -> list[tuple[str, str]]:
@@ -85,30 +87,33 @@ def pubspec(text: str) -> list[tuple[str, str]]:
 
 
 def pubspec_lock(text: str) -> list[tuple[str, str]]:
-    """Each Smile ID package in a pubspec.lock and the version pub resolved."""
-    return [
-        (m.group(1), m.group(2))
-        for m in re.finditer(r'^  (usesmileid\w*):\n(?:    .*\n)*?    version: "([^"]+)"', text, re.M)
-    ]
+    """Each Smile ID package in a pubspec.lock and the version pub resolved; one not from pub.dev isn't a release."""
+    pins = []
+    for match in re.finditer(r"^  (usesmileid\w*):\n((?:    .*\n?)*)", text, re.M):
+        source = re.search(r"^    source: (\S+)", match.group(2), re.M)
+        version = re.search(r'^    version: "([^"]+)"', match.group(2), re.M)
+        hosted = source and source.group(1) == "hosted"
+        pins.append((match.group(1), version.group(1) if version and hosted else f"from {source.group(1) if source else 'nowhere'}"))
+    return pins
 
 
 def package_json(text: str) -> list[tuple[str, str]]:
-    """Each @smileid package a package.json names, apart from the workspace's own."""
+    """Each @smileid package a package.json names, apart from the workspace's shared UI."""
     manifest = json.loads(text)
     return [
         (name, version)
         for field in ("dependencies", "devDependencies", "peerDependencies")
         for name, version in manifest.get(field, {}).items()
-        if name.startswith("@smileid/") and not version.startswith("workspace:")
+        if name.startswith("@smileid/") and name != WORKSPACE
     ]
 
 
 def pnpm_lock(text: str) -> list[tuple[str, str]]:
-    """Each @smileid package version a pnpm lockfile resolves, apart from the linked workspace."""
+    """Each @smileid package version a pnpm lockfile resolves, apart from the workspace's shared UI."""
     keys = re.findall(r"@smileid/([\w-]+)@([^:(\s'\"]+)", text)
     deps = re.findall(r"'@smileid/([\w-]+)':[ \t]+([^\s(]+)", text)
     versions = re.findall(r"'@smileid/([\w-]+)':\n\s+specifier:[^\n]*\n\s+version:\s*([^\s(]+)", text)
-    return [(f"@smileid/{n}", v) for n, v in keys + deps + versions if not v.startswith("link:")]
+    return [(f"@smileid/{n}", v) for n, v in keys + deps + versions if f"@smileid/{n}" != WORKSPACE]
 
 
 SITES = {
