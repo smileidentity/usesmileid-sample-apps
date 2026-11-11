@@ -26,6 +26,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Production ships only a v* tag on main whose Smile ID pins are all releases (docs/source-build.md, Releases).
+      - name: Release pins
+        if: ${{ !inputs.lookup_only }}
+        run: python3 scripts/release_pins.py
+
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
