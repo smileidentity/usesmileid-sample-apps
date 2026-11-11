@@ -148,13 +148,6 @@ SDK's mount. Add the same three checks to the iOS device lane.
 ends the Expo flows (see `expo/maestro/README.md`). Once that is solved, drive it through consent to the
 capture screen, as the Android and Flutter flows do.
 
-### Expo on `next`: a release build on Expo SDK 58
-
-`next` builds the Expo app on Expo SDK 58 and React Native 0.88, but still pins the 12.4.0 React Native
-SDK packages, which were built and verified on Expo SDK 57, so the app's minified release build is not
-expected to pass there. Done when `next` pins an SDK release built on Expo SDK 58 and `expo/verify.sh native`
-passes on it.
-
 ### iOS: build against the published SDK on the oldest Xcode partners use
 
 Every iOS lane builds with the one Xcode `.github/actions/select-xcode` pins, the one the team builds
