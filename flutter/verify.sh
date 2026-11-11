@@ -52,6 +52,9 @@ if [ "$PHASE" != android ]; then
   echo "==> bundled spec files are current"
   # Flutter's asset list cannot reach spec/, so the app ships copies of the fixture and the njia graph that must match byte for byte.
   python3 "$REPO_ROOT/scripts/sync_spec_assets.py" --check
+
+  echo "==> the snapshots repository serves only Smile ID"
+  python3 "$REPO_ROOT/scripts/check_snapshot_repositories.py"
 fi
 
 for package in "${PACKAGES[@]}"; do
