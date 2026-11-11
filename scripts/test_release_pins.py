@@ -126,6 +126,15 @@ class PinTest(unittest.TestCase):
         problems = self.replaced("flutter/app/pubspec.lock", '    source: hosted\n    version: "12.4.0"', '    source: path\n    version: "12.4.0"')
         self.assertIn("flutter/app/pubspec.lock: usesmileid is from path, not a release", problems)
 
+    def test_a_range_requirement_in_project_yml_is_not_a_release(self):
+        problems = self.replaced("ios/App/project.yml", "    exactVersion: 12.4.0", "    from: 12.4.0")
+        self.assertIn("ios/App/project.yml: https://github.com/smileidentity/ios-spm.git is from 12.4.0, not a release", problems)
+
+    def test_a_peer_range_in_the_lockfile_is_not_a_resolved_version(self):
+        problems = self.replaced("expo/pnpm-lock.yaml", "  '@smileid/kamera@1.3.0':\n    resolution: {}\n",
+                                 "  '@smileid/kamera@1.3.0':\n    resolution: {}\n    peerDependencies:\n      '@smileid/njia': ^1.0.0\n      react: '*'\n")
+        self.assertEqual([], problems)
+
     def test_another_publisher_is_not_read(self):
         self.assertEqual([], self.replaced("ios/SampleUI/Package.resolved", '"8.58.4"', '"8.58.4-beta.1"'))
 

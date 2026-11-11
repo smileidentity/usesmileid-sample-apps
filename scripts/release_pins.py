@@ -55,9 +55,10 @@ def project_yml(text: str) -> list[tuple[str, str]]:
         for sibling in lines[index + 1:]:
             if len(sibling) - len(sibling.lstrip()) != len(url.group(1)):
                 break
-            requirement = re.match(r"\s*(?:exactVersion|version|from|branch|revision|minorVersion|majorVersion):\s*(\S+)", sibling)
+            requirement = re.match(r"\s*(exactVersion|version|from|branch|revision|minorVersion|majorVersion):\s*(\S+)", sibling)
             if requirement:
-                version = requirement.group(1)
+                # Only an exact requirement pins one build; any other kind is reported with its kind.
+                version = requirement.group(2) if requirement.group(1) == "exactVersion" else f"{requirement.group(1)} {requirement.group(2)}"
         pins.append((url.group(2), version))
     return pins
 
@@ -110,6 +111,8 @@ def package_json(text: str) -> list[tuple[str, str]]:
 
 def pnpm_lock(text: str) -> list[tuple[str, str]]:
     """Each @smileid package version a pnpm lockfile resolves, apart from the workspace's shared UI."""
+    # A package's peerDependencies are ranges it declares, not versions pnpm resolved.
+    text = re.sub(r"^( +)peerDependencies:\n(?:\1 +.*\n)*", "", text, flags=re.M)
     keys = re.findall(r"@smileid/([\w-]+)@([^:(\s'\"]+)", text)
     deps = re.findall(r"'@smileid/([\w-]+)':[ \t]+([^\s(]+)", text)
     versions = re.findall(r"'@smileid/([\w-]+)':\n\s+specifier:[^\n]*\n\s+version:\s*([^\s(]+)", text)
