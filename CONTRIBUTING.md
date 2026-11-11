@@ -11,6 +11,8 @@ change.
 - **SDK behaviour is not fixed here.** If something only works with a path dependency, an override or a
   patched build file, that is an SDK defect. Open an issue describing it, and leave the workaround out.
   The apps consume every SDK from its public registry, deliberately and permanently.
+- **`main` is the only branch.** Between releases it builds on SDK snapshots, and a change that
+  needs new SDK API merges here before the SDK change that adds it (docs/source-build.md).
 - **Change all four apps, or say why not.** A screen, scenario or behaviour added to one platform is
   added to the other three, and to `spec/` if it is part of the shared contract. If a change is
   genuinely platform-specific, the pull request says so.
