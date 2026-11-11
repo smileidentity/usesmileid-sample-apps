@@ -2,6 +2,10 @@ allprojects {
     repositories {
         google()
         mavenCentral()
+        // The SDK snapshot pins timestamped com.usesmileid builds, which only this repository serves.
+        maven("https://central.sonatype.com/repository/maven-snapshots/") {
+            content { includeGroup("com.usesmileid") }
+        }
     }
 }
 
