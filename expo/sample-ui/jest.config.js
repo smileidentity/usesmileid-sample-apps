@@ -21,7 +21,6 @@ const forPlatform = (platform) => {
   return {
     ...platformPreset,
     transform: { ...platformPreset.transform, [BABEL]: ['babel-jest', { ...baseOptions, caller: platformOptions.caller }] },
-    testEnvironment: 'node',
     roots: ['<rootDir>/test'],
     // The layout engine and pixelmatch ship as ESM, so they must reach Babel.
     transformIgnorePatterns: [

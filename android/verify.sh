@@ -40,6 +40,11 @@ python3 "$REPO_ROOT/scripts/test_app_size.py" >/dev/null
 python3 "$REPO_ROOT/scripts/test_select_android_flows.py" >/dev/null
 ./gradlew :app:checkLicenses :app:checkAppgalleryLicenses
 
+echo "==> the snapshots repository serves only Smile ID"
+# A public app must never resolve another publisher's snapshot.
+python3 "$REPO_ROOT/scripts/check_snapshot_repositories.py"
+python3 "$REPO_ROOT/scripts/test_check_snapshot_repositories.py" >/dev/null
+
 echo "==> strings are current"
 # Generated from spec/l10n/; a hand edit fails here.
 python3 "$REPO_ROOT/scripts/sync_l10n.py" --check --platform android

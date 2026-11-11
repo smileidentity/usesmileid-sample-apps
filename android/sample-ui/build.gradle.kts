@@ -53,6 +53,14 @@ dependencies {
     // signature, so every consumer needs the SDK on its compile classpath to assign those fields.
     api(platform(libs.usesmileid.bom))
     api(libs.usesmileid)
+    // The SDK's POM names its bridge as the moving -SNAPSHOT; this holds it to the build of the same snapshot run.
+    project.the<VersionCatalogsExtension>().named("libs").findVersion("usesmileid-bridge").ifPresent { sdk ->
+        constraints {
+            api("com.usesmileid:bridge") {
+                version { strictly(sdk.requiredVersion) }
+            }
+        }
+    }
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.material3)

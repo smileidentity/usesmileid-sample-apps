@@ -76,7 +76,7 @@ SDK, so it can include changes that aren't released yet.
 | Android | JDK 21 or newer, and an Android SDK with API 37 |
 | iOS | Xcode 27.1, and [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
 | Flutter | The Flutter stable channel |
-| Expo | Node 20.19 or newer, and pnpm 9 |
+| Expo | Node 22.13 or newer, and pnpm 9 |
 
 ### Android
 
