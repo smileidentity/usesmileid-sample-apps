@@ -53,7 +53,7 @@ dependencies {
     // signature, so every consumer needs the SDK on its compile classpath to assign those fields.
     api(platform(libs.usesmileid.bom))
     api(libs.usesmileid)
-    // The SDK's bridge, held strictly to its pinned snapshot build, so a POM naming the moving snapshot fails the build.
+    // The SDK's POM names its bridge as the moving -SNAPSHOT; this holds it to the build of the same snapshot run.
     project.the<VersionCatalogsExtension>().named("libs").findVersion("usesmileid-bridge").ifPresent { sdk ->
         constraints {
             api("com.usesmileid:bridge") {

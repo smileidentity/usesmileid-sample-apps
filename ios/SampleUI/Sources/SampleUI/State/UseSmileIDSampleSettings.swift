@@ -2,7 +2,7 @@
 public enum UseSmileIDSampleSetting: String, CaseIterable, Sendable {
   case enhancedSmartSelfie, agentMode, consentStep, instructionsStep, previewStep
   case galleryUpload, allowSkipBack, selfieFirst
-  case skipApiSubmission
+  case skipApiSubmission, allowOfflineMode
   case allowScreenCapture
 }
 
@@ -93,6 +93,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var selfieFirst: Bool
   /// config.skipApiSubmission; off, as the SDK defaults it.
   public var skipApiSubmission: Bool
+  /// config.allowOfflineMode; off, as the SDK defaults it.
+  public var allowOfflineMode: Bool
   /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
   public var allowScreenCapture: Bool
   /// A typed field rather than one of the switches: three values, not two.
@@ -112,6 +114,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     allowSkipBack: Bool = false,
     selfieFirst: Bool = false,
     skipApiSubmission: Bool = false,
+    allowOfflineMode: Bool = false,
     allowScreenCapture: Bool = true,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
     appearance: UseSmileIDSampleAppearance = .system,
@@ -126,6 +129,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.allowSkipBack = allowSkipBack
     self.selfieFirst = selfieFirst
     self.skipApiSubmission = skipApiSubmission
+    self.allowOfflineMode = allowOfflineMode
     self.allowScreenCapture = allowScreenCapture
     self.captureMode = captureMode
     self.appearance = appearance
@@ -143,6 +147,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .allowSkipBack: allowSkipBack
     case .selfieFirst: selfieFirst
     case .skipApiSubmission: skipApiSubmission
+    case .allowOfflineMode: allowOfflineMode
     case .allowScreenCapture: allowScreenCapture
     }
   }
@@ -169,6 +174,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .allowSkipBack: copy.allowSkipBack = enabled
     case .selfieFirst: copy.selfieFirst = enabled
     case .skipApiSubmission: copy.skipApiSubmission = enabled
+    case .allowOfflineMode: copy.allowOfflineMode = enabled
     case .allowScreenCapture: copy.allowScreenCapture = enabled
     }
     return copy

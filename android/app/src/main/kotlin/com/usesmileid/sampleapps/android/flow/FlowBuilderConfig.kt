@@ -13,6 +13,7 @@ import com.usesmileid.presentation.flow.config.DocumentVerificationParams
 import com.usesmileid.presentation.flow.config.EnhancedDocumentVerificationParams
 import com.usesmileid.presentation.flow.config.EnhancedKYCParams
 import com.usesmileid.presentation.flow.config.ResidencyDocumentVerificationParams
+import com.usesmileid.presentation.flow.config.UseSmileIDConfigBuilder
 import com.usesmileid.presentation.flow.dsl.DocumentCaptureConfigBuilder
 import com.usesmileid.presentation.flow.dsl.ScreensBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
@@ -58,7 +59,7 @@ fun UseSmileIDFlowBuilder.applying(
     applyIdParams(snapshot)
     screens { journeyFor(snapshot) }
     config {
-        skipApiSubmission = snapshot.skipApiSubmission
+        applySubmission(snapshot)
         allowScreenCapture = snapshot.allowScreenCapture
     }
     if (snapshot.product.capture) {
@@ -129,6 +130,12 @@ fun UseSmileIDFlowBuilder.applying(
             palette.fontFamily?.let { fontFamily = it }
         }
     }
+}
+
+/** The SUBMISSION settings: whether the SDK submits, and whether it hands back a job that can't connect. */
+internal fun UseSmileIDConfigBuilder.applySubmission(snapshot: FlowLaunchSnapshot) {
+    skipApiSubmission = snapshot.skipApiSubmission
+    allowOfflineMode = snapshot.allowOfflineMode
 }
 
 private fun UseSmileIDFlowBuilder.applyIdParams(snapshot: FlowLaunchSnapshot) {

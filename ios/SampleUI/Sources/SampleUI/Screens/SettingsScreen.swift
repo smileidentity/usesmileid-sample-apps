@@ -344,6 +344,13 @@ public struct SettingsScreen: View {
         setting: .skipApiSubmission,
         testId: UseSmileIDSampleTestIds.settingSkipApiSubmission
       )
+      switchRow(
+        title: UseSmileIDSampleStrings.settingsAllowOfflineMode,
+        icon: SmileIcons.verifications,
+        supporting: UseSmileIDSampleStrings.settingsAllowOfflineModeBody,
+        setting: .allowOfflineMode,
+        testId: UseSmileIDSampleTestIds.settingAllowOfflineMode
+      )
     }
   }
 

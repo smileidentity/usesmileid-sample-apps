@@ -211,6 +211,7 @@ class _UseSmileIDSampleSdkFlowTabState
       allowSkipBack: settings.allowSkipBack,
       selfieFirst: settings.selfieFirst,
       skipApiSubmission: settings.skipApiSubmission,
+      allowOfflineMode: settings.allowOfflineMode,
       allowScreenCapture: settings.allowScreenCapture,
       userId: forms.authUserId.trim(),
       partnerId: profiles.partnerId,

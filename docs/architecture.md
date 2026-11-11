@@ -258,12 +258,16 @@ the SDK's default: gallery upload off, and skip the back off (`allowSkipBack`). 
 switch: Capture as matches the document, and the SDK decides from its type whether to ask for a back. Selfie first, off by default,
 orders the two captures: every document product runs document then selfie unless it is on.
 
-**The SUBMISSION setting.** Skip API submission is a switch, off by default as the SDK defaults it,
+**The SUBMISSION settings.** Skip API submission is a switch, off by default as the SDK defaults it,
 and sets `config.skipApiSubmission`. On, the SDK seals the job and hands it back through `onResult`
 instead of submitting it. The result card records that as `captured`, the run lands on the unsubmitted
 job's details, and no verification is stored. This app forwards nothing, so it deletes every file the
 captured job lists and then its session folder, which the SDK leaves to the host.
 
+Allow offline mode is a switch beside it, also off by default, and sets `config.allowOfflineMode`. On,
+a submission that can't connect to Smile ID comes back the same way, as a captured job, and is handled
+as above; a timeout or a submission Smile ID answers is shown as usual. Turn the phone's network off before submitting
+to see it.
 **The SCREEN CAPTURE setting.** Allow screen capture is a switch, on by default in this app, and sets
 `config.allowScreenCapture`. The SDK defaults it off, which keeps the flow out of screenshots,
 recordings, casting and the recents thumbnail on Android and covers it while the screen is recorded or

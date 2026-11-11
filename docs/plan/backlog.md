@@ -93,15 +93,6 @@ do, run by `flutter/verify.sh` on the Mac.
 
 ## Spec and code health
 
-### Android: replace the pinned njia and SDK snapshot builds with releases
-
-`android/gradle/libs.versions.toml` pins njia to one snapshot build, `0.0.1-20261023.003202-6`, and the
-SDK artifacts to the builds made against it (`12.3.0-20261023.083151-*`). A bare `0.0.1-SNAPSHOT` lost
-Gradle's conflict resolution to the SDK snapshot's older njia, and an SDK built on another njia fails at
-run time with `NoSuchMethodError`. Maven Central's snapshot repository deletes builds after about 90 days,
-so once these go, a clean build can't resolve them. Done when both pins are releases, or newer matching
-builds until then.
-
 ### Flutter iOS: retire the first-push launch listener
 
 `UseSmileIDSampleColdLink` takes a cold link from the first route push within two seconds of the first
@@ -121,22 +112,6 @@ Profiles and the token session are kept in the Keychain, which iOS keeps when th
 reinstall opens with the last install's profiles and an ended session instead of an empty app, which a
 partner reading the sample will take for state the app made up. Done looks like the stores cleared on
 the first launch after an install, on iOS, with a test for it.
-
-### Back onto released SDKs with the next SDK release
-
-`main` builds the four apps against SDK snapshots for test builds (#163), until the next SDK release
-(AGENTS.md, "Unreleased SDK API"). The Android pins can stop resolving on their own: Central prunes snapshot builds
-after its retention window, and every `main` build then fails until the pins move. Each piece goes
-in the release bump:
-
-- **Android:** `libs.versions.toml` back to one released version, and the snapshot repository in
-  `settings.gradle.kts` and the strict `bridge` constraint in `sample-ui/build.gradle.kts` removed.
-- **Flutter:** `usesmileid` released in `app` and `sample_ui`, the snapshot repository in
-  `app/android/build.gradle.kts` removed, and `the SDK is resolved from the registry` test back to
-  accepting `x.y.z` only.
-- **iOS and Expo:** `ios-spm` and `@smileid/usesmileid*` back to released versions.
-
-Done when `main` pins only released SDKs and no build reads a snapshot repository.
 
 ### Android: a launch screen that matches a pinned appearance
 

@@ -1,18 +1,18 @@
 [versions]
 # The SDK snapshot builds made against njia's pinned build; a bare -SNAPSHOT can resolve a build made against another njia.
-usesmileid = "12.3.0-20261030.021402-369"
-usesmileid-bom = "12.3.0-20261030.021402-370"
-usesmileid-mlkit-face = "12.3.0-20261030.021402-366"
-usesmileid-mlkit-document = "12.3.0-20261030.021402-367"
-usesmileid-huawei-face = "12.3.0-20261030.021402-367"
-usesmileid-huawei-document = "12.3.0-20261030.021402-368"
-usesmileid-bridge = "12.3.0-20261030.021402-368"
-# The four apps' navigation engine: one snapshot build, pinned, until its first release; the SDK's older build would win as a bare -SNAPSHOT.
-njia = "0.0.1-20261030.012141-13"
+usesmileid = "12.4.0-20261110.133529-83"
+usesmileid-bom = "12.4.0-20261110.133529-84"
+usesmileid-mlkit-face = "12.4.0-20261110.133529-83"
+usesmileid-mlkit-document = "12.4.0-20261110.133529-83"
+usesmileid-huawei-face = "12.4.0-20261110.133529-82"
+usesmileid-huawei-document = "12.4.0-20261110.133529-83"
+usesmileid-bridge = "12.4.0-20261110.133529-83"
+# The four apps' navigation engine, at the exact build the SDK snapshot depends on.
+njia = "1.0.0"
 
-android-gradle-plugin = "9.5.0"
+android-gradle-plugin = "9.5.1"
 kotlin = "2.4.21"
-ksp = "2.3.12"
+ksp = "2.3.13"
 
 androidx-activity = "1.13.0"
 # Custom Tabs for the Settings links: the page keeps the user's own browser rather than a WebView.

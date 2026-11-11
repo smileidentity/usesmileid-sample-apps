@@ -32,6 +32,9 @@ enum UseSmileIDSampleSetting {
   /// config.skipApiSubmission; off, as the SDK defaults it.
   skipApiSubmission(UseSmileIDSampleTestIds.settingSkipApiSubmission),
 
+  /// config.allowOfflineMode; off, as the SDK defaults it.
+  allowOfflineMode(UseSmileIDSampleTestIds.settingAllowOfflineMode),
+
   /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
   allowScreenCapture(UseSmileIDSampleTestIds.settingAllowScreenCapture);
 
@@ -169,6 +172,7 @@ class UseSmileIDSampleSettings {
     this.allowSkipBack = false,
     this.selfieFirst = false,
     this.skipApiSubmission = false,
+    this.allowOfflineMode = false,
     this.allowScreenCapture = true,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
     this.appearance = UseSmileIDSampleAppearance.system,
@@ -202,6 +206,9 @@ class UseSmileIDSampleSettings {
   /// Whether the SDK hands the captured job back instead of submitting it.
   final bool skipApiSubmission;
 
+  /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
+  final bool allowOfflineMode;
+
   /// Whether screenshots and recordings can show the flow.
   final bool allowScreenCapture;
 
@@ -225,6 +232,7 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.allowSkipBack => allowSkipBack,
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
     UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
+    UseSmileIDSampleSetting.allowOfflineMode => allowOfflineMode,
     UseSmileIDSampleSetting.allowScreenCapture => allowScreenCapture,
   };
 
@@ -258,6 +266,9 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.skipApiSubmission => _copy(
       skipApiSubmission: enabled,
     ),
+    UseSmileIDSampleSetting.allowOfflineMode => _copy(
+      allowOfflineMode: enabled,
+    ),
     UseSmileIDSampleSetting.allowScreenCapture => _copy(
       allowScreenCapture: enabled,
     ),
@@ -287,6 +298,7 @@ class UseSmileIDSampleSettings {
     bool? allowSkipBack,
     bool? selfieFirst,
     bool? skipApiSubmission,
+    bool? allowOfflineMode,
     bool? allowScreenCapture,
     UseSmileIDSampleCaptureMode? captureMode,
     UseSmileIDSampleAppearance? appearance,
@@ -301,6 +313,7 @@ class UseSmileIDSampleSettings {
     allowSkipBack: allowSkipBack ?? this.allowSkipBack,
     selfieFirst: selfieFirst ?? this.selfieFirst,
     skipApiSubmission: skipApiSubmission ?? this.skipApiSubmission,
+    allowOfflineMode: allowOfflineMode ?? this.allowOfflineMode,
     allowScreenCapture: allowScreenCapture ?? this.allowScreenCapture,
     captureMode: captureMode ?? this.captureMode,
     appearance: appearance ?? this.appearance,
@@ -319,6 +332,7 @@ class UseSmileIDSampleSettings {
       other.allowSkipBack == allowSkipBack &&
       other.selfieFirst == selfieFirst &&
       other.skipApiSubmission == skipApiSubmission &&
+      other.allowOfflineMode == allowOfflineMode &&
       other.allowScreenCapture == allowScreenCapture &&
       other.captureMode == captureMode &&
       other.appearance == appearance &&
@@ -335,6 +349,7 @@ class UseSmileIDSampleSettings {
     allowSkipBack,
     selfieFirst,
     skipApiSubmission,
+    allowOfflineMode,
     allowScreenCapture,
     captureMode,
     appearance,

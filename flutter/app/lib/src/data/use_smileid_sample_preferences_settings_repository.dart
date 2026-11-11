@@ -60,6 +60,10 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.skipApiSubmission,
         defaults.skipApiSubmission,
       ),
+      allowOfflineMode: stored(
+        UseSmileIDSampleSettingsKeys.allowOfflineMode,
+        defaults.allowOfflineMode,
+      ),
       allowScreenCapture: stored(
         UseSmileIDSampleSettingsKeys.allowScreenCapture,
         defaults.allowScreenCapture,

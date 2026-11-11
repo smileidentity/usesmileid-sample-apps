@@ -380,6 +380,12 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
                 supportingText: context.strings.settingsSkipApiSubmissionBody,
                 setting: UseSmileIDSampleSetting.skipApiSubmission,
               ),
+              _switchRow(
+                title: context.strings.settingsAllowOfflineMode,
+                icon: SmileIcons.verifications,
+                supportingText: context.strings.settingsAllowOfflineModeBody,
+                setting: UseSmileIDSampleSetting.allowOfflineMode,
+              ),
             ],
           ),
           // The design draws no such section either; it sits on its own, as SUBMISSION does.

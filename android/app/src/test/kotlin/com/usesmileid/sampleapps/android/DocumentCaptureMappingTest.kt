@@ -5,10 +5,12 @@ import com.usesmileid.presentation.flow.config.DocumentOrientation
 import com.usesmileid.presentation.flow.config.DocumentType
 import com.usesmileid.presentation.flow.config.DocumentVerificationParams
 import com.usesmileid.presentation.flow.dsl.DocumentCaptureConfigBuilder
+import com.usesmileid.presentation.flow.config.UseSmileIDConfigBuilder
 import com.usesmileid.presentation.flow.dsl.UseSmileIDFlowBuilder
 import com.usesmileid.sampleapps.android.flow.DocumentOptions
 import com.usesmileid.sampleapps.android.flow.FlowLaunchSnapshot
 import com.usesmileid.sampleapps.android.flow.applyDocumentOptions
+import com.usesmileid.sampleapps.android.flow.applySubmission
 import com.usesmileid.sampleapps.android.flow.applying
 import com.usesmileid.sampleapps.android.flow.documentTypeFor
 import com.usesmileid.sampleapps.android.flow.documentOptionsFor
@@ -140,6 +142,17 @@ class DocumentCaptureMappingTest {
         assertEquals(false, defaults.allowGalleryUpload)
         assertTrue(sdkCapturesBothSides(defaults))
         assertEquals(false, defaults.allowSkipBack)
+    }
+
+    @Test
+    fun the_submission_settings_reach_the_sdk() {
+        for (enabled in listOf(false, true)) {
+            val config = UseSmileIDConfigBuilder().apply {
+                applySubmission(snapshotOf(UseSmileIDSampleIdDetails()).copy(skipApiSubmission = enabled, allowOfflineMode = !enabled))
+            }
+            assertEquals(enabled, config.skipApiSubmission)
+            assertEquals(!enabled, config.allowOfflineMode)
+        }
     }
 
     @Test

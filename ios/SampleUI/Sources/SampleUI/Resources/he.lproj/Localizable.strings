@@ -285,6 +285,8 @@
 "settings_section_submission" = "שליחה";
 "settings_skip_api_submission" = "דילוג על שליחה ל-API";
 "settings_skip_api_submission_body" = "המשימה שצולמה חוזרת בלי שליחה";
+"settings_allow_offline_mode" = "אפשר מצב לא מקוון";
+"settings_allow_offline_mode_body" = "בלי חיבור, המשימה חוזרת לשליחה מאוחר יותר";
 "settings_section_screen_capture" = "צילום מסך";
 "settings_allow_screen_capture" = "לאפשר צילום מסך";
 "settings_allow_screen_capture_body" = "צילומי מסך והקלטות יכולים להציג את התהליך";

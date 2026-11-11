@@ -29,6 +29,7 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     this.allowSkipBack = false,
     this.selfieFirst = false,
     this.skipApiSubmission = false,
+    this.allowOfflineMode = false,
     this.allowScreenCapture = true,
     this.session,
     this.sessionExpired = false,
@@ -84,6 +85,9 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// Whether the SDK hands the captured job back instead of submitting it.
   final bool skipApiSubmission;
+
+  /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
+  final bool allowOfflineMode;
 
   /// Whether screenshots and recordings can show the flow.
   final bool allowScreenCapture;

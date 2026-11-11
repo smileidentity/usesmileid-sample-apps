@@ -59,6 +59,7 @@ public final class UseSmileIDSampleStore {
       allowSkipBack: settingsStorage.flag(.allowSkipBack) ?? defaults.allowSkipBack,
       selfieFirst: settingsStorage.flag(.selfieFirst) ?? defaults.selfieFirst,
       skipApiSubmission: settingsStorage.flag(.skipApiSubmission) ?? defaults.skipApiSubmission,
+      allowOfflineMode: settingsStorage.flag(.allowOfflineMode) ?? defaults.allowOfflineMode,
       allowScreenCapture: settingsStorage.flag(.allowScreenCapture) ?? defaults.allowScreenCapture,
       captureMode: settingsStorage.data(Self.captureModeKey)
         .flatMap { String(data: $0, encoding: .utf8) }
@@ -239,6 +240,7 @@ public extension UseSmileIDSampleSetting {
     case .allowSkipBack: "allow_skip_back"
     case .selfieFirst: "selfie_first"
     case .skipApiSubmission: "skip_api_submission"
+    case .allowOfflineMode: "allow_offline_mode"
     case .allowScreenCapture: "allow_screen_capture"
     }
   }

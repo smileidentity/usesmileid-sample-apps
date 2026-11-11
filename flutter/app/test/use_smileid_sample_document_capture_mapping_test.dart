@@ -160,6 +160,33 @@ void main() {
     }
   });
 
+  test('the offline mode setting reaches the SDK', () {
+    for (final bool offline in <bool>[false, true]) {
+      final UseSmileIDFlowBuilder builder = UseSmileIDFlowBuilder();
+      useSmileIDSampleApplying(
+        builder,
+        _snapshot(
+          const UseSmileIDSampleIdDetails(
+            country: UseSmileIDSampleCountry('KE', 'Kenya'),
+            document: UseSmileIDSampleDocument(
+              code: 'PASSPORT',
+              name: 'Passport',
+              hasBack: false,
+              format: 3,
+            ),
+          ),
+          allowOfflineMode: offline,
+        ),
+      );
+      // The SDK says to inspect this, then marks it internal.
+      // ignore: invalid_use_of_internal_member
+      final dynamic result = builder.build();
+      // The result's type is unexported, hence the dynamic read.
+      // ignore: avoid_dynamic_calls
+      expect(result.configuration.allowOfflineMode, offline);
+    }
+  });
+
   test('the SDK captures a passport front only, whether matched or chosen', () {
     for (final UseSmileIDSampleCaptureAs? captureAs
         in <UseSmileIDSampleCaptureAs?>[
@@ -314,6 +341,7 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   bool galleryUpload = false,
   bool allowSkipBack = false,
   bool skipApiSubmission = false,
+  bool allowOfflineMode = false,
   bool allowScreenCapture = true,
 }) => UseSmileIDSampleFlowLaunchSnapshot(
   product: product,
@@ -336,6 +364,7 @@ UseSmileIDSampleFlowLaunchSnapshot _snapshot(
   galleryUpload: galleryUpload,
   allowSkipBack: allowSkipBack,
   skipApiSubmission: skipApiSubmission,
+  allowOfflineMode: allowOfflineMode,
   allowScreenCapture: allowScreenCapture,
   userId: 'user_1',
   partnerId: 'profile-1',

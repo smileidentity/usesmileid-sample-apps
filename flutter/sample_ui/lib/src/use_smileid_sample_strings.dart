@@ -413,6 +413,10 @@ final class UseSmileIDSampleStrings {
       _values['settings_skip_api_submission']!;
   String get settingsSkipApiSubmissionBody =>
       _values['settings_skip_api_submission_body']!;
+  String get settingsAllowOfflineMode =>
+      _values['settings_allow_offline_mode']!;
+  String get settingsAllowOfflineModeBody =>
+      _values['settings_allow_offline_mode_body']!;
   String get settingsSectionScreenCapture =>
       _values['settings_section_screen_capture']!;
   String get settingsAllowScreenCapture =>
@@ -778,6 +782,9 @@ final class UseSmileIDSampleStrings {
       'settings_skip_api_submission': 'Skip API submission',
       'settings_skip_api_submission_body':
           'The captured job comes back unsubmitted',
+      'settings_allow_offline_mode': 'Allow offline mode',
+      'settings_allow_offline_mode_body':
+          'With no connection, the job comes back to send later',
       'settings_section_screen_capture': 'SCREEN CAPTURE',
       'settings_allow_screen_capture': 'Allow screen capture',
       'settings_allow_screen_capture_body':
@@ -1153,6 +1160,9 @@ final class UseSmileIDSampleStrings {
       'settings_skip_api_submission': 'Ignorer la soumission à l’API',
       'settings_skip_api_submission_body':
           'La tâche capturée revient sans être soumise',
+      'settings_allow_offline_mode': 'Autoriser le mode hors ligne',
+      'settings_allow_offline_mode_body':
+          'Sans connexion, la tâche revient pour être envoyée plus tard',
       'settings_section_screen_capture': 'CAPTURE D’ÉCRAN',
       'settings_allow_screen_capture': 'Autoriser la capture d’écran',
       'settings_allow_screen_capture_body':
@@ -1507,6 +1517,9 @@ final class UseSmileIDSampleStrings {
       'settings_section_submission': 'الإرسال',
       'settings_skip_api_submission': 'تخطي الإرسال إلى واجهة API',
       'settings_skip_api_submission_body': 'تعود المهمة الملتقطة دون إرسال',
+      'settings_allow_offline_mode': 'السماح بوضع عدم الاتصال',
+      'settings_allow_offline_mode_body':
+          'بدون اتصال، تعود المهمة لإرسالها لاحقًا',
       'settings_section_screen_capture': 'التقاط الشاشة',
       'settings_allow_screen_capture': 'السماح بالتقاط الشاشة',
       'settings_allow_screen_capture_body':
@@ -1854,6 +1867,9 @@ final class UseSmileIDSampleStrings {
       'settings_section_submission': 'שליחה',
       'settings_skip_api_submission': 'דילוג על שליחה ל-API',
       'settings_skip_api_submission_body': 'המשימה שצולמה חוזרת בלי שליחה',
+      'settings_allow_offline_mode': 'אפשר מצב לא מקוון',
+      'settings_allow_offline_mode_body':
+          'בלי חיבור, המשימה חוזרת לשליחה מאוחר יותר',
       'settings_section_screen_capture': 'צילום מסך',
       'settings_allow_screen_capture': 'לאפשר צילום מסך',
       'settings_allow_screen_capture_body':

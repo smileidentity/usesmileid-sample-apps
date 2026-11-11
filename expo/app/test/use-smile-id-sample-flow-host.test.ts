@@ -70,6 +70,7 @@ const snapshot = (
   allowSkipBack: false,
   selfieFirst: false,
   skipApiSubmission: false,
+  allowOfflineMode: false,
   allowScreenCapture: true,
   userId: 'user_1',
   partnerId: 'p-1',
@@ -276,6 +277,14 @@ describe('what the SDK is handed', () => {
       const result = built(snapshot({ skipApiSubmission })).build();
       expect(result.kind).toBe('success');
       if (result.kind === 'success') expect(result.configuration.config?.skipApiSubmission).toBe(skipApiSubmission);
+    }
+  });
+
+  it('hands the SDK the offline mode setting', () => {
+    for (const allowOfflineMode of [false, true]) {
+      const result = built(snapshot({ allowOfflineMode })).build();
+      expect(result.kind).toBe('success');
+      if (result.kind === 'success') expect(result.configuration.config?.allowOfflineMode).toBe(allowOfflineMode);
     }
   });
 

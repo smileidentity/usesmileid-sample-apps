@@ -157,6 +157,16 @@ class UseSmileIDSampleSettingsPersistenceTest {
     }
 
     @Test
+    fun `the Allow offline mode switch is stored under the key the four apps share`() = runTest {
+        assertFalse(store.settings.first().allowOfflineMode)
+
+        store.setSetting(UseSmileIDSampleSetting.AllowOfflineMode, true)
+
+        assertEquals(true, prefs.data.first()[booleanPreferencesKey("allow_offline_mode")])
+        assertTrue(store.settings.first().allowOfflineMode)
+    }
+
+    @Test
     fun `the Allow screen capture switch starts on and is stored under the key the four apps share`() = runTest {
         assertTrue(store.settings.first().allowScreenCapture)
 

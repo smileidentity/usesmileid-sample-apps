@@ -68,6 +68,7 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   allowSkipBack: false,
   selfieFirst: false,
   skipApiSubmission: false,
+  allowOfflineMode: false,
   allowScreenCapture: true,
   userId: 'user_1',
   partnerId: 'p-1',

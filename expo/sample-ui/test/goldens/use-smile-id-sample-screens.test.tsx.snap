@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`licenses dark default 1`] = `
 <View
@@ -39861,65 +39861,6 @@ exports[`settings dark agentModeOn 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#272a35",
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -39977,8 +39918,8 @@ exports[`settings dark agentModeOn 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -39990,7 +39931,7 @@ exports[`settings dark agentModeOn 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -40008,9 +39949,32 @@ exports[`settings dark agentModeOn 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4294111986,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -40044,7 +40008,7 @@ exports[`settings dark agentModeOn 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -40063,7 +40027,7 @@ exports[`settings dark agentModeOn 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -40092,10 +40056,10 @@ exports[`settings dark agentModeOn 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#272a35"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -44834,65 +44798,6 @@ exports[`settings dark consentBoundByToken 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#272a35",
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -44950,8 +44855,8 @@ exports[`settings dark consentBoundByToken 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -44963,7 +44868,7 @@ exports[`settings dark consentBoundByToken 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -44981,9 +44886,32 @@ exports[`settings dark consentBoundByToken 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4294111986,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -45017,7 +44945,7 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -45036,7 +44964,7 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -45065,10 +44993,10 @@ exports[`settings dark consentBoundByToken 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#272a35"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -49807,65 +49735,6 @@ exports[`settings dark default 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#272a35",
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -49923,8 +49792,8 @@ exports[`settings dark default 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -49936,7 +49805,7 @@ exports[`settings dark default 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -49954,9 +49823,32 @@ exports[`settings dark default 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4294111986,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -49990,7 +49882,7 @@ exports[`settings dark default 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -50009,7 +49901,7 @@ exports[`settings dark default 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -50038,10 +49930,10 @@ exports[`settings dark default 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#272a35"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -54780,65 +54672,6 @@ exports[`settings dark withDebugSection 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#272a35",
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -54896,8 +54729,8 @@ exports[`settings dark withDebugSection 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -54909,7 +54742,7 @@ exports[`settings dark withDebugSection 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -54927,9 +54760,32 @@ exports[`settings dark withDebugSection 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4294111986,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -54963,7 +54819,7 @@ exports[`settings dark withDebugSection 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -54982,7 +54838,7 @@ exports[`settings dark withDebugSection 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -55011,10 +54867,10 @@ exports[`settings dark withDebugSection 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#272a35"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -60098,65 +59954,6 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                 value={false}
               />
             </View>
-          </View>
-        </View>
-      </View>
-      <View
-        style={
-          [
-            {
-              "rowGap": 8,
-            },
-            {
-              "paddingHorizontal": 16,
-            },
-          ]
-        }
-      >
-        <Text
-          style={
-            [
-              {
-                "fontFamily": "DMSans-Bold",
-                "fontSize": 11,
-                "letterSpacing": 0,
-                "lineHeight": 16,
-                "marginBottom": -0.8389999999999995,
-                "marginTop": -0.8389999999999995,
-              },
-              {
-                "color": "#848282",
-                "letterSpacing": 0.88,
-              },
-              undefined,
-            ]
-          }
-        >
-          التقاط الشاشة
-        </Text>
-        <View
-          style={
-            [
-              {
-                "overflow": "hidden",
-                "width": "100%",
-              },
-              {
-                "backgroundColor": "#ffffff",
-                "borderColor": "#eaecf0",
-                "borderRadius": 16,
-                "borderWidth": 0.5,
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              {
-                "margin": -0.5,
-              }
-            }
-          >
             <View
               style={
                 [
@@ -60214,8 +60011,8 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                       },
                     ]
                   }
-                  vbHeight={19}
-                  vbWidth={19}
+                  vbHeight={21}
+                  vbWidth={21}
                   width={20}
                 >
                   <RNSVGGroup
@@ -60227,7 +60024,7 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                     }
                   >
                     <RNSVGPath
-                      d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                      d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                       fill={null}
                       opacity={1}
                       propList={
@@ -60245,9 +60042,32 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                           "type": 0,
                         }
                       }
-                      strokeLinecap={0}
-                      strokeLinejoin={0}
-                      strokeWidth={1.58333}
+                      strokeLinecap={1}
+                      strokeLinejoin={1}
+                      strokeWidth={1.83333}
+                    />
+                    <RNSVGPath
+                      d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                      fill={null}
+                      opacity={1}
+                      propList={
+                        [
+                          "fill",
+                          "stroke",
+                          "strokeWidth",
+                          "strokeLinecap",
+                          "strokeLinejoin",
+                        ]
+                      }
+                      stroke={
+                        {
+                          "payload": 4280361772,
+                          "type": 0,
+                        }
+                      }
+                      strokeLinecap={1}
+                      strokeLinejoin={1}
+                      strokeWidth={1.83333}
                     />
                   </RNSVGGroup>
                 </RNSVGSvgView>
@@ -60281,7 +60101,7 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                     ]
                   }
                 >
-                  السماح بالتقاط الشاشة
+                  السماح بوضع عدم الاتصال
                 </Text>
                 <Text
                   style={
@@ -60300,7 +60120,7 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                     ]
                   }
                 >
-                  يمكن أن تُظهر لقطات الشاشة والتسجيلات مسار التحقق
+                  بدون اتصال، تعود المهمة لإرسالها لاحقًا
                 </Text>
               </View>
               <RCTSwitch
@@ -60329,10 +60149,10 @@ exports[`settings in Arabic mirrors the rows and translates every line but the i
                     ],
                   ]
                 }
-                testID="sample_setting_allow_screen_capture"
+                testID="sample_setting_allow_offline_mode"
                 thumbTintColor="#ffffff"
                 tintColor="#eaecf0"
-                value={true}
+                value={false}
               />
             </View>
           </View>
@@ -65132,65 +64952,6 @@ exports[`settings light agentModeOn 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#ffffff",
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -65248,8 +65009,8 @@ exports[`settings light agentModeOn 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -65261,7 +65022,7 @@ exports[`settings light agentModeOn 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -65279,9 +65040,32 @@ exports[`settings light agentModeOn 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4280361772,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -65315,7 +65099,7 @@ exports[`settings light agentModeOn 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -65334,7 +65118,7 @@ exports[`settings light agentModeOn 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -65363,10 +65147,10 @@ exports[`settings light agentModeOn 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#ffffff"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -70105,65 +69889,6 @@ exports[`settings light consentBoundByToken 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#ffffff",
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -70221,8 +69946,8 @@ exports[`settings light consentBoundByToken 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -70234,7 +69959,7 @@ exports[`settings light consentBoundByToken 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -70252,9 +69977,32 @@ exports[`settings light consentBoundByToken 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4280361772,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -70288,7 +70036,7 @@ exports[`settings light consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -70307,7 +70055,7 @@ exports[`settings light consentBoundByToken 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -70336,10 +70084,10 @@ exports[`settings light consentBoundByToken 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#ffffff"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -75078,65 +74826,6 @@ exports[`settings light default 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#ffffff",
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -75194,8 +74883,8 @@ exports[`settings light default 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -75207,7 +74896,7 @@ exports[`settings light default 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -75225,9 +74914,32 @@ exports[`settings light default 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4280361772,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -75261,7 +74973,7 @@ exports[`settings light default 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -75280,7 +74992,7 @@ exports[`settings light default 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -75309,10 +75021,10 @@ exports[`settings light default 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#ffffff"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>
@@ -80051,65 +79763,6 @@ exports[`settings light withDebugSection 1`] = `
               value={false}
             />
           </View>
-        </View>
-      </View>
-    </View>
-    <View
-      style={
-        [
-          {
-            "rowGap": 8,
-          },
-          {
-            "paddingHorizontal": 16,
-          },
-        ]
-      }
-    >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 11,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -0.8389999999999995,
-              "marginTop": -0.8389999999999995,
-            },
-            {
-              "color": "#848282",
-              "letterSpacing": 0.88,
-            },
-            undefined,
-          ]
-        }
-      >
-        SCREEN CAPTURE
-      </Text>
-      <View
-        style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "backgroundColor": "#ffffff",
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-            },
-          ]
-        }
-      >
-        <View
-          style={
-            {
-              "margin": -0.5,
-            }
-          }
-        >
           <View
             style={
               [
@@ -80167,8 +79820,8 @@ exports[`settings light withDebugSection 1`] = `
                     },
                   ]
                 }
-                vbHeight={19}
-                vbWidth={19}
+                vbHeight={21}
+                vbWidth={21}
                 width={20}
               >
                 <RNSVGGroup
@@ -80180,7 +79833,7 @@ exports[`settings light withDebugSection 1`] = `
                   }
                 >
                   <RNSVGPath
-                    d="M9.5 2.375L15.0417 4.75V9.5C15.0417 12.6667 12.6667 15.0417 9.5 16.625C6.33333 15.0417 3.95833 12.6667 3.95833 9.5V4.75L9.5 2.375Z"
+                    d="M7.875 5.25H17.5M7.875 10.5H17.5M7.875 15.75H17.5"
                     fill={null}
                     opacity={1}
                     propList={
@@ -80198,9 +79851,32 @@ exports[`settings light withDebugSection 1`] = `
                         "type": 0,
                       }
                     }
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeWidth={1.58333}
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
+                  />
+                  <RNSVGPath
+                    d="M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875"
+                    fill={null}
+                    opacity={1}
+                    propList={
+                      [
+                        "fill",
+                        "stroke",
+                        "strokeWidth",
+                        "strokeLinecap",
+                        "strokeLinejoin",
+                      ]
+                    }
+                    stroke={
+                      {
+                        "payload": 4280361772,
+                        "type": 0,
+                      }
+                    }
+                    strokeLinecap={1}
+                    strokeLinejoin={1}
+                    strokeWidth={1.83333}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -80234,7 +79910,7 @@ exports[`settings light withDebugSection 1`] = `
                   ]
                 }
               >
-                Allow screen capture
+                Allow offline mode
               </Text>
               <Text
                 style={
@@ -80253,7 +79929,7 @@ exports[`settings light withDebugSection 1`] = `
                   ]
                 }
               >
-                Screenshots and recordings can show the flow
+                With no connection, the job comes back to send later
               </Text>
             </View>
             <RCTSwitch
@@ -80282,10 +79958,10 @@ exports[`settings light withDebugSection 1`] = `
                   ],
                 ]
               }
-              testID="sample_setting_allow_screen_capture"
+              testID="sample_setting_allow_offline_mode"
               thumbTintColor="#ffffff"
               tintColor="#eaecf0"
-              value={true}
+              value={false}
             />
           </View>
         </View>

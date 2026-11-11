@@ -16,6 +16,7 @@ let useSmileIDSampleSettingsSeed = [
   "-allow_skip_back", "false",
   "-selfie_first", "false",
   "-skip_api_submission", "false",
+  "-allow_offline_mode", "false",
   "-allow_screen_capture", "true"
 ]
 

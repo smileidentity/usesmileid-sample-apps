@@ -348,6 +348,15 @@ export const SettingsScreen = ({
           testID={UseSmileIDSampleTestIds.SETTING_SKIP_API_SUBMISSION}
           onSettingChange={onSettingChange}
         />
+        <SwitchRow
+          title={strings.settingsAllowOfflineMode}
+          supportingText={strings.settingsAllowOfflineModeBody}
+          icon="verifications"
+          setting={UseSmileIDSampleSetting.AllowOfflineMode}
+          checked={settings.allowOfflineMode}
+          testID={UseSmileIDSampleTestIds.SETTING_ALLOW_OFFLINE_MODE}
+          onSettingChange={onSettingChange}
+        />
       </Section>
 
       {/* The design draws no such section either; it sits on its own, as SUBMISSION does. */}

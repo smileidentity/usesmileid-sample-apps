@@ -415,6 +415,10 @@ abstract final class UseSmileIDSampleTestIds {
   static const String settingSkipApiSubmission =
       'sample_setting_skip_api_submission';
 
+  /// The Allow offline mode switch.
+  static const String settingAllowOfflineMode =
+      'sample_setting_allow_offline_mode';
+
   /// The Allow screen capture switch.
   static const String settingAllowScreenCapture =
       'sample_setting_allow_screen_capture';
@@ -570,6 +574,7 @@ abstract final class UseSmileIDSampleTestIds {
     settingAllowSkipBack,
     settingSelfieFirst,
     settingSkipApiSubmission,
+    settingAllowOfflineMode,
     settingAllowScreenCapture,
     scenarioDrawer,
     scenarioDrawerButton,

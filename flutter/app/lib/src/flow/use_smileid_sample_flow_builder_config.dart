@@ -42,9 +42,9 @@ void useSmileIDSampleApplying(
   _applyIdParams(builder, snapshot);
   builder.screens((ScreensBuilder screens) => _journeyFor(screens, snapshot));
   builder.config((UseSmileIDConfigBuilder config) {
-    config
-      ..skipApiSubmission = snapshot.skipApiSubmission
-      ..allowScreenCapture = snapshot.allowScreenCapture;
+    config.skipApiSubmission = snapshot.skipApiSubmission;
+    config.allowOfflineMode = snapshot.allowOfflineMode;
+    config.allowScreenCapture = snapshot.allowScreenCapture;
   });
   if (snapshot.product.capture) {
     builder.ml(
