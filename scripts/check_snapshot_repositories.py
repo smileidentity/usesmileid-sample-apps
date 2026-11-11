@@ -13,10 +13,11 @@ FILTER = re.compile(r'content\s*\{\s*includeGroup\(\s*"com\.usesmileid"\s*\)\s*\
 
 
 def block_after(text: str, start: int) -> str:
-    """The repository's own `{ … }` block that follows its URL."""
-    opening = text.find("{", start)
-    if opening < 0:
+    """The repository's own `{ … }` block, opening right after its URL's `")`, or nothing."""
+    url_end = re.compile(r'[^"]*"\s*\)\s*\{').match(text, start)
+    if not url_end:
         return ""
+    opening = url_end.end() - 1
     depth = 0
     for index in range(opening, len(text)):
         depth += {"{": 1, "}": -1}.get(text[index], 0)

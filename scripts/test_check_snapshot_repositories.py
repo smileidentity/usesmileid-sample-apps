@@ -21,6 +21,10 @@ class TestSnapshotRepositories(unittest.TestCase):
     def test_a_repository_without_a_filter_fails(self):
         self.assertEqual(1, len(check.problems(f"{URL}\nmaven(\"https://developer.huawei.com/repo/\") {{ }}\n")))
 
+    def test_a_filter_on_the_next_repository_does_not_count(self):
+        text = f'{URL}\nmaven("https://example.com/") {{\n    content {{ includeGroup("com.usesmileid") }}\n}}\n'
+        self.assertEqual(1, len(check.problems(text)))
+
     def test_a_repository_with_a_wider_filter_fails(self):
         text = f'{URL} {{\n    content {{ includeGroupAndSubgroups("com") }}\n}}\n'
         self.assertEqual(1, len(check.problems(text)))
