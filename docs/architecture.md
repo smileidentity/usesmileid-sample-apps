@@ -36,7 +36,7 @@ because that is where those defects show.
 application id, bundle id or URL scheme. Both rules let the same UI compile inside a second host, a
 development sample that builds the SDK from source, so a broken public API fails there before release.
 `sample-ui` is never published. [Source builds](source-build.md) covers that second host: the shell's
-extension point, the identities and the `next` branch.
+extension point, the identities, and how `main` pins SDK snapshots.
 
 ## 3. `spec/` is the contract
 

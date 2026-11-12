@@ -57,6 +57,16 @@ which every document product needs.
 These figures are what a user's phone downloads from the store. [App size](docs/app-size.md) has the space each
 takes once installed, these apps' own sizes for comparison, and how they are measured.
 
+## Branches
+
+**`main`** is the only branch to use. It builds against a recent snapshot of each Smile ID
+SDK, so it can include changes that aren't released yet.
+
+- For the last released SDK, check out the newest `v*` tag. The store apps are built from
+  those tags.
+- Snapshots expire, so an older commit on `main` may no longer build. Use the newest commit
+  or a `v*` tag.
+
 ## Run an app
 
 ### Prerequisites
@@ -66,7 +76,7 @@ takes once installed, these apps' own sizes for comparison, and how they are mea
 | Android | JDK 21 or newer, and an Android SDK with API 37 |
 | iOS | Xcode 27.1, and [XcodeGen](https://github.com/yonaskolb/XcodeGen) |
 | Flutter | The Flutter stable channel |
-| Expo | Node 20.19 or newer, and pnpm 9 |
+| Expo | Node 22.13 or newer, and pnpm 9 |
 
 ### Android
 

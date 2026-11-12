@@ -1,12 +1,13 @@
 [versions]
-# The released SDK, from Maven Central.
-usesmileid = "12.4.0"
-usesmileid-bom = "12.4.0"
-usesmileid-mlkit-face = "12.4.0"
-usesmileid-mlkit-document = "12.4.0"
-usesmileid-huawei-face = "12.4.0"
-usesmileid-huawei-document = "12.4.0"
-# The four apps' navigation engine, at the exact release the SDK depends on.
+# The SDK snapshot builds made against njia's pinned build; a bare -SNAPSHOT can resolve a build made against another njia.
+usesmileid = "12.4.0-20261110.133529-83"
+usesmileid-bom = "12.4.0-20261110.133529-84"
+usesmileid-mlkit-face = "12.4.0-20261110.133529-83"
+usesmileid-mlkit-document = "12.4.0-20261110.133529-83"
+usesmileid-huawei-face = "12.4.0-20261110.133529-82"
+usesmileid-huawei-document = "12.4.0-20261110.133529-83"
+usesmileid-bridge = "12.4.0-20261110.133529-83"
+# The four apps' navigation engine, at the exact build the SDK snapshot depends on.
 njia = "1.0.0"
 
 android-gradle-plugin = "9.5.1"
