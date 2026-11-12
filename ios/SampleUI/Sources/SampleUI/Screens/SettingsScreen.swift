@@ -165,6 +165,7 @@ public struct SettingsScreen: View {
         sdkScreensSection
         documentCaptureSection
         submissionSection
+        screenCaptureSection
         debugSection
         navSection(UseSmileIDSampleStrings.settingsSectionAbout, rows: aboutRows)
         navSection(UseSmileIDSampleStrings.settingsSectionLegal, rows: legalRows)
@@ -349,6 +350,19 @@ public struct SettingsScreen: View {
         supporting: UseSmileIDSampleStrings.settingsAllowOfflineModeBody,
         setting: .allowOfflineMode,
         testId: UseSmileIDSampleTestIds.settingAllowOfflineMode
+      )
+    }
+  }
+
+  /// The design draws no such section either; it sits on its own, as SUBMISSION does.
+  private var screenCaptureSection: some View {
+    UseSmileIDSampleSectionSurface(label: UseSmileIDSampleStrings.settingsSectionScreenCapture) {
+      switchRow(
+        title: UseSmileIDSampleStrings.settingsAllowScreenCapture,
+        icon: SmileIcons.privacy,
+        supporting: UseSmileIDSampleStrings.settingsAllowScreenCaptureBody,
+        setting: .allowScreenCapture,
+        testId: UseSmileIDSampleTestIds.settingAllowScreenCapture
       )
     }
   }

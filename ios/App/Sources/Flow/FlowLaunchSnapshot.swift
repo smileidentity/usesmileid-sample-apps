@@ -21,6 +21,7 @@ struct FlowLaunchSnapshot: Equatable {
   let selfieFirst: Bool
   let skipApiSubmission: Bool
   let allowOfflineMode: Bool
+  let allowScreenCapture: Bool
   /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   let userId: String
   let partnerId: String
@@ -51,6 +52,7 @@ struct FlowLaunchSnapshot: Equatable {
     selfieFirst: Bool = false,
     skipApiSubmission: Bool = false,
     allowOfflineMode: Bool = false,
+    allowScreenCapture: Bool = true,
     userId: String = "",
     partnerId: String = "",
     partnerName: String = "",
@@ -76,6 +78,7 @@ struct FlowLaunchSnapshot: Equatable {
     self.selfieFirst = selfieFirst
     self.skipApiSubmission = skipApiSubmission
     self.allowOfflineMode = allowOfflineMode
+    self.allowScreenCapture = allowScreenCapture
     self.userId = userId
     self.partnerId = partnerId
     self.partnerName = partnerName
@@ -121,6 +124,7 @@ func buildSnapshot(
     selfieFirst: app.settings.selfieFirst,
     skipApiSubmission: app.settings.skipApiSubmission,
     allowOfflineMode: app.settings.allowOfflineMode,
+    allowScreenCapture: app.settings.allowScreenCapture,
     userId: app.authUserId.trimmingCharacters(in: .whitespaces),
     partnerId: app.profiles.partnerId,
     partnerName: app.profiles.partnerName,

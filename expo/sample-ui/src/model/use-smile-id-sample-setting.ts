@@ -10,6 +10,7 @@ export const UseSmileIDSampleSetting = {
   SelfieFirst: 'selfieFirst',
   SkipApiSubmission: 'skipApiSubmission',
   AllowOfflineMode: 'allowOfflineMode',
+  AllowScreenCapture: 'allowScreenCapture',
 } as const;
 
 export type UseSmileIDSampleSetting =
@@ -27,4 +28,5 @@ export const smileIDSampleSettings: readonly UseSmileIDSampleSetting[] = [
   UseSmileIDSampleSetting.SelfieFirst,
   UseSmileIDSampleSetting.SkipApiSubmission,
   UseSmileIDSampleSetting.AllowOfflineMode,
+  UseSmileIDSampleSetting.AllowScreenCapture,
 ];

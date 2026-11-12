@@ -79,6 +79,7 @@ export const smileIDSampleApplying = (
   builder.config((config: UseSmileIDConfigBuilder) => {
     config.skipApiSubmission = snapshot.skipApiSubmission;
     config.allowOfflineMode = snapshot.allowOfflineMode;
+    config.allowScreenCapture = snapshot.allowScreenCapture;
   });
   if (snapshot.product.capture) {
     builder.ml((ml: UseSmileIDMLBuilder) =>

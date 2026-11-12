@@ -637,6 +637,7 @@
         "SDK SCREENS — SHOW OR SKIP FLOW STEPS",
         "DOCUMENT CAPTURE (four rows: Capture mode, Gallery upload, Skip the back, Selfie first; placed by the sample, the design draws no such section)",
         "SUBMISSION (one switch: Skip API submission; placed by the sample, the design draws no such section)",
+        "SCREEN CAPTURE (one switch: Allow screen capture, ON by default in the sample; placed by the sample, the design draws no such section)",
         "ABOUT",
         "LEGAL",
         "sign out",
@@ -665,6 +666,7 @@
         "sample_setting_selfie_first",
         "sample_setting_skip_api_submission",
         "sample_setting_allow_offline_mode",
+        "sample_setting_allow_screen_capture",
         "sample_sign_out",
         "sample_sign_out_confirm"
       ],

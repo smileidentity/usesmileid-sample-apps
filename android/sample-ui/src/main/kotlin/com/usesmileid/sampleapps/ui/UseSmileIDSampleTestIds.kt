@@ -34,6 +34,7 @@ object UseSmileIDSampleTestIds {
     const val SETTING_SELFIE_FIRST = "sample_setting_selfie_first"
     const val SETTING_SKIP_API_SUBMISSION = "sample_setting_skip_api_submission"
     const val SETTING_ALLOW_OFFLINE_MODE = "sample_setting_allow_offline_mode"
+    const val SETTING_ALLOW_SCREEN_CAPTURE = "sample_setting_allow_screen_capture"
     const val VERIFICATION_DETAILS_SCREEN = "sample_verification_details_screen"
     const val SETTINGS_SCREEN = "sample_settings_screen"
     const val USER_DETAILS_SCREEN = "sample_user_details_screen"
@@ -163,6 +164,7 @@ object UseSmileIDSampleTestIds {
         SETTING_SELFIE_FIRST,
         SETTING_SKIP_API_SUBMISSION,
         SETTING_ALLOW_OFFLINE_MODE,
+        SETTING_ALLOW_SCREEN_CAPTURE,
         VERIFICATION_DETAILS_SCREEN,
         SETTINGS_SCREEN,
         USER_DETAILS_SCREEN,

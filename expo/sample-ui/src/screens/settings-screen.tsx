@@ -359,6 +359,19 @@ export const SettingsScreen = ({
         />
       </Section>
 
+      {/* The design draws no such section either; it sits on its own, as SUBMISSION does. */}
+      <Section label={strings.settingsSectionScreenCapture}>
+        <SwitchRow
+          title={strings.settingsAllowScreenCapture}
+          supportingText={strings.settingsAllowScreenCaptureBody}
+          icon="privacy"
+          setting={UseSmileIDSampleSetting.AllowScreenCapture}
+          checked={settings.allowScreenCapture}
+          testID={UseSmileIDSampleTestIds.SETTING_ALLOW_SCREEN_CAPTURE}
+          onSettingChange={onSettingChange}
+        />
+      </Section>
+
       {/* The design draws no control for the drawer, so this placement is ours, and debug-only. */}
       {onOpenScenarioDrawer || debugRows ? (
         <Section label="DEBUG">

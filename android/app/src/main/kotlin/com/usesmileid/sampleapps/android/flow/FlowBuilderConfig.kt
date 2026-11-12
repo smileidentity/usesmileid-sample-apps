@@ -58,7 +58,10 @@ fun UseSmileIDFlowBuilder.applying(
     if (snapshot.product == UseSmileIDSampleProduct.SmartSelfieAuth) userId = snapshot.userId
     applyIdParams(snapshot)
     screens { journeyFor(snapshot) }
-    config { applySubmission(snapshot) }
+    config {
+        applySubmission(snapshot)
+        allowScreenCapture = snapshot.allowScreenCapture
+    }
     if (snapshot.product.capture) {
         ml {
             analyzers {

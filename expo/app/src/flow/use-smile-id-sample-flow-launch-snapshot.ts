@@ -34,6 +34,8 @@ export type UseSmileIDSampleFlowLaunchSnapshot = {
   readonly skipApiSubmission: boolean;
   /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
   readonly allowOfflineMode: boolean;
+  /// config.allowScreenCapture: whether screenshots and recordings can show the flow.
+  readonly allowScreenCapture: boolean;
   /// The id this run submits under; only authentication sends it.
   /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   readonly userId: string;

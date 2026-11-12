@@ -388,6 +388,18 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
               ),
             ],
           ),
+          // The design draws no such section either; it sits on its own, as SUBMISSION does.
+          _Section(
+            label: context.strings.settingsSectionScreenCapture,
+            children: <Widget>[
+              _switchRow(
+                title: context.strings.settingsAllowScreenCapture,
+                icon: SmileIcons.privacy,
+                supportingText: context.strings.settingsAllowScreenCaptureBody,
+                setting: UseSmileIDSampleSetting.allowScreenCapture,
+              ),
+            ],
+          ),
           if (onOpenScenarioDrawer != null)
             _Section(
               label: 'DEBUG',

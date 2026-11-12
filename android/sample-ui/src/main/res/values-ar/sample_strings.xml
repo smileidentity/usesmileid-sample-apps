@@ -289,6 +289,9 @@
     <string name="sample_settings_skip_api_submission_body">تعود المهمة الملتقطة دون إرسال</string>
     <string name="sample_settings_allow_offline_mode">السماح بوضع عدم الاتصال</string>
     <string name="sample_settings_allow_offline_mode_body">بدون اتصال، تعود المهمة لإرسالها لاحقًا</string>
+    <string name="sample_settings_section_screen_capture">التقاط الشاشة</string>
+    <string name="sample_settings_allow_screen_capture">السماح بالتقاط الشاشة</string>
+    <string name="sample_settings_allow_screen_capture_body">يمكن أن تُظهر لقطات الشاشة والتسجيلات مسار التحقق</string>
     <string name="sample_settings_section_about">حول</string>
     <string name="sample_settings_documentation">الوثائق</string>
     <string name="sample_settings_support">الدعم</string>

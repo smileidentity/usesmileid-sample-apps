@@ -417,6 +417,12 @@ final class UseSmileIDSampleStrings {
       _values['settings_allow_offline_mode']!;
   String get settingsAllowOfflineModeBody =>
       _values['settings_allow_offline_mode_body']!;
+  String get settingsSectionScreenCapture =>
+      _values['settings_section_screen_capture']!;
+  String get settingsAllowScreenCapture =>
+      _values['settings_allow_screen_capture']!;
+  String get settingsAllowScreenCaptureBody =>
+      _values['settings_allow_screen_capture_body']!;
   String get settingsSectionAbout => _values['settings_section_about']!;
   String get settingsDocumentation => _values['settings_documentation']!;
   String get settingsSupport => _values['settings_support']!;
@@ -779,6 +785,10 @@ final class UseSmileIDSampleStrings {
       'settings_allow_offline_mode': 'Allow offline mode',
       'settings_allow_offline_mode_body':
           'With no connection, the job comes back to send later',
+      'settings_section_screen_capture': 'SCREEN CAPTURE',
+      'settings_allow_screen_capture': 'Allow screen capture',
+      'settings_allow_screen_capture_body':
+          'Screenshots and recordings can show the flow',
       'settings_section_about': 'ABOUT',
       'settings_documentation': 'Documentation',
       'settings_support': 'Support',
@@ -1153,6 +1163,10 @@ final class UseSmileIDSampleStrings {
       'settings_allow_offline_mode': 'Autoriser le mode hors ligne',
       'settings_allow_offline_mode_body':
           'Sans connexion, la tâche revient pour être envoyée plus tard',
+      'settings_section_screen_capture': 'CAPTURE D’ÉCRAN',
+      'settings_allow_screen_capture': 'Autoriser la capture d’écran',
+      'settings_allow_screen_capture_body':
+          'Les captures et enregistrements d’écran peuvent montrer le parcours',
       'settings_section_about': 'À PROPOS',
       'settings_documentation': 'Documentation',
       'settings_support': 'Assistance',
@@ -1506,6 +1520,10 @@ final class UseSmileIDSampleStrings {
       'settings_allow_offline_mode': 'السماح بوضع عدم الاتصال',
       'settings_allow_offline_mode_body':
           'بدون اتصال، تعود المهمة لإرسالها لاحقًا',
+      'settings_section_screen_capture': 'التقاط الشاشة',
+      'settings_allow_screen_capture': 'السماح بالتقاط الشاشة',
+      'settings_allow_screen_capture_body':
+          'يمكن أن تُظهر لقطات الشاشة والتسجيلات مسار التحقق',
       'settings_section_about': 'حول',
       'settings_documentation': 'الوثائق',
       'settings_support': 'الدعم',
@@ -1852,6 +1870,10 @@ final class UseSmileIDSampleStrings {
       'settings_allow_offline_mode': 'אפשר מצב לא מקוון',
       'settings_allow_offline_mode_body':
           'בלי חיבור, המשימה חוזרת לשליחה מאוחר יותר',
+      'settings_section_screen_capture': 'צילום מסך',
+      'settings_allow_screen_capture': 'לאפשר צילום מסך',
+      'settings_allow_screen_capture_body':
+          'צילומי מסך והקלטות יכולים להציג את התהליך',
       'settings_section_about': 'אודות',
       'settings_documentation': 'תיעוד',
       'settings_support': 'תמיכה',

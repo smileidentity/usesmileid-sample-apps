@@ -30,6 +30,7 @@ class UseSmileIDSampleFlowLaunchSnapshot {
     this.selfieFirst = false,
     this.skipApiSubmission = false,
     this.allowOfflineMode = false,
+    this.allowScreenCapture = true,
     this.session,
     this.sessionExpired = false,
   });
@@ -87,6 +88,9 @@ class UseSmileIDSampleFlowLaunchSnapshot {
 
   /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
   final bool allowOfflineMode;
+
+  /// Whether screenshots and recordings can show the flow.
+  final bool allowScreenCapture;
 
   /// SmartSelfie Authentication's enrolled user, typed or picked; blank for every other product, whose user ID the server issues.
   final String userId;

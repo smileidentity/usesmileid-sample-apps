@@ -71,6 +71,7 @@ const snapshot = (
   selfieFirst: false,
   skipApiSubmission: false,
   allowOfflineMode: false,
+  allowScreenCapture: true,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',
@@ -261,6 +262,14 @@ describe('what the SDK is handed', () => {
     const selfie = built(snapshot()).build();
     expect(selfie.kind).toBe('success');
     if (selfie.kind === 'success') expect(selfie.configuration.ml?.analyzers.document).toBeUndefined();
+  });
+
+  it('passes the screen capture setting to the SDK', () => {
+    for (const allowScreenCapture of [false, true]) {
+      const result = built(snapshot({ allowScreenCapture })).build();
+      expect(result.kind).toBe('success');
+      if (result.kind === 'success') expect(result.configuration.config?.allowScreenCapture).toBe(allowScreenCapture);
+    }
   });
 
   it('hands the SDK the API submission setting', () => {

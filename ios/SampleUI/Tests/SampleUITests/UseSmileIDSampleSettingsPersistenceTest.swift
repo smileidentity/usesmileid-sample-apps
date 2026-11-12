@@ -72,7 +72,8 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
         allowSkipBack: true,
         selfieFirst: true,
         skipApiSubmission: true,
-        allowOfflineMode: true
+        allowOfflineMode: true,
+        allowScreenCapture: false
       )
     )
     XCTAssertEqual(Self.keys.count, UseSmileIDSampleSetting.allCases.count, "a row was added with no key here")
@@ -192,6 +193,7 @@ final class UseSmileIDSampleSettingsPersistenceTest: XCTestCase {
 
   private static let keys = [
     "enhanced_smart_selfie", "agent_mode", "consent_step", "instructions_step", "preview_step",
-    "gallery_upload", "allow_skip_back", "selfie_first", "skip_api_submission", "allow_offline_mode"
+    "gallery_upload", "allow_skip_back", "selfie_first", "skip_api_submission", "allow_offline_mode",
+    "allow_screen_capture"
   ]
 }

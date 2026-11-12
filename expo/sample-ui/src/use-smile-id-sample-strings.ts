@@ -295,6 +295,9 @@ type Key =
   | 'settings_skip_api_submission_body'
   | 'settings_allow_offline_mode'
   | 'settings_allow_offline_mode_body'
+  | 'settings_section_screen_capture'
+  | 'settings_allow_screen_capture'
+  | 'settings_allow_screen_capture_body'
   | 'settings_section_about'
   | 'settings_documentation'
   | 'settings_support'
@@ -1497,6 +1500,18 @@ export class UseSmileIDSampleStrings {
     return this.values.settings_allow_offline_mode_body;
   }
 
+  get settingsSectionScreenCapture(): string {
+    return this.values.settings_section_screen_capture;
+  }
+
+  get settingsAllowScreenCapture(): string {
+    return this.values.settings_allow_screen_capture;
+  }
+
+  get settingsAllowScreenCaptureBody(): string {
+    return this.values.settings_allow_screen_capture_body;
+  }
+
   get settingsSectionAbout(): string {
     return this.values.settings_section_about;
   }
@@ -1932,6 +1947,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_api_submission_body: 'The captured job comes back unsubmitted',
     settings_allow_offline_mode: 'Allow offline mode',
     settings_allow_offline_mode_body: 'With no connection, the job comes back to send later',
+    settings_section_screen_capture: 'SCREEN CAPTURE',
+    settings_allow_screen_capture: 'Allow screen capture',
+    settings_allow_screen_capture_body: 'Screenshots and recordings can show the flow',
     settings_section_about: 'ABOUT',
     settings_documentation: 'Documentation',
     settings_support: 'Support',
@@ -2258,6 +2276,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_api_submission_body: 'La tâche capturée revient sans être soumise',
     settings_allow_offline_mode: 'Autoriser le mode hors ligne',
     settings_allow_offline_mode_body: 'Sans connexion, la tâche revient pour être envoyée plus tard',
+    settings_section_screen_capture: 'CAPTURE D’ÉCRAN',
+    settings_allow_screen_capture: 'Autoriser la capture d’écran',
+    settings_allow_screen_capture_body: 'Les captures et enregistrements d’écran peuvent montrer le parcours',
     settings_section_about: 'À PROPOS',
     settings_documentation: 'Documentation',
     settings_support: 'Assistance',
@@ -2584,6 +2605,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_api_submission_body: 'تعود المهمة الملتقطة دون إرسال',
     settings_allow_offline_mode: 'السماح بوضع عدم الاتصال',
     settings_allow_offline_mode_body: 'بدون اتصال، تعود المهمة لإرسالها لاحقًا',
+    settings_section_screen_capture: 'التقاط الشاشة',
+    settings_allow_screen_capture: 'السماح بالتقاط الشاشة',
+    settings_allow_screen_capture_body: 'يمكن أن تُظهر لقطات الشاشة والتسجيلات مسار التحقق',
     settings_section_about: 'حول',
     settings_documentation: 'الوثائق',
     settings_support: 'الدعم',
@@ -2910,6 +2934,9 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     settings_skip_api_submission_body: 'המשימה שצולמה חוזרת בלי שליחה',
     settings_allow_offline_mode: 'אפשר מצב לא מקוון',
     settings_allow_offline_mode_body: 'בלי חיבור, המשימה חוזרת לשליחה מאוחר יותר',
+    settings_section_screen_capture: 'צילום מסך',
+    settings_allow_screen_capture: 'לאפשר צילום מסך',
+    settings_allow_screen_capture_body: 'צילומי מסך והקלטות יכולים להציג את התהליך',
     settings_section_about: 'אודות',
     settings_documentation: 'תיעוד',
     settings_support: 'תמיכה',

@@ -63,6 +63,9 @@ abstract final class UseSmileIDSampleSettingsKeys {
   /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
   static const String allowOfflineMode = 'allow_offline_mode';
 
+  /// Whether screenshots and recordings can show the flow.
+  static const String allowScreenCapture = 'allow_screen_capture';
+
   /// The capture mode, stored by its id.
   static const String captureMode = 'capture_mode';
 
@@ -84,6 +87,7 @@ abstract final class UseSmileIDSampleSettingsKeys {
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
     UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
     UseSmileIDSampleSetting.allowOfflineMode => allowOfflineMode,
+    UseSmileIDSampleSetting.allowScreenCapture => allowScreenCapture,
   };
 }
 

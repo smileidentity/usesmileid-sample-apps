@@ -64,6 +64,10 @@ class UseSmileIDSamplePreferencesSettingsRepository
         UseSmileIDSampleSettingsKeys.allowOfflineMode,
         defaults.allowOfflineMode,
       ),
+      allowScreenCapture: stored(
+        UseSmileIDSampleSettingsKeys.allowScreenCapture,
+        defaults.allowScreenCapture,
+      ),
       captureMode:
           UseSmileIDSampleCaptureMode.values
               .where(

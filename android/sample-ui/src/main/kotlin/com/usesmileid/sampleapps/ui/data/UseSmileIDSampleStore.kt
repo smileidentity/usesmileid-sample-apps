@@ -135,6 +135,7 @@ class UseSmileIDSampleStore(
             selfieFirst = prefs[SELFIE_FIRST] ?: defaults.selfieFirst,
             skipApiSubmission = prefs[SKIP_API_SUBMISSION] ?: defaults.skipApiSubmission,
             allowOfflineMode = prefs[ALLOW_OFFLINE_MODE] ?: defaults.allowOfflineMode,
+            allowScreenCapture = prefs[ALLOW_SCREEN_CAPTURE] ?: defaults.allowScreenCapture,
             captureMode = UseSmileIDSampleCaptureMode.entries.firstOrNull { it.id == prefs[CAPTURE_MODE] }
                 ?: defaults.captureMode,
             appearance = appearanceIn(prefs),
@@ -158,6 +159,7 @@ class UseSmileIDSampleStore(
         UseSmileIDSampleSetting.SelfieFirst -> SELFIE_FIRST
         UseSmileIDSampleSetting.SkipApiSubmission -> SKIP_API_SUBMISSION
         UseSmileIDSampleSetting.AllowOfflineMode -> ALLOW_OFFLINE_MODE
+        UseSmileIDSampleSetting.AllowScreenCapture -> ALLOW_SCREEN_CAPTURE
     }
 
     private companion object {
@@ -176,6 +178,7 @@ class UseSmileIDSampleStore(
         val SELFIE_FIRST = booleanPreferencesKey("selfie_first")
         val SKIP_API_SUBMISSION = booleanPreferencesKey("skip_api_submission")
         val ALLOW_OFFLINE_MODE = booleanPreferencesKey("allow_offline_mode")
+        val ALLOW_SCREEN_CAPTURE = booleanPreferencesKey("allow_screen_capture")
         val CAPTURE_MODE = stringPreferencesKey("capture_mode")
         val SESSION_TOKEN = stringPreferencesKey("token_session_token")
         val ENDED_SESSION_ID = stringPreferencesKey("ended_session_id")

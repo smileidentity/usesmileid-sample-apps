@@ -55,6 +55,7 @@ export const UseSmileIDSampleTestIds = {
   SETTING_SELFIE_FIRST: 'sample_setting_selfie_first',
   SETTING_SKIP_API_SUBMISSION: 'sample_setting_skip_api_submission',
   SETTING_ALLOW_OFFLINE_MODE: 'sample_setting_allow_offline_mode',
+  SETTING_ALLOW_SCREEN_CAPTURE: 'sample_setting_allow_screen_capture',
   JOB_ROW: 'sample_job_row',
   JOB_ROW_STATUS: 'sample_job_row_status',
   SELECT_TOGGLE: 'sample_select_toggle',

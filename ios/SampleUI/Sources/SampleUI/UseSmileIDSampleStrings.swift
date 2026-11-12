@@ -1155,6 +1155,18 @@ public enum UseSmileIDSampleStrings {
     text("settings_allow_offline_mode_body")
   }
 
+  public static var settingsSectionScreenCapture: String {
+    text("settings_section_screen_capture")
+  }
+
+  public static var settingsAllowScreenCapture: String {
+    text("settings_allow_screen_capture")
+  }
+
+  public static var settingsAllowScreenCaptureBody: String {
+    text("settings_allow_screen_capture_body")
+  }
+
   public static var settingsSectionAbout: String {
     text("settings_section_about")
   }

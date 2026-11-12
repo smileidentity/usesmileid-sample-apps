@@ -116,6 +116,7 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
       selfieFirst: settings.selfieFirst,
       skipApiSubmission: settings.skipApiSubmission,
       allowOfflineMode: settings.allowOfflineMode,
+      allowScreenCapture: settings.allowScreenCapture,
       userId: authUserId.trim(),
       partnerId: profile?.id ?? USE_SMILE_ID_SAMPLE_FIRST_PROFILE_ID,
       partnerName: smileIDSamplePartnerName(profile),

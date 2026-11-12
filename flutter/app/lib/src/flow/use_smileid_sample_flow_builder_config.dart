@@ -44,6 +44,7 @@ void useSmileIDSampleApplying(
   builder.config((UseSmileIDConfigBuilder config) {
     config.skipApiSubmission = snapshot.skipApiSubmission;
     config.allowOfflineMode = snapshot.allowOfflineMode;
+    config.allowScreenCapture = snapshot.allowScreenCapture;
   });
   if (snapshot.product.capture) {
     builder.ml(

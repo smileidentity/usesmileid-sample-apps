@@ -69,6 +69,7 @@ const snapshot = (overrides: Partial<UseSmileIDSampleFlowLaunchSnapshot> = {}): 
   selfieFirst: false,
   skipApiSubmission: false,
   allowOfflineMode: false,
+  allowScreenCapture: true,
   userId: 'user_1',
   partnerId: 'p-1',
   partnerName: 'Kobo Bank',

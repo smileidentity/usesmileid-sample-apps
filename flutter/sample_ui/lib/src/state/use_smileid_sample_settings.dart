@@ -33,7 +33,10 @@ enum UseSmileIDSampleSetting {
   skipApiSubmission(UseSmileIDSampleTestIds.settingSkipApiSubmission),
 
   /// config.allowOfflineMode; off, as the SDK defaults it.
-  allowOfflineMode(UseSmileIDSampleTestIds.settingAllowOfflineMode);
+  allowOfflineMode(UseSmileIDSampleTestIds.settingAllowOfflineMode),
+
+  /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
+  allowScreenCapture(UseSmileIDSampleTestIds.settingAllowScreenCapture);
 
   const UseSmileIDSampleSetting(this.testId);
 
@@ -170,6 +173,7 @@ class UseSmileIDSampleSettings {
     this.selfieFirst = false,
     this.skipApiSubmission = false,
     this.allowOfflineMode = false,
+    this.allowScreenCapture = true,
     this.captureMode = UseSmileIDSampleCaptureMode.autoWithFallback,
     this.appearance = UseSmileIDSampleAppearance.system,
     this.language = UseSmileIDSampleLanguage.system,
@@ -205,6 +209,9 @@ class UseSmileIDSampleSettings {
   /// Whether a submission that can't connect to Smile ID comes back sealed, to send later.
   final bool allowOfflineMode;
 
+  /// Whether screenshots and recordings can show the flow.
+  final bool allowScreenCapture;
+
   /// A typed field rather than one of the switches: three values, not two.
   final UseSmileIDSampleCaptureMode captureMode;
 
@@ -226,6 +233,7 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.selfieFirst => selfieFirst,
     UseSmileIDSampleSetting.skipApiSubmission => skipApiSubmission,
     UseSmileIDSampleSetting.allowOfflineMode => allowOfflineMode,
+    UseSmileIDSampleSetting.allowScreenCapture => allowScreenCapture,
   };
 
   /// Drops enhanced liveness where a stored state carries both, so the SDK is never handed the pair.
@@ -261,6 +269,9 @@ class UseSmileIDSampleSettings {
     UseSmileIDSampleSetting.allowOfflineMode => _copy(
       allowOfflineMode: enabled,
     ),
+    UseSmileIDSampleSetting.allowScreenCapture => _copy(
+      allowScreenCapture: enabled,
+    ),
   };
 
   /// A copy with [captureMode] chosen.
@@ -288,6 +299,7 @@ class UseSmileIDSampleSettings {
     bool? selfieFirst,
     bool? skipApiSubmission,
     bool? allowOfflineMode,
+    bool? allowScreenCapture,
     UseSmileIDSampleCaptureMode? captureMode,
     UseSmileIDSampleAppearance? appearance,
     UseSmileIDSampleLanguage? language,
@@ -302,6 +314,7 @@ class UseSmileIDSampleSettings {
     selfieFirst: selfieFirst ?? this.selfieFirst,
     skipApiSubmission: skipApiSubmission ?? this.skipApiSubmission,
     allowOfflineMode: allowOfflineMode ?? this.allowOfflineMode,
+    allowScreenCapture: allowScreenCapture ?? this.allowScreenCapture,
     captureMode: captureMode ?? this.captureMode,
     appearance: appearance ?? this.appearance,
     language: language ?? this.language,
@@ -320,6 +333,7 @@ class UseSmileIDSampleSettings {
       other.selfieFirst == selfieFirst &&
       other.skipApiSubmission == skipApiSubmission &&
       other.allowOfflineMode == allowOfflineMode &&
+      other.allowScreenCapture == allowScreenCapture &&
       other.captureMode == captureMode &&
       other.appearance == appearance &&
       other.language == language;
@@ -336,6 +350,7 @@ class UseSmileIDSampleSettings {
     selfieFirst,
     skipApiSubmission,
     allowOfflineMode,
+    allowScreenCapture,
     captureMode,
     appearance,
     language,

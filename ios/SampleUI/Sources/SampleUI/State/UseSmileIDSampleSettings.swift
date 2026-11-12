@@ -3,6 +3,7 @@ public enum UseSmileIDSampleSetting: String, CaseIterable, Sendable {
   case enhancedSmartSelfie, agentMode, consentStep, instructionsStep, previewStep
   case galleryUpload, allowSkipBack, selfieFirst
   case skipApiSubmission, allowOfflineMode
+  case allowScreenCapture
 }
 
 /// DocumentCaptureConfig.captureMode, in `spec/test-ids.json`'s vocabulary.
@@ -94,6 +95,8 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
   public var skipApiSubmission: Bool
   /// config.allowOfflineMode; off, as the SDK defaults it.
   public var allowOfflineMode: Bool
+  /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
+  public var allowScreenCapture: Bool
   /// A typed field rather than one of the switches: three values, not two.
   public var captureMode: UseSmileIDSampleCaptureMode
   /// This app's own appearance; the `theme` launch argument seeds a run's SDK theme scenario, which is a different axis.
@@ -112,6 +115,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     selfieFirst: Bool = false,
     skipApiSubmission: Bool = false,
     allowOfflineMode: Bool = false,
+    allowScreenCapture: Bool = true,
     captureMode: UseSmileIDSampleCaptureMode = .autoWithFallback,
     appearance: UseSmileIDSampleAppearance = .system,
     language: UseSmileIDSampleLanguage = .system
@@ -126,6 +130,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     self.selfieFirst = selfieFirst
     self.skipApiSubmission = skipApiSubmission
     self.allowOfflineMode = allowOfflineMode
+    self.allowScreenCapture = allowScreenCapture
     self.captureMode = captureMode
     self.appearance = appearance
     self.language = language
@@ -143,6 +148,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .selfieFirst: selfieFirst
     case .skipApiSubmission: skipApiSubmission
     case .allowOfflineMode: allowOfflineMode
+    case .allowScreenCapture: allowScreenCapture
     }
   }
 
@@ -169,6 +175,7 @@ public struct UseSmileIDSampleSettings: Equatable, Sendable {
     case .selfieFirst: copy.selfieFirst = enabled
     case .skipApiSubmission: copy.skipApiSubmission = enabled
     case .allowOfflineMode: copy.allowOfflineMode = enabled
+    case .allowScreenCapture: copy.allowScreenCapture = enabled
     }
     return copy
   }

@@ -419,6 +419,10 @@ abstract final class UseSmileIDSampleTestIds {
   static const String settingAllowOfflineMode =
       'sample_setting_allow_offline_mode';
 
+  /// The Allow screen capture switch.
+  static const String settingAllowScreenCapture =
+      'sample_setting_allow_screen_capture';
+
   /// The scenario drawer, a debug affordance the design does not cover.
   static const String scenarioDrawer = 'sample_scenario_drawer';
 
@@ -571,6 +575,7 @@ abstract final class UseSmileIDSampleTestIds {
     settingSelfieFirst,
     settingSkipApiSubmission,
     settingAllowOfflineMode,
+    settingAllowScreenCapture,
     scenarioDrawer,
     scenarioDrawerButton,
     showDiagnostics,

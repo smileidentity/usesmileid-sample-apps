@@ -21,6 +21,8 @@ export type UseSmileIDSampleSettings = {
   readonly skipApiSubmission: boolean;
   /// config.allowOfflineMode; off, as the SDK defaults it.
   readonly allowOfflineMode: boolean;
+  /// config.allowScreenCapture; on in the sample, so a demo can be recorded, where the SDK defaults it off.
+  readonly allowScreenCapture: boolean;
   /// A typed field rather than one of the switches: three values, not two.
   readonly captureMode: UseSmileIDSampleCaptureMode;
   /// Typed like `captureMode`; System follows the device.
@@ -40,6 +42,7 @@ export const smileIDSampleSettingsDefaults: UseSmileIDSampleSettings = {
   selfieFirst: false,
   skipApiSubmission: false,
   allowOfflineMode: false,
+  allowScreenCapture: true,
   captureMode: UseSmileIDSampleCaptureMode.AutoWithFallback,
   appearance: UseSmileIDSampleAppearance.System,
   language: UseSmileIDSampleLanguage.System,
