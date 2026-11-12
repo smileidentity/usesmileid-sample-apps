@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/ios-spm",
       "state" : {
-        "revision" : "6b27c5801c124f910014d93c690cd2117cd84232",
-        "version" : "12.4.0-SNAPSHOT.20261110110737.42802734750"
+        "revision" : "6dd965060fd5146a8ba32c2cf3f3371fffb3673a",
+        "version" : "12.4.0-SNAPSHOT.20261112220000.43313536729"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/smileidentity/kamera-spm",
       "state" : {
-        "revision" : "287ee7d8e7fe056d6b1b86083baf237bcbcd4343",
-        "version" : "1.3.1-SNAPSHOT.38"
+        "revision" : "a7781ef0a8587f816b96d35d791fcd13fc1d71d1",
+        "version" : "1.3.1-SNAPSHOT.39"
       }
     },
     {
