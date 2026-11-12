@@ -1499,6 +1499,7 @@ export class UseSmileIDSampleStrings {
   get settingsAllowOfflineModeBody(): string {
     return this.values.settings_allow_offline_mode_body;
   }
+
   get settingsSectionScreenCapture(): string {
     return this.values.settings_section_screen_capture;
   }
