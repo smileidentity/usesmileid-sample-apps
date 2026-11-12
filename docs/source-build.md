@@ -42,39 +42,65 @@ setting. `spec/app-identity.json` records them under `sourceMode`, so the store 
 build can sit on one device without a link reaching the wrong one. Flutter and Expo source builds
 keep the registry identity, so on one device it is one or the other.
 
-## The `next` branch
+## SDK snapshots and pins
 
-`main` builds against the exact SDK builds it pins: snapshots for test builds until the next SDK
-release, released versions after it (AGENTS.md, "Unreleased SDK API"). A change that needs SDK API no
-published build has lands on `next`, the one long-lived branch the SDK repositories pin, and is
-reviewed with the linked SDK pull request's source-build lane green. This repo's own lanes build
-against the pinned SDK, so they run red on `next` while it carries such a change; the SDK repositories' source-build
-lanes are its gate. Everything else lands on `main`, which the **Sync next** workflow
-(`sync-next.yml`) merges into `next` after every push to `main`. `next` is only ever merged into,
-never rebased or force-pushed: released SDK versions pin its commits. When an SDK version ships,
-`next` is merged into `main` and each SDK repository moves its pin to the result.
+`main` builds on recent snapshots of each Smile ID SDK between releases, so it can carry changes
+that aren't released yet, and it is the only branch. Each app pins exact builds, never a range, and
+pins njia, the SDKs' navigation engine, to the exact build its SDK snapshot was made against:
 
-The **Promote next** workflow (`promote-next.yml`) opens that merge, named for the release: run it
-with the version that shipped. Its head is a copy of `next`, because merging a pull request deletes
-its head branch and `next` must never be deleted. Once it merges, Sync next merges `main` back into
-`next`; then run `bump_sample_apps.yaml` in each SDK repository to pin `main`.
+| Platform | Snapshot | Where an SDK change's snapshot version is printed |
+|---|---|---|
+| Android | `<version>-<date>.<time>-<n>`, from Central's snapshots repository; each module has its own `<n>` | the Publish Snapshot step's log in the SDK build that published it; pin the set from that one run |
+| iOS | `<version>-SNAPSHOT.<timestamp>.<run>`, an ios-spm tag | the ios-spm tag ending in that SDK build's run id |
+| Flutter | `<version>-SNAPSHOT.<run>`, on pub.dev | the SDK publish run's summary (`### snapshot <version>`) |
+| Expo | `<version>-SNAPSHOT.<run>`, on npm | the SDK publish run's Publish to npm log (`+ @smileid/<package>@<version>`) |
 
-- A promotion held open because `next` needs a newer SDK is replaced when Promote next runs for that
-  version.
-- Conflicts are resolved on `next`, by merging `main` into it, and then Promote next runs again; never
-  on the promotion branch.
-- It runs in the `release` environment, with the repository's `GH_PAT`, because a pull request opened
-  with the workflow's own token starts no checks. It needs contents, pull requests and workflows write
-  here, the last because a promotion can carry workflow changes.
+Android pins the timestamped build because a bare `-SNAPSHOT` can resolve a build made against
+another njia. Android and iOS publish a snapshot on every push to an SDK pull request and to the
+SDK's `main`; Flutter and Expo publish one when their publish workflow is dispatched with
+`channel=snapshot`.
 
-Sync next pushes a clean merge straight to `next` with the run's own token, so no credential is stored
-for it. That token can't push a merge that changes `.github/workflows`, so a sync that carries a
-workflow change fails, as a conflict does, and leaves `next` as it was: merge `main` into `next` by
-hand, resolve any conflict there and push. Any other failure is tried again within the run. A run
-that still can't sync, for any of these reasons, opens a "Sync next is blocked" issue or adds to the
-open one; whoever owns the current SDK release clears it, and the next clean run, at the latest the
-daily one, closes the issue. A repository ruleset on `next` refuses a force-push or a deletion from
-anyone.
+**Only ready snapshots are pinned.** `main` pins a snapshot only when it is the final commit of an
+SDK pull request that is approved and green, or a commit on an SDK's `main`. Never a pull request
+that is still changing.
+
+### A change that needs new SDK API
+
+The app change merges first, and the SDK pull request pins the merged commit:
+
+1. The SDK change is reviewed in its own pull request, from a branch in the SDK repository. Build the
+   pair from source meanwhile: check out your branch of this repository in the SDK's `sample-apps/`
+   submodule. This pull request may be open as a draft.
+2. When the SDK pull request is approved, green, up to date with its `main` and finished, take the
+   snapshot of its final commit (the table above).
+3. Pin that snapshot here, update the branch from `main`, and merge it once every lane is green.
+4. The SDK pull request pins the commit this one merged as, not the tip of `main` and never an open
+   pull request's head, and then merges. No pin moves after that.
+5. A later bump moves `main` to a snapshot of the SDK's `main`.
+
+- One paired change per platform at a time, and a pin only moves to a snapshot that contains the
+  code behind the pin it replaces. A second pair for the same platform waits until the first SDK
+  pull request has merged.
+- A pair that is dropped is reverted on `main` the same day.
+- A bump that turns `main` red is reverted, not fixed forward.
+- `main` requires no status check, so update a pull request from `main` and re-run its checks before
+  merging it.
+
+**Snapshots expire.** Central keeps a snapshot build for 90 days. ios-spm keeps its newest snapshots,
+those from the last 14 days, and every one `main` resolves. An older commit on `main` may stop
+building; use the newest commit or a `v*` tag.
+
+### Releases
+
+1. Once the SDKs' release-prep changes have merged, bump `main` to snapshots of those commits (for
+   Flutter and Expo, dispatch a snapshot first). Green on all four lanes is the go signal.
+2. The SDKs publish from those same commits.
+3. One pull request here moves every pin from the snapshot to the release: the SDKs, njia, kamera
+   where it is pinned, the lockfiles and the third-party notices. Squash it and tag the merged
+   commit `v<version>`.
+4. Production store builds (Play production, the App Store, AppGallery) run from that tag. Internal
+   builds (Play internal testing, TestFlight) ship from `main` at any time.
+5. `main` goes back to snapshots with the next change that needs one.
 
 ## The reserved `e2eScenario` argument
 
