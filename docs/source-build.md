@@ -98,7 +98,9 @@ building; use the newest commit or a `v*` tag.
 3. One pull request here moves every pin from the snapshot to the release: the SDKs, njia, kamera
    where it is pinned, the lockfiles and the third-party notices. Squash it and tag the merged
    commit `v<version>`.
-4. Production store builds (Play production, the App Store, AppGallery) run from that tag. Internal
+4. Production store builds (Play production, the App Store, AppGallery) run from that tag. Their
+   first step, `scripts/release_pins.py`, refuses any other ref and any pin that isn't a plain
+   `x.y.z`, lockfiles included; a lookup-only or dry run publishes nothing and skips it. Internal
    builds (Play internal testing, TestFlight) ship from `main` at any time.
 5. `main` goes back to snapshots with the next change that needs one.
 

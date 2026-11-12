@@ -47,6 +47,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      # Production ships only a v* tag on main whose Smile ID pins are all releases (docs/source-build.md, Releases).
+      - name: Release pins
+        if: ${{ !inputs.dry_run }}
+        run: python3 scripts/release_pins.py
+
       # The uploaded binary links against this Xcode's SDK.
       - uses: ./.github/actions/select-xcode
 
