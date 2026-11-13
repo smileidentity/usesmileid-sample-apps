@@ -24,11 +24,15 @@ appId: ${APP_ID}
 - eraseText
 - inputText: "Ada"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
@@ -77,16 +81,17 @@ appId: ${APP_ID}
     timeout: 5000
 - extendedWaitUntil:
     visible:
-      id: "si_consent_screen|sample_verification_details_screen"
+      id: "si_consent_screen|sample_verification_details_screen|si_instructions_screen"
     timeout: 10000
+# A stray tap that hit Allow instead would carry on into the SDK; that fails here, where it happened.
+- assertNotVisible:
+    id: "si_instructions_screen"
 - runFlow:
     when:
       visible:
         id: "si_consent_screen"
     commands:
-      - tapOn:
-          text: "Deny"
-          optional: true
+      - tapOn: "Deny"
 - assertVisible:
     id: "sample_verification_details_screen"
 - assertVisible:
@@ -153,11 +158,15 @@ appId: ${APP_ID}
 - eraseText
 - inputText: "Ada"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
@@ -197,11 +206,15 @@ appId: ${APP_ID}
 - eraseText
 - inputText: "Ada"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText

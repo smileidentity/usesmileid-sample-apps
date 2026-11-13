@@ -59,7 +59,7 @@ leaves the form a strip one row tall: the next field is either off screen and ab
 hierarchy, or half under the keyboard while the hierarchy still reports its full bounds, so the tap
 lands on the keyboard and the next value is typed into the previous field. The fields have no Done
 action, so `pressKey: Enter` does not close the keyboard. `hideKeyboard` runs straight after
-`inputText`, while the keyboard is certainly up, because it presses Back.
+`inputText`, while the keyboard is certainly up, because it presses Back; the form is asserted straight after, so a Back that left it fails there.
 
 **`APP_ID` has no default, deliberately.** In Maestro 2.8 a flow-level `env:` default WINS over `-e`
 on the command line, so declaring one here would silently pin every run to a single variant and the

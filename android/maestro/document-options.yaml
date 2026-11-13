@@ -19,11 +19,15 @@ appId: ${APP_ID}
 - eraseText
 - inputText: "Ada"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
 - hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText

@@ -39,10 +39,14 @@ appId: ${APP_ID}
     id: "sample_new_profile_name"
 - inputText: "Karibu Pay"
 - hideKeyboard
+- assertVisible:
+    id: "sample_new_profile_sheet"
 - tapOn:
     id: "sample_new_profile_first_name"
 - inputText: "Njeri"
 - hideKeyboard
+- assertVisible:
+    id: "sample_new_profile_sheet"
 - tapOn:
     id: "sample_new_profile_last_name"
 - inputText: "Wanjiku"
@@ -52,6 +56,8 @@ appId: ${APP_ID}
     id: "sample_new_profile_email"
 - inputText: "njeri"
 - hideKeyboard
+- assertVisible:
+    id: "sample_new_profile_sheet"
 - assertVisible:
     id: "sample_new_profile_save"
     enabled: true
