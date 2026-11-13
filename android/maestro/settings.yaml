@@ -68,6 +68,9 @@ appId: ${APP_ID}
     element:
       id: "sample_setting_agent_mode"
     direction: UP
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_agent_mode"
 - assertVisible:
@@ -84,6 +87,9 @@ appId: ${APP_ID}
     element:
       id: "sample_setting_enhanced_smart_selfie"
     direction: UP
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -136,6 +142,9 @@ appId: ${APP_ID}
     visibilityPercentage: 80
     # Centred: a short phone's three-button bar covers it; the tab keeps the scroll, so rows above scroll back up.
     centerElement: true
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_instructions_step"
 - assertVisible:
@@ -172,6 +181,9 @@ appId: ${APP_ID}
     direction: DOWN
     visibilityPercentage: 80
     centerElement: true
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_instructions_step"
 - assertVisible: "Prep tips before capture"
@@ -179,6 +191,9 @@ appId: ${APP_ID}
     element:
       id: "sample_setting_enhanced_smart_selfie"
     direction: UP
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -210,6 +225,9 @@ appId: ${APP_ID}
     element:
       id: "sample_setting_enhanced_smart_selfie"
     direction: UP
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -226,6 +244,9 @@ appId: ${APP_ID}
     direction: DOWN
     visibilityPercentage: 80
     centerElement: true
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:
@@ -267,6 +288,9 @@ appId: ${APP_ID}
     direction: DOWN
     visibilityPercentage: 80
     centerElement: true
+    timeout: 45000
+- assertVisible:
+    id: "sample_settings_screen"
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible: "Ask permission before KYC checks"
