@@ -64,6 +64,21 @@ echo "==> unit tests (includes the spec validation and the font-scale predicates
 echo "==> goldens, light and dark"
 ./gradlew verifyRoborazziDebug
 
+echo "==> debug-only libraries stay out of release"
+# LeakCanary and Chucker are debugImplementation; a release classpath that names either would ship it.
+# A plain assignment, so set -e stops on a Gradle failure instead of reading its silence as "absent".
+for variant in playRelease appgalleryRelease; do
+  classpath="$(./gradlew -q :app:dependencies --configuration "${variant}RuntimeClasspath")"
+  if ! grep -q "${variant}RuntimeClasspath" <<<"$classpath"; then
+    echo "verify.sh: Gradle printed no ${variant} runtime classpath to check." >&2
+    exit 1
+  fi
+  if grep -E "com\.squareup\.leakcanary|com\.github\.chuckerteam" <<<"$classpath"; then
+    echo "verify.sh: a debug-only library is on the ${variant} runtime classpath." >&2
+    exit 1
+  fi
+done
+
 echo "==> release assemble (minified, resource-shrunk, no app-side keep rules)"
 ./gradlew assembleRelease
 

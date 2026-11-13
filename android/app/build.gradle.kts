@@ -347,6 +347,7 @@ dependencies {
     implementation(libs.retrofit.converter.kotlinx.serialization)
 
     debugImplementation(libs.chucker)
+    debugImplementation(libs.leakcanary)
 
     testImplementation(libs.junit)
     // The launch-intent parser needs a real Intent and Uri, which is the only reason this is here.

@@ -88,6 +88,9 @@ adb shell am start -a android.intent.action.VIEW -d "usesmileid-sample-android:/
 
 In debug builds, Settings → Network logs opens the app's and the SDK's requests from the last hour,
 in [Chucker](https://github.com/ChuckerTeam/chucker), with credential headers redacted.
+[LeakCanary](https://square.github.io/leakcanary/) watches debug builds for leaks with heap dumps off,
+because a dump holds the token and captured images. Turn dumps on only for a local investigation, and
+never attach a dump to an issue or pull request.
 
 ### iOS
 
