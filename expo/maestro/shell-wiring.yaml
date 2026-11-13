@@ -126,9 +126,9 @@ appId: ${APP_ID}
 # The scanner asks for the camera as it opens, and the prompt hides the screen until answered.
 - extendedWaitUntil:
     visible:
-      id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+      id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     timeout: 60000
 - tapOn:
-    id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+    id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
 - assertVisible:
     id: "sample_scan_token_screen"

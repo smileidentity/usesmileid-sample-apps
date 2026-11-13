@@ -7,6 +7,8 @@
 # an immediate `when: visible:` check reads SKIPPED and the dialog then swallows the next tap.
 # Conditional because the grant outlives both `stopApp` and the install, and ColorOS refuses
 # `pm grant`, so it cannot be pre-granted. Defined once so a new flow cannot forget it.
+# The id is a pattern: the API 34 emulator's button is "While using the app", while Android 10 and 11
+# phones show a plain "Allow".
 appId: ${APP_ID}
 ---
 - waitForAnimationToEnd:
@@ -14,7 +16,7 @@ appId: ${APP_ID}
 - runFlow:
     when:
       visible:
-        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+        id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     commands:
       - tapOn:
-          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"

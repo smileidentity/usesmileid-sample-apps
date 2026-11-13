@@ -54,6 +54,13 @@ a cold start by link returns to what the device stored.
 was typed as a profile, which then prefills the next pass (`inputText` appends) and outlives the run,
 since `clearState` is unusable. So every such flow runs `subflows/keep-nothing.yaml` before Continue.
 
+**Each typed field is followed by `hideKeyboard` before the next tap.** On a short phone the keyboard
+leaves the form a strip one row tall: the next field is either off screen and absent from the
+hierarchy, or half under the keyboard while the hierarchy still reports its full bounds, so the tap
+lands on the keyboard and the next value is typed into the previous field. The fields have no Done
+action, so `pressKey: Enter` does not close the keyboard. `hideKeyboard` runs straight after
+`inputText`, while the keyboard is certainly up, because it presses Back.
+
 **`APP_ID` has no default, deliberately.** In Maestro 2.8 a flow-level `env:` default WINS over `-e`
 on the command line, so declaring one here would silently pin every run to a single variant and the
 release lane would quietly test the debug build.
@@ -92,7 +99,9 @@ For font scale, use the component gallery's own override
 **The camera permission prompt is part of the SDK journey, and it cannot be pre-granted here.** The
 SDK asks for it between consent and instructions. ColorOS refuses `pm grant` (`SecurityException:
 Neither user 2000 nor current process has GRANT_RUNTIME_PERMISSIONS`), so `launchApp: permissions:`
-cannot help and `sdk-flow` answers the prompt on screen. Two consequences:
+cannot help and `sdk-flow` answers the prompt on screen. Its Allow button's id differs by version
+(`permission_allow_foreground_only_button` on the API 34 emulator, `permission_allow_button` on
+Android 10 and 11), so the flows match both with one pattern. Two consequences:
 
 - The tap is wrapped in `runFlow: when: visible:` because the grant **outlives both `stopApp` and
   the install**. An unconditional tap passes on a fresh install and fails every run after it.
@@ -104,6 +113,8 @@ cannot help and `sdk-flow` answers the prompt on screen. Two consequences:
 adb -s <serial> shell input keyevent KEYCODE_BACK   # dismisses without granting
 adb -s <serial> shell dumpsys activity activities | grep mResumedActivity
 ```
+
+On Android 10 Back leaves the dialog up, even after its app is stopped; tap its Deny button instead.
 
 **These flows delete stored profiles.** `profile-journey` and `settings` confirm sign-out, which ends
 the token session and deletes every profile on the device. Run them on a test device, never on a

@@ -37,9 +37,16 @@ appId: ${APP_ID}
 - assertVisible:
     id: "sample_license_row_angle"
 
-# One Dart package too, so the assertion covers both halves of what the registry merges.
-- assertVisible:
-    id: "sample_license_row_battery_plus"
+# One Dart package too, so the assertion covers both halves of what the registry merges. Scrolled to,
+# because on a short screen it sits below the fold.
+- scrollUntilVisible:
+    element:
+      id: "sample_license_row_battery_plus"
+    direction: DOWN
+- scrollUntilVisible:
+    element:
+      id: "sample_license_row_abseil_cpp"
+    direction: UP
 
 # The body is decompressed on demand; a row that expands to nothing is the failure this catches.
 - tapOn:

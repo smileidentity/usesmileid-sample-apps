@@ -64,6 +64,10 @@ appId: ${APP_ID}
 - assertVisible: "Turns Enhanced SmartSelfie™ off"
 
 # One tap, and both rows move.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_agent_mode"
+    direction: UP
 - tapOn:
     id: "sample_setting_agent_mode"
 - assertVisible:
@@ -76,6 +80,10 @@ appId: ${APP_ID}
 - assertVisible: "Operator captures for the applicant"
 
 # And back the other way, which also restores the default for everything below.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_enhanced_smart_selfie"
+    direction: UP
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -121,6 +129,13 @@ appId: ${APP_ID}
 # and a row tap measured mid-restore lands on whichever row moved into that spot.
 - waitForAnimationToEnd:
     timeout: 3000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_instructions_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    # Centred: a short phone's three-button bar covers it; the tab keeps the scroll, so rows above scroll back up.
+    centerElement: true
 - tapOn:
     id: "sample_setting_instructions_step"
 - assertVisible:
@@ -151,9 +166,19 @@ appId: ${APP_ID}
 # and a row tap measured mid-restore lands on whichever row moved into that spot.
 - waitForAnimationToEnd:
     timeout: 3000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_instructions_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    centerElement: true
 - tapOn:
     id: "sample_setting_instructions_step"
 - assertVisible: "Prep tips before capture"
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_enhanced_smart_selfie"
+    direction: UP
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -181,6 +206,10 @@ appId: ${APP_ID}
 # and a row tap measured mid-restore lands on whichever row moved into that spot.
 - waitForAnimationToEnd:
     timeout: 3000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_enhanced_smart_selfie"
+    direction: UP
 - tapOn:
     id: "sample_setting_enhanced_smart_selfie"
 - assertVisible:
@@ -191,6 +220,12 @@ appId: ${APP_ID}
 # No consent screen and no bound consent: the flow is refused, and the card is where the message
 # lands. The host's pre-flight sees it, since the builder's validate() returns build()'s verdict, and
 # lands on the same card as the SDK's typed Failure would.
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_consent_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    centerElement: true
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:
@@ -226,6 +261,12 @@ appId: ${APP_ID}
 # and a row tap measured mid-restore lands on whichever row moved into that spot.
 - waitForAnimationToEnd:
     timeout: 3000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_consent_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    centerElement: true
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible: "Ask permission before KYC checks"

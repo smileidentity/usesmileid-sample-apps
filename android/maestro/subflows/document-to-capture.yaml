@@ -44,10 +44,10 @@ appId: ${APP_ID}
 - runFlow:
     when:
       visible:
-        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+        id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     commands:
       - tapOn:
-          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
 - assertVisible:
     id: "si_instructions_screen"
 - scrollUntilVisible:

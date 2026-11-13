@@ -93,10 +93,12 @@ appId: ${APP_ID}
     id: "sample_user_details_field_firstName"
 - eraseText
 - inputText: "Ada"
+- hideKeyboard
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
+- hideKeyboard
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
@@ -117,10 +119,10 @@ appId: ${APP_ID}
 - runFlow:
     when:
       visible:
-        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+        id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     commands:
       - tapOn:
-          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
 # Release-on-leave: the scan screen had the camera bound moments ago, so the SDK reaching its own
 # camera journey is the host having handed it back. The capture screen itself, `si_capture_screen`,
 # is asserted by the document flows.
@@ -165,10 +167,10 @@ appId: ${APP_ID}
 - runFlow:
     when:
       visible:
-        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+        id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     commands:
       - tapOn:
-          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
 - assertVisible:
     id: "si_instructions_screen"
 - runFlow: subflows/leave-sdk-flow.yaml

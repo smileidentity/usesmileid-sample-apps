@@ -1,10 +1,11 @@
 appId: ${APP_ID}
 ---
-# Conditional because a grant outlives the run, and ColorOS refuses `pm grant`.
+# Conditional because a grant outlives the run, and ColorOS refuses `pm grant`. The id is a pattern:
+# the API 34 emulator says "While using the app", Android 10 and 11 phones a plain "Allow".
 - runFlow:
     when:
       visible:
-        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+        id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     commands:
       - tapOn:
-          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
