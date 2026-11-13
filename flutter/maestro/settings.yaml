@@ -30,6 +30,13 @@ appId: ${APP_ID}
 # Settled before the tap: the tab animates in, and a tap measured mid-animation lands on no row.
 - waitForAnimationToEnd:
     timeout: 3000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_consent_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    # Centred: on a short phone the row sits under the floating nav bar, which takes the tap.
+    centerElement: true
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:
@@ -64,6 +71,12 @@ appId: ${APP_ID}
 # Settled before the tap: the tab animates in, and a tap measured mid-animation lands on no row.
 - waitForAnimationToEnd:
     timeout: 3000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_consent_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    centerElement: true
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:
