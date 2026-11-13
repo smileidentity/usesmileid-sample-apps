@@ -72,7 +72,7 @@ exports[`appearanceSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -450,7 +450,7 @@ exports[`appearanceSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -9890,7 +9890,7 @@ exports[`captureAsSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -10342,7 +10342,7 @@ exports[`captureAsSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -10794,7 +10794,7 @@ exports[`captureModeSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -11172,7 +11172,7 @@ exports[`captureModeSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -11651,7 +11651,7 @@ exports[`countryPickerSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -12246,7 +12246,7 @@ exports[`countryPickerSheet dark empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -12629,7 +12629,7 @@ exports[`countryPickerSheet dark error 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -13071,7 +13071,7 @@ exports[`countryPickerSheet dark loading 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -13680,7 +13680,7 @@ exports[`countryPickerSheet dark noMatch 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -14041,7 +14041,7 @@ exports[`countryPickerSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -14636,7 +14636,7 @@ exports[`countryPickerSheet light empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -15019,7 +15019,7 @@ exports[`countryPickerSheet light error 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -15461,7 +15461,7 @@ exports[`countryPickerSheet light loading 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -16070,7 +16070,7 @@ exports[`countryPickerSheet light noMatch 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -16431,7 +16431,7 @@ exports[`documentPickerSheet dark arabicNames 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -16984,7 +16984,7 @@ exports[`documentPickerSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -17611,7 +17611,7 @@ exports[`documentPickerSheet dark empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -17994,7 +17994,7 @@ exports[`documentPickerSheet dark enhanced 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -18547,7 +18547,7 @@ exports[`documentPickerSheet dark error 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -18989,7 +18989,7 @@ exports[`documentPickerSheet dark loading 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -19532,7 +19532,7 @@ exports[`documentPickerSheet light arabicNames 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -20085,7 +20085,7 @@ exports[`documentPickerSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -20712,7 +20712,7 @@ exports[`documentPickerSheet light empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -21095,7 +21095,7 @@ exports[`documentPickerSheet light enhanced 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -21648,7 +21648,7 @@ exports[`documentPickerSheet light error 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -22090,7 +22090,7 @@ exports[`documentPickerSheet light loading 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -22532,7 +22532,7 @@ exports[`genericDocumentSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -23479,7 +23479,7 @@ exports[`genericDocumentSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -25574,7 +25574,7 @@ exports[`idTypePickerSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -26053,7 +26053,7 @@ exports[`idTypePickerSheet dark empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -26436,7 +26436,7 @@ exports[`idTypePickerSheet dark error 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -26878,7 +26878,7 @@ exports[`idTypePickerSheet dark loading 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -27421,7 +27421,7 @@ exports[`idTypePickerSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -27900,7 +27900,7 @@ exports[`idTypePickerSheet light empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -28283,7 +28283,7 @@ exports[`idTypePickerSheet light error 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -28725,7 +28725,7 @@ exports[`idTypePickerSheet light loading 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -53775,7 +53775,7 @@ exports[`languageSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -54301,7 +54301,7 @@ exports[`languageSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -54827,7 +54827,7 @@ exports[`scenarioDrawer dark flowScenarios 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -55758,7 +55758,7 @@ exports[`scenarioDrawer dark themeScenarios 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -56689,7 +56689,7 @@ exports[`scenarioDrawer light flowScenarios 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -57620,7 +57620,7 @@ exports[`scenarioDrawer light themeScenarios 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
