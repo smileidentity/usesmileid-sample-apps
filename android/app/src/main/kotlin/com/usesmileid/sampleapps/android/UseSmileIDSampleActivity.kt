@@ -8,6 +8,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalConfiguration
 import com.usesmileid.sampleapps.android.extension.launchUseSmileIDSampleShellExtension
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleLeakWatch
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.launch.UseSmileIDSampleAppLocale
 import com.usesmileid.sampleapps.android.launch.useSmileIDSampleLaunchArgs
@@ -18,6 +19,7 @@ class UseSmileIDSampleActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val launchArgs = intent.useSmileIDSampleLaunchArgs()
+        UseSmileIDSampleLeakWatch.install()
         UseSmileIDSampleNetworkLog.install(this)
         launchUseSmileIDSampleShellExtension(intent, restored = savedInstanceState != null)
         setContent {
