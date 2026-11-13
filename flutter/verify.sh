@@ -78,6 +78,17 @@ if [ "$PHASE" != android ]; then
 fi
 
 if [ "$PHASE" != checks ]; then
+  echo "==> LeakCanary watches the debug build and stays out of release"
+  leakcanary() { (cd app/android && ./gradlew -q :app:dependencies --configuration "$1RuntimeClasspath") | grep -c "com\.squareup\.leakcanary:leakcanary-android:"; }
+  if [ "$(leakcanary debug)" -eq 0 ]; then
+    echo "verify.sh: the debug build lost LeakCanary." >&2
+    exit 1
+  fi
+  if [ "$(leakcanary release)" -ne 0 ]; then
+    echo "verify.sh: LeakCanary is on the release runtime classpath." >&2
+    exit 1
+  fi
+
   echo "==> release APKs, one per ABI (minified, resource-shrunk, no app-side keep rules)"
   # Bundled ML Kit ships a native library per ABI, so a single APK carries four and weighs ~117 MB.
   (cd app && flutter build apk --release --split-per-abi)
