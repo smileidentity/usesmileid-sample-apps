@@ -23,10 +23,16 @@ appId: ${APP_ID}
     id: "sample_user_details_field_firstName"
 - eraseText
 - inputText: "Ada"
+- hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
+- hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
@@ -70,14 +76,30 @@ appId: ${APP_ID}
     id: "sample_user_details_continue"
     repeat: 3
     delay: 60
-- assertVisible:
-    id: "si_consent_screen"
-- tapOn: "Deny"
+# On a slow phone consent is up before the third tap, which lands on Deny; either way one run ends denied.
+- waitForAnimationToEnd:
+    timeout: 5000
+- extendedWaitUntil:
+    visible:
+      id: "si_consent_screen|sample_verification_details_screen|si_instructions_screen|com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
+    timeout: 10000
+# A stray tap that hit Allow instead would carry on into the SDK, to the camera prompt or instructions; that fails here.
+- assertNotVisible:
+    id: "si_instructions_screen|com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
+- runFlow:
+    when:
+      visible:
+        id: "si_consent_screen"
+    commands:
+      - tapOn: "Deny"
 - assertVisible:
     id: "sample_verification_details_screen"
 - assertVisible:
     id: "sample_result_result_count"
     text: "1"
+- assertVisible:
+    id: "sample_result_last_error"
+    text: "User denied consent"
 - back
 - assertVisible:
     id: "sample_verifications_screen"
@@ -135,10 +157,16 @@ appId: ${APP_ID}
     id: "sample_user_details_field_firstName"
 - eraseText
 - inputText: "Ada"
+- hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
+- hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
@@ -177,10 +205,16 @@ appId: ${APP_ID}
     id: "sample_user_details_field_firstName"
 - eraseText
 - inputText: "Ada"
+- hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_lastName"
 - eraseText
 - inputText: "Okafor"
+- hideKeyboard
+- assertVisible:
+    id: "sample_user_details_screen"
 - tapOn:
     id: "sample_user_details_field_email"
 - eraseText
@@ -200,10 +234,10 @@ appId: ${APP_ID}
 - runFlow:
     when:
       visible:
-        id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+        id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     commands:
       - tapOn:
-          id: "com.android.permissioncontroller:id/permission_allow_foreground_only_button"
+          id: "com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
 - assertVisible:
     id: "si_instructions_screen"
 - stopApp

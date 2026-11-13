@@ -72,7 +72,7 @@ exports[`newProfileSheet dark empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -1030,7 +1030,7 @@ exports[`newProfileSheet dark filled 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -1988,7 +1988,7 @@ exports[`newProfileSheet light empty 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -2946,7 +2946,7 @@ exports[`newProfileSheet light filled 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -9466,7 +9466,7 @@ exports[`profileSwitchSheet dark default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }
@@ -10105,7 +10105,7 @@ exports[`profileSwitchSheet light default 1`] = `
     <RCTScrollView
       contentContainerStyle={
         {
-          "paddingBottom": 24,
+          "paddingBottom": 58,
           "rowGap": 12,
         }
       }

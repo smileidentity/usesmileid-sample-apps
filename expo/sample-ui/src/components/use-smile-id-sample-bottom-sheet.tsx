@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import { UseSmileIDSampleTopAppBarButton } from './use-smile-id-sample-top-app-bar';
@@ -29,6 +30,7 @@ type Props = {
 export const UseSmileIDSampleBottomSheet = ({ onDismiss, title, fullHeight = false, testID, children }: Props) => {
   const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
+  const insets = useSafeAreaInsets();
 
   return (
     <View style={[styles.panel, { backgroundColor: theme.colors.surface }]}>
@@ -53,9 +55,13 @@ export const UseSmileIDSampleBottomSheet = ({ onDismiss, title, fullHeight = fal
           </Text>
         ) : null}
         {/* Scrolls rather than clips, so enlarged type cannot strand a call to action below the fold. */}
+        {/* njia pins the panel to the screen's bottom edge, so the content clears the system bar itself. */}
         <ScrollView
           style={!fullHeight && title !== undefined ? { marginTop: theme.dimens.spacing.sm } : undefined}
-          contentContainerStyle={{ paddingBottom: theme.dimens.spacing.lg, rowGap: theme.dimens.spacing.sm }}
+          contentContainerStyle={{
+            paddingBottom: theme.dimens.spacing.lg + insets.bottom,
+            rowGap: theme.dimens.spacing.sm,
+          }}
         >
           {children}
         </ScrollView>
