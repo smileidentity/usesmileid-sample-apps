@@ -57,8 +57,3 @@ kotlin {
 flutter {
     source = "../.."
 }
-
-dependencies {
-    // The SDK's own sample's leak watcher; verify.sh keeps it out of release.
-    debugImplementation("com.squareup.leakcanary:leakcanary-android:2.14")
-}

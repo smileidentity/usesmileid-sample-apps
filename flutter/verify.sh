@@ -81,26 +81,6 @@ if [ "$PHASE" != checks ]; then
   echo "==> release APKs, one per ABI (minified, resource-shrunk, no app-side keep rules)"
   # Bundled ML Kit ships a native library per ABI, so a single APK carries four and weighs ~117 MB.
   (cd app && flutter build apk --release --split-per-abi)
-
-  echo "==> LeakCanary watches the debug build and stays out of release"
-  # After the build: the Flutter tool writes app/android/gradlew, which is not committed.
-  # Plain assignments, so set -e stops on a Gradle failure instead of reading its silence as "absent".
-  debug_cp="$(cd app/android && ./gradlew -q :app:dependencies --configuration debugRuntimeClasspath)"
-  release_cp="$(cd app/android && ./gradlew -q :app:dependencies --configuration releaseRuntimeClasspath)"
-  for cp in "$debug_cp" "$release_cp"; do
-    if ! grep -q "RuntimeClasspath" <<<"$cp"; then
-      echo "verify.sh: Gradle printed no runtime classpath to check." >&2
-      exit 1
-    fi
-  done
-  if ! grep -q "com\.squareup\.leakcanary:leakcanary-android:" <<<"$debug_cp"; then
-    echo "verify.sh: the debug build lost LeakCanary." >&2
-    exit 1
-  fi
-  if grep -q "com\.squareup\.leakcanary:leakcanary-android:" <<<"$release_cp"; then
-    echo "verify.sh: LeakCanary is on the release runtime classpath." >&2
-    exit 1
-  fi
 fi
 
 if [ "$PHASE" != android ]; then
