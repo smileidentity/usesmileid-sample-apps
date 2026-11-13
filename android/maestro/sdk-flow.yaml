@@ -81,11 +81,11 @@ appId: ${APP_ID}
     timeout: 5000
 - extendedWaitUntil:
     visible:
-      id: "si_consent_screen|sample_verification_details_screen|si_instructions_screen"
+      id: "si_consent_screen|sample_verification_details_screen|si_instructions_screen|com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
     timeout: 10000
-# A stray tap that hit Allow instead would carry on into the SDK; that fails here, where it happened.
+# A stray tap that hit Allow instead would carry on into the SDK, to the camera prompt or instructions; that fails here.
 - assertNotVisible:
-    id: "si_instructions_screen"
+    id: "si_instructions_screen|com.android.permissioncontroller:id/permission_allow_(foreground_only_)?button"
 - runFlow:
     when:
       visible:

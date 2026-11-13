@@ -51,6 +51,8 @@ appId: ${APP_ID}
     id: "sample_new_profile_last_name"
 - inputText: "Wanjiku"
 - hideKeyboard
+- assertVisible:
+    id: "sample_new_profile_sheet"
 # The sheet checks no contact, because the API judges it: a partial email leaves Create enabled.
 - tapOn:
     id: "sample_new_profile_email"
@@ -66,10 +68,14 @@ appId: ${APP_ID}
 - eraseText
 - inputText: "njeri@karibu.example"
 - hideKeyboard
+- assertVisible:
+    id: "sample_new_profile_sheet"
 - tapOn:
     id: "sample_new_profile_phone"
 - inputText: "+254 700 000 000"
 - hideKeyboard
+- assertVisible:
+    id: "sample_new_profile_sheet"
 - tapOn:
     id: "sample_new_profile_save"
 
