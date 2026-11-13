@@ -25,6 +25,13 @@ appId: ${APP_ID}
     visible:
       id: "sample_settings_screen"
     timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_consent_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    # Centred: on a short phone the row sits under the floating nav bar, which takes the tap.
+    centerElement: true
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:
@@ -55,6 +62,12 @@ appId: ${APP_ID}
     visible:
       id: "sample_settings_screen"
     timeout: 30000
+- scrollUntilVisible:
+    element:
+      id: "sample_setting_consent_step"
+    direction: DOWN
+    visibilityPercentage: 80
+    centerElement: true
 - tapOn:
     id: "sample_setting_consent_step"
 - assertVisible:
