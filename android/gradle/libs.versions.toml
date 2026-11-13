@@ -1,12 +1,12 @@
 [versions]
 # The SDK snapshot builds made against njia's pinned build; a bare -SNAPSHOT can resolve a build made against another njia.
-usesmileid = "12.4.0-20261110.133529-83"
-usesmileid-bom = "12.4.0-20261110.133529-84"
-usesmileid-mlkit-face = "12.4.0-20261110.133529-83"
-usesmileid-mlkit-document = "12.4.0-20261110.133529-83"
-usesmileid-huawei-face = "12.4.0-20261110.133529-82"
-usesmileid-huawei-document = "12.4.0-20261110.133529-83"
-usesmileid-bridge = "12.4.0-20261110.133529-83"
+usesmileid = "12.4.0-20261112.214838-117"
+usesmileid-bom = "12.4.0-20261112.214838-118"
+usesmileid-mlkit-face = "12.4.0-20261112.214838-117"
+usesmileid-mlkit-document = "12.4.0-20261112.214838-117"
+usesmileid-huawei-face = "12.4.0-20261112.214838-116"
+usesmileid-huawei-document = "12.4.0-20261112.214838-117"
+usesmileid-bridge = "12.4.0-20261112.214838-117"
 # The four apps' navigation engine, at the exact build the SDK snapshot depends on.
 njia = "1.0.0"
 
