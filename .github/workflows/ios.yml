@@ -106,3 +106,4 @@ jobs:
           name: ios-uitest-result-${{ matrix.class || 'checks' }}
           path: ios/build/*.xcresult
           if-no-files-found: ignore
+          retention-days: 7
