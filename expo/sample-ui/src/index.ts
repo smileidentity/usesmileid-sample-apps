@@ -276,6 +276,7 @@ export {
   smileIDSampleErrorResultRows,
   smileIDSampleErrorSubmissionRows,
 } from './state/use-smile-id-sample-error-handling';
+export { smileIDSampleErrorForFailure } from './state/use-smile-id-sample-failure-row';
 export {
   smileIDSampleAspectRatios,
   smileIDSampleCaptureAsTriggerText,
