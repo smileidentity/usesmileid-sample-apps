@@ -141,6 +141,7 @@ expo/verify.sh
 |---|---|
 | [Architecture](docs/architecture.md) | How the four apps are built and kept identical, and where the SDK is called |
 | [Token sessions](docs/token-session.md) | How to run verifications from a v3 token instead of an API key |
+| [Handling errors](docs/error-handling.md) | How a failed verification becomes one short message and one action |
 | [Theming](docs/theming.md) | How the apps theme themselves and the SDK |
 | [Localisation](docs/localisation.md) | How the apps are translated, and how to add a language |
 | [Testing](docs/testing.md) | How to test an integration like this one |
