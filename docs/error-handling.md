@@ -70,9 +70,10 @@ apps ship.
 | `exit` | Close | Ends the flow | None |
 
 A row's `backoffSeconds` is how long the button stays dimmed before each use, in order: a server error
-waits 5 seconds before the first use, 15 before the second and 30 before the third. `waitsFor:
-connection` keeps it dimmed while the device is offline. When a limit is reached, Close replaces the
-button.
+waits 5 seconds before the first use, 15 before the second and 30 before the third. A use past the
+last entry waits the last entry again, so a timeout, which has one entry and no limit, waits 5 seconds
+before every use. `waitsFor: connection` keeps the button dimmed while the device is offline. When a
+limit is reached, Close replaces the button.
 
 ## 4. The resolver
 

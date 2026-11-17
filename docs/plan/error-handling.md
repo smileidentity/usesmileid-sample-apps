@@ -57,3 +57,7 @@ Each item is one pull request on all four apps, in this order.
    and a press while offline fails with the same message.
 5. A 408 is not in the table, so it resolves as the fallback and ends in Close. Should it resolve as a
    timeout?
+6. "We couldn't start this verification. Please try again, or contact the app's support." is shown with
+   Close and no retry. Should the message drop "Please try again", or the row offer one?
+7. A timeout and a lost connection have no limit, so Try again is offered for as long as they keep
+   failing. Should each have one, as a server error has three?
