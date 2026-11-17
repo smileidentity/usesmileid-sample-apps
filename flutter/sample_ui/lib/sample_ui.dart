@@ -74,6 +74,7 @@ export 'src/state/use_smileid_sample_auth_user_ids.dart';
 export 'src/state/use_smileid_sample_catalogue.dart';
 export 'src/state/use_smileid_sample_contact_rules.dart';
 export 'src/state/use_smileid_sample_error_handling.dart';
+export 'src/state/use_smileid_sample_failure_row.dart';
 export 'src/state/use_smileid_sample_id_details.dart';
 export 'src/state/use_smileid_sample_id_number_hint.dart';
 export 'src/state/use_smileid_sample_launch_args.dart';
