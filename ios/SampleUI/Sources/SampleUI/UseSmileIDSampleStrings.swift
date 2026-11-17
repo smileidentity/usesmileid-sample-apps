@@ -855,6 +855,118 @@ public enum UseSmileIDSampleStrings {
     String(format: text("status_refresh_failed"), reason)
   }
 
+  public static var errorCouldNotStart: String {
+    text("error_could_not_start")
+  }
+
+  public static var errorIdNumberInvalid: String {
+    text("error_id_number_invalid")
+  }
+
+  public static var errorServiceNotSetUp: String {
+    text("error_service_not_set_up")
+  }
+
+  public static var errorSessionExpired: String {
+    text("error_session_expired")
+  }
+
+  public static var errorServiceUnavailable: String {
+    text("error_service_unavailable")
+  }
+
+  public static var errorNotAvailable: String {
+    text("error_not_available")
+  }
+
+  public static var errorUpdateApp: String {
+    text("error_update_app")
+  }
+
+  public static var errorNotFound: String {
+    text("error_not_found")
+  }
+
+  public static var errorAlreadyStarted: String {
+    text("error_already_started")
+  }
+
+  public static var errorLinkExpired: String {
+    text("error_link_expired")
+  }
+
+  public static var errorPhotosTooLarge: String {
+    text("error_photos_too_large")
+  }
+
+  public static var errorTooManyAttempts: String {
+    text("error_too_many_attempts")
+  }
+
+  public static var errorServer: String {
+    text("error_server")
+  }
+
+  public static var errorNoConnection: String {
+    text("error_no_connection")
+  }
+
+  public static var errorTimeout: String {
+    text("error_timeout")
+  }
+
+  public static var errorPhotoUnusable: String {
+    text("error_photo_unusable")
+  }
+
+  public static var errorPhotoRejected: String {
+    text("error_photo_rejected")
+  }
+
+  public static var errorDocumentNotRecognised: String {
+    text("error_document_not_recognised")
+  }
+
+  public static var errorFaceCheckUnavailable: String {
+    text("error_face_check_unavailable")
+  }
+
+  public static var errorNoSavedSelfie: String {
+    text("error_no_saved_selfie")
+  }
+
+  public static var errorIdNumberNotAccepted: String {
+    text("error_id_number_not_accepted")
+  }
+
+  public static var errorIdServiceDown: String {
+    text("error_id_service_down")
+  }
+
+  public static var errorCouldNotFinish: String {
+    text("error_could_not_finish")
+  }
+
+  public static var errorNotVerified: String {
+    text("error_not_verified")
+  }
+
+  public static var errorActionRetakePhoto: String {
+    text("error_action_retake_photo")
+  }
+
+  public static var errorActionEditIdNumber: String {
+    text("error_action_edit_id_number")
+  }
+
+  public static var errorActionStartAgain: String {
+    text("error_action_start_again")
+  }
+
+  public static var errorActionClose: String {
+    text("error_action_close")
+  }
+
   public static var detailsTitle: String {
     text("details_title")
   }

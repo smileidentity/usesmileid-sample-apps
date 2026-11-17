@@ -38,6 +38,7 @@ Rules:
 | `id-number-hints.json` | Test cases for the ID-number hint computed from a type's regex, and the regexes every platform's engine must compile | added 2026-09-28 |
 | `contact-rules.json` | How the forms submit an email or a phone number: trimmed, and a phone number without separators. No form checks either value; the API judges them | added 2026-09-30; checks dropped 2026-10-14 |
 | `user-details-fields.json` | Which user-details rows the form shows for a product, read from `fields_to_collect` in the API's configuration, and for KYC from each ID type's entry in `products`: a name the partner may leave out is not shown, a field the token binds shows as provided, and a name the picked ID type does not need is not sent | added 2026-10-14; per-ID-type names added 2026-10-16 |
+| `error-handling.json` | The message a failed verification shows and the one action it offers: a row for each HTTP status or transport failure at submission and for each result `reason`, with the button's delays and limits, and the cases every app's resolver must resolve the same way. `docs/error-handling.md` explains it | added 2026-11-17; the resolver is in all four apps, the screen that uses it is planned in `docs/plan/error-handling.md` |
 | `l10n/` | Every string the apps show and the SDK overrides they ship, in each language `languages.json` lists. `scripts/sync_l10n.py` generates each platform's files from it; never edit those by hand | added 2026-10-05 |
 
 ## `screens.json` entry shape

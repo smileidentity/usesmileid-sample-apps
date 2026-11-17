@@ -220,6 +220,34 @@ type Key =
   | 'status_refresh_not_token_job'
   | 'status_refresh_other_partner'
   | 'status_refresh_failed'
+  | 'error_could_not_start'
+  | 'error_id_number_invalid'
+  | 'error_service_not_set_up'
+  | 'error_session_expired'
+  | 'error_service_unavailable'
+  | 'error_not_available'
+  | 'error_update_app'
+  | 'error_not_found'
+  | 'error_already_started'
+  | 'error_link_expired'
+  | 'error_photos_too_large'
+  | 'error_too_many_attempts'
+  | 'error_server'
+  | 'error_no_connection'
+  | 'error_timeout'
+  | 'error_photo_unusable'
+  | 'error_photo_rejected'
+  | 'error_document_not_recognised'
+  | 'error_face_check_unavailable'
+  | 'error_no_saved_selfie'
+  | 'error_id_number_not_accepted'
+  | 'error_id_service_down'
+  | 'error_could_not_finish'
+  | 'error_not_verified'
+  | 'error_action_retake_photo'
+  | 'error_action_edit_id_number'
+  | 'error_action_start_again'
+  | 'error_action_close'
   | 'details_title'
   | 'details_missing_title'
   | 'details_missing_body'
@@ -1200,6 +1228,118 @@ export class UseSmileIDSampleStrings {
     return this.format('status_refresh_failed', args);
   }
 
+  get errorCouldNotStart(): string {
+    return this.values.error_could_not_start;
+  }
+
+  get errorIdNumberInvalid(): string {
+    return this.values.error_id_number_invalid;
+  }
+
+  get errorServiceNotSetUp(): string {
+    return this.values.error_service_not_set_up;
+  }
+
+  get errorSessionExpired(): string {
+    return this.values.error_session_expired;
+  }
+
+  get errorServiceUnavailable(): string {
+    return this.values.error_service_unavailable;
+  }
+
+  get errorNotAvailable(): string {
+    return this.values.error_not_available;
+  }
+
+  get errorUpdateApp(): string {
+    return this.values.error_update_app;
+  }
+
+  get errorNotFound(): string {
+    return this.values.error_not_found;
+  }
+
+  get errorAlreadyStarted(): string {
+    return this.values.error_already_started;
+  }
+
+  get errorLinkExpired(): string {
+    return this.values.error_link_expired;
+  }
+
+  get errorPhotosTooLarge(): string {
+    return this.values.error_photos_too_large;
+  }
+
+  get errorTooManyAttempts(): string {
+    return this.values.error_too_many_attempts;
+  }
+
+  get errorServer(): string {
+    return this.values.error_server;
+  }
+
+  get errorNoConnection(): string {
+    return this.values.error_no_connection;
+  }
+
+  get errorTimeout(): string {
+    return this.values.error_timeout;
+  }
+
+  get errorPhotoUnusable(): string {
+    return this.values.error_photo_unusable;
+  }
+
+  get errorPhotoRejected(): string {
+    return this.values.error_photo_rejected;
+  }
+
+  get errorDocumentNotRecognised(): string {
+    return this.values.error_document_not_recognised;
+  }
+
+  get errorFaceCheckUnavailable(): string {
+    return this.values.error_face_check_unavailable;
+  }
+
+  get errorNoSavedSelfie(): string {
+    return this.values.error_no_saved_selfie;
+  }
+
+  get errorIdNumberNotAccepted(): string {
+    return this.values.error_id_number_not_accepted;
+  }
+
+  get errorIdServiceDown(): string {
+    return this.values.error_id_service_down;
+  }
+
+  get errorCouldNotFinish(): string {
+    return this.values.error_could_not_finish;
+  }
+
+  get errorNotVerified(): string {
+    return this.values.error_not_verified;
+  }
+
+  get errorActionRetakePhoto(): string {
+    return this.values.error_action_retake_photo;
+  }
+
+  get errorActionEditIdNumber(): string {
+    return this.values.error_action_edit_id_number;
+  }
+
+  get errorActionStartAgain(): string {
+    return this.values.error_action_start_again;
+  }
+
+  get errorActionClose(): string {
+    return this.values.error_action_close;
+  }
+
   get detailsTitle(): string {
     return this.values.details_title;
   }
@@ -1872,6 +2012,34 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_not_token_job: 'Not submitted under a scanned token',
     status_refresh_other_partner: 'Submitted by a different partner',
     status_refresh_failed: 'Could not check status: {reason}',
+    error_could_not_start: 'We couldn\'t start this verification. Please try again, or contact the app\'s support.',
+    error_id_number_invalid: 'That ID number doesn\'t look right. Check it and try again.',
+    error_service_not_set_up: 'This service isn\'t set up to complete verifications yet. Please contact the app\'s support.',
+    error_session_expired: 'Your session has expired. Please start again.',
+    error_service_unavailable: 'This service is temporarily unavailable. Please try again later.',
+    error_not_available: 'This verification isn\'t available right now. Please contact the app\'s support.',
+    error_update_app: 'This app needs to be updated to continue. Please update and try again.',
+    error_not_found: 'We couldn\'t find this verification. Please start again.',
+    error_already_started: 'This verification has already been started. Please start a new one.',
+    error_link_expired: 'This link has expired. Please request a new one.',
+    error_photos_too_large: 'Your photos were too large to send. Please try again.',
+    error_too_many_attempts: 'Too many attempts. Please wait a moment and try again.',
+    error_server: 'Something went wrong on our side. Please try again in a few minutes.',
+    error_no_connection: 'Check your internet connection and try again.',
+    error_timeout: 'The request took too long. Please try again.',
+    error_photo_unusable: 'We couldn\'t use your photo. Please retake it in good light.',
+    error_photo_rejected: 'We couldn\'t use that photo. Please retake it.',
+    error_document_not_recognised: 'We couldn\'t recognise this document. Please use a supported ID and retake the photo.',
+    error_face_check_unavailable: 'We couldn\'t complete the face check for this ID. Please try another ID or contact support.',
+    error_no_saved_selfie: 'We couldn\'t find your saved selfie. Please register first.',
+    error_id_number_not_accepted: 'The ID number wasn\'t accepted. Check it and try again.',
+    error_id_service_down: 'The ID service is temporarily down. Please try again later.',
+    error_could_not_finish: 'We couldn\'t finish this verification. Please try again.',
+    error_not_verified: 'We couldn\'t verify your identity.',
+    error_action_retake_photo: 'Retake photo',
+    error_action_edit_id_number: 'Edit ID number',
+    error_action_start_again: 'Start again',
+    error_action_close: 'Close',
     details_title: 'Verification details',
     details_missing_title: 'No verification here',
     details_missing_body: 'Nothing stored for jobId = {jobId}',
@@ -2201,6 +2369,34 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_not_token_job: 'Non soumis avec un jeton scanné',
     status_refresh_other_partner: 'Soumis par un autre partenaire',
     status_refresh_failed: 'Impossible de vérifier le statut : {reason}',
+    error_could_not_start: 'Nous n’avons pas pu démarrer cette vérification. Veuillez réessayer ou contacter l’assistance de l’application.',
+    error_id_number_invalid: 'Ce numéro de pièce semble incorrect. Vérifiez-le et réessayez.',
+    error_service_not_set_up: 'Ce service n’est pas encore configuré pour effectuer des vérifications. Veuillez contacter l’assistance de l’application.',
+    error_session_expired: 'Votre session a expiré. Veuillez recommencer.',
+    error_service_unavailable: 'Ce service est temporairement indisponible. Veuillez réessayer plus tard.',
+    error_not_available: 'Cette vérification n’est pas disponible pour le moment. Veuillez contacter l’assistance de l’application.',
+    error_update_app: 'Cette application doit être mise à jour pour continuer. Veuillez la mettre à jour et réessayer.',
+    error_not_found: 'Nous n’avons pas trouvé cette vérification. Veuillez recommencer.',
+    error_already_started: 'Cette vérification a déjà été lancée. Veuillez en démarrer une nouvelle.',
+    error_link_expired: 'Ce lien a expiré. Veuillez en demander un nouveau.',
+    error_photos_too_large: 'Vos photos étaient trop volumineuses pour être envoyées. Veuillez réessayer.',
+    error_too_many_attempts: 'Trop de tentatives. Veuillez patienter un instant et réessayer.',
+    error_server: 'Un problème est survenu de notre côté. Veuillez réessayer dans quelques minutes.',
+    error_no_connection: 'Vérifiez votre connexion Internet et réessayez.',
+    error_timeout: 'La requête a pris trop de temps. Veuillez réessayer.',
+    error_photo_unusable: 'Nous n’avons pas pu utiliser votre photo. Veuillez la reprendre avec un bon éclairage.',
+    error_photo_rejected: 'Nous n’avons pas pu utiliser cette photo. Veuillez la reprendre.',
+    error_document_not_recognised: 'Nous n’avons pas reconnu ce document. Veuillez utiliser une pièce prise en charge et reprendre la photo.',
+    error_face_check_unavailable: 'Nous n’avons pas pu effectuer la vérification faciale pour cette pièce. Veuillez essayer une autre pièce ou contacter l’assistance.',
+    error_no_saved_selfie: 'Nous n’avons pas trouvé votre selfie enregistré. Veuillez d’abord vous inscrire.',
+    error_id_number_not_accepted: 'Le numéro de pièce n’a pas été accepté. Vérifiez-le et réessayez.',
+    error_id_service_down: 'Le service de vérification des pièces est temporairement indisponible. Veuillez réessayer plus tard.',
+    error_could_not_finish: 'Nous n’avons pas pu terminer cette vérification. Veuillez réessayer.',
+    error_not_verified: 'Nous n’avons pas pu vérifier votre identité.',
+    error_action_retake_photo: 'Reprendre la photo',
+    error_action_edit_id_number: 'Modifier le numéro de pièce',
+    error_action_start_again: 'Recommencer',
+    error_action_close: 'Fermer',
     details_title: 'Détails de la vérification',
     details_missing_title: 'Aucune vérification ici',
     details_missing_body: 'Rien d’enregistré pour jobId = {jobId}',
@@ -2530,6 +2726,34 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_not_token_job: 'لم يُرسل باستخدام رمز ممسوح',
     status_refresh_other_partner: 'أُرسل بواسطة شريك آخر',
     status_refresh_failed: 'تعذّر التحقق من الحالة: {reason}',
+    error_could_not_start: 'تعذّر علينا بدء عملية التحقق هذه. يُرجى المحاولة مرة أخرى أو التواصل مع دعم التطبيق.',
+    error_id_number_invalid: 'يبدو أن رقم الهوية هذا غير صحيح. تحقّق منه وحاول مرة أخرى.',
+    error_service_not_set_up: 'هذه الخدمة غير مهيّأة بعد لإتمام عمليات التحقق. يُرجى التواصل مع دعم التطبيق.',
+    error_session_expired: 'انتهت صلاحية جلستك. يُرجى البدء من جديد.',
+    error_service_unavailable: 'هذه الخدمة غير متاحة مؤقتًا. يُرجى المحاولة لاحقًا.',
+    error_not_available: 'عملية التحقق هذه غير متاحة حاليًا. يُرجى التواصل مع دعم التطبيق.',
+    error_update_app: 'يجب تحديث هذا التطبيق للمتابعة. يُرجى تحديثه والمحاولة مرة أخرى.',
+    error_not_found: 'تعذّر علينا العثور على عملية التحقق هذه. يُرجى البدء من جديد.',
+    error_already_started: 'عملية التحقق هذه بدأت من قبل. يُرجى بدء عملية جديدة.',
+    error_link_expired: 'انتهت صلاحية هذا الرابط. يُرجى طلب رابط جديد.',
+    error_photos_too_large: 'كانت صورك أكبر من أن تُرسل. يُرجى المحاولة مرة أخرى.',
+    error_too_many_attempts: 'محاولات كثيرة جدًا. يُرجى الانتظار قليلًا ثم المحاولة مرة أخرى.',
+    error_server: 'حدث خطأ من جهتنا. يُرجى المحاولة مرة أخرى بعد بضع دقائق.',
+    error_no_connection: 'تحقّق من اتصالك بالإنترنت وحاول مرة أخرى.',
+    error_timeout: 'استغرق الطلب وقتًا طويلًا. يُرجى المحاولة مرة أخرى.',
+    error_photo_unusable: 'تعذّر علينا استخدام صورتك. يُرجى التقاطها من جديد في إضاءة جيدة.',
+    error_photo_rejected: 'تعذّر علينا استخدام تلك الصورة. يُرجى التقاطها من جديد.',
+    error_document_not_recognised: 'تعذّر علينا التعرّف على هذا المستند. يُرجى استخدام هوية مدعومة والتقاط الصورة من جديد.',
+    error_face_check_unavailable: 'تعذّر علينا إتمام فحص الوجه لهذه الهوية. يُرجى تجربة هوية أخرى أو التواصل مع الدعم.',
+    error_no_saved_selfie: 'تعذّر علينا العثور على صورتك الذاتية المحفوظة. يُرجى التسجيل أولًا.',
+    error_id_number_not_accepted: 'لم يُقبل رقم الهوية. تحقّق منه وحاول مرة أخرى.',
+    error_id_service_down: 'خدمة التحقق من الهوية متوقفة مؤقتًا. يُرجى المحاولة لاحقًا.',
+    error_could_not_finish: 'تعذّر علينا إكمال عملية التحقق هذه. يُرجى المحاولة مرة أخرى.',
+    error_not_verified: 'تعذّر علينا التحقق من هويتك.',
+    error_action_retake_photo: 'إعادة التقاط الصورة',
+    error_action_edit_id_number: 'تعديل رقم الهوية',
+    error_action_start_again: 'البدء من جديد',
+    error_action_close: 'إغلاق',
     details_title: 'تفاصيل عملية التحقق',
     details_missing_title: 'لا توجد عملية تحقق هنا',
     details_missing_body: 'لا شيء محفوظ لـ jobId = {jobId}',
@@ -2859,6 +3083,34 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_not_token_job: 'לא נשלח עם טוקן שנסרק',
     status_refresh_other_partner: 'נשלח על ידי שותף אחר',
     status_refresh_failed: 'לא ניתן לבדוק את הסטטוס: {reason}',
+    error_could_not_start: 'לא הצלחנו להתחיל את האימות הזה. נסו שוב או פנו לתמיכה של האפליקציה.',
+    error_id_number_invalid: 'מספר התעודה הזה לא נראה תקין. בדקו אותו ונסו שוב.',
+    error_service_not_set_up: 'השירות הזה עדיין לא מוגדר להשלמת אימותים. פנו לתמיכה של האפליקציה.',
+    error_session_expired: 'פג תוקף ההפעלה שלכם. התחילו מחדש.',
+    error_service_unavailable: 'השירות הזה אינו זמין זמנית. נסו שוב מאוחר יותר.',
+    error_not_available: 'האימות הזה אינו זמין כרגע. פנו לתמיכה של האפליקציה.',
+    error_update_app: 'צריך לעדכן את האפליקציה כדי להמשיך. עדכנו אותה ונסו שוב.',
+    error_not_found: 'לא הצלחנו למצוא את האימות הזה. התחילו מחדש.',
+    error_already_started: 'האימות הזה כבר התחיל. התחילו אימות חדש.',
+    error_link_expired: 'פג תוקף הקישור הזה. בקשו קישור חדש.',
+    error_photos_too_large: 'התמונות שלכם היו גדולות מדי לשליחה. נסו שוב.',
+    error_too_many_attempts: 'יותר מדי ניסיונות. המתינו רגע ונסו שוב.',
+    error_server: 'משהו השתבש אצלנו. נסו שוב בעוד כמה דקות.',
+    error_no_connection: 'בדקו את החיבור לאינטרנט ונסו שוב.',
+    error_timeout: 'הבקשה ארכה זמן רב מדי. נסו שוב.',
+    error_photo_unusable: 'לא הצלחנו להשתמש בתמונה שלכם. צלמו אותה שוב בתאורה טובה.',
+    error_photo_rejected: 'לא הצלחנו להשתמש בתמונה הזו. צלמו אותה שוב.',
+    error_document_not_recognised: 'לא הצלחנו לזהות את המסמך הזה. השתמשו בתעודה נתמכת וצלמו שוב.',
+    error_face_check_unavailable: 'לא הצלחנו להשלים את בדיקת הפנים עבור התעודה הזו. נסו תעודה אחרת או פנו לתמיכה.',
+    error_no_saved_selfie: 'לא מצאנו את הסלפי השמור שלכם. הירשמו תחילה.',
+    error_id_number_not_accepted: 'מספר התעודה לא התקבל. בדקו אותו ונסו שוב.',
+    error_id_service_down: 'שירות אימות התעודות מושבת זמנית. נסו שוב מאוחר יותר.',
+    error_could_not_finish: 'לא הצלחנו לסיים את האימות הזה. נסו שוב.',
+    error_not_verified: 'לא הצלחנו לאמת את זהותכם.',
+    error_action_retake_photo: 'צילום מחדש',
+    error_action_edit_id_number: 'עריכת מספר התעודה',
+    error_action_start_again: 'התחלה מחדש',
+    error_action_close: 'סגירה',
     details_title: 'פרטי האימות',
     details_missing_title: 'אין כאן אימות',
     details_missing_body: 'לא נשמר דבר עבור jobId = {jobId}',

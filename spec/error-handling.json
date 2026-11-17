@@ -1,0 +1,146 @@
+{
+  "description": "Which message a failed verification shows and the one action it offers. A failure is either refused when the job is submitted, which the SDK reports with the HTTP status, or returned after the job was accepted, with a `reason`. Each app's resolver holds this table and a unit test asserts it row for row and case for case. `message` and `button` are keys in `l10n/app/`. The messages say what the user can do and never why a verification was refused, and no server text is ever shown.",
+  "matching": "Rows are tried in order and the first match wins. A submission row matches on `status` or `transport`, a result row on `reasons`. A row with `serverMessageContains` also needs the server's message to contain one of its entries, ignoring case, so it sits above the plain row for the same status or reason. Nothing matching resolves as the `fallback` row.",
+  "actions": {
+    "retry": {
+      "button": "common_try_again",
+      "does": "Runs the verification again as a new job. The button stays visible and is dimmed for the row's `backoffSeconds`, one entry per use, and for `waitsFor` while that holds."
+    },
+    "retryLater": {
+      "button": "common_try_again",
+      "does": "As `retry`, with a longer delay and a single use."
+    },
+    "recapture": {
+      "button": "error_action_retake_photo",
+      "maxUses": 3,
+      "per": "session",
+      "does": "Restarts capture, then submits a new job."
+    },
+    "fixInput": {
+      "button": "error_action_edit_id_number",
+      "does": "Returns to the ID form. No new capture."
+    },
+    "newSession": {
+      "button": "error_action_start_again",
+      "maxUses": 1,
+      "per": "error",
+      "does": "Takes a new token and restarts the flow."
+    },
+    "exit": {
+      "button": "error_action_close",
+      "does": "Ends the flow. No retry is offered, and the error still reaches the host app."
+    }
+  },
+  "limits": "`maxUses` on a row overrides its action's. `per: session` counts every use of the action in the session, `per: error` counts uses for one error. A row with neither has no limit. A use past the last `backoffSeconds` entry waits the last entry again, so a row with one entry waits that long before every use. When a limit is reached the button is replaced by Close.",
+  "submission": [
+    { "id": "idNumberInvalid", "status": [400], "serverMessageContains": ["id number format", "id_number", "id_type"], "message": "error_id_number_invalid", "action": "fixInput" },
+    { "id": "callbackUrlMissing", "status": [400], "serverMessageContains": ["callback"], "message": "error_service_not_set_up", "action": "exit" },
+    { "id": "requestInvalid", "status": [400], "message": "error_could_not_start", "action": "exit" },
+    { "id": "sessionExpired", "status": [401], "message": "error_session_expired", "action": "newSession" },
+    { "id": "insufficientBalance", "status": [402], "message": "error_service_unavailable", "action": "exit" },
+    { "id": "sdkVersionNotAllowed", "status": [403], "serverMessageContains": ["sdk version"], "message": "error_update_app", "action": "exit" },
+    { "id": "notEnabled", "status": [403], "message": "error_not_available", "action": "exit" },
+    { "id": "notFound", "status": [404], "message": "error_not_found", "action": "exit" },
+    { "id": "alreadyStarted", "status": [409], "message": "error_already_started", "action": "newSession" },
+    { "id": "linkExpired", "status": [410], "message": "error_link_expired", "action": "exit" },
+    { "id": "payloadTooLarge", "status": [413], "message": "error_photos_too_large", "action": "recapture" },
+    { "id": "wrongContentType", "status": [415], "message": "error_could_not_start", "action": "exit" },
+    { "id": "tokenPayloadInvalid", "status": [422], "message": "error_session_expired", "action": "newSession" },
+    { "id": "rateLimited", "status": [429], "message": "error_too_many_attempts", "action": "retry", "backoffSeconds": [30], "maxUses": 1 },
+    { "id": "serverError", "status": [500, 502, 503, 504], "message": "error_server", "action": "retry", "backoffSeconds": [5, 15, 30], "maxUses": 3 },
+    { "id": "noConnection", "transport": "noConnection", "message": "error_no_connection", "action": "retry", "waitsFor": "connection" },
+    { "id": "timeout", "transport": "timeout", "message": "error_timeout", "action": "retry", "backoffSeconds": [5] }
+  ],
+  "result": [
+    { "id": "idAuthorityPhotoUnavailable", "reasons": ["image_unavailable_or_invalid"], "serverMessageContains": ["id authority photo not available"], "message": "error_face_check_unavailable", "action": "exit" },
+    { "id": "noEnrolledSelfie", "reasons": ["image_unavailable_or_invalid"], "serverMessageContains": ["no enrolled selfie found"], "message": "error_no_saved_selfie", "action": "exit" },
+    { "id": "photoUnusable", "reasons": ["image_unavailable_or_invalid"], "message": "error_photo_unusable", "action": "recapture" },
+    { "id": "contentPolicyViolated", "reasons": ["content_policy_violated"], "message": "error_photo_rejected", "action": "recapture" },
+    { "id": "documentUnclassifiable", "reasons": ["document_unclassifiable"], "message": "error_document_not_recognised", "action": "recapture" },
+    { "id": "invalidIdNumber", "reasons": ["invalid_id_number"], "message": "error_id_number_not_accepted", "action": "fixInput" },
+    { "id": "serviceUnavailable", "reasons": ["service_unavailable"], "message": "error_id_service_down", "action": "retryLater", "backoffSeconds": [30], "maxUses": 1 },
+    { "id": "internalError", "reasons": ["internal_error"], "message": "error_could_not_finish", "action": "retry", "backoffSeconds": [5], "maxUses": 1 },
+    {
+      "id": "notVerified",
+      "reasons": ["spoof_detected", "face_verification_failed", "document_check_failed", "age_requirement_not_met", "account_locked", "account_locked_fraud", "high_risk", "medium_risk", "identifier_not_found"],
+      "message": "error_not_verified",
+      "action": "exit"
+    }
+  ],
+  "fallback": {
+    "submission": "requestInvalid",
+    "result": "notVerified",
+    "why": "A status or reason the table does not name gets a message that names nothing and a Close button: a retry that fails the same way is not offered, and an unknown refusal is never explained."
+  },
+  "notDistinguished": [
+    {
+      "status": 403,
+      "cause": "Refused by a security rule",
+      "resolvesAs": "notEnabled",
+      "why": "The API documents no response text for it, so an app cannot tell it from the other 403 answers. Both end in Close."
+    },
+    {
+      "status": 403,
+      "cause": "Token rejected after the flow began",
+      "resolvesAs": "notEnabled",
+      "why": "The API documents no response text for it either. Until it does, the app offers Close where a new session would help."
+    }
+  ],
+  "cases": [
+    { "status": 400, "serverMessage": "Required field 'country' is missing or invalid.", "resolves": "requestInvalid" },
+    { "status": 400, "serverMessage": "Header 'SmileID-Token' is required.", "resolves": "requestInvalid" },
+    { "status": 400, "serverMessage": "Either email or phone_number is required.", "resolves": "requestInvalid" },
+    { "status": 400, "resolves": "requestInvalid" },
+    { "status": 400, "serverMessage": "Invalid ID number format for the specified country and ID type.", "resolves": "idNumberInvalid" },
+    { "status": 400, "serverMessage": "Required field 'id_number' is missing or invalid.", "resolves": "idNumberInvalid" },
+    { "status": 400, "serverMessage": "INVALID ID NUMBER FORMAT", "resolves": "idNumberInvalid" },
+    { "status": 400, "serverMessage": "Required field 'phone_number' is not a valid number.", "resolves": "requestInvalid" },
+    { "status": 400, "serverMessage": "A valid callback_url is required in the request or a default callback URL must be configured in the portal.", "resolves": "callbackUrlMissing" },
+    { "status": 401, "serverMessage": "Invalid authentication credentials.", "resolves": "sessionExpired" },
+    { "status": 402, "serverMessage": "Insufficient wallet balance.", "resolves": "insufficientBalance" },
+    { "status": 403, "serverMessage": "Product not enabled for this partner.", "resolves": "notEnabled" },
+    { "status": 403, "serverMessage": "ID type not enabled for this partner.", "resolves": "notEnabled" },
+    { "status": 403, "serverMessage": "Production access is not enabled.", "resolves": "notEnabled" },
+    { "status": 403, "serverMessage": "Callback url not allowed.", "resolves": "notEnabled" },
+    { "status": 403, "serverMessage": "IP address not allowed.", "resolves": "notEnabled" },
+    { "status": 403, "resolves": "notEnabled" },
+    { "status": 403, "serverMessage": "SDK version not allowed.", "resolves": "sdkVersionNotAllowed" },
+    { "status": 404, "resolves": "notFound" },
+    { "status": 409, "resolves": "alreadyStarted" },
+    { "status": 410, "resolves": "linkExpired" },
+    { "status": 413, "serverMessage": "The request payload exceeds the maximum allowed size of 4.5MB.", "resolves": "payloadTooLarge" },
+    { "status": 415, "serverMessage": "Unsupported Media Type. Required Content-Type is multipart/form-data", "resolves": "wrongContentType" },
+    { "status": 422, "resolves": "tokenPayloadInvalid" },
+    { "status": 429, "serverMessage": "Rate limit exceeded. Please try again later.", "resolves": "rateLimited" },
+    { "status": 500, "serverMessage": "An unexpected error occurred. Please try again or contact support.", "resolves": "serverError" },
+    { "status": 502, "resolves": "serverError" },
+    { "status": 503, "resolves": "serverError" },
+    { "status": 504, "resolves": "serverError" },
+    { "status": 418, "resolves": "requestInvalid" },
+    { "status": 501, "resolves": "requestInvalid" },
+    { "transport": "noConnection", "resolves": "noConnection" },
+    { "transport": "timeout", "resolves": "timeout" },
+    { "reason": "image_unavailable_or_invalid", "serverMessage": "Error: selfie image(s) are unusable.", "resolves": "photoUnusable" },
+    { "reason": "image_unavailable_or_invalid", "serverMessage": "Error: selfie, document image(s) are unusable.", "resolves": "photoUnusable" },
+    { "reason": "image_unavailable_or_invalid", "resolves": "photoUnusable" },
+    { "reason": "image_unavailable_or_invalid", "serverMessage": "Error: ID authority photo not available.", "resolves": "idAuthorityPhotoUnavailable" },
+    { "reason": "image_unavailable_or_invalid", "serverMessage": "Error: no enrolled selfie found for this user.", "resolves": "noEnrolledSelfie" },
+    { "reason": "content_policy_violated", "serverMessage": "Error: image(s) are unusable.", "resolves": "contentPolicyViolated" },
+    { "reason": "document_unclassifiable", "serverMessage": "Error: document could not be classified.", "resolves": "documentUnclassifiable" },
+    { "reason": "invalid_id_number", "serverMessage": "Verification failed: invalid id number", "resolves": "invalidIdNumber" },
+    { "reason": "service_unavailable", "serverMessage": "Error: external service unavailable.", "resolves": "serviceUnavailable" },
+    { "reason": "internal_error", "serverMessage": "Error: verification could not be completed at this time.", "resolves": "internalError" },
+    { "reason": "spoof_detected", "resolves": "notVerified" },
+    { "reason": "face_verification_failed", "resolves": "notVerified" },
+    { "reason": "document_check_failed", "resolves": "notVerified" },
+    { "reason": "age_requirement_not_met", "resolves": "notVerified" },
+    { "reason": "account_locked", "resolves": "notVerified" },
+    { "reason": "account_locked_fraud", "resolves": "notVerified" },
+    { "reason": "high_risk", "resolves": "notVerified" },
+    { "reason": "medium_risk", "resolves": "notVerified" },
+    { "reason": "identifier_not_found", "resolves": "notVerified" },
+    { "reason": "a_reason_added_later", "resolves": "notVerified" },
+    { "reason": null, "serverMessage": "Verification failed.", "resolves": "notVerified" },
+    { "reason": null, "resolves": "notVerified" }
+  ]
+}

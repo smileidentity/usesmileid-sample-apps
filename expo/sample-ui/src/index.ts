@@ -13,6 +13,13 @@ export {
   smileIDSampleStatusFrom,
   smileIDSampleStatusRole,
 } from './model/use-smile-id-sample-status';
+export {
+  smileIDSampleErrorActions,
+  UseSmileIDSampleErrorAction,
+  UseSmileIDSampleErrorMessage,
+  type UseSmileIDSampleErrorResolution,
+  UseSmileIDSampleTransportFailure,
+} from './model/use-smile-id-sample-error-resolution';
 
 export {
   UseSmileIDSampleSuffixedTestIds,
@@ -262,6 +269,13 @@ export {
 export {
   smileIDSampleContactSubmitted,
 } from './state/use-smile-id-sample-contact-rules';
+export {
+  smileIDSampleErrorForReason,
+  smileIDSampleErrorForStatus,
+  smileIDSampleErrorForTransport,
+  smileIDSampleErrorResultRows,
+  smileIDSampleErrorSubmissionRows,
+} from './state/use-smile-id-sample-error-handling';
 export {
   smileIDSampleAspectRatios,
   smileIDSampleCaptureAsTriggerText,
