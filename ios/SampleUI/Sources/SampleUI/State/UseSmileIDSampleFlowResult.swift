@@ -9,6 +9,8 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   public private(set) var jobId: String?
   public private(set) var userId: String?
   public private(set) var lastError: String?
+  /// The row a failed submission resolved to, for the message and action the app offers; nil when the failure has none.
+  public private(set) var errorResolution: UseSmileIDSampleErrorResolution?
   public private(set) var resultCallbackCount: Int
   public private(set) var refreshCallbackCount: Int
 
@@ -21,6 +23,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     jobId: String? = nil,
     userId: String? = nil,
     lastError: String? = nil,
+    errorResolution: UseSmileIDSampleErrorResolution? = nil,
     resultCallbackCount: Int = 0,
     refreshCallbackCount: Int = 0
   ) {
@@ -32,6 +35,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     self.jobId = jobId
     self.userId = userId
     self.lastError = lastError
+    self.errorResolution = errorResolution
     self.resultCallbackCount = resultCallbackCount
     self.refreshCallbackCount = refreshCallbackCount
   }
@@ -70,6 +74,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     jobId = nil
     userId = nil
     lastError = nil
+    errorResolution = nil
     resultCallbackCount = 0
     refreshCallbackCount = 0
   }
@@ -79,13 +84,15 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     status: UseSmileIDSampleFlowStatus,
     jobId: String? = nil,
     userId: String? = nil,
-    error: String? = nil
+    error: String? = nil,
+    errorResolution: UseSmileIDSampleErrorResolution? = nil
   ) {
     resultCallbackCount += 1
     self.status = status
     self.jobId = jobId
     self.userId = userId
     lastError = error
+    self.errorResolution = errorResolution
   }
 
   /// The gate refused the run, so the SDK never mounted. Not counted as a result callback.
@@ -95,18 +102,20 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     jobId = nil
     userId = nil
     lastError = reason
+    errorResolution = nil
   }
 
   public mutating func recordRefreshCallback() {
     refreshCallbackCount += 1
   }
 
-  /// The ten fields as strings in a fixed order; `init(saved:)` reads them back by position.
+  /// The eleven fields as strings in a fixed order; `init(saved:)` reads them back by position.
   public var saved: [String] {
     [
       scenario.id, theme.id, route.id, environment.id, status.id,
       jobId ?? "", userId ?? "", lastError ?? "",
-      String(resultCallbackCount), String(refreshCallbackCount)
+      String(resultCallbackCount), String(refreshCallbackCount),
+      errorResolution?.id ?? ""
     ]
   }
 
@@ -124,6 +133,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
       jobId: field(5).isEmpty ? nil : field(5),
       userId: field(6).isEmpty ? nil : field(6),
       lastError: field(7).isEmpty ? nil : field(7),
+      errorResolution: UseSmileIDSampleErrorHandling.resolution(id: field(10)),
       resultCallbackCount: Int(field(8)) ?? 0,
       refreshCallbackCount: Int(field(9)) ?? 0
     )

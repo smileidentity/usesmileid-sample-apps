@@ -3,6 +3,9 @@ import UseSmileID
 @testable import UseSmileIDSample
 import XCTest
 
+/// A failure no submission returned.
+private struct CameraDidNotStart: Error {}
+
 /// What the result card records for each terminal result, and what the sample does with a captured job.
 final class UseSmileIDSampleSdkFlowResultTest: XCTestCase {
   private var session: URL!
@@ -27,6 +30,24 @@ final class UseSmileIDSampleSdkFlowResultTest: XCTestCase {
     XCTAssertNil(flow.lastError)
     XCTAssertNil(flow.jobId, "nothing was submitted, so there is no job id")
     XCTAssertEqual(flow.resultCallbackCount, 1)
+  }
+
+  func testAFailedSubmissionRecordsTheRowItsFailureResolvesTo() {
+    var flow = UseSmileIDSampleFlowResult()
+
+    flow.record(UseSmileIDResult<JobSubmissionResponse>.failure(NetworkServerException(statusCode: 429)))
+
+    XCTAssertEqual(flow.status, .failed)
+    XCTAssertEqual(flow.errorResolution, UseSmileIDSampleErrorHandling.forStatus(429))
+  }
+
+  func testAFailureNoSubmissionReturnedRecordsNoRow() {
+    var flow = UseSmileIDSampleFlowResult()
+
+    flow.record(UseSmileIDResult<JobSubmissionResponse>.failure(CameraDidNotStart()))
+
+    XCTAssertEqual(flow.status, .failed)
+    XCTAssertNil(flow.errorResolution)
   }
 
   func testACapturedJobsFilesAndSessionDirectoryAreDeletedSinceThisSampleForwardsNothing() throws {

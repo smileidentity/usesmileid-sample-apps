@@ -52,6 +52,52 @@ final class UseSmileIDSampleFlowResultTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).snapshot, flow.snapshot)
   }
 
+  func testAFailureKeepsTheRowItResolvedToAndRecreationPreservesIt() {
+    let row = UseSmileIDSampleErrorHandling.forStatus(429)
+    var flow = UseSmileIDSampleFlowResult()
+    flow.recordResultCallback(status: .failed, error: "HTTP 429", errorResolution: row)
+
+    XCTAssertEqual(flow.errorResolution, row)
+    XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).errorResolution, row)
+  }
+
+  func testStartingARunClearsThePreviousRow() {
+    var flow = UseSmileIDSampleFlowResult()
+    flow.recordResultCallback(
+      status: .failed, error: "HTTP 429", errorResolution: UseSmileIDSampleErrorHandling.forStatus(429)
+    )
+
+    flow.startFlow(environment: .sandbox)
+
+    XCTAssertNil(flow.errorResolution)
+  }
+
+  func testABlockedRunHasNoRow() {
+    var flow = UseSmileIDSampleFlowResult()
+    flow.recordResultCallback(
+      status: .failed, error: "HTTP 429", errorResolution: UseSmileIDSampleErrorHandling.forStatus(429)
+    )
+
+    flow.recordBlocked(reason: "no token", environment: .sandbox)
+
+    XCTAssertNil(flow.errorResolution)
+  }
+
+  func testARowThisBuildNoLongerHasRestoresAsNone() {
+    let saved = UseSmileIDSampleFlowResult().saved.dropLast() + ["a-row-that-is-gone"]
+
+    XCTAssertNil(UseSmileIDSampleFlowResult(saved: Array(saved)).errorResolution)
+  }
+
+  func testAResultSavedBeforeRowsWereKeptRestoresWithNone() {
+    let flow = UseSmileIDSampleFlowResult()
+
+    let restored = UseSmileIDSampleFlowResult(saved: Array(flow.saved.dropLast()))
+
+    XCTAssertNil(restored.errorResolution)
+    XCTAssertEqual(restored.snapshot, flow.snapshot)
+  }
+
   func testACapturedJobIsItsOwnOutcomeAndSurvivesRecreation() {
     var flow = UseSmileIDSampleFlowResult()
     flow.recordResultCallback(status: .captured)

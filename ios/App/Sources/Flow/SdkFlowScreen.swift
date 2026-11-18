@@ -165,7 +165,11 @@ extension UseSmileIDSampleFlowResult {
     case .success(let response):
       recordResultCallback(status: .succeeded, jobId: response.jobId, userId: response.userId)
     case .failure(let error):
-      recordResultCallback(status: .failed, error: error.useSmileIDSampleMessage)
+      recordResultCallback(
+        status: .failed,
+        error: error.useSmileIDSampleMessage,
+        errorResolution: error.useSmileIDSampleErrorResolution
+      )
     case .cancelled:
       recordResultCallback(status: .cancelled)
     case .captured:
