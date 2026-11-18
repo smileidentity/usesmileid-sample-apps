@@ -56,9 +56,7 @@ pins njia, the SDKs' navigation engine, to the exact build its SDK snapshot was 
 | Expo | `<version>-SNAPSHOT.<run>`, on npm | the SDK publish run's Publish to npm log (`+ @smileid/<package>@<version>`) |
 
 Android pins the timestamped build because a bare `-SNAPSHOT` can resolve a build made against
-another njia. Android and iOS publish a snapshot on every push to an SDK pull request and to the
-SDK's `main`; Flutter and Expo publish one when their publish workflow is dispatched with
-`channel=snapshot`.
+another njia.
 
 **Only ready snapshots are pinned.** `main` pins a snapshot only when it is the final commit of an
 SDK pull request that is approved and green, or a commit on an SDK's `main`. Never a pull request
@@ -92,8 +90,8 @@ building; use the newest commit or a `v*` tag.
 
 ### Releases
 
-1. Once the SDKs' release-prep changes have merged, bump `main` to snapshots of those commits (for
-   Flutter and Expo, dispatch a snapshot first). Green on all four lanes is the go signal.
+1. Once the SDKs' release-prep changes have merged, bump `main` to snapshots of those commits.
+   Green on all four lanes is the go signal.
 2. The SDKs publish from those same commits.
 3. One pull request here moves every pin from the snapshot to the release: the SDKs, njia, kamera
    where it is pinned, the lockfiles and the third-party notices. Squash it and tag the merged
