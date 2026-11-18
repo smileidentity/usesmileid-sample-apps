@@ -1,4 +1,4 @@
-import type { smileIDSampleRunRecorder } from '@smileid/sample-ui';
+import { smileIDSampleErrorForFailure, type smileIDSampleRunRecorder } from '@smileid/sample-ui';
 import type { CapturedJob, JobSubmissionResponse, UseSmileIDResult } from '@smileid/usesmileid';
 import { Directory, File } from 'expo-file-system';
 
@@ -14,6 +14,7 @@ export const smileIDSampleRecordResult = (
     case 'failure':
       recorder.deliver('failed', {
         error: result.error instanceof Error ? result.error.message : String(result.error),
+        errorResolution: smileIDSampleErrorForFailure(result.error),
       });
       return;
     case 'cancelled':

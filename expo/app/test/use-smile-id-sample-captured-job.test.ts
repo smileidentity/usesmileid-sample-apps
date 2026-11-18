@@ -1,4 +1,4 @@
-import { useSmileIDSampleResultStore, smileIDSampleRunRecorder } from '@smileid/sample-ui';
+import { smileIDSampleErrorForStatus, useSmileIDSampleResultStore, smileIDSampleRunRecorder } from '@smileid/sample-ui';
 import type { CapturedJob } from '@smileid/usesmileid';
 
 import { smileIDSampleDeleteCapturedFiles, smileIDSampleRecordResult } from '../src/flow/use-smile-id-sample-captured-job';
@@ -39,6 +39,53 @@ const job = (overrides: Partial<CapturedJob> = {}): CapturedJob => ({
 beforeEach(() => {
   mockDeleted.length = 0;
   useSmileIDSampleResultStore.getState().reset();
+});
+
+const run = { scenario: 'normal', theme: 'brandDefault', route: 'fullscreen', environment: 'sandbox' } as const;
+
+describe('a failed submission', () => {
+  it('records the row its failure resolves to', () => {
+    const refused = Object.assign(new Error('HTTP 429'), { statusCode: 429 });
+
+    smileIDSampleRecordResult(smileIDSampleRunRecorder(run), { status: 'failure', error: refused });
+
+    const { result, errorResolution } = useSmileIDSampleResultStore.getState();
+    expect(result.jobStatus).toBe('failed');
+    expect(errorResolution).toEqual(smileIDSampleErrorForStatus(429));
+  });
+
+  it('records no row for a failure no submission returned', () => {
+    smileIDSampleRecordResult(smileIDSampleRunRecorder(run), {
+      status: 'failure',
+      error: new Error('the camera could not start'),
+    });
+
+    const { result, errorResolution } = useSmileIDSampleResultStore.getState();
+    expect(result.jobStatus).toBe('failed');
+    expect(errorResolution).toBeNull();
+  });
+
+  it('loses its row when a new run starts, and when a run is blocked', () => {
+    const refused = Object.assign(new Error('HTTP 429'), { statusCode: 429 });
+    const store = useSmileIDSampleResultStore.getState();
+
+    smileIDSampleRecordResult(smileIDSampleRunRecorder(run), { status: 'failure', error: refused });
+    store.start(run);
+    expect(useSmileIDSampleResultStore.getState().errorResolution).toBeNull();
+
+    smileIDSampleRecordResult(smileIDSampleRunRecorder(run), { status: 'failure', error: refused });
+    store.block('no token', run);
+    expect(useSmileIDSampleResultStore.getState().errorResolution).toBeNull();
+  });
+
+  it('keeps its row through a token refresh', () => {
+    const refused = Object.assign(new Error('HTTP 429'), { statusCode: 429 });
+
+    smileIDSampleRecordResult(smileIDSampleRunRecorder(run), { status: 'failure', error: refused });
+    useSmileIDSampleResultStore.getState().refreshed();
+
+    expect(useSmileIDSampleResultStore.getState().errorResolution).toEqual(smileIDSampleErrorForStatus(429));
+  });
 });
 
 describe('a captured job', () => {
