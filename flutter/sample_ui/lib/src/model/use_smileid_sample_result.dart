@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 import 'use_smileid_sample_environment.dart';
+import 'use_smileid_sample_error_resolution.dart';
 import 'use_smileid_sample_scenario.dart';
 
 /// One route, two presentations.
@@ -62,6 +63,7 @@ class UseSmileIDSampleResult {
     this.jobId,
     this.userId,
     this.lastError,
+    this.errorResolution,
     this.sdkVersion,
   });
 
@@ -94,6 +96,10 @@ class UseSmileIDSampleResult {
 
   /// The last error surfaced to the host, code and message.
   final String? lastError;
+
+  /// The row a failed submission resolved to, for the message and action the app offers; null when
+  /// the failure has none. Not a card field, so [toMap] leaves it out.
+  final UseSmileIDSampleErrorResolution? errorResolution;
 
   /// The SDK version resolved at runtime, which proves which published artifact the run exercised.
   final String? sdkVersion;
@@ -135,12 +141,14 @@ class UseSmileIDSampleResult {
     String? jobId,
     String? userId,
     String? error,
+    UseSmileIDSampleErrorResolution? errorResolution,
   }) => _with(
     jobStatus: status,
     resultCallbackCount: resultCallbackCount + 1,
     jobId: jobId,
     userId: userId,
     lastError: error,
+    errorResolution: errorResolution,
   );
 
   /// The gate refused the run, so the SDK never mounted; not a result callback.
@@ -190,6 +198,7 @@ class UseSmileIDSampleResult {
     String? jobId,
     String? userId,
     String? lastError,
+    UseSmileIDSampleErrorResolution? errorResolution,
   }) => UseSmileIDSampleResult(
     activeScenario: activeScenario,
     activeTheme: activeTheme,
@@ -198,10 +207,11 @@ class UseSmileIDSampleResult {
     jobStatus: jobStatus ?? this.jobStatus,
     resultCallbackCount: resultCallbackCount ?? this.resultCallbackCount,
     refreshCallbackCount: refreshCallbackCount ?? this.refreshCallbackCount,
-    // A recorded result replaces all three; a refresh keeps them.
+    // A recorded result replaces all four; a refresh keeps them.
     jobId: jobStatus == null ? this.jobId : jobId,
     userId: jobStatus == null ? this.userId : userId,
     lastError: jobStatus == null ? this.lastError : lastError,
+    errorResolution: jobStatus == null ? this.errorResolution : errorResolution,
     sdkVersion: sdkVersion,
   );
 
