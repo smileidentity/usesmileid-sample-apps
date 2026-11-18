@@ -54,7 +54,7 @@ void main() {
   });
 
   test('a failure no submission returned has no row', () {
-    expect(StateError('the camera could not start').errorResolution, isNull);
+    expect(Exception('the camera could not start').errorResolution, isNull);
     expect(
       const NetworkResponseParseException(
         cause: FormatException('not JSON'),

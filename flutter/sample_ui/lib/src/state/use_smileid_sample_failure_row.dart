@@ -3,8 +3,9 @@ import 'package:usesmileid/usesmileid.dart';
 import '../model/use_smileid_sample_error_resolution.dart';
 import 'use_smileid_sample_error_handling.dart';
 
-/// How a failure the SDK hands `onResult` picks its row of `spec/error-handling.json`.
-extension UseSmileIDSampleFailureRow on Object {
+/// How a failure the SDK hands `onResult` picks its row of `spec/error-handling.json`. On
+/// `Exception`, the type `UseSmileIDFailure` carries, so it reaches nothing else.
+extension UseSmileIDSampleFailureRow on Exception {
   /// The row this failure resolves to; null when no submission returned it, such as a camera that could not start.
   UseSmileIDSampleErrorResolution? get errorResolution => switch (this) {
     NetworkServerException(:final int statusCode, :final String message) =>
