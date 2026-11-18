@@ -12,6 +12,52 @@ void main() {
     environment: UseSmileIDSampleEnvironment.production,
   );
 
+  group('the row a failure resolved to', () {
+    final UseSmileIDSampleErrorResolution row =
+        UseSmileIDSampleErrorHandling.forStatus(429);
+    final UseSmileIDSampleResult failed = running.recorded(
+      UseSmileIDSampleFlowStatus.failed,
+      error: 'HTTP 429',
+      errorResolution: row,
+    );
+
+    test('is kept with the failure, and through a token refresh', () {
+      expect(failed.errorResolution, row);
+      expect(failed.refreshed().errorResolution, row);
+    });
+
+    test('is cleared by a new run and by a later result', () {
+      final UseSmileIDSampleResult again = failed.started(
+        scenario: UseSmileIDSampleScenario.normal,
+        theme: UseSmileIDSampleThemeScenario.brandDefault,
+        route: UseSmileIDSampleFlowRoute.fullscreen,
+        environment: UseSmileIDSampleEnvironment.sandbox,
+      );
+
+      expect(again.errorResolution, isNull);
+      expect(
+        failed.recorded(UseSmileIDSampleFlowStatus.cancelled).errorResolution,
+        isNull,
+      );
+    });
+
+    test('is not kept by a blocked run', () {
+      final UseSmileIDSampleResult blocked = failed.blocked(
+        'no token',
+        scenario: UseSmileIDSampleScenario.normal,
+        theme: UseSmileIDSampleThemeScenario.brandDefault,
+        route: UseSmileIDSampleFlowRoute.fullscreen,
+        environment: UseSmileIDSampleEnvironment.sandbox,
+      );
+
+      expect(blocked.errorResolution, isNull);
+    });
+
+    test('is not a card field', () {
+      expect(failed.toMap().keys, running.toMap().keys);
+    });
+  });
+
   group('the counts', () {
     test('start at zero for every run, not once per launch', () {
       final UseSmileIDSampleResult again = running

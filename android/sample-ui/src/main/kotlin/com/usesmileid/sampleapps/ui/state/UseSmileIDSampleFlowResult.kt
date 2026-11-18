@@ -7,6 +7,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.setValue
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
@@ -23,6 +24,7 @@ class UseSmileIDSampleFlowResult(
     jobId: String? = null,
     userId: String? = null,
     lastError: String? = null,
+    errorResolution: UseSmileIDSampleErrorResolution? = null,
     resultCallbackCount: Int = 0,
     refreshCallbackCount: Int = 0,
 ) {
@@ -49,6 +51,10 @@ class UseSmileIDSampleFlowResult(
         private set
 
     var lastError by mutableStateOf(lastError)
+        private set
+
+    /** The row a failed submission resolved to, for the message and action the app offers; null when the failure has none. */
+    var errorResolution by mutableStateOf(errorResolution)
         private set
 
     var resultCallbackCount by mutableIntStateOf(resultCallbackCount)
@@ -90,6 +96,7 @@ class UseSmileIDSampleFlowResult(
         jobId = null
         userId = null
         lastError = null
+        errorResolution = null
         resultCallbackCount = 0
         refreshCallbackCount = 0
     }
@@ -100,12 +107,14 @@ class UseSmileIDSampleFlowResult(
         jobId: String? = null,
         userId: String? = null,
         error: String? = null,
+        errorResolution: UseSmileIDSampleErrorResolution? = null,
     ) {
         resultCallbackCount++
         this.status = status
         this.jobId = jobId
         this.userId = userId
         lastError = error
+        this.errorResolution = errorResolution
     }
 
     /** The gate refused the run, so the SDK never mounted. Not counted as a result callback. */
@@ -115,6 +124,7 @@ class UseSmileIDSampleFlowResult(
         jobId = null
         userId = null
         lastError = reason
+        errorResolution = null
     }
 
     fun recordRefreshCallback() {
@@ -135,6 +145,7 @@ class UseSmileIDSampleFlowResult(
                     it.lastError.orEmpty(),
                     it.resultCallbackCount.toString(),
                     it.refreshCallbackCount.toString(),
+                    it.errorResolution?.id.orEmpty(),
                 )
             },
             restore = { saved ->
@@ -155,6 +166,7 @@ class UseSmileIDSampleFlowResult(
                     lastError = saved[7].ifEmpty { null },
                     resultCallbackCount = saved[8].toIntOrNull() ?: 0,
                     refreshCallbackCount = saved[9].toIntOrNull() ?: 0,
+                    errorResolution = UseSmileIDSampleErrorHandling.resolution(saved.getOrNull(10)),
                 )
             },
         )

@@ -56,6 +56,11 @@ public enum UseSmileIDSampleErrorHandling {
   /// Every result row's resolution, in the table's order.
   public static let result: [UseSmileIDSampleErrorResolution] = resultRows.map(\.resolution)
 
+  /// The row a saved `id` names; nil for none, or for one this build no longer has.
+  public static func resolution(id: String?) -> UseSmileIDSampleErrorResolution? {
+    (submission + result).first { $0.id == id }
+  }
+
   /// A submission the server refused with `status`; `serverMessage` only tells rows apart and is never shown.
   public static func forStatus(_ status: Int, serverMessage: String? = nil) -> UseSmileIDSampleErrorResolution {
     submissionRows.first { $0.statuses.contains(status) && $0.accepts(serverMessage) }?.resolution ?? requestInvalid

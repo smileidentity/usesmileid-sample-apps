@@ -61,6 +61,31 @@ void main() {
     expect(result().jobStatus, UseSmileIDSampleFlowStatus.cancelled);
   });
 
+  test('a failed submission records the row its failure resolves to', () {
+    run.deliverResult(
+      const UseSmileIDFailure<JobSubmissionResponse>(
+        NetworkServerException(statusCode: 429),
+      ),
+    );
+
+    expect(result().jobStatus, UseSmileIDSampleFlowStatus.failed);
+    expect(
+      result().errorResolution,
+      UseSmileIDSampleErrorHandling.forStatus(429),
+    );
+  });
+
+  test('a failure no submission returned records no row', () {
+    run.deliverResult(
+      UseSmileIDFailure<JobSubmissionResponse>(
+        Exception('the camera could not start'),
+      ),
+    );
+
+    expect(result().jobStatus, UseSmileIDSampleFlowStatus.failed);
+    expect(result().errorResolution, isNull);
+  });
+
   test('a captured job is recorded as captured, not as a failure', () {
     run.deliverResult(
       const UseSmileIDCaptured<JobSubmissionResponse>(

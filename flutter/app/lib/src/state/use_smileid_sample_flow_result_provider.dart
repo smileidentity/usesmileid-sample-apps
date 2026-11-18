@@ -58,11 +58,13 @@ class UseSmileIDSampleFlowResultNotifier
     String? jobId,
     String? userId,
     String? error,
+    UseSmileIDSampleErrorResolution? errorResolution,
   }) => state = state.recorded(
     status,
     jobId: jobId,
     userId: userId,
     error: error,
+    errorResolution: errorResolution,
   );
 
   /// The gate refused [snapshot]'s run before the SDK mounted.
@@ -120,6 +122,7 @@ class UseSmileIDSampleRunRecorder {
         deliver(
           UseSmileIDSampleFlowStatus.failed,
           error: error is UseSmileIDException ? error.message : '$error',
+          errorResolution: error.errorResolution,
         );
       case UseSmileIDCancelled<JobSubmissionResponse>():
         deliver(UseSmileIDSampleFlowStatus.cancelled);
@@ -134,8 +137,15 @@ class UseSmileIDSampleRunRecorder {
     String? jobId,
     String? userId,
     String? error,
+    UseSmileIDSampleErrorResolution? errorResolution,
   }) {
     ensureStarted();
-    _result.record(status, jobId: jobId, userId: userId, error: error);
+    _result.record(
+      status,
+      jobId: jobId,
+      userId: userId,
+      error: error,
+      errorResolution: errorResolution,
+    );
   }
 }

@@ -40,6 +40,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleCameraHold
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
+import com.usesmileid.sampleapps.ui.state.errorResolution
 import java.io.File
 
 /** The step hosting the SDK flow, in both presentations (R3); the SDK owns everything inside it (R2): no host BackHandler, no host chrome. */
@@ -182,6 +183,7 @@ internal fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmi
         is UseSmileIDResult.Failure -> flowResult.recordResultCallback(
             status = UseSmileIDSampleFlowStatus.Failed,
             error = result.error.message ?: result.error::class.java.simpleName,
+            errorResolution = result.error.errorResolution(),
         )
         UseSmileIDResult.Cancelled -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Cancelled)
         is UseSmileIDResult.Captured -> flowResult.recordResultCallback(status = UseSmileIDSampleFlowStatus.Captured)

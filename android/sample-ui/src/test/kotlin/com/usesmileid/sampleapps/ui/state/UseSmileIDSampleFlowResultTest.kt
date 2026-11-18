@@ -68,6 +68,65 @@ class UseSmileIDSampleFlowResultTest {
     }
 
     @Test
+    fun a_failure_keeps_the_row_it_resolved_to_and_recreation_preserves_it() {
+        val row = UseSmileIDSampleErrorHandling.forStatus(429)
+        val flow = UseSmileIDSampleFlowResult()
+        flow.recordResultCallback(UseSmileIDSampleFlowStatus.Failed, error = "HTTP 429", errorResolution = row)
+
+        assertEquals(row, flow.errorResolution)
+        assertEquals(row, flow.recreate().errorResolution)
+    }
+
+    @Test
+    fun starting_a_run_clears_the_previous_row() {
+        val flow = UseSmileIDSampleFlowResult()
+        flow.recordResultCallback(
+            UseSmileIDSampleFlowStatus.Failed,
+            error = "HTTP 429",
+            errorResolution = UseSmileIDSampleErrorHandling.forStatus(429),
+        )
+
+        flow.startFlow(UseSmileIDSampleEnvironment.Sandbox)
+
+        assertNull(flow.errorResolution)
+    }
+
+    @Test
+    fun a_blocked_run_has_no_row() {
+        val flow = UseSmileIDSampleFlowResult()
+        flow.recordResultCallback(
+            UseSmileIDSampleFlowStatus.Failed,
+            error = "HTTP 429",
+            errorResolution = UseSmileIDSampleErrorHandling.forStatus(429),
+        )
+
+        flow.recordBlocked("no token", UseSmileIDSampleEnvironment.Sandbox)
+
+        assertNull(flow.errorResolution)
+    }
+
+    @Test
+    fun a_row_this_build_no_longer_has_restores_as_none() {
+        val flow = UseSmileIDSampleFlowResult()
+        val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(flow) } as List<*>
+
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.dropLast(1) + "a-row-that-is-gone")
+
+        assertNull(restored?.errorResolution)
+    }
+
+    @Test
+    fun a_result_saved_before_rows_were_kept_restores_with_none() {
+        val flow = UseSmileIDSampleFlowResult()
+        val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(flow) } as List<*>
+
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.dropLast(1))
+
+        assertNull(restored?.errorResolution)
+        assertEquals(flow.snapshot, restored?.snapshot)
+    }
+
+    @Test
     fun a_captured_job_is_its_own_outcome_and_survives_recreation() {
         val flow = UseSmileIDSampleFlowResult()
         flow.recordResultCallback(UseSmileIDSampleFlowStatus.Captured)
