@@ -1,7 +1,7 @@
 # Friendly errors: the screen and its actions
 
 Status: the table, the resolver and the banner on verification details are in all four apps. The
-button's delays and limits are not.
+retry's delays and limits are the SDKs', on their processing screen.
 
 ## 1. The problem
 
@@ -32,9 +32,11 @@ Partners copy these apps as the reference integration, so they copy that handlin
 
 ## 3. What is left
 
-Dim the button for the row's delay, with the seconds left in the label and in what a screen reader
-announces, and enable it when the delay ends. Count uses, and replace the button with Close at the limit.
-One pull request on all four apps.
+Nothing on this plan. The row's `backoffSeconds` and `maxUses` were to dim the banner's button, but every
+flow in these apps ends on the SDK's processing screen. That screen already resends the same images with
+the same delays and limits by error code, and the failure reaches `onResult` only once the user leaves
+it. The banner's Try again starts a new capture, so a second delay there would make the user wait twice.
+The rows keep those fields as the record of what the SDKs apply.
 
 ## 4. Open questions
 
