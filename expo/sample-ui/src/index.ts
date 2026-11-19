@@ -488,5 +488,6 @@ export {
   type UseSmileIDSampleResumePoint,
   type UseSmileIDSampleRunIntent,
   type UseSmileIDSampleSessionStorage,
+  smileIDSampleKeepsForms,
   smileIDSampleResumesInFlow,
 } from './state/use-smile-id-sample-session-store';

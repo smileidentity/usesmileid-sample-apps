@@ -1,6 +1,6 @@
 import { smileIDSampleIdDetailsDefaults, smileIDSampleIdDetailsWithEnabledOnly } from '../src/state/use-smile-id-sample-id-details';
 import type { UseSmileIDSampleDocument } from '../src/state/use-smile-id-sample-id-details';
-import { smileIDSampleResumesInFlow } from '../src/state/use-smile-id-sample-session-store';
+import { smileIDSampleKeepsForms, smileIDSampleResumesInFlow } from '../src/state/use-smile-id-sample-session-store';
 
 const kenya = { code: 'KE', name: 'Kenya' };
 const passport = { code: 'PASSPORT', subType: null, name: 'Passport', hasBack: false, format: 3 } as UseSmileIDSampleDocument;
@@ -31,5 +31,15 @@ describe('a relinked partner', () => {
     expect(smileIDSampleResumesInFlow(expired, 'p-1', 'p-2')).toBe(false);
     expect(smileIDSampleResumesInFlow(expired, null, 'p-1')).toBe(false);
     expect(smileIDSampleResumesInFlow({ ...expired, resumeAt: 'firstStep' }, 'p-1', 'p-1')).toBe(false);
+  });
+
+  it("carries the forms over only to the run's own partner while they hold its details", () => {
+    const expired = { productId: 'enhancedDocumentVerification', route: 'shell', resumeAt: 'flow' } as const;
+    const firstStep = { ...expired, resumeAt: 'firstStep' } as const;
+    expect(smileIDSampleKeepsForms(expired, 'p-1', 'p-1', true)).toBe(true);
+    expect(smileIDSampleKeepsForms(firstStep, 'p-1', 'p-1', true)).toBe(true);
+    expect(smileIDSampleKeepsForms(firstStep, 'p-1', 'p-1', false)).toBe(false);
+    expect(smileIDSampleKeepsForms(firstStep, 'p-1', 'p-2', true)).toBe(false);
+    expect(smileIDSampleKeepsForms(firstStep, null, 'p-1', true)).toBe(false);
   });
 });

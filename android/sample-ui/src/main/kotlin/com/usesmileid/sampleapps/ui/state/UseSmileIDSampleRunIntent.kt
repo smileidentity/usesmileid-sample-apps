@@ -57,3 +57,7 @@ class UseSmileIDSampleInterruptedRun {
 /** Straight back into the SDK only on the partner the run was started for; any other goes back through its first step. */
 fun UseSmileIDSampleRunIntent.resumesInFlow(runPartnerId: String?, linkedPartnerId: String?): Boolean =
     resumeAt == UseSmileIDSampleResumePoint.Flow && runPartnerId != null && runPartnerId == linkedPartnerId
+
+/** Whether the resumed run keeps the forms: into the flow, or on the run's own partner while they still hold its details. */
+fun UseSmileIDSampleRunIntent.keepsForms(runPartnerId: String?, linkedPartnerId: String?, formsFlowStarted: Boolean): Boolean =
+    resumesInFlow(runPartnerId, linkedPartnerId) || (formsFlowStarted && runPartnerId != null && runPartnerId == linkedPartnerId)

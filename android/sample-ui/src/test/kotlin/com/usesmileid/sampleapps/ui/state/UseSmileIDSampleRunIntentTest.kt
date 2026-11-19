@@ -72,4 +72,15 @@ class UseSmileIDSampleRunIntentTest {
         val tapped = expired.copy(resumeAt = UseSmileIDSampleResumePoint.FirstStep)
         assertFalse("a product tap always starts at its first step", tapped.resumesInFlow("p-1", "p-1"))
     }
+
+    @Test
+    fun the_forms_carry_over_only_to_the_runs_own_partner_while_they_hold_its_details() {
+        val expired = UseSmileIDSampleRunIntent("enhancedDocumentVerification", UseSmileIDSampleFlowRoute.Shell)
+        val firstStep = expired.copy(resumeAt = UseSmileIDSampleResumePoint.FirstStep)
+        assertTrue(expired.keepsForms("p-1", "p-1", formsFlowStarted = true))
+        assertTrue(firstStep.keepsForms("p-1", "p-1", formsFlowStarted = true))
+        assertFalse("another tap reset them", firstStep.keepsForms("p-1", "p-1", formsFlowStarted = false))
+        assertFalse("another partner's run never sees them", firstStep.keepsForms("p-1", "p-2", formsFlowStarted = true))
+        assertFalse("an unknown run partner is treated as another", firstStep.keepsForms(null, "p-1", formsFlowStarted = true))
+    }
 }

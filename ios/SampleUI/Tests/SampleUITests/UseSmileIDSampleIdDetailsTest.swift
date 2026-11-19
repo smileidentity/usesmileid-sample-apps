@@ -76,4 +76,14 @@ final class UseSmileIDSampleIdDetailsTest: XCTestCase {
     let tapped = UseSmileIDSampleRunIntent(productId: "enhancedDocumentVerification", route: .shell, resumeAt: .firstStep)
     XCTAssertFalse(tapped.resumesInFlow(runPartnerId: "p-1", linkedPartnerId: "p-1"))
   }
+
+  func testTheFormsCarryOverOnlyToTheRunsOwnPartnerWhileTheyHoldItsDetails() {
+    let expired = UseSmileIDSampleRunIntent(productId: "enhancedDocumentVerification", route: .shell)
+    let firstStep = UseSmileIDSampleRunIntent(productId: "enhancedDocumentVerification", route: .shell, resumeAt: .firstStep)
+    XCTAssertTrue(expired.keepsForms(runPartnerId: "p-1", linkedPartnerId: "p-1", formsFlowStarted: true))
+    XCTAssertTrue(firstStep.keepsForms(runPartnerId: "p-1", linkedPartnerId: "p-1", formsFlowStarted: true))
+    XCTAssertFalse(firstStep.keepsForms(runPartnerId: "p-1", linkedPartnerId: "p-1", formsFlowStarted: false), "another tap reset them")
+    XCTAssertFalse(firstStep.keepsForms(runPartnerId: "p-1", linkedPartnerId: "p-2", formsFlowStarted: true), "another partner's run never sees them")
+    XCTAssertFalse(firstStep.keepsForms(runPartnerId: nil, linkedPartnerId: "p-1", formsFlowStarted: true))
+  }
 }

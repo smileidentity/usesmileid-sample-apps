@@ -18,6 +18,7 @@ import com.usesmileid.sampleapps.android.flow.runOnly
 import com.usesmileid.sampleapps.android.scan.UseSmileIDSampleQrScanner
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleScanReason
+import com.usesmileid.sampleapps.ui.state.keepsForms
 import com.usesmileid.sampleapps.ui.state.resumesInFlow
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleTokenDecoder
@@ -70,6 +71,9 @@ internal fun ScanTokenScreen(scope: UseSmileIDSampleStepScope) {
         } else {
             val product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == resuming.productId }
             val intoFlow = resuming.resumesInFlow(app.interruptedRun.runPartnerId, linked.partnerId)
+            if (!resuming.keepsForms(app.interruptedRun.runPartnerId, linked.partnerId, app.forms.flowStarted)) {
+                app.forms.startRun(app.profiles.active)
+            }
             app.interruptedRun.runPartnerId = linked.partnerId
             if (product == null) {
                 scope.navigator.back()
