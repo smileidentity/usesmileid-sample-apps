@@ -8,8 +8,8 @@ A verification can fail when it is submitted, or after Smile ID has accepted it.
 either failure to one short message and one action, from a table held as data in
 [`spec/error-handling.json`](../spec/error-handling.json).
 
-This page covers the table and the resolver each app builds from it. The screen that shows the message and
-runs the action is not built yet: [the plan](plan/error-handling.md) has what is left.
+This page covers the table, the resolver each app builds from it, and the banner that shows the message
+and runs the action. [The plan](plan/error-handling.md) has what is left.
 
 ## Prerequisites
 
@@ -98,18 +98,48 @@ A lookup returns a resolution:
 | `maxUses` | How many times the action is offered; the row's limit, or its action's, or none |
 | `waitsForConnection` | Whether the button also stays dimmed while the device is offline |
 
-## 5. What an app cannot tell apart
+## 5. The banner
+
+Verification details shows a failure as a banner: the design system's banner on the card surface, with
+an accent bar and glyph, the message, and the row's action under it.
+
+| Visit | What it shows |
+|---|---|
+| A run that failed with no job | The product's name, then the banner in place of "No verification here" |
+| A stored job that ended in `error` or `block` | The banner under the status badge |
+| Any other visit | No banner |
+
+- The tone is warning, with a filled button, while the action can get past the failure. A row whose only
+  action is Close takes the error tone, and Close is a text action.
+- On a stored job the banner has no Close: the app bar's back already leaves the page.
+- A run that failed before any submission explained it, such as a camera that could not start, shows the
+  submission fallback: the message for a request the table does not name, and Close.
+- The result card stays under the banner in debug builds, so the SDK's own error is still on screen.
+
+Each action reuses the run the app already knows how to start:
+
+| Action | Goes to |
+|---|---|
+| Try again, Retake photo | The product's flow, past the forms, as a new job |
+| Edit ID number | The ID form, whose Continue starts the flow |
+| Start again | The scanner for a new token, then the flow |
+| Close | The products tab |
+
+The shell records the product each run starts, so an action knows what to run again. The mapping is
+`UseSmileIDSampleErrorMove` in each shell, and `sample_error_banner` and `sample_error_action` are the ids
+a flow asserts on.
+
+## 6. What an app cannot tell apart
 
 - Two causes of a 403, a refusal by a security rule and a token rejected after the flow began, have no
   documented response text. Both resolve as the plain 403 row, which ends in Close.
 - A status or a reason the table does not name resolves as the fallback: a message that names nothing,
   and Close.
 
-## 6. Automatic retry
+## 7. Automatic retry
 
 The SDK does not retry a request by itself. Its `retry` block's `strategy` is none unless an app sets
-it, on all four platforms, and no sample app sets it. So a retry button, once the screen has one, is the
-only retry.
+it, on all four platforms, and no sample app sets it. So the banner's Try again is the only retry.
 
 ## Related
 
