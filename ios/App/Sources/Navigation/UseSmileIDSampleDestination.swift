@@ -431,7 +431,11 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
         job: app.jobs?.first { $0.id == jobId },
         result: app.flowResult.snapshot,
         showProbes: app.showProbes,
-        pending: app.jobs == nil
+        pending: app.jobs == nil,
+        landedFailure: jobId == unsubmittedJobId
+          ? useSmileIDSampleLandedFailure(status: app.flowResult.status, row: app.flowResult.errorResolution)
+          : nil,
+        landedProduct: jobId == unsubmittedJobId ? app.flowResult.product : nil
       ),
       resultExpanded: $app.resultCardExpanded,
       onBack: navigator.back,

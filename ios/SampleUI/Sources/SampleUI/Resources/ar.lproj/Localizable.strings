@@ -213,6 +213,7 @@
 "status_refresh_other_partner" = "أُرسل بواسطة شريك آخر";
 "status_refresh_failed" = "تعذّر التحقق من الحالة: %1$@";
 "error_could_not_start" = "تعذّر علينا بدء عملية التحقق هذه. يُرجى المحاولة مرة أخرى أو التواصل مع دعم التطبيق.";
+"error_ended_early" = "توقّف هذا التحقق قبل اكتماله.";
 "error_id_number_invalid" = "يبدو أن رقم الهوية هذا غير صحيح. تحقّق منه وحاول مرة أخرى.";
 "error_service_not_set_up" = "هذه الخدمة غير مهيّأة بعد لإتمام عمليات التحقق. يُرجى التواصل مع دعم التطبيق.";
 "error_session_expired" = "انتهت صلاحية جلستك. يُرجى البدء من جديد.";
@@ -240,6 +241,8 @@
 "error_action_edit_id_number" = "تعديل رقم الهوية";
 "error_action_start_again" = "البدء من جديد";
 "error_action_close" = "إغلاق";
+"error_title_not_completed" = "لم يكتمل التحقق";
+"error_title_failed" = "فشل التحقق";
 "details_title" = "تفاصيل عملية التحقق";
 "details_missing_title" = "لا توجد عملية تحقق هنا";
 "details_missing_body" = "لا شيء محفوظ لـ jobId = %1$@";

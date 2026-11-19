@@ -215,6 +215,7 @@
     <string name="sample_status_refresh_other_partner">Submitted by a different partner</string>
     <string name="sample_status_refresh_failed">Could not check status: %1$s</string>
     <string name="sample_error_could_not_start">We couldn\'t start this verification. Please try again, or contact the app\'s support.</string>
+    <string name="sample_error_ended_early">This verification stopped before it finished.</string>
     <string name="sample_error_id_number_invalid">That ID number doesn\'t look right. Check it and try again.</string>
     <string name="sample_error_service_not_set_up">This service isn\'t set up to complete verifications yet. Please contact the app\'s support.</string>
     <string name="sample_error_session_expired">Your session has expired. Please start again.</string>
@@ -242,6 +243,8 @@
     <string name="sample_error_action_edit_id_number">Edit ID number</string>
     <string name="sample_error_action_start_again">Start again</string>
     <string name="sample_error_action_close">Close</string>
+    <string name="sample_error_title_not_completed">Verification not completed</string>
+    <string name="sample_error_title_failed">Verification failed</string>
     <string name="sample_details_title">Verification details</string>
     <string name="sample_details_missing_title">No verification here</string>
     <string name="sample_details_missing_body">Nothing stored for jobId = %1$s</string>

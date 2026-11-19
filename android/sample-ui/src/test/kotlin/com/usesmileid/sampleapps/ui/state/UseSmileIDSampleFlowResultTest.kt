@@ -4,6 +4,7 @@ import androidx.compose.runtime.saveable.SaverScope
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -92,6 +93,26 @@ class UseSmileIDSampleFlowResultTest {
     }
 
     @Test
+    fun a_run_keeps_its_product_for_the_failure_actions_and_recreation_preserves_it() {
+        val flow = UseSmileIDSampleFlowResult()
+
+        flow.startFlow(UseSmileIDSampleEnvironment.Sandbox, UseSmileIDSampleProduct.EnhancedKyc)
+
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flow.product)
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flow.recreate().product)
+    }
+
+    @Test
+    fun a_blocked_run_keeps_its_own_product_not_the_previous_runs() {
+        val flow = UseSmileIDSampleFlowResult()
+        flow.startFlow(UseSmileIDSampleEnvironment.Sandbox, UseSmileIDSampleProduct.SmartSelfieEnrollment)
+
+        flow.recordBlocked("no token", UseSmileIDSampleEnvironment.Sandbox, UseSmileIDSampleProduct.EnhancedKyc)
+
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flow.product)
+    }
+
+    @Test
     fun a_blocked_run_has_no_row() {
         val flow = UseSmileIDSampleFlowResult()
         flow.recordResultCallback(
@@ -110,7 +131,7 @@ class UseSmileIDSampleFlowResultTest {
         val flow = UseSmileIDSampleFlowResult()
         val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(flow) } as List<*>
 
-        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.dropLast(1) + "a-row-that-is-gone")
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.take(10) + "a-row-that-is-gone")
 
         assertNull(restored?.errorResolution)
     }
@@ -120,7 +141,7 @@ class UseSmileIDSampleFlowResultTest {
         val flow = UseSmileIDSampleFlowResult()
         val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(flow) } as List<*>
 
-        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.dropLast(1))
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.take(10))
 
         assertNull(restored?.errorResolution)
         assertEquals(flow.snapshot, restored?.snapshot)

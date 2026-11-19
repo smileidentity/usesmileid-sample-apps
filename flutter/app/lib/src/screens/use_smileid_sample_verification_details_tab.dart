@@ -10,6 +10,7 @@ import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_remove_jobs.dart';
+import 'use_smileid_sample_sdk_flow_tab.dart';
 
 /// One verification's detail page, pushed inside the verifications tab so back stays within it.
 class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
@@ -93,6 +94,10 @@ class _UseSmileIDSampleVerificationDetailsTabState
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleJob? found = _stored();
+    final UseSmileIDSampleResult run = ref.watch(
+      useSmileIDSampleFlowResultProvider,
+    );
+    final bool landed = widget.jobId == unsubmittedJobId;
     return UseSmileIDSampleVerificationDetailsScreen(
       jobId: widget.jobId,
       result: ref.watch(useSmileIDSampleShowProbesProvider)
@@ -125,6 +130,13 @@ class _UseSmileIDSampleVerificationDetailsTabState
       onRefresh: _refresh,
       onCopy: (String label, String value) => unawaited(_copy(label, value)),
       notice: _notice,
+      landedFailure: landed
+          ? useSmileIDSampleLandedFailure(
+              status: run.jobStatus,
+              row: run.errorResolution,
+            )
+          : null,
+      landedProduct: landed ? run.product : null,
     );
   }
 

@@ -89,6 +89,8 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
   'verificationDetails.attention': 'screen_verification_details_attention',
   'verificationDetails.blocked': 'screen_verification_details_blocked',
   'verificationDetails.error': 'screen_verification_details_error',
+  'verificationDetails.failed': 'screen_verification_details_failed',
+  'verificationDetails.failedFinal': 'screen_verification_details_failed_final',
   'verificationDetails.processing': 'screen_verification_details_processing',
   'userDetails.empty': 'screen_user_details',
   'userDetails.editing': 'screen_user_details_editing',

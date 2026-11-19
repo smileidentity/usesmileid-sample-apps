@@ -18,6 +18,8 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
     "verificationDetails.clear": "verification_details_clear",
     "verificationDetails.blocked": "verification_details_blocked",
     "verificationDetails.error": "verification_details_error",
+    "verificationDetails.failed": "verification_details_failed",
+    "verificationDetails.failedFinal": "verification_details_failed_final",
     "verificationDetails.processing": "verification_details_processing",
     "userDetails.empty": "user_details_empty",
     "userDetails.editing": "user_details_editing",

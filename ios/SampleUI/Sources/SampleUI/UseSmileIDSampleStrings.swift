@@ -859,6 +859,10 @@ public enum UseSmileIDSampleStrings {
     text("error_could_not_start")
   }
 
+  public static var errorEndedEarly: String {
+    text("error_ended_early")
+  }
+
   public static var errorIdNumberInvalid: String {
     text("error_id_number_invalid")
   }
@@ -965,6 +969,14 @@ public enum UseSmileIDSampleStrings {
 
   public static var errorActionClose: String {
     text("error_action_close")
+  }
+
+  public static var errorTitleNotCompleted: String {
+    text("error_title_not_completed")
+  }
+
+  public static var errorTitleFailed: String {
+    text("error_title_failed")
   }
 
   public static var detailsTitle: String {

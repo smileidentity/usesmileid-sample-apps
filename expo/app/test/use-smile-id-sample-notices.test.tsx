@@ -16,6 +16,7 @@ import type { ReactElement } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 
 import { UseSmileIDSampleProfilesStep } from '../src/steps/use-smile-id-sample-profiles-step';
+import { unsubmittedJobId } from '../src/steps/use-smile-id-sample-sdk-flow-step';
 import { UseSmileIDSampleVerificationDetailsStep } from '../src/steps/use-smile-id-sample-verification-details-step';
 import { smileIDSampleFakeScope } from './support/use-smile-id-sample-test-njia';
 
@@ -164,6 +165,28 @@ describe('a notice on a screen with no nav bar', () => {
     const screen = await inTheme(<VerificationDetails />);
     expect(screen.getByTestId('sample_details_empty')).toBeTruthy();
     expect(screen.getByTestId('sample_result_result_count').props.children).toBe('1');
+  });
+
+  it('states the last run that failed on the unsubmitted page', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    useSmileIDSampleResultStore.getState().reset();
+    useSmileIDSampleResultStore.getState().record('failed');
+    const screen = await inTheme(
+      <UseSmileIDSampleVerificationDetailsStep
+        scope={smileIDSampleFakeScope('verificationDetails', { arg: unsubmittedJobId }).scope}
+      />,
+    );
+    expect(screen.getByTestId('sample_error_banner')).toBeTruthy();
+    expect(screen.queryByTestId('sample_details_empty')).toBeNull();
+  });
+
+  it('states no failure on any other missing job, so it never borrows the last run', async () => {
+    await useSmileIDSampleJobStore.getState().load();
+    useSmileIDSampleResultStore.getState().reset();
+    useSmileIDSampleResultStore.getState().record('failed');
+    const screen = await inTheme(<VerificationDetails />);
+    expect(screen.getByTestId('sample_details_empty')).toBeTruthy();
+    expect(screen.queryByTestId('sample_error_banner')).toBeNull();
   });
 
   it('loads the store itself on a cold link, so a stored job is found without the list', async () => {

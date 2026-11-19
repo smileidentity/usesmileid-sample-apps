@@ -32,6 +32,9 @@ enum UseSmileIDSampleErrorMessage {
   /// The request was refused before it could start.
   couldNotStart('error_could_not_start'),
 
+  /// A failed run no row explains: it stopped before it finished.
+  endedEarly('error_ended_early'),
+
   /// The ID number was refused at submission.
   idNumberInvalid('error_id_number_invalid'),
 

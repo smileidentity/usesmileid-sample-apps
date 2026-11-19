@@ -146,6 +146,13 @@ const resolve = (
 ): UseSmileIDSampleErrorResolution =>
   rows.find((candidate) => matches(candidate) && accepts(candidate, serverMessage))?.resolution ?? fallback;
 
+/// What a failed run no row explains resolves as: it says only that the run stopped before it finished.
+export const smileIDSampleErrorUnexplained: UseSmileIDSampleErrorResolution = resolution(
+  'endedEarly',
+  Message.EndedEarly,
+  Action.Retry,
+);
+
 /// A submission the server refused with `status`; `serverMessage` only tells rows apart and is never shown.
 export const smileIDSampleErrorForStatus = (status: number, serverMessage?: string | null): UseSmileIDSampleErrorResolution =>
   resolve(submissionRows, (row) => row.statuses?.includes(status) ?? false, serverMessage, requestInvalid);

@@ -145,6 +145,7 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
     val resources = LocalResources.current
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
+    val landing = detailsLanding(jobId, app.flowResult)
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
@@ -172,6 +173,8 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             // Computed here: `sample-ui` reads no host's BuildConfig.
             showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
             pending = app.jobs == null,
+            landedFailure = landing.failure,
+            landedProduct = landing.product,
         )
         // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
         LaunchedEffect(jobId, app.session?.id) {

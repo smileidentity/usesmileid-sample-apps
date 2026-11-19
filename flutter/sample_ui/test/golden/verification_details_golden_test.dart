@@ -86,6 +86,42 @@ void main() {
     );
   });
 
+  /// A run whose submission the server refused, landed with no job: its message, as a release build draws it.
+  testWidgets('verification details failed', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verification_details_failed',
+      () => _failedRun(UseSmileIDSampleErrorHandling.forStatus(503)),
+    );
+  });
+
+  /// A refusal no retry gets past: the error tone and its title.
+  testWidgets('verification details failed final', (WidgetTester tester) async {
+    await _screenGoldens(
+      tester,
+      'screen_verification_details_failed_final',
+      () => _failedRun(UseSmileIDSampleErrorHandling.forStatus(403)),
+    );
+  });
+
+  /// The table's longest message in English, which wraps furthest.
+  testWidgets('verification details failed survives max text scale', (
+    WidgetTester tester,
+  ) async {
+    await assertSurvivesMaxTextScale(
+      tester,
+      _failedRun(
+        UseSmileIDSampleErrorHandling.forStatus(
+          400,
+          serverMessage: 'Callback URL is required',
+        ),
+      ),
+      ownsScrolling: true,
+      hostHeight: goldenScreenHeight * 2,
+      knownOpenWords: _openWords,
+    );
+  });
+
   testWidgets('verification details survives max text scale', (
     WidgetTester tester,
   ) async {
@@ -126,6 +162,17 @@ Widget _details({UseSmileIDSampleJob? job, bool stored = true}) {
     onCopy: _ignoreCopy,
   );
 }
+
+Widget _failedRun(UseSmileIDSampleErrorResolution failure) =>
+    UseSmileIDSampleVerificationDetailsScreen(
+      jobId: 'unsubmitted',
+      job: const UseSmileIDSampleJobLookup.none(),
+      onBack: () {},
+      onRefresh: () async {},
+      onCopy: _ignoreCopy,
+      landedFailure: failure,
+      landedProduct: UseSmileIDSampleProduct.biometricKyc,
+    );
 
 UseSmileIDSampleJob _job({
   UseSmileIDSampleStatus status = UseSmileIDSampleStatus.clear,

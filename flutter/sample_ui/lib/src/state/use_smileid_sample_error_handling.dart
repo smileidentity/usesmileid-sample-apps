@@ -228,6 +228,13 @@ abstract final class UseSmileIDSampleErrorHandling {
         _resultRows.map((_Row row) => row.resolution),
       );
 
+  /// What a failed run no row explains resolves as: it says only that the run stopped before it finished.
+  static const UseSmileIDSampleErrorResolution unexplained = _Resolution(
+    'endedEarly',
+    _Message.endedEarly,
+    _Action.retry,
+  );
+
   /// A submission the server refused with [status]; [serverMessage] only tells rows apart and is never shown.
   static UseSmileIDSampleErrorResolution forStatus(
     int status, {

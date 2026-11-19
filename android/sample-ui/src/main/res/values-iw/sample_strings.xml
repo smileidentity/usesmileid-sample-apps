@@ -215,6 +215,7 @@
     <string name="sample_status_refresh_other_partner">נשלח על ידי שותף אחר</string>
     <string name="sample_status_refresh_failed">לא ניתן לבדוק את הסטטוס: %1$s</string>
     <string name="sample_error_could_not_start">לא הצלחנו להתחיל את האימות הזה. נסו שוב או פנו לתמיכה של האפליקציה.</string>
+    <string name="sample_error_ended_early">האימות הזה נעצר לפני שהסתיים.</string>
     <string name="sample_error_id_number_invalid">מספר התעודה הזה לא נראה תקין. בדקו אותו ונסו שוב.</string>
     <string name="sample_error_service_not_set_up">השירות הזה עדיין לא מוגדר להשלמת אימותים. פנו לתמיכה של האפליקציה.</string>
     <string name="sample_error_session_expired">פג תוקף ההפעלה שלכם. התחילו מחדש.</string>
@@ -242,6 +243,8 @@
     <string name="sample_error_action_edit_id_number">עריכת מספר התעודה</string>
     <string name="sample_error_action_start_again">התחלה מחדש</string>
     <string name="sample_error_action_close">סגירה</string>
+    <string name="sample_error_title_not_completed">האימות לא הושלם</string>
+    <string name="sample_error_title_failed">האימות נכשל</string>
     <string name="sample_details_title">פרטי האימות</string>
     <string name="sample_details_missing_title">אין כאן אימות</string>
     <string name="sample_details_missing_body">לא נשמר דבר עבור jobId = %1$s</string>

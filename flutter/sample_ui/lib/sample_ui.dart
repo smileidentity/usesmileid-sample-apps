@@ -2,6 +2,7 @@
 library;
 
 export 'src/components/use_smileid_sample_avatar.dart';
+export 'src/components/use_smileid_sample_banner.dart';
 export 'src/components/use_smileid_sample_bottom_sheet.dart';
 export 'src/components/use_smileid_sample_button.dart';
 export 'src/components/use_smileid_sample_confirm_dialog.dart';
@@ -73,6 +74,7 @@ export 'src/screens/use_smileid_sample_verifications_screen.dart';
 export 'src/state/use_smileid_sample_auth_user_ids.dart';
 export 'src/state/use_smileid_sample_catalogue.dart';
 export 'src/state/use_smileid_sample_contact_rules.dart';
+export 'src/state/use_smileid_sample_details_failure.dart';
 export 'src/state/use_smileid_sample_error_handling.dart';
 export 'src/state/use_smileid_sample_failure_row.dart';
 export 'src/state/use_smileid_sample_id_details.dart';

@@ -184,6 +184,10 @@
         "description": "Shown when the route names a job this build has no row for, which a deep link can do. The jobId asked for is in the supporting line, because that is the whole diagnostic."
       },
       {
+        "id": "sample_error_banner",
+        "description": "The failure banner: a failed run's message in place of sample_details_empty, or a stored job's under its badge when it ended in error or block."
+      },
+      {
         "id": "sample_details_refresh",
         "description": "Pull-to-refresh container on the verification details screen, which is what the design draws in the processing state. Fetches GET /v3/status/{jobId} and rewrites the row. Always present, never conditionally hidden: a gesture that silently does nothing reads as a defect, so a refresh that cannot succeed reports why instead — no live scanned session, or a row never submitted under one (every fixture-token run). A row still processing is also refreshed automatically on entry, since that is the only status that can change."
       }

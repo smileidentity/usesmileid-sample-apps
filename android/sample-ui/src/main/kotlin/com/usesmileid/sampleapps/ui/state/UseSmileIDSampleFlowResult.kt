@@ -10,6 +10,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleThemeScenario
@@ -25,6 +26,7 @@ class UseSmileIDSampleFlowResult(
     userId: String? = null,
     lastError: String? = null,
     errorResolution: UseSmileIDSampleErrorResolution? = null,
+    product: UseSmileIDSampleProduct? = null,
     resultCallbackCount: Int = 0,
     refreshCallbackCount: Int = 0,
 ) {
@@ -55,6 +57,10 @@ class UseSmileIDSampleFlowResult(
 
     /** The row a failed submission resolved to, for the message and action the app offers; null when the failure has none. */
     var errorResolution by mutableStateOf(errorResolution)
+        private set
+
+    /** The product the latest run started, which the failure banner names. */
+    var product by mutableStateOf(product)
         private set
 
     var resultCallbackCount by mutableIntStateOf(resultCallbackCount)
@@ -90,8 +96,9 @@ class UseSmileIDSampleFlowResult(
     }
 
     /** Both counts reset here, so "exactly once" is asserted per run rather than per app launch. */
-    fun startFlow(environment: UseSmileIDSampleEnvironment) {
+    fun startFlow(environment: UseSmileIDSampleEnvironment, product: UseSmileIDSampleProduct? = null) {
         this.environment = environment
+        this.product = product
         status = UseSmileIDSampleFlowStatus.Running
         jobId = null
         userId = null
@@ -117,9 +124,15 @@ class UseSmileIDSampleFlowResult(
         this.errorResolution = errorResolution
     }
 
+    /** The run of [product], which the failure banner names. */
+    fun recordProduct(product: UseSmileIDSampleProduct) {
+        this.product = product
+    }
+
     /** The gate refused the run, so the SDK never mounted. Not counted as a result callback. */
-    fun recordBlocked(reason: String, environment: UseSmileIDSampleEnvironment) {
+    fun recordBlocked(reason: String, environment: UseSmileIDSampleEnvironment, product: UseSmileIDSampleProduct? = null) {
         this.environment = environment
+        this.product = product
         status = UseSmileIDSampleFlowStatus.Failed
         jobId = null
         userId = null
@@ -146,6 +159,7 @@ class UseSmileIDSampleFlowResult(
                     it.resultCallbackCount.toString(),
                     it.refreshCallbackCount.toString(),
                     it.errorResolution?.id.orEmpty(),
+                    it.product?.id.orEmpty(),
                 )
             },
             restore = { saved ->
@@ -167,6 +181,7 @@ class UseSmileIDSampleFlowResult(
                     resultCallbackCount = saved[8].toIntOrNull() ?: 0,
                     refreshCallbackCount = saved[9].toIntOrNull() ?: 0,
                     errorResolution = UseSmileIDSampleErrorHandling.resolution(saved.getOrNull(10)),
+                    product = UseSmileIDSampleProduct.entries.firstOrNull { it.id == saved.getOrNull(11) },
                 )
             },
         )

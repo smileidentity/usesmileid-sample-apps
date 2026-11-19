@@ -22,6 +22,8 @@ class ScreenStateGoldenTest {
         "verifications.swipeToDelete" to "screen_verifications_swipe_open",
         "verificationDetails.attention" to "screen_verification_details_attention",
         "verificationDetails.clear" to "screen_verification_details_clear",
+        "verificationDetails.failed" to "screen_verification_details_failed",
+        "verificationDetails.failedFinal" to "screen_verification_details_failed_final",
         "verificationDetails.blocked" to "screen_verification_details_blocked",
         "verificationDetails.error" to "screen_verification_details_error",
         "verificationDetails.processing" to "screen_verification_details_processing",

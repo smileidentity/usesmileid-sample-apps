@@ -72,6 +72,7 @@ export const UseSmileIDSampleTestIds = {
   DETAIL_COPY: 'sample_detail_copy',
   DETAILS_DELETE: 'sample_details_delete',
   DETAILS_EMPTY: 'sample_details_empty',
+  ERROR_BANNER: 'sample_error_banner',
   DETAILS_REFRESH: 'sample_details_refresh',
   // userDetails
   USER_DETAILS_SCREEN: 'sample_user_details_screen',

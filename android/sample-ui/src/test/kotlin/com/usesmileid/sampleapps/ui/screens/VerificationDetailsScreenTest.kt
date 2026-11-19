@@ -2,8 +2,14 @@ package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.onNodeWithText
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.golden.ResultFixtures
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleErrorHandling
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Rule
 import org.junit.Test
@@ -30,16 +36,51 @@ class VerificationDetailsScreenTest {
         compose.onNodeWithTag(UseSmileIDSampleTestIds.DETAILS_EMPTY).assertExists()
     }
 
-    private fun details(pending: Boolean) = compose.setContent {
+    @Test
+    fun a_failed_run_states_its_message_in_place_of_missing() {
+        details(pending = false, landedFailure = UseSmileIDSampleErrorHandling.forStatus(503))
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.DETAILS_EMPTY).assertDoesNotExist()
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_BANNER).assertExists()
+        compose.onNodeWithText("Something went wrong on our side. Please try again in a few minutes.").assertExists()
+    }
+
+    @Test
+    fun a_stored_job_that_ended_in_error_states_why() {
+        details(pending = false, job = job(UseSmileIDSampleStatus.Error))
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_BANNER).assertExists()
+    }
+
+    @Test
+    fun a_stored_job_that_passed_states_no_failure_even_after_a_failed_run() {
+        details(pending = false, job = job(UseSmileIDSampleStatus.Clear), landedFailure = UseSmileIDSampleErrorHandling.forStatus(503))
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_BANNER).assertDoesNotExist()
+    }
+
+    private fun job(status: UseSmileIDSampleStatus) = UseSmileIDSampleJob(
+        id = "job_missing",
+        userId = "user_1",
+        product = UseSmileIDSampleProduct.BiometricKyc,
+        status = status,
+        createdAtMillis = 0L,
+        message = "Rejected",
+        httpStatus = 200,
+    )
+
+    private fun details(
+        pending: Boolean,
+        job: UseSmileIDSampleJob? = null,
+        landedFailure: UseSmileIDSampleErrorResolution? = null,
+    ) = compose.setContent {
         UseSmileIDSampleTheme {
             VerificationDetailsScreen(
                 jobId = "job_missing",
-                job = null,
+                job = job,
                 result = ResultFixtures.Failed,
                 onBack = {},
                 onDelete = {},
                 onCopy = { _, _ -> },
                 pending = pending,
+                landedFailure = landedFailure,
             )
         }
     }

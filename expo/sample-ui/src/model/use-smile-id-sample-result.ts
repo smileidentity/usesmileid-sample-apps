@@ -1,4 +1,5 @@
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import type { UseSmileIDSampleProduct } from './use-smile-id-sample-product';
 import type { UseSmileIDSampleFlowRoute } from './use-smile-id-sample-scenario';
 
 /// Where a run submitted, which the token's `api_url` claim decides and nothing can override.
@@ -62,6 +63,8 @@ export type UseSmileIDSampleRunContext = {
   readonly theme: string;
   readonly route: UseSmileIDSampleFlowRoute;
   readonly environment: UseSmileIDSampleEnvironment;
+  /// The product the run started, which the failure banner names.
+  readonly product?: UseSmileIDSampleProduct;
 };
 
 const entered = (result: UseSmileIDSampleResult, run: UseSmileIDSampleRunContext) => ({

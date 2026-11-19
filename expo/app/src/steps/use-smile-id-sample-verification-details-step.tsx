@@ -9,6 +9,7 @@ import {
   useSmileIDSampleTransientNotice,
   useSmileIDSampleStrings,
   UseSmileIDSampleStatus,
+  smileIDSampleLandedFailure,
 } from '@smileid/sample-ui';
 import * as Clipboard from 'expo-clipboard';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -18,6 +19,7 @@ import type { UseSmileIDSampleStepScope } from '../navigation/use-smile-id-sampl
 import { smileIDSampleStatusApi } from '../status/use-smile-id-sample-status-api';
 import { useLaunchArgs } from '../use-smile-id-sample-launch';
 import { useSmileIDSampleNoticeStyle } from '../use-smile-id-sample-notice-inset';
+import { unsubmittedJobId } from './use-smile-id-sample-sdk-flow-step';
 
 /// One verification, the job id its entry carries; also where a finished run lands.
 export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseSmileIDSampleStepScope }) => {
@@ -34,6 +36,9 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const notice = useSmileIDSampleTransientNotice();
   const args = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
+  const errorResolution = useSmileIDSampleResultStore((state) => state.errorResolution);
+  const runProduct = useSmileIDSampleResultStore((state) => state.product);
+  const landed = jobId === unsubmittedJobId;
   const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
@@ -101,6 +106,8 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           refreshing,
           pending: jobs === null,
           result: showProbes ? smileIDSampleResultSelecting(result, args.scenario, args.theme) : null,
+          landedFailure: landed ? smileIDSampleLandedFailure(result.jobStatus, errorResolution ?? undefined) : undefined,
+          landedProduct: landed ? (runProduct ?? undefined) : undefined,
         }}
         onBack={() => back()}
         onDelete={() => {

@@ -44,6 +44,67 @@ exports[`at the largest content size, dark avatar 1`] = `
 </View>
 `;
 
+exports[`at the largest content size, dark banner_longest_message 1`] = `
+<View
+  style={
+    [
+      {
+        "alignSelf": "stretch",
+      },
+      {
+        "backgroundColor": "#1a1c23",
+        "borderColor": "#2d3748",
+        "borderRadius": 16,
+        "borderWidth": 0.5,
+        "minHeight": 64,
+        "padding": 15.5,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 10,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -1.4900000000000002,
+          "marginTop": -1.4900000000000002,
+        },
+        {
+          "color": "#c2c5cb",
+        },
+      ]
+    }
+  >
+    VERIFICATION FAILED
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-SemiBold",
+          "fontSize": 16,
+          "letterSpacing": 0,
+          "lineHeight": 24,
+          "marginBottom": -1.5839999999999996,
+          "marginTop": -1.5839999999999996,
+        },
+        {
+          "color": "#f2f2f2",
+        },
+      ]
+    }
+  >
+    This service isn't set up to complete verifications yet. Please contact the app's support.
+  </Text>
+</View>
+`;
+
 exports[`at the largest content size, dark button_wrapping 1`] = `
 <View
   accessibilityRole="button"
@@ -1279,6 +1340,67 @@ exports[`at the largest content size, light avatar 1`] = `
     }
   >
     KA
+  </Text>
+</View>
+`;
+
+exports[`at the largest content size, light banner_longest_message 1`] = `
+<View
+  style={
+    [
+      {
+        "alignSelf": "stretch",
+      },
+      {
+        "backgroundColor": "#f9fafb",
+        "borderColor": "#eaecf0",
+        "borderRadius": 16,
+        "borderWidth": 0.5,
+        "minHeight": 64,
+        "padding": 15.5,
+        "rowGap": 4,
+      },
+      undefined,
+    ]
+  }
+>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 10,
+          "letterSpacing": 0,
+          "lineHeight": 16,
+          "marginBottom": -1.4900000000000002,
+          "marginTop": -1.4900000000000002,
+        },
+        {
+          "color": "#5e646e",
+        },
+      ]
+    }
+  >
+    VERIFICATION FAILED
+  </Text>
+  <Text
+    style={
+      [
+        {
+          "fontFamily": "DMSans-SemiBold",
+          "fontSize": 16,
+          "letterSpacing": 0,
+          "lineHeight": 24,
+          "marginBottom": -1.5839999999999996,
+          "marginTop": -1.5839999999999996,
+        },
+        {
+          "color": "#21232c",
+        },
+      ]
+    }
+  >
+    This service isn't set up to complete verifications yet. Please contact the app's support.
   </Text>
 </View>
 `;

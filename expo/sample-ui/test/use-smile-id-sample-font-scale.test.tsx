@@ -59,6 +59,6 @@ describe('a control that must grow with the scale does', () => {
 
 describe('font-scale coverage', () => {
   it('records both schemes for every scale-sensitive state', () => {
-    expect(Object.keys(scaleSensitive).length * schemes.length).toBe(18);
+    expect(Object.keys(scaleSensitive).length * schemes.length).toBe(20);
   });
 });

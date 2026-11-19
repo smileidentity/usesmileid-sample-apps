@@ -9,6 +9,8 @@ import {
 } from '../src/model/use-smile-id-sample-job-dates';
 import { smileIDSampleHttpLabel } from '../src/model/use-smile-id-sample-job';
 import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status';
+import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
+import { smileIDSampleErrorForStatus } from '../src/state/use-smile-id-sample-error-handling';
 import { VerificationDetailsScreen } from '../src/screens/verification-details-screen';
 import {
   VerificationsScreen,
@@ -114,6 +116,30 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
+      failed: {
+        element: () =>
+          details({
+            state: {
+              job: null,
+              jobId: 'unsubmitted',
+              refreshing: false,
+              landedFailure: smileIDSampleErrorForStatus(503),
+              landedProduct: smileIDSampleProducts.find((it) => it.id === 'biometricKyc'),
+            },
+          }),
+      },
+      failedFinal: {
+        element: () =>
+          details({
+            state: {
+              job: null,
+              jobId: 'unsubmitted',
+              refreshing: false,
+              landedFailure: smileIDSampleErrorForStatus(403),
+              landedProduct: smileIDSampleProducts.find((it) => it.id === 'biometricKyc'),
+            },
+          }),
+      },
       // A deep link can name a row this build has no copy of, and the id is the whole diagnostic.
       noRow: {
         element: () => details({ state: { job: null, jobId: 'job_99ky31za00', refreshing: false } }),
@@ -142,7 +168,7 @@ describe('the recording environment', () => {
 describe('verifications coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(18);
+    expect(total * schemes.length).toBe(22);
   });
 });
 
@@ -344,6 +370,41 @@ describe('the details screen', () => {
       const control = scroll.props.refreshControl as { props?: { testID?: string } } | undefined;
       expect(control?.props?.testID).toBe(UseSmileIDSampleTestIds.DETAILS_REFRESH);
     }
+  });
+
+  it('states a failed run in place of missing', async () => {
+    const rendered = await renderInTheme(
+      details({
+        state: { job: null, jobId: 'unsubmitted', refreshing: false, landedFailure: smileIDSampleErrorForStatus(503) },
+      }),
+      false,
+    );
+    expect(rendered.queryByTestId(UseSmileIDSampleTestIds.DETAILS_EMPTY)).toBeNull();
+    expect(rendered.getByTestId(UseSmileIDSampleTestIds.ERROR_BANNER)).toBeTruthy();
+    expect(rendered.getByText('Something went wrong on our side. Please try again in a few minutes.')).toBeTruthy();
+  });
+
+  it('states why a stored job ended in error', async () => {
+    const rendered = await renderInTheme(
+      details({ state: { job: { ...fixtures[0]!, status: UseSmileIDSampleStatus.Error }, jobId: 'x', refreshing: false } }),
+      false,
+    );
+    expect(rendered.getByTestId(UseSmileIDSampleTestIds.ERROR_BANNER)).toBeTruthy();
+  });
+
+  it('states no failure on a job that passed, even after a failed run', async () => {
+    const rendered = await renderInTheme(
+      details({
+        state: {
+          job: { ...fixtures[0]!, status: UseSmileIDSampleStatus.Clear },
+          jobId: 'x',
+          refreshing: false,
+          landedFailure: smileIDSampleErrorForStatus(503),
+        },
+      }),
+      false,
+    );
+    expect(rendered.queryByTestId(UseSmileIDSampleTestIds.ERROR_BANNER)).toBeNull();
   });
 
   it('names the id it could not find, which is the whole diagnostic', async () => {

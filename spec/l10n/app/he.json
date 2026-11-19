@@ -224,6 +224,7 @@
   "status_refresh_failed": "לא ניתן לבדוק את הסטטוס: {reason}",
 
   "error_could_not_start": "לא הצלחנו להתחיל את האימות הזה. נסו שוב או פנו לתמיכה של האפליקציה.",
+  "error_ended_early": "האימות הזה נעצר לפני שהסתיים.",
   "error_id_number_invalid": "מספר התעודה הזה לא נראה תקין. בדקו אותו ונסו שוב.",
   "error_service_not_set_up": "השירות הזה עדיין לא מוגדר להשלמת אימותים. פנו לתמיכה של האפליקציה.",
   "error_session_expired": "פג תוקף ההפעלה שלכם. התחילו מחדש.",
@@ -251,6 +252,8 @@
   "error_action_edit_id_number": "עריכת מספר התעודה",
   "error_action_start_again": "התחלה מחדש",
   "error_action_close": "סגירה",
+  "error_title_not_completed": "האימות לא הושלם",
+  "error_title_failed": "האימות נכשל",
 
   "details_title": "פרטי האימות",
   "details_missing_title": "אין כאן אימות",

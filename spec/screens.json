@@ -229,17 +229,28 @@
         {
           "state": "error",
           "design": "in-repo",
-          "note": "The job failed: GET /v3/status returned `error`, a final state of its own, not a `block` verdict. Neutral pill; the server's message as it came."
+          "note": "The job failed: GET /v3/status returned `error`, a final state of its own, not a `block` verdict. Neutral pill; the server's message as it came, and under the badge an error Banner with the table's fallback message: the status carries no reason yet."
         },
         {
           "state": "processing",
           "node": "5206-2756",
           "note": "202 Accepted, pull-to-refresh present."
+        },
+        {
+          "state": "failed",
+          "design": "in-repo",
+          "note": "A run that ended with no job, landed on the unsubmitted id: the product's name, then the Banner captioned 'Verification not completed' over the row's message. Replaces sample_details_empty; the result card stays under it."
+        },
+        {
+          "state": "failedFinal",
+          "design": "in-repo",
+          "note": "The same landing for a row whose action is Close, captioned 'Verification failed'."
         }
       ],
       "components": [
         "TopAppBar",
         "StatusBadge",
+        "Banner",
         "SectionLabel",
         "DataFieldRow",
         "Button"
@@ -251,6 +262,7 @@
         "sample_status_badge",
         "sample_details_delete",
         "sample_details_empty",
+        "sample_error_banner",
         "sample_details_refresh",
         "sample_result_environment"
       ],

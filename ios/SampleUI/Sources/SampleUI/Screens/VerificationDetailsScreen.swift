@@ -10,10 +10,19 @@ public struct UseSmileIDSampleVerificationDetailsState: Equatable {
   public var showProbes: Bool
   /// True until the store first reports: a cold link lands before the rows do.
   public var pending: Bool
+  /// The row the run that landed here with no job failed with; nil for any other visit.
+  public var landedFailure: UseSmileIDSampleErrorResolution?
+  /// That run's product, named over its banner.
+  public var landedProduct: UseSmileIDSampleProduct?
 
-  /// The row is known not to exist, rather than not loaded yet.
+  /// The failure the screen states, if any.
+  var failure: UseSmileIDSampleErrorResolution? {
+    useSmileIDSampleDetailsFailure(job: job, landedRun: landedFailure)
+  }
+
+  /// The row is known not to exist, rather than not loaded yet, and no failed run explains it.
   var missing: Bool {
-    job == nil && !pending
+    job == nil && !pending && failure == nil
   }
 
   public init(
@@ -21,13 +30,17 @@ public struct UseSmileIDSampleVerificationDetailsState: Equatable {
     job: UseSmileIDSampleJob? = nil,
     result: UseSmileIDSampleResult = UseSmileIDSampleFlowResult().snapshot,
     showProbes: Bool = true,
-    pending: Bool = false
+    pending: Bool = false,
+    landedFailure: UseSmileIDSampleErrorResolution? = nil,
+    landedProduct: UseSmileIDSampleProduct? = nil
   ) {
     self.jobId = jobId
     self.job = job
     self.result = result
     self.showProbes = showProbes
     self.pending = pending
+    self.landedFailure = landedFailure
+    self.landedProduct = landedProduct
   }
 }
 
@@ -70,7 +83,15 @@ public struct VerificationDetailsScreen: View {
         VStack(spacing: SmileSpacing.spacingSm) {
           if let job = state.job {
             heading(job)
+            if let failure = state.failure {
+              banner(failure)
+            }
             details(job)
+          } else if let failure = state.failure {
+            if let product = state.landedProduct {
+              title(product.label)
+            }
+            banner(failure)
           } else if state.missing {
             UseSmileIDSampleEmptyState(
               text: UseSmileIDSampleStrings.detailsMissingTitle,
@@ -131,6 +152,23 @@ public struct VerificationDetailsScreen: View {
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.vertical, SmileSpacing.spacingXxs)
+  }
+
+  private func title(_ text: String) -> some View {
+    UseSmileIDSampleText(text, style: UseSmileIDSampleTheme.type.textStyleTitle)
+      .foregroundColor(colors.textTitle)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, SmileSpacing.spacingMd)
+      .padding(.vertical, SmileSpacing.spacingXxs)
+  }
+
+  private func banner(_ failure: UseSmileIDSampleErrorResolution) -> some View {
+    UseSmileIDSampleBanner(
+      caption: failure.bannerTone == .warning ? UseSmileIDSampleStrings.errorTitleNotCompleted : UseSmileIDSampleStrings.errorTitleFailed,
+      message: failure.message.text,
+      testId: UseSmileIDSampleTestIds.errorBanner
+    )
+    .padding(.horizontal, SmileSpacing.spacingMd)
   }
 
   private func details(_ job: UseSmileIDSampleJob) -> some View {

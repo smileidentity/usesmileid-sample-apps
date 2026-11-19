@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Color
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBanner
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
@@ -28,9 +29,16 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleStatusBadge
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
+import com.usesmileid.sampleapps.ui.label
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.createdAtLabel
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleBannerTone
+import com.usesmileid.sampleapps.ui.state.bannerTone
+import com.usesmileid.sampleapps.ui.state.detailsFailure
+import com.usesmileid.sampleapps.ui.text
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** One verification, and where the flow lands after submission. A missing job is a real state: a deep link can name one this build never had. */
@@ -49,6 +57,10 @@ fun VerificationDetailsScreen(
     showProbes: Boolean = true,
     /** True until the store first reports: a cold link lands before the rows do, and a row not loaded is not missing. */
     pending: Boolean = false,
+    /** The row the run that landed here with no job failed with; null for any other visit. */
+    landedFailure: UseSmileIDSampleErrorResolution? = null,
+    /** That run's product, named over its banner. */
+    landedProduct: UseSmileIDSampleProduct? = null,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -78,7 +90,11 @@ fun VerificationDetailsScreen(
                 contentPadding = contentPadding,
                 verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
             ) {
-            if (job == null) {
+            val failure = detailsFailure(job, landedFailure)
+            if (job == null && failure != null) {
+                if (landedProduct != null) item { TitleRow(landedProduct.localizedTitle()) }
+                item { FailureBanner(failure) }
+            } else if (job == null) {
                 if (!pending) {
                     item {
                         // The id stays in the supporting line: which one was asked for is the whole diagnostic.
@@ -91,25 +107,14 @@ fun VerificationDetailsScreen(
                 }
             } else {
                 item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
-                        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                                    text = job.product.localizedTitle(),
-                            style = UseSmileIDSampleTheme.type.textStyleTitle,
-                            color = UseSmileIDSampleTheme.colors.textTitle,
-                            modifier = Modifier.weight(1f),
-                        )
+                    TitleRow(job.product.localizedTitle()) {
                         UseSmileIDSampleStatusBadge(
                             status = job.status,
                             testId = UseSmileIDSampleTestIds.STATUS_BADGE,
                         )
                     }
                 }
+                if (failure != null) item { FailureBanner(failure) }
                 item {
                     UseSmileIDSampleSectionSurface(
                         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
@@ -138,6 +143,35 @@ fun VerificationDetailsScreen(
             }
         }
     }
+}
+
+@Composable
+private fun TitleRow(title: String, trailing: @Composable () -> Unit = {}) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingXs),
+        horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = title,
+            style = UseSmileIDSampleTheme.type.textStyleTitle,
+            color = UseSmileIDSampleTheme.colors.textTitle,
+            modifier = Modifier.weight(1f),
+        )
+        trailing()
+    }
+}
+
+@Composable
+private fun FailureBanner(failure: UseSmileIDSampleErrorResolution) {
+    UseSmileIDSampleBanner(
+        caption = if (failure.bannerTone == UseSmileIDSampleBannerTone.Warning) UseSmileIDSampleStrings.errorTitleNotCompleted else UseSmileIDSampleStrings.errorTitleFailed,
+        message = failure.message.text(),
+        modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+        testId = UseSmileIDSampleTestIds.ERROR_BANNER,
+    )
 }
 
 @Composable

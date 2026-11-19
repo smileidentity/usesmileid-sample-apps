@@ -25,6 +25,7 @@ export const smileIDSampleErrorActions: Readonly<
 /// The message a failure shows; each value is its key in spec/l10n/app/.
 export const UseSmileIDSampleErrorMessage = {
   CouldNotStart: 'error_could_not_start',
+  EndedEarly: 'error_ended_early',
   IdNumberInvalid: 'error_id_number_invalid',
   ServiceNotSetUp: 'error_service_not_set_up',
   SessionExpired: 'error_session_expired',
