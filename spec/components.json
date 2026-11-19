@@ -881,6 +881,39 @@
       "designRef": "Re-read 2026-08-25 off node 5487:1351 (light) and 5447:1701 (dark), which are identical apart from the variables they resolve."
     },
     {
+      "name": "Banner",
+      "tier": "composite",
+      "owner": "sample",
+      "dsContract": "components/banner.md",
+      "tokens": [
+        "banner.warning-accent",
+        "banner.error-accent",
+        "banner.title",
+        "card.background",
+        "color.card-stroke",
+        "color.primary",
+        "radius.surface",
+        "text-style.body",
+        "spacing.md",
+        "spacing.sm"
+      ],
+      "variants": [
+        "warningWithButton",
+        "errorWithTextAction",
+        "errorMessageOnly"
+      ],
+      "metrics": {
+        "accentBar": "4 wide, the full height, at the leading edge",
+        "glyph": "sizeIconMd, the tone's accent: Material Symbols warning, or cancel for error",
+        "padding": "spacing.md around the message and action, spacing.sm between glyph and message",
+        "action": "a full-width primary Button when it moves the user on; a trailing text action in color.primary when it only closes"
+      },
+      "usedBy": [
+        "verificationDetails"
+      ],
+      "notes": "The design system's banner, drawn on the card surface rather than banner.bg: the SDK result card under it already fills with banner.bg, so the two would merge. Warning tone for a row whose action can get past the failure, error tone for one that ends in Close. Holds one row of spec/error-handling.json: its message and its one action."
+    },
+    {
       "name": "SessionEndedBanner",
       "tier": "composite",
       "owner": "sample",
