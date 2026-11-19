@@ -33,27 +33,28 @@ private struct IconGrid: View {
 
   /// Listed by hand: a mark the generator stopped emitting should break the build, not shrink the baseline.
   private static let all: [(String, SmileIcon)] = [
-    ("agent", SmileIcons.agent), ("arrowBack", SmileIcons.arrowBack),
-    ("arrowForward", SmileIcons.arrowForward), ("biometricKyc", SmileIcons.biometricKyc),
+    ("agent", SmileIcons.agent), ("analytics", SmileIcons.analytics),
+    ("arrowBack", SmileIcons.arrowBack), ("arrowForward", SmileIcons.arrowForward),
+    ("biometricKyc", SmileIcons.biometricKyc), ("bugReport", SmileIcons.bugReport),
     ("check", SmileIcons.check), ("chevron", SmileIcons.chevron),
     ("chevronDown", SmileIcons.chevronDown), ("consent", SmileIcons.consent),
     ("copy", SmileIcons.copy), ("darkMode", SmileIcons.darkMode),
     ("docs", SmileIcons.docs), ("documentVerification", SmileIcons.documentVerification),
     ("enhancedKyc", SmileIcons.enhancedKyc), ("fieldEmail", SmileIcons.fieldEmail),
     ("fieldPerson", SmileIcons.fieldPerson), ("fieldPhone", SmileIcons.fieldPhone),
-    ("flash", SmileIcons.flash),
-    ("instructions", SmileIcons.instructions), ("licenses", SmileIcons.licenses),
-    ("plus", SmileIcons.plus), ("preview", SmileIcons.preview),
-    ("privacy", SmileIcons.privacy), ("productMark", SmileIcons.productMark),
-    ("products", SmileIcons.products),
+    ("flash", SmileIcons.flash), ("instructions", SmileIcons.instructions),
+    ("licenses", SmileIcons.licenses), ("plus", SmileIcons.plus),
+    ("preview", SmileIcons.preview), ("privacy", SmileIcons.privacy),
+    ("productMark", SmileIcons.productMark), ("products", SmileIcons.products),
+    ("receiptLong", SmileIcons.receiptLong),
     ("residencyDocumentVerification", SmileIcons.residencyDocumentVerification),
-    ("scanGlyph", SmileIcons.scanGlyph),
-    ("settingScenarios", SmileIcons.settingScenarios), ("settings", SmileIcons.settings),
+    ("scanGlyph", SmileIcons.scanGlyph), ("schedule", SmileIcons.schedule),
+    ("science", SmileIcons.science), ("settingLanguage", SmileIcons.settingLanguage),
+    ("settings", SmileIcons.settings), ("settingScenarios", SmileIcons.settingScenarios),
     ("smartSelfieAuth", SmileIcons.smartSelfieAuth),
-    ("smartSelfieEnrollment", SmileIcons.smartSelfieEnrollment),
-    ("smile", SmileIcons.smile), ("support", SmileIcons.support),
-    ("terms", SmileIcons.terms), ("tokenScan", SmileIcons.tokenScan),
-    ("trash", SmileIcons.trash),
-    ("verifications", SmileIcons.verifications)
+    ("smartSelfieEnrollment", SmileIcons.smartSelfieEnrollment), ("smile", SmileIcons.smile),
+    ("support", SmileIcons.support), ("terms", SmileIcons.terms),
+    ("tokenScan", SmileIcons.tokenScan), ("trash", SmileIcons.trash),
+    ("verifications", SmileIcons.verifications), ("videocam", SmileIcons.videocam)
   ]
 }

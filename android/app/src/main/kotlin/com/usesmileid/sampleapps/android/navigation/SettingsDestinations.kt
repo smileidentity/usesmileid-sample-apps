@@ -34,6 +34,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.R
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowDivider
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleLicenses
@@ -112,6 +113,7 @@ internal fun SettingsScreen(scope: UseSmileIDSampleStepScope) {
 private fun NetworkLogsRow() {
     val context = LocalContext.current
     UseSmileIDSampleNetworkLog.intent(context)?.let { intent ->
+        UseSmileIDSampleSettingRowDivider()
         UseSmileIDSampleSettingRow(
             title = "Network logs",
             supportingText = "Requests from the last hour",

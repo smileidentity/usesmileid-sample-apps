@@ -373,18 +373,16 @@ export const SettingsScreen = ({
       </Section>
 
       {/* The design draws no control for the drawer, so this placement is ours, and debug-only. */}
-      {onOpenScenarioDrawer || debugRows ? (
+      {onOpenScenarioDrawer ? (
         <Section label="DEBUG">
-          {onOpenScenarioDrawer ? (
-            <UseSmileIDSampleSettingRow
-              title="Scenarios"
-              supportingText="Choose how the environment misbehaves"
-              onPress={onOpenScenarioDrawer}
-              leading={(tint) => <UseSmileIDSampleIcon name="settingScenarios" tint={tint} />}
-              trailing={<UseSmileIDSampleSettingRowChevron />}
-              testID={UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON}
-            />
-          ) : null}
+          <UseSmileIDSampleSettingRow
+            title="Scenarios"
+            supportingText="Choose how the environment misbehaves"
+            onPress={onOpenScenarioDrawer}
+            leading={(tint) => <UseSmileIDSampleIcon name="settingScenarios" tint={tint} />}
+            trailing={<UseSmileIDSampleSettingRowChevron />}
+            testID={UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON}
+          />
           {debugRows}
         </Section>
       ) : null}

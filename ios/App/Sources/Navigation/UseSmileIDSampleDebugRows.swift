@@ -35,6 +35,7 @@ struct UseSmileIDSampleDebugRows: View {
 struct UseSmileIDSampleNetworkLogsRow: View {
   var body: some View {
     #if DEBUG
+      UseSmileIDSampleRowDivider()
       UseSmileIDSampleSettingRow(
         title: "Network logs",
         supportingText: "The last 500 requests",
