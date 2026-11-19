@@ -37,10 +37,14 @@ func useSmileIDSampleErrorMove(
   let ownPartner = runPartnerId != nil && runPartnerId == livePartnerId
   switch action {
   case .retry, .retryLater, .recapture:
-    if !sessionLive { return .newToken(product, resumeAt: .flow) }
+    if !sessionLive {
+      return .newToken(product, resumeAt: .flow)
+    }
     return ownPartner ? .runAgain(product) : .runFromStart(product)
   case .fixInput:
-    if !sessionLive || idDetails == .token { return .newToken(product, resumeAt: .firstStep) }
+    if !sessionLive || idDetails == .token {
+      return .newToken(product, resumeAt: .firstStep)
+    }
     return ownPartner && idDetails == .form ? .editIdDetails(product) : .runFromStart(product)
   case .newSession:
     return .newToken(product, resumeAt: .flow)

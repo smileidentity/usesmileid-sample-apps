@@ -18,7 +18,7 @@ export type UseSmileIDSampleErrorMove =
   | { readonly kind: 'leave' };
 
 /// Where the run's ID details come from: the form it asks for, the token (which only a new token can change), or nowhere.
-export type UseSmileIDSampleIdDetailsSource = 'form' | 'token' | 'none';
+type UseSmileIDSampleIdDetailsSource = 'form' | 'token' | 'none';
 
 /// What the gate a product tap passes knows: whether a session is live, its partner, the run's own, and its ID details' source.
 export type UseSmileIDSampleErrorGate = {

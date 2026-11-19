@@ -465,15 +465,15 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       idDetails: product.map { $0.needsIdDetails ? (app.tokenBindsIdDetails($0) ? .token : .form) : .none } ?? .none
     )
     switch move {
-    case let .runAgain(product):
+    case .runAgain(let product):
       engine.startRun(from: entry, product: product, run: app.runOnly(product, route: app.flowResult.route), replace: entry.id)
-    case let .runFromStart(product):
+    case .runFromStart(let product):
       app.startProductRun(engine: engine, from: entry, product: product, replace: entry.id)
-    case let .editIdDetails(product):
+    case .editIdDetails(let product):
       let facts = app.runOnly(product, route: app.flowResult.route).facts
       let run = UseSmileIDSampleRunEntry(facts: facts, step: UseSmileIDSampleStep.idDetailsForm.rawValue)
       engine.startRun(from: entry, product: product, run: run, replace: entry.id)
-    case let .newToken(product, resumeAt):
+    case .newToken(let product, let resumeAt):
       // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
       app.interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: app.flowResult.route, resumeAt: resumeAt)
       engine.navigator(entry).go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: entry.id)

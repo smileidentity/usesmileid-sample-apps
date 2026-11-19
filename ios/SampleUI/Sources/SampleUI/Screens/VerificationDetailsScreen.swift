@@ -86,10 +86,14 @@ public struct VerificationDetailsScreen: View {
         VStack(spacing: SmileSpacing.spacingSm) {
           if let job = state.job {
             heading(job)
-            if let failure = state.failure { banner(failure, onStoredJob: true) }
+            if let failure = state.failure {
+              banner(failure, onStoredJob: true)
+            }
             details(job)
           } else if let failure = state.failure {
-            if let product = state.landedProduct { title(product.label) }
+            if let product = state.landedProduct {
+              title(product.label)
+            }
             banner(failure, onStoredJob: false)
           } else if state.missing {
             UseSmileIDSampleEmptyState(
