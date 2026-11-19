@@ -32,6 +32,8 @@ Every member is optional and does nothing by default:
 | `hasDebugSheet` | when the shell's `debugSheet` step opens, to ask whether the extension draws that id; the step closes at once for any other id, in a release build and without an extension |
 | `debugSheet` | inside that step (`/debug/sheet/:sheetId`), with the id a row opened and a callback that closes it; the extension draws the whole panel with `sample-ui`'s shared bottom sheet, as the shell's own sheet steps do, and the step supplies the window, scrim and dismissal |
 
+Every DEBUG row sits in one card under Scenarios, so each row a shell or an extension adds leads with `sample-ui`'s row divider and draws `sample-ui`'s setting row with an icon tile, as every other Settings row does.
+
 **The order is a guarantee:** `onLaunch`, then `launchSession`, then autostart, then the flow hooks.
 A unit test pins it on Android, Flutter and Expo with a recording extension; on iOS `App.init` runs
 before SwiftUI builds the first scene, so no other member can be reached first.
