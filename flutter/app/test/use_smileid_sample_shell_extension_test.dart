@@ -20,6 +20,27 @@ void main() {
     );
   });
 
+  test('a debug build with an extension opens a debug sheet', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(debugBuild: true, hasExtension: true),
+      isTrue,
+    );
+  });
+
+  test('a release build never opens it even with an extension', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(debugBuild: false, hasExtension: true),
+      isFalse,
+    );
+  });
+
+  test('a build with no extension has no debug sheet to draw', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(debugBuild: true, hasExtension: false),
+      isFalse,
+    );
+  });
+
   test('a build without an extension has no debug rows', () {
     expect(useSmileIDSampleDebugRows(null), isEmpty);
   });
