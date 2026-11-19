@@ -52,7 +52,8 @@ final class UseSmileIDSampleFlowUITests: XCTestCase {
     XCTAssertTrue(element("si_consent_screen").waitForNonExistence(timeout: 5), "the flow is still mounted")
     XCTAssertEqual(element("sample_result_result_count").label, "1", "the callback did not arrive exactly once")
     XCTAssertEqual(element("sample_result_job_status").label, "failed", "a denial is a failure, not a cancel")
-    XCTAssertTrue(element("sample_details_empty").exists)
+    XCTAssertTrue(element("sample_error_banner").exists, "the denial's banner is not on the details")
+    XCTAssertFalse(element("sample_details_empty").exists)
 
     // Back never goes into capture: the flow's own tab is at its root.
     app.buttons["Back"].tap()
