@@ -82,9 +82,16 @@ data class FilterChipTokens(
 @Immutable
 data class CardTokens(val background: Color, val border: Color, val title: Color, val body: Color)
 
-/** Colours the inline banners draw, the notices and callouts among them. */
+/** Colours the inline banners draw, the notices and callouts among them; each accent marks its tone's bar and glyph. */
 @Immutable
-data class BannerTokens(val background: Color, val border: Color, val title: Color, val text: Color)
+data class BannerTokens(
+    val background: Color,
+    val border: Color,
+    val title: Color,
+    val text: Color,
+    val warningAccent: Color,
+    val errorAccent: Color,
+)
 
 /** The product and profile fills. Which hue belongs to which product is the designer's list, still outstanding, so callers pass one explicitly rather than this deciding. */
 @Immutable
@@ -237,6 +244,8 @@ internal val lightColors = UseSmileIDSampleColors(
         border = SmileColorLight.bannerBorder,
         title = SmileColorLight.bannerTitle,
         text = SmileColorLight.bannerText,
+        warningAccent = SmileColorLight.bannerWarningAccent,
+        errorAccent = SmileColorLight.bannerErrorAccent,
     ),
     decorative = DecorativeTokens(
         yellow = SmileColorLight.colorDecorativeYellow,
@@ -336,6 +345,8 @@ internal val darkColors = UseSmileIDSampleColors(
         border = SmileColorDark.bannerBorder,
         title = SmileColorDark.bannerTitle,
         text = SmileColorDark.bannerText,
+        warningAccent = SmileColorDark.bannerWarningAccent,
+        errorAccent = SmileColorDark.bannerErrorAccent,
     ),
     decorative = DecorativeTokens(
         yellow = SmileColorDark.colorDecorativeYellow,

@@ -6,6 +6,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalResources
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorMessage
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProductSection
@@ -63,6 +65,45 @@ fun UseSmileIDSampleStatus.label(): String = when (this) {
     UseSmileIDSampleStatus.Blocked -> UseSmileIDSampleStrings.statusBlocked
     UseSmileIDSampleStatus.Error -> UseSmileIDSampleStrings.statusError
     UseSmileIDSampleStatus.Processing -> UseSmileIDSampleStrings.statusProcessing
+}
+
+/** A failure's message in the app's language. */
+@Composable
+fun UseSmileIDSampleErrorMessage.text(): String = when (this) {
+    UseSmileIDSampleErrorMessage.CouldNotStart -> UseSmileIDSampleStrings.errorCouldNotStart
+    UseSmileIDSampleErrorMessage.IdNumberInvalid -> UseSmileIDSampleStrings.errorIdNumberInvalid
+    UseSmileIDSampleErrorMessage.ServiceNotSetUp -> UseSmileIDSampleStrings.errorServiceNotSetUp
+    UseSmileIDSampleErrorMessage.SessionExpired -> UseSmileIDSampleStrings.errorSessionExpired
+    UseSmileIDSampleErrorMessage.ServiceUnavailable -> UseSmileIDSampleStrings.errorServiceUnavailable
+    UseSmileIDSampleErrorMessage.NotAvailable -> UseSmileIDSampleStrings.errorNotAvailable
+    UseSmileIDSampleErrorMessage.UpdateApp -> UseSmileIDSampleStrings.errorUpdateApp
+    UseSmileIDSampleErrorMessage.NotFound -> UseSmileIDSampleStrings.errorNotFound
+    UseSmileIDSampleErrorMessage.AlreadyStarted -> UseSmileIDSampleStrings.errorAlreadyStarted
+    UseSmileIDSampleErrorMessage.LinkExpired -> UseSmileIDSampleStrings.errorLinkExpired
+    UseSmileIDSampleErrorMessage.PhotosTooLarge -> UseSmileIDSampleStrings.errorPhotosTooLarge
+    UseSmileIDSampleErrorMessage.TooManyAttempts -> UseSmileIDSampleStrings.errorTooManyAttempts
+    UseSmileIDSampleErrorMessage.Server -> UseSmileIDSampleStrings.errorServer
+    UseSmileIDSampleErrorMessage.NoConnection -> UseSmileIDSampleStrings.errorNoConnection
+    UseSmileIDSampleErrorMessage.Timeout -> UseSmileIDSampleStrings.errorTimeout
+    UseSmileIDSampleErrorMessage.PhotoUnusable -> UseSmileIDSampleStrings.errorPhotoUnusable
+    UseSmileIDSampleErrorMessage.PhotoRejected -> UseSmileIDSampleStrings.errorPhotoRejected
+    UseSmileIDSampleErrorMessage.DocumentNotRecognised -> UseSmileIDSampleStrings.errorDocumentNotRecognised
+    UseSmileIDSampleErrorMessage.FaceCheckUnavailable -> UseSmileIDSampleStrings.errorFaceCheckUnavailable
+    UseSmileIDSampleErrorMessage.NoSavedSelfie -> UseSmileIDSampleStrings.errorNoSavedSelfie
+    UseSmileIDSampleErrorMessage.IdNumberNotAccepted -> UseSmileIDSampleStrings.errorIdNumberNotAccepted
+    UseSmileIDSampleErrorMessage.IdServiceDown -> UseSmileIDSampleStrings.errorIdServiceDown
+    UseSmileIDSampleErrorMessage.CouldNotFinish -> UseSmileIDSampleStrings.errorCouldNotFinish
+    UseSmileIDSampleErrorMessage.NotVerified -> UseSmileIDSampleStrings.errorNotVerified
+}
+
+/** The label on a failure's one button. */
+@Composable
+fun UseSmileIDSampleErrorAction.label(): String = when (this) {
+    UseSmileIDSampleErrorAction.Retry, UseSmileIDSampleErrorAction.RetryLater -> UseSmileIDSampleStrings.commonTryAgain
+    UseSmileIDSampleErrorAction.Recapture -> UseSmileIDSampleStrings.errorActionRetakePhoto
+    UseSmileIDSampleErrorAction.FixInput -> UseSmileIDSampleStrings.errorActionEditIdNumber
+    UseSmileIDSampleErrorAction.NewSession -> UseSmileIDSampleStrings.errorActionStartAgain
+    UseSmileIDSampleErrorAction.Exit -> UseSmileIDSampleStrings.errorActionClose
 }
 
 @Composable

@@ -9,7 +9,9 @@ import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleToast
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
@@ -17,6 +19,7 @@ import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleVerificationsState
 import com.usesmileid.sampleapps.ui.screens.VerificationDetailsScreen
 import com.usesmileid.sampleapps.ui.screens.VerificationsScreen
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleErrorHandling
 import org.junit.Test
 
 /** The clock is fixed, so the date headers a golden records are the ones it compares against tomorrow. */
@@ -101,6 +104,27 @@ class VerificationsGoldenTest : GoldenTest() {
     @Test
     fun verification_details_pending() = goldens("screen_verification_details_pending") { UnknownDetails(pending = true) }
 
+    /** A run whose submission the server refused, landed with no job: its message and the action that can get past it. */
+    @Test
+    fun verification_details_failed() =
+        goldens("screen_verification_details_failed") { FailedRun(UseSmileIDSampleErrorHandling.forStatus(503)) }
+
+    /** A refusal no retry gets past: the error tone, and Close. */
+    @Test
+    fun verification_details_failed_final() =
+        goldens("screen_verification_details_failed_final") { FailedRun(UseSmileIDSampleErrorHandling.forStatus(403)) }
+
+    /** The release build's page: the banner alone, with no result card under it. */
+    @Test
+    fun verification_details_failed_without_probes() = goldens("screen_verification_details_failed_no_probes") {
+        FailedRun(UseSmileIDSampleErrorHandling.forStatus(400), showProbes = false)
+    }
+
+    /** The table's longest message, which wraps furthest beside the glyph. */
+    @Test
+    fun verification_details_failed_max_font_scale() =
+        assertSurvivesMaxFontScale { FailedRun(UseSmileIDSampleErrorHandling.forStatus(400)) }
+
     @Test
     fun verification_details_without_probes() =
         goldens("screen_verification_details_no_probes") { Details(showProbes = false) }
@@ -163,6 +187,19 @@ class VerificationsGoldenTest : GoldenTest() {
         onDelete = {},
         onCopy = { _, _ -> },
         showProbes = showProbes,
+    )
+
+    @Composable
+    private fun FailedRun(failure: UseSmileIDSampleErrorResolution, showProbes: Boolean = true) = VerificationDetailsScreen(
+        jobId = "unsubmitted",
+        job = null,
+        result = ResultFixtures.Failed,
+        onBack = {},
+        onDelete = {},
+        onCopy = { _, _ -> },
+        showProbes = showProbes,
+        landedFailure = failure,
+        landedProduct = UseSmileIDSampleProduct.BiometricKyc,
     )
 
     @Composable

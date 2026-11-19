@@ -4,6 +4,7 @@ import androidx.compose.runtime.saveable.SaverScope
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowRoute
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleScenario
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -89,6 +90,16 @@ class UseSmileIDSampleFlowResultTest {
         flow.startFlow(UseSmileIDSampleEnvironment.Sandbox)
 
         assertNull(flow.errorResolution)
+    }
+
+    @Test
+    fun a_run_keeps_its_product_for_the_failure_actions_and_recreation_preserves_it() {
+        val flow = UseSmileIDSampleFlowResult()
+
+        flow.startFlow(UseSmileIDSampleEnvironment.Sandbox, UseSmileIDSampleProduct.EnhancedKyc)
+
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flow.product)
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flow.recreate().product)
     }
 
     @Test

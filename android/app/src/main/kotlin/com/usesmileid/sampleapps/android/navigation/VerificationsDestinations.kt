@@ -28,6 +28,19 @@ import androidx.compose.ui.platform.LocalClipboard
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.flow.UNSUBMITTED_JOB_ID
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleErrorMove
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleRunEntry
+import com.usesmileid.sampleapps.android.flow.errorMove
+import com.usesmileid.sampleapps.android.flow.runOnly
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
+import com.usesmileid.njia.NjiaEntry
+import com.usesmileid.njia.navigator
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleResumePoint
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
+import com.usesmileid.sampleapps.ui.state.landedFailure
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
@@ -145,6 +158,7 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
     val resources = LocalResources.current
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
+    val engine = LocalUseSmileIDSampleEngine.current
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
@@ -172,6 +186,9 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             // Computed here: `sample-ui` reads no host's BuildConfig.
             showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
             pending = app.jobs == null,
+            landedFailure = landedFailure(app.flowResult.status, app.flowResult.errorResolution).takeIf { jobId == UNSUBMITTED_JOB_ID },
+            landedProduct = app.flowResult.product.takeIf { jobId == UNSUBMITTED_JOB_ID },
+            onErrorAction = { action -> app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry) },
         )
         // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
         LaunchedEffect(jobId, app.session?.id) {
@@ -190,5 +207,30 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
                 .align(Alignment.BottomCenter)
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingMd),
         )
+    }
+}
+
+/** Runs a failure's [action] for [product] from the details entry, which the move replaces. */
+private fun UseSmileIDSampleAppState.runErrorAction(
+    action: UseSmileIDSampleErrorAction,
+    product: UseSmileIDSampleProduct?,
+    engine: UseSmileIDSampleEngine,
+    from: NjiaEntry,
+) {
+    when (val move = errorMove(action, product)) {
+        is UseSmileIDSampleErrorMove.RunAgain ->
+            engine.startRun(from, move.product, runOnly(move.product, flowResult.route), replace = from.id)
+        is UseSmileIDSampleErrorMove.EditIdDetails -> engine.startRun(
+            from,
+            move.product,
+            UseSmileIDSampleRunEntry(njiaFactsFor(move.product), UseSmileIDSampleStep.IdDetailsForm.wireName),
+            replace = from.id,
+        )
+        is UseSmileIDSampleErrorMove.NewToken -> {
+            interruptedRun.runPartnerId = session?.partnerId
+            interruptedRun.send(UseSmileIDSampleRunIntent(move.product.id, flowResult.route, UseSmileIDSampleResumePoint.Flow))
+            engine.navigator(from).go(UseSmileIDSampleStep.ScanToken.wireName, replace = from.id)
+        }
+        UseSmileIDSampleErrorMove.Leave -> engine.leaveToProducts()
     }
 }

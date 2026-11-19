@@ -90,6 +90,9 @@ object UseSmileIDSampleErrorHandling {
     val result: List<UseSmileIDSampleErrorResolution> = resultRows.map { it.resolution }
 
     /** The row a saved [id] names; null for none, or for one this build no longer has. */
+    /** The row a submission the table does not name resolves as. */
+    val submissionFallback: UseSmileIDSampleErrorResolution get() = requestInvalid
+
     fun resolution(id: String?): UseSmileIDSampleErrorResolution? = (submission + result).firstOrNull { it.id == id }
 
     /** A submission the server refused with [status]; [serverMessage] only tells rows apart and is never shown. */

@@ -111,7 +111,7 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {
-        if (viewModel.markRunStarted() && !viewModel.resultDelivered) app.flowResult.startFlow(snapshot.environment)
+        if (viewModel.markRunStarted() && !viewModel.resultDelivered) app.flowResult.startFlow(snapshot.environment, snapshot.product)
     }
 
     // A teardown-delivered cancel arrives after the route is gone, where navigating again would act
@@ -211,4 +211,5 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
 )
 
 /** A failed or captured run has no server-issued job id, so the landing route carries a stable non-id. */
-private const val UNSUBMITTED_JOB_ID = "unsubmitted"
+/** The details route's id for a run that ended with no job, where its failure is stated. */
+internal const val UNSUBMITTED_JOB_ID = "unsubmitted"
