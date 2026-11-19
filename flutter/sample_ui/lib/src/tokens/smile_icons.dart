@@ -61,6 +61,7 @@ abstract final class SmileIcons {
       '$_base/material-symbols/setting_language.svg';
   static const String materialSettingScenarios =
       '$_base/material-symbols/setting_scenarios.svg';
+  static const String materialVideocam = '$_base/material-symbols/videocam.svg';
 
   /// All of them, which the generator's test counts against the shared record.
   static const List<String> all = <String>[
@@ -106,5 +107,6 @@ abstract final class SmileIcons {
     materialScience,
     materialSettingLanguage,
     materialSettingScenarios,
+    materialVideocam,
   ];
 }

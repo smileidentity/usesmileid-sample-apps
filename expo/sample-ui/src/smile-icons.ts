@@ -437,6 +437,15 @@ export const smileIcons = {
       { d: "M3.0625 5.25L3.9375 6.125L5.25 4.375M3.0625 10.5L3.9375 11.375L5.25 9.625M3.0625 15.75L3.9375 16.625L5.25 14.875", paint: { kind: 'stroke', width: 1.83333, round: true }, opacity: 1 },
     ],
   },
+  videocam: {
+    minX: 0,
+    minY: -960,
+    width: 960,
+    height: 960,
+    parts: [
+      { d: "M160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h480q33 0 56.5 23.5T720-720v180l160-160v440L720-420v180q0 33-23.5 56.5T640-160H160Zm0-80h480v-480H160v480Zm0 0v-480 480Z", paint: { kind: 'fill' }, opacity: 1 },
+    ],
+  },
 } as const satisfies Readonly<Record<string, SmileIcon>>;
 
 /** A mark's name, so a caller cannot ask for one the record does not hold. */

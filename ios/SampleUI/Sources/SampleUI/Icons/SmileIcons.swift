@@ -1601,4 +1601,43 @@ public enum SmileIcons {
       }
     ]
   )
+
+  public static let videocam = SmileIcon(
+    width: 960,
+    height: 960,
+    minX: 0,
+    minY: -960,
+    parts: [
+      SmileIconPart(stroke: .fill, opacity: 1) { path in
+        path.move(to: CGPoint(x: 160, y: -160))
+        path.addQuadCurve(to: CGPoint(x: 103.5, y: -183.5), control: CGPoint(x: 127, y: -160))
+        path.addQuadCurve(to: CGPoint(x: 80, y: -240), control: CGPoint(x: 80, y: -207))
+        path.addLine(to: CGPoint(x: 80, y: -720))
+        path.addQuadCurve(to: CGPoint(x: 103.5, y: -776.5), control: CGPoint(x: 80, y: -753))
+        path.addQuadCurve(to: CGPoint(x: 160, y: -800), control: CGPoint(x: 127, y: -800))
+        path.addLine(to: CGPoint(x: 640, y: -800))
+        path.addQuadCurve(to: CGPoint(x: 696.5, y: -776.5), control: CGPoint(x: 673, y: -800))
+        path.addQuadCurve(to: CGPoint(x: 720, y: -720), control: CGPoint(x: 720, y: -753))
+        path.addLine(to: CGPoint(x: 720, y: -540))
+        path.addLine(to: CGPoint(x: 880, y: -700))
+        path.addLine(to: CGPoint(x: 880, y: -260))
+        path.addLine(to: CGPoint(x: 720, y: -420))
+        path.addLine(to: CGPoint(x: 720, y: -240))
+        path.addQuadCurve(to: CGPoint(x: 696.5, y: -183.5), control: CGPoint(x: 720, y: -207))
+        path.addQuadCurve(to: CGPoint(x: 640, y: -160), control: CGPoint(x: 673, y: -160))
+        path.addLine(to: CGPoint(x: 160, y: -160))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 160, y: -240))
+        path.addLine(to: CGPoint(x: 640, y: -240))
+        path.addLine(to: CGPoint(x: 640, y: -720))
+        path.addLine(to: CGPoint(x: 160, y: -720))
+        path.addLine(to: CGPoint(x: 160, y: -240))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 160, y: -240))
+        path.addLine(to: CGPoint(x: 160, y: -720))
+        path.addLine(to: CGPoint(x: 160, y: -240))
+        path.closeSubpath()
+      }
+    ]
+  )
 }
