@@ -11,6 +11,7 @@ import {
   UseSmileIDSampleStatus,
   smileIDSampleLandedFailure,
   smileIDSampleLiveSession,
+  useSmileIDSampleActiveProfile,
   type UseSmileIDSampleErrorAction,
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
@@ -19,7 +20,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import { smileIDSampleErrorMove } from '../flow/use-smile-id-sample-error-move';
-import { smileIDSampleRunEntryFor, smileIDSampleRunOnly } from '../flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleRunOnly } from '../flow/use-smile-id-sample-flow-journey';
 import { smileIDSampleLiveBindingsNow } from '../flow/use-smile-id-sample-token-binding-rules';
 import {
   smileIDSampleLeaveToProducts,
@@ -30,6 +31,7 @@ import {
 import { smileIDSampleStatusApi } from '../status/use-smile-id-sample-status-api';
 import { useLaunchArgs } from '../use-smile-id-sample-launch';
 import { useSmileIDSampleNoticeStyle } from '../use-smile-id-sample-notice-inset';
+import { smileIDSampleStartProductRun } from './use-smile-id-sample-products-step';
 import { unsubmittedJobId } from './use-smile-id-sample-sdk-flow-step';
 
 /// One verification, the job id its entry carries; also where a finished run lands.
@@ -50,6 +52,7 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const errorResolution = useSmileIDSampleResultStore((state) => state.errorResolution);
   const runProduct = useSmileIDSampleResultStore((state) => state.product);
   const engine = useSmileIDSampleEngine();
+  const profile = useSmileIDSampleActiveProfile();
   const landed = jobId === unsubmittedJobId;
   const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
@@ -126,15 +129,17 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
         smileIDSampleStartRun(engine, scope.entry, move.product, runOnly(move.product), scope.entry.id);
         return;
       case 'runFromStart':
-        smileIDSampleStartRun(
+        smileIDSampleStartProductRun(
           engine,
-          scope.entry,
+          scope,
           move.product,
-          smileIDSampleRunEntryFor(engine.graph, move.product, route, smileIDSampleLiveBindingsNow(args.scenario)),
+          { profile, route, scenario: args.scenario, catalogue: args.catalogue },
           scope.entry.id,
         );
         return;
       case 'editIdDetails':
+        // The details stay to be edited, but the run is now the live partner's.
+        session.recordRunPartner(live?.partnerId ?? null);
         smileIDSampleStartRun(
           engine,
           scope.entry,

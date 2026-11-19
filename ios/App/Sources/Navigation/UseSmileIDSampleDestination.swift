@@ -285,14 +285,7 @@ struct UseSmileIDSampleDestination: View {
 
   /// A product tap: the run's first form, or the scanner first when no live session backs it.
   private func startRun(_ product: UseSmileIDSampleProduct) {
-    app.fillFormForRun(product)
-    let run = app.entry(in: engine.graph, for: product)
-    app.runPartnerId = run == nil ? nil : app.session?.partnerId
-    if let run {
-      engine.startRun(from: scope.entry, product: product, run: run)
-    } else {
-      navigator.go(.scanToken)
-    }
+    app.startProductRun(engine: engine, from: scope.entry, product: product)
   }
 
   /// SmartSelfie Registration in this run's place, for a user with no enrolment to authenticate.
@@ -468,8 +461,10 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     case let .runAgain(product):
       engine.startRun(from: entry, product: product, run: app.runOnly(product, route: app.flowResult.route), replace: entry.id)
     case let .runFromStart(product):
-      engine.startRun(from: entry, product: product, run: app.runEntry(in: engine.graph, for: product), replace: entry.id)
+      app.startProductRun(engine: engine, from: entry, product: product, replace: entry.id)
     case let .editIdDetails(product):
+      // The details stay to be edited, but the run is now the live partner's.
+      app.runPartnerId = live?.partnerId
       let facts = app.runOnly(product, route: app.flowResult.route).facts
       let run = UseSmileIDSampleRunEntry(facts: facts, step: UseSmileIDSampleStep.idDetailsForm.rawValue)
       engine.startRun(from: entry, product: product, run: run, replace: entry.id)

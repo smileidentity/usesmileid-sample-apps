@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
 
 import '../catalogue/use_smileid_sample_catalogue_providers.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
@@ -65,35 +66,14 @@ class _UseSmileIDSampleProductsTabState
               ),
         sessionEnded: ended,
       ),
-      onProductTap: (UseSmileIDSampleProduct product) {
-        ref
-            .read(useSmileIDSampleFormsProvider.notifier)
-            .startRun(profiles.active);
-        final UseSmileIDSampleEngine engine =
-            UseSmileIDSampleNavigationScope.engineOf(context);
-        final UseSmileIDSampleRunEntry? run = useSmileIDSampleEntryFor(
+      onProductTap: (UseSmileIDSampleProduct product) => unawaited(
+        useSmileIDSampleStartProductRun(
           ref,
-          engine.graph,
+          UseSmileIDSampleNavigationScope.engineOf(context),
+          widget.scope.entry,
           product,
-        );
-        ref
-            .read(useSmileIDSampleRunPartnerProvider.notifier)
-            .record(run == null ? null : live?.partnerId);
-        // Fetched ahead, so the list is usually there by the time the picker opens.
-        if (run != null && useSmileIDSampleCatalogueFamily(product) != null) {
-          final UseSmileIDSampleCatalogueStore store =
-              ref.read(useSmileIDSampleCatalogueStoreProvider)..begin(
-                useSmileIDSampleCatalogueEnvironment(live),
-                useSmileIDSampleCatalogueLocale(),
-              );
-          useSmileIDSampleEnsureEnabled(store, product, live);
-        }
-        unawaited(
-          run == null
-              ? widget.scope.navigator.goStep(UseSmileIDSampleStep.scanToken)
-              : engine.startRun(widget.scope.entry, product, run),
-        );
-      },
+        ),
+      ),
       onProfileTap: () => unawaited(
         widget.scope.navigator.goStep(UseSmileIDSampleStep.profileSwitch),
       ),
@@ -103,4 +83,43 @@ class _UseSmileIDSampleProductsTabState
       bottomInset: useSmileIDSampleNavBarClearance(context),
     );
   }
+}
+
+/// A product tap's run from [from], in place of [replace] if given: fresh forms, the run's partner, and the scanner first with no live session.
+Future<void> useSmileIDSampleStartProductRun(
+  WidgetRef ref,
+  UseSmileIDSampleEngine engine,
+  NjiaEntry from,
+  UseSmileIDSampleProduct product, {
+  int? replace,
+}) async {
+  // Fresh from the profile, so one run's ID details never carry into another, least of all another partner's.
+  ref
+      .read(useSmileIDSampleFormsProvider.notifier)
+      .startRun(ref.read(useSmileIDSampleProfilesProvider).active);
+  final UseSmileIDSampleTokenSession? live = ref
+      .read(useSmileIDSampleSessionProvider)
+      .live;
+  final UseSmileIDSampleRunEntry? run = useSmileIDSampleEntryFor(
+    ref,
+    engine.graph,
+    product,
+  );
+  ref
+      .read(useSmileIDSampleRunPartnerProvider.notifier)
+      .record(run == null ? null : live?.partnerId);
+  // Fetched ahead, so the list is usually there by the time the picker opens.
+  if (run != null && useSmileIDSampleCatalogueFamily(product) != null) {
+    final UseSmileIDSampleCatalogueStore store =
+        ref.read(useSmileIDSampleCatalogueStoreProvider)..begin(
+          useSmileIDSampleCatalogueEnvironment(live),
+          useSmileIDSampleCatalogueLocale(),
+        );
+    useSmileIDSampleEnsureEnabled(store, product, live);
+  }
+  await (run == null
+      ? engine
+            .navigator(from)
+            .go(UseSmileIDSampleStep.scanToken.name, replace: replace)
+      : engine.startRun(from, product, run, replace: replace));
 }

@@ -33,7 +33,6 @@ import com.usesmileid.sampleapps.android.flow.UNSUBMITTED_JOB_ID
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleErrorMove
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleRunEntry
 import com.usesmileid.sampleapps.android.flow.errorMove
-import com.usesmileid.sampleapps.android.flow.runEntryFor
 import com.usesmileid.sampleapps.android.flow.runOnly
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -221,14 +220,17 @@ private fun UseSmileIDSampleAppState.runErrorAction(
     when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId)) {
         is UseSmileIDSampleErrorMove.RunAgain ->
             engine.startRun(from, move.product, runOnly(move.product, flowResult.route), replace = from.id)
-        is UseSmileIDSampleErrorMove.RunFromStart ->
-            engine.startRun(from, move.product, runEntryFor(engine.graph, move.product), replace = from.id)
-        is UseSmileIDSampleErrorMove.EditIdDetails -> engine.startRun(
-            from,
-            move.product,
-            UseSmileIDSampleRunEntry(runOnly(move.product, flowResult.route).facts, UseSmileIDSampleStep.IdDetailsForm.wireName),
-            replace = from.id,
-        )
+        is UseSmileIDSampleErrorMove.RunFromStart -> startProductRun(engine, from, move.product, replace = from.id)
+        is UseSmileIDSampleErrorMove.EditIdDetails -> {
+            // The details stay to be edited, but the run is now the live partner's.
+            interruptedRun.runPartnerId = live?.partnerId
+            engine.startRun(
+                from,
+                move.product,
+                UseSmileIDSampleRunEntry(runOnly(move.product, flowResult.route).facts, UseSmileIDSampleStep.IdDetailsForm.wireName),
+                replace = from.id,
+            )
+        }
         // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
         is UseSmileIDSampleErrorMove.NewToken -> {
             interruptedRun.send(UseSmileIDSampleRunIntent(move.product.id, flowResult.route, move.resumeAt))

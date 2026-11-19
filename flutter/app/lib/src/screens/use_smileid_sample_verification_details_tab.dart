@@ -15,6 +15,7 @@ import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_remove_jobs.dart';
+import 'use_smileid_sample_products_tab.dart';
 import 'use_smileid_sample_sdk_flow_tab.dart';
 
 /// One verification's detail page, pushed inside the verifications tab so back stays within it.
@@ -181,15 +182,20 @@ class _UseSmileIDSampleVerificationDetailsTabState
           replace: widget.entry.id,
         );
       case UseSmileIDSampleRunFromStart(:final UseSmileIDSampleProduct product):
-        await engine.startRun(
+        await useSmileIDSampleStartProductRun(
+          ref,
+          engine,
           widget.entry,
           product,
-          useSmileIDSampleRunEntryFor(ref, engine.graph, product),
           replace: widget.entry.id,
         );
       case UseSmileIDSampleEditIdDetails(
         :final UseSmileIDSampleProduct product,
       ):
+        // The details stay to be edited, but the run is now the live partner's.
+        ref
+            .read(useSmileIDSampleRunPartnerProvider.notifier)
+            .record(live?.partnerId);
         await engine.startRun(
           widget.entry,
           product,

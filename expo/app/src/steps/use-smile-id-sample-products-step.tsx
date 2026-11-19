@@ -13,6 +13,9 @@ import {
   useSmileIDSampleActiveProfileIndex,
   useSmileIDSampleSessionStore,
   useSmileIDSampleFormsStore,
+  type UseSmileIDSampleFlowRoute,
+  type UseSmileIDSampleProduct,
+  type UseSmileIDSampleProfile,
 } from '@smileid/sample-ui';
 
 import {
@@ -35,7 +38,6 @@ export const UseSmileIDSampleProductsStep = ({ scope }: { scope: UseSmileIDSampl
   const engine = useSmileIDSampleEngine();
   const profile = useSmileIDSampleActiveProfile();
   const index = useSmileIDSampleActiveProfileIndex();
-  const startRun = useSmileIDSampleFormsStore((state) => state.startRun);
   const bottomInset = useSmileIDSampleListInset();
   const { scenario, theme, catalogue, route } = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
@@ -53,24 +55,45 @@ export const UseSmileIDSampleProductsStep = ({ scope }: { scope: UseSmileIDSampl
         sessionRemaining: live === null ? null : smileIDSampleCountdown(smileIDSampleSessionRemaining(live, nowMillis)),
         sessionEnded: ended,
       }}
-      onProductPress={(product) => {
-        startRun(profile);
-        const run = smileIDSampleEntryFor(engine.graph, product, route, scenario);
-        if (run === null) {
-          scope.navigator.go('scanToken');
-          return;
-        }
-        // Fetched ahead, so the list is usually there by the time the picker opens.
-        if (smileIDSampleCatalogueFamily(product) !== null) {
-          const store = smileIDSampleCatalogueStore(catalogue);
-          store.getState().begin(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale());
-          smileIDSampleEnsureEnabled(store, product.id, live);
-        }
-        smileIDSampleStartRun(engine, scope.entry, product, run);
-      }}
+      onProductPress={(product) =>
+        smileIDSampleStartProductRun(engine, scope, product, { profile, route, scenario, catalogue })
+      }
       onProfilePress={() => scope.navigator.go('profileSwitch')}
       onScanPress={() => scope.navigator.go('scanToken')}
       bottomInset={bottomInset}
     />
   );
+};
+
+/// What a product tap reads from the launch and the active profile.
+type UseSmileIDSampleProductRunContext = {
+  readonly profile: UseSmileIDSampleProfile | null;
+  readonly route: UseSmileIDSampleFlowRoute;
+  readonly scenario: string;
+  readonly catalogue: Parameters<typeof smileIDSampleCatalogueStore>[0];
+};
+
+/// A product tap's run from `scope`'s entry, in place of `replace` if given: fresh forms, the run's partner, and the scanner first with no live session.
+export const smileIDSampleStartProductRun = (
+  engine: ReturnType<typeof useSmileIDSampleEngine>,
+  scope: UseSmileIDSampleStepScope,
+  product: UseSmileIDSampleProduct,
+  { profile, route, scenario, catalogue }: UseSmileIDSampleProductRunContext,
+  replace?: number,
+): void => {
+  // Fresh from the profile, so one run's ID details never carry into another, least of all another partner's.
+  useSmileIDSampleFormsStore.getState().startRun(profile);
+  const run = smileIDSampleEntryFor(engine.graph, product, route, scenario);
+  if (run === null) {
+    scope.navigator.go('scanToken', undefined, replace);
+    return;
+  }
+  // Fetched ahead, so the list is usually there by the time the picker opens.
+  if (smileIDSampleCatalogueFamily(product) !== null) {
+    const live = smileIDSampleLiveSession(useSmileIDSampleSessionStore.getState(), Date.now());
+    const store = smileIDSampleCatalogueStore(catalogue);
+    store.getState().begin(smileIDSampleCatalogueEnvironment(live), smileIDSampleCatalogueLocale());
+    smileIDSampleEnsureEnabled(store, product.id, live);
+  }
+  smileIDSampleStartRun(engine, scope.entry, product, run, replace);
 };

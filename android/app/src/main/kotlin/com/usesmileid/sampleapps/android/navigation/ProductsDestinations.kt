@@ -4,10 +4,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.njia.NjiaEntry
+import com.usesmileid.njia.navigator
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.ui.state.catalogueFamily
 import com.usesmileid.sampleapps.android.flow.entryFor
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.screens.UseSmileIDSampleProductsState
 import com.usesmileid.sampleapps.ui.state.toCountdown
 import com.usesmileid.sampleapps.ui.screens.ProductsScreen as ProductsContent
@@ -35,22 +39,32 @@ internal fun ProductsScreen(scope: UseSmileIDSampleStepScope) {
         ),
         onProductClick = { product ->
             if (!app.sessionLoaded) return@ProductsContent
-            app.forms.startRun(app.profiles.active)
-            val entry = app.entryFor(engine.graph, product)
-            val toScanner = entry == null
-            app.interruptedRun.runPartnerId = app.session?.partnerId.takeIf { !toScanner }
-            // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.
-            if (!toScanner && product.catalogueFamily != null) {
-                app.catalogue.begin(app.environment, app.catalogueLocale)
-                app.ensureCatalogue(product)
-            }
-            if (entry == null) {
-                scope.navigator.go(UseSmileIDSampleStep.ScanToken)
-            } else {
-                engine.startRun(scope.entry, product, entry)
-            }
+            app.startProductRun(engine, scope.entry, product)
         },
         onProfileClick = { scope.navigator.go(UseSmileIDSampleStep.ProfileSwitch) },
         onScanClick = { scope.navigator.go(UseSmileIDSampleStep.ScanToken) },
     )
+}
+
+/** A product tap's run from [from], in place of [replace] if given: fresh forms, the run's partner, and the scanner first with no live session. */
+internal fun UseSmileIDSampleAppState.startProductRun(
+    engine: UseSmileIDSampleEngine,
+    from: NjiaEntry,
+    product: UseSmileIDSampleProduct,
+    replace: Long? = null,
+) {
+    // Fresh from the profile, so one run's ID details never carry into another, least of all another partner's.
+    forms.startRun(profiles.active)
+    val entry = entryFor(engine.graph, product)
+    interruptedRun.runPartnerId = session?.partnerId.takeIf { entry != null }
+    // Fetched ahead: the user-details form sits between, so the lists are usually there before the ID form.
+    if (entry != null && product.catalogueFamily != null) {
+        catalogue.begin(environment, catalogueLocale)
+        ensureCatalogue(product)
+    }
+    if (entry == null) {
+        engine.navigator(from).go(UseSmileIDSampleStep.ScanToken.wireName, replace = replace)
+    } else {
+        engine.startRun(from, product, entry, replace)
+    }
 }
