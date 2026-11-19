@@ -33,6 +33,14 @@ class UseSmileIDSampleForms(
     var authUserId by mutableStateOf(authUserId)
         private set
 
+    /** Whether the SDK flow started with what these forms hold, since a product tap last reset them; not saved, so a restore reads false. */
+    var flowStarted by mutableStateOf(false)
+        private set
+
+    fun markFlowStarted() {
+        flowStarted = true
+    }
+
     fun authUserId(value: String) {
         authUserId = value
     }
@@ -61,6 +69,7 @@ class UseSmileIDSampleForms(
         profile?.let(::fillFrom)
         idDetails = UseSmileIDSampleIdDetails()
         authUserId = ""
+        flowStarted = false
     }
 
     /** A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays. */

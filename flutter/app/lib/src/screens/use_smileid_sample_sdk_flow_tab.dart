@@ -232,6 +232,7 @@ class _UseSmileIDSampleSdkFlowTabState
         _leave();
       case UseSmileIDSampleFlowReady():
         _run!.ensureStarted();
+        ref.read(useSmileIDSampleFormsProvider.notifier).markFlowStarted();
       case UseSmileIDSampleFlowNeedsDetails():
         _left = true;
         widget.onNeedsDetails();

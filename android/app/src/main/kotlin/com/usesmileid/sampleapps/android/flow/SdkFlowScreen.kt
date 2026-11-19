@@ -112,7 +112,10 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {
-        if (viewModel.markRunStarted() && !viewModel.resultDelivered) app.flowResult.startFlow(snapshot.environment, snapshot.product)
+        if (viewModel.markRunStarted() && !viewModel.resultDelivered) {
+            app.flowResult.startFlow(snapshot.environment, snapshot.product)
+            app.forms.markFlowStarted()
+        }
     }
 
     // A teardown-delivered cancel arrives after the route is gone, where navigating again would act

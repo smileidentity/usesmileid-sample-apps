@@ -24,30 +24,32 @@ enum UseSmileIDSampleIdDetailsSource {
   case none
 }
 
-/// The move `action` makes for the run of `product`, gated as a product tap is: a live session, on the run's own partner.
+/// The move `action` makes for the run of `product`, gated as a product tap is; `formsHoldRun` is false once another tap has reset the forms.
 func useSmileIDSampleErrorMove(
   _ action: UseSmileIDSampleErrorAction,
   product: UseSmileIDSampleProduct?,
   sessionLive: Bool,
   livePartnerId: String?,
   runPartnerId: String?,
-  idDetails: UseSmileIDSampleIdDetailsSource
+  idDetails: UseSmileIDSampleIdDetailsSource,
+  formsHoldRun: Bool
 ) -> UseSmileIDSampleErrorMove {
   guard let product else { return .leave }
-  let ownPartner = runPartnerId != nil && runPartnerId == livePartnerId
+  let ownRun = formsHoldRun && runPartnerId != nil && runPartnerId == livePartnerId
+  let resumeAt: UseSmileIDSampleResumePoint = formsHoldRun ? .flow : .firstStep
   switch action {
   case .retry, .retryLater, .recapture:
     if !sessionLive {
-      return .newToken(product, resumeAt: .flow)
+      return .newToken(product, resumeAt: resumeAt)
     }
-    return ownPartner ? .runAgain(product) : .runFromStart(product)
+    return ownRun ? .runAgain(product) : .runFromStart(product)
   case .fixInput:
     if !sessionLive || idDetails == .token {
       return .newToken(product, resumeAt: .firstStep)
     }
-    return ownPartner && idDetails == .form ? .editIdDetails(product) : .runFromStart(product)
+    return ownRun && idDetails == .form ? .editIdDetails(product) : .runFromStart(product)
   case .newSession:
-    return .newToken(product, resumeAt: .flow)
+    return .newToken(product, resumeAt: resumeAt)
   case .exit:
     return .leave
   }

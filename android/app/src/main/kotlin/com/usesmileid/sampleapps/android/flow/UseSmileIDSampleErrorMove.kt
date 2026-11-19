@@ -34,7 +34,7 @@ internal enum class UseSmileIDSampleIdDetailsSource {
     None,
 }
 
-/** The move [action] makes for the run of [product], gated as a product tap is: a live session, on the run's own partner. */
+/** The move [action] makes for the run of [product], gated as a product tap is; [formsHoldRun] is false once another tap has reset the forms. */
 internal fun errorMove(
     action: UseSmileIDSampleErrorAction,
     product: UseSmileIDSampleProduct?,
@@ -42,25 +42,27 @@ internal fun errorMove(
     livePartnerId: String?,
     runPartnerId: String?,
     idDetails: UseSmileIDSampleIdDetailsSource,
+    formsHoldRun: Boolean,
 ): UseSmileIDSampleErrorMove {
     if (product == null) return UseSmileIDSampleErrorMove.Leave
-    val ownPartner = runPartnerId != null && runPartnerId == livePartnerId
+    val ownRun = formsHoldRun && runPartnerId != null && runPartnerId == livePartnerId
+    val resumeAt = if (formsHoldRun) UseSmileIDSampleResumePoint.Flow else UseSmileIDSampleResumePoint.FirstStep
     return when (action) {
         UseSmileIDSampleErrorAction.Retry,
         UseSmileIDSampleErrorAction.RetryLater,
         UseSmileIDSampleErrorAction.Recapture,
         -> when {
-            !sessionLive -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow)
-            ownPartner -> UseSmileIDSampleErrorMove.RunAgain(product)
+            !sessionLive -> UseSmileIDSampleErrorMove.NewToken(product, resumeAt)
+            ownRun -> UseSmileIDSampleErrorMove.RunAgain(product)
             else -> UseSmileIDSampleErrorMove.RunFromStart(product)
         }
         UseSmileIDSampleErrorAction.FixInput -> when {
             !sessionLive || idDetails == UseSmileIDSampleIdDetailsSource.Token ->
                 UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep)
-            ownPartner && idDetails == UseSmileIDSampleIdDetailsSource.Form -> UseSmileIDSampleErrorMove.EditIdDetails(product)
+            ownRun && idDetails == UseSmileIDSampleIdDetailsSource.Form -> UseSmileIDSampleErrorMove.EditIdDetails(product)
             else -> UseSmileIDSampleErrorMove.RunFromStart(product)
         }
-        UseSmileIDSampleErrorAction.NewSession -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow)
+        UseSmileIDSampleErrorAction.NewSession -> UseSmileIDSampleErrorMove.NewToken(product, resumeAt)
         UseSmileIDSampleErrorAction.Exit -> UseSmileIDSampleErrorMove.Leave
     }
 }

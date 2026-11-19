@@ -11,6 +11,7 @@ import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../navigation/use_smileid_sample_navigation.dart';
 import '../navigation/use_smileid_sample_njia.dart';
 import '../state/use_smileid_sample_flow_result_provider.dart';
+import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
@@ -193,6 +194,7 @@ class _UseSmileIDSampleVerificationDetailsTabState
           : useSmileIDSampleLiveBindings(ref)?.bindsIdDetails(product) ?? false
           ? UseSmileIDSampleIdDetailsSource.token
           : UseSmileIDSampleIdDetailsSource.form,
+      formsHoldRun: ref.read(useSmileIDSampleFormsProvider).flowStarted,
     );
     switch (move) {
       case UseSmileIDSampleRunAgain(:final UseSmileIDSampleProduct product):

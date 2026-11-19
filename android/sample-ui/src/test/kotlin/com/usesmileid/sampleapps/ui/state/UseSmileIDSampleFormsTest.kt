@@ -3,6 +3,7 @@ package com.usesmileid.sampleapps.ui.state
 import androidx.compose.runtime.saveable.SaverScope
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -83,6 +84,18 @@ class UseSmileIDSampleFormsTest {
 
         assertEquals(UseSmileIDSampleIdDetails(), forms.idDetails)
         assertEquals(ada, forms.userDetails)
+    }
+
+    @Test
+    fun a_started_flow_holds_the_forms_until_the_next_product_tap() {
+        val forms = UseSmileIDSampleForms()
+        assertFalse(forms.flowStarted)
+
+        forms.markFlowStarted()
+        assertTrue(forms.flowStarted)
+
+        forms.startRun(profile = null)
+        assertFalse(forms.flowStarted)
     }
 
     @Test

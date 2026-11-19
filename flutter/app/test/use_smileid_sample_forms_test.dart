@@ -194,6 +194,23 @@ void main() {
     expect(details.idNumber, isEmpty);
   });
 
+  test('a started flow holds the forms until the next product tap', () {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+    final UseSmileIDSampleFormsNotifier notifier = container.read(
+      useSmileIDSampleFormsProvider.notifier,
+    );
+    bool flowStarted() =>
+        container.read(useSmileIDSampleFormsProvider).flowStarted;
+    expect(flowStarted(), isFalse);
+
+    notifier.markFlowStarted();
+    expect(flowStarted(), isTrue);
+
+    notifier.startRun(null);
+    expect(flowStarted(), isFalse);
+  });
+
   group('the ID form', () {
     Future<void> openForm(WidgetTester tester) =>
         pumpAt(tester, UseSmileIDSampleRoutes.idDetailsForm('biometricKyc'));

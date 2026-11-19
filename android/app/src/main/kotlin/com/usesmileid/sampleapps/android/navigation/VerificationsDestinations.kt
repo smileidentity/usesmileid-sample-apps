@@ -230,7 +230,7 @@ private fun UseSmileIDSampleAppState.runErrorAction(
         tokenBindsIdDetails(product) -> UseSmileIDSampleIdDetailsSource.Token
         else -> UseSmileIDSampleIdDetailsSource.Form
     }
-    when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId, idDetails)) {
+    when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId, idDetails, forms.flowStarted)) {
         is UseSmileIDSampleErrorMove.RunAgain ->
             engine.startRun(from, move.product, runOnly(move.product, flowResult.route), replace = from.id)
         is UseSmileIDSampleErrorMove.RunFromStart -> startProductRun(engine, from, move.product, replace = from.id)

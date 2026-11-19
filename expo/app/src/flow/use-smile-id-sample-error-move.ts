@@ -26,6 +26,8 @@ export type UseSmileIDSampleErrorGate = {
   readonly livePartnerId: string | null;
   readonly runPartnerId: string | null;
   readonly idDetails: UseSmileIDSampleIdDetailsSource;
+  /// False once another product tap has reset the forms the run started with.
+  readonly formsHoldRun: boolean;
 };
 
 /// The move `action` makes for the run of `product`, gated as a product tap is: a live session, on the run's own partner.
@@ -35,18 +37,19 @@ export const smileIDSampleErrorMove = (
   gate: UseSmileIDSampleErrorGate,
 ): UseSmileIDSampleErrorMove => {
   if (product === null) return { kind: 'leave' };
-  const ownPartner = gate.runPartnerId !== null && gate.runPartnerId === gate.livePartnerId;
+  const ownRun = gate.formsHoldRun && gate.runPartnerId !== null && gate.runPartnerId === gate.livePartnerId;
+  const resumeAt = gate.formsHoldRun ? 'flow' : 'firstStep';
   switch (action) {
     case UseSmileIDSampleErrorAction.Retry:
     case UseSmileIDSampleErrorAction.RetryLater:
     case UseSmileIDSampleErrorAction.Recapture:
-      if (!gate.sessionLive) return { kind: 'newToken', product, resumeAt: 'flow' };
-      return ownPartner ? { kind: 'runAgain', product } : { kind: 'runFromStart', product };
+      if (!gate.sessionLive) return { kind: 'newToken', product, resumeAt };
+      return ownRun ? { kind: 'runAgain', product } : { kind: 'runFromStart', product };
     case UseSmileIDSampleErrorAction.FixInput:
       if (!gate.sessionLive || gate.idDetails === 'token') return { kind: 'newToken', product, resumeAt: 'firstStep' };
-      return ownPartner && gate.idDetails === 'form' ? { kind: 'editIdDetails', product } : { kind: 'runFromStart', product };
+      return ownRun && gate.idDetails === 'form' ? { kind: 'editIdDetails', product } : { kind: 'runFromStart', product };
     case UseSmileIDSampleErrorAction.NewSession:
-      return { kind: 'newToken', product, resumeAt: 'flow' };
+      return { kind: 'newToken', product, resumeAt };
     case UseSmileIDSampleErrorAction.Exit:
       return { kind: 'leave' };
   }

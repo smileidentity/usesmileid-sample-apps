@@ -62,7 +62,7 @@ enum UseSmileIDSampleIdDetailsSource {
   none,
 }
 
-/// The move [action] makes for the run of [product], gated as a product tap is: a live session, on the run's own partner.
+/// The move [action] makes for the run of [product], gated as a product tap is; [formsHoldRun] is false once another tap has reset the forms.
 UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
   UseSmileIDSampleErrorAction action,
   UseSmileIDSampleProduct? product, {
@@ -70,16 +70,21 @@ UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
   required String? livePartnerId,
   required String? runPartnerId,
   required UseSmileIDSampleIdDetailsSource idDetails,
+  required bool formsHoldRun,
 }) {
   if (product == null) return const UseSmileIDSampleLeave();
-  final bool ownPartner = runPartnerId != null && runPartnerId == livePartnerId;
+  final bool ownRun =
+      formsHoldRun && runPartnerId != null && runPartnerId == livePartnerId;
+  final UseSmileIDSampleResumePoint resumeAt = formsHoldRun
+      ? UseSmileIDSampleResumePoint.flow
+      : UseSmileIDSampleResumePoint.firstStep;
   return switch (action) {
     UseSmileIDSampleErrorAction.retry ||
     UseSmileIDSampleErrorAction.retryLater ||
     UseSmileIDSampleErrorAction.recapture =>
       !sessionLive
-          ? UseSmileIDSampleNewToken(product, UseSmileIDSampleResumePoint.flow)
-          : ownPartner
+          ? UseSmileIDSampleNewToken(product, resumeAt)
+          : ownRun
           ? UseSmileIDSampleRunAgain(product)
           : UseSmileIDSampleRunFromStart(product),
     UseSmileIDSampleErrorAction.fixInput =>
@@ -88,12 +93,12 @@ UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
               product,
               UseSmileIDSampleResumePoint.firstStep,
             )
-          : ownPartner && idDetails == UseSmileIDSampleIdDetailsSource.form
+          : ownRun && idDetails == UseSmileIDSampleIdDetailsSource.form
           ? UseSmileIDSampleEditIdDetails(product)
           : UseSmileIDSampleRunFromStart(product),
     UseSmileIDSampleErrorAction.newSession => UseSmileIDSampleNewToken(
       product,
-      UseSmileIDSampleResumePoint.flow,
+      resumeAt,
     ),
     UseSmileIDSampleErrorAction.exit => const UseSmileIDSampleLeave(),
   };

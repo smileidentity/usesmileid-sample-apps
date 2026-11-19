@@ -13,6 +13,7 @@ import {
   smileIDSampleLiveSession,
   smileIDSampleBindsIdDetails,
   useSmileIDSampleActiveProfile,
+  useSmileIDSampleFormsStore,
   type UseSmileIDSampleErrorAction,
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
@@ -133,6 +134,7 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           : smileIDSampleBindsIdDetails(smileIDSampleLiveBindingsNow(args.scenario), product)
             ? 'token'
             : 'form',
+      formsHoldRun: useSmileIDSampleFormsStore.getState().flowStarted,
     });
     const runOnly = (it: UseSmileIDSampleProduct) =>
       smileIDSampleRunOnly(it, route, smileIDSampleLiveBindingsNow(args.scenario));

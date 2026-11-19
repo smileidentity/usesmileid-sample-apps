@@ -47,9 +47,18 @@ final class UseSmileIDSampleErrorMoveTest: XCTestCase {
     XCTAssertEqual(move(.exit), .leave)
   }
 
+  func testOnceAnotherProductTapHasResetTheFormsEveryMoveStartsTheProductAfresh() {
+    for action in [UseSmileIDSampleErrorAction.retry, .retryLater, .recapture] {
+      XCTAssertEqual(move(action, formsHoldRun: false), .runFromStart(.biometricKyc), action.rawValue)
+      XCTAssertEqual(move(action, sessionLive: false, formsHoldRun: false), .newToken(.biometricKyc, resumeAt: .firstStep), action.rawValue)
+    }
+    XCTAssertEqual(move(.fixInput, formsHoldRun: false), .runFromStart(.biometricKyc))
+    XCTAssertEqual(move(.newSession, formsHoldRun: false), .newToken(.biometricKyc, resumeAt: .firstStep))
+  }
+
   func testARunWhoseProductWasNotKeptCanOnlyLeave() {
     for action in UseSmileIDSampleErrorAction.allCases {
-      let move = useSmileIDSampleErrorMove(action, product: nil, sessionLive: true, livePartnerId: "p", runPartnerId: "p", idDetails: .form)
+      let move = useSmileIDSampleErrorMove(action, product: nil, sessionLive: true, livePartnerId: "p", runPartnerId: "p", idDetails: .form, formsHoldRun: true)
       XCTAssertEqual(move, .leave, action.rawValue)
     }
   }
@@ -59,7 +68,8 @@ final class UseSmileIDSampleErrorMoveTest: XCTestCase {
     sessionLive: Bool = true,
     livePartnerId: String? = "partner_1",
     runPartnerId: String? = "partner_1",
-    idDetails: UseSmileIDSampleIdDetailsSource = .form
+    idDetails: UseSmileIDSampleIdDetailsSource = .form,
+    formsHoldRun: Bool = true
   ) -> UseSmileIDSampleErrorMove {
     useSmileIDSampleErrorMove(
       action,
@@ -67,7 +77,8 @@ final class UseSmileIDSampleErrorMoveTest: XCTestCase {
       sessionLive: sessionLive,
       livePartnerId: livePartnerId,
       runPartnerId: runPartnerId,
-      idDetails: idDetails
+      idDetails: idDetails,
+      formsHoldRun: formsHoldRun
     )
   }
 }

@@ -74,9 +74,26 @@ class UseSmileIDSampleErrorMoveTest {
     }
 
     @Test
+    fun once_another_product_tap_has_reset_the_forms_every_move_starts_the_product_afresh() {
+        reruns.forEach {
+            assertEquals(it.id, UseSmileIDSampleErrorMove.RunFromStart(product), move(it, formsHoldRun = false))
+            assertEquals(
+                it.id,
+                UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep),
+                move(it, sessionLive = false, formsHoldRun = false),
+            )
+        }
+        assertEquals(UseSmileIDSampleErrorMove.RunFromStart(product), move(UseSmileIDSampleErrorAction.FixInput, formsHoldRun = false))
+        assertEquals(
+            UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep),
+            move(UseSmileIDSampleErrorAction.NewSession, formsHoldRun = false),
+        )
+    }
+
+    @Test
     fun a_run_whose_product_was_not_kept_can_only_leave() {
         UseSmileIDSampleErrorAction.entries.forEach {
-            assertEquals(it.id, UseSmileIDSampleErrorMove.Leave, errorMove(it, product = null, sessionLive = true, livePartnerId = "p", runPartnerId = "p", idDetails = UseSmileIDSampleIdDetailsSource.Form))
+            assertEquals(it.id, UseSmileIDSampleErrorMove.Leave, errorMove(it, product = null, sessionLive = true, livePartnerId = "p", runPartnerId = "p", idDetails = UseSmileIDSampleIdDetailsSource.Form, formsHoldRun = true))
         }
     }
 
@@ -86,5 +103,6 @@ class UseSmileIDSampleErrorMoveTest {
         livePartnerId: String? = "partner_1",
         runPartnerId: String? = "partner_1",
         idDetails: UseSmileIDSampleIdDetailsSource = UseSmileIDSampleIdDetailsSource.Form,
-    ) = errorMove(action, product, sessionLive, livePartnerId, runPartnerId, idDetails)
+        formsHoldRun: Boolean = true,
+    ) = errorMove(action, product, sessionLive, livePartnerId, runPartnerId, idDetails, formsHoldRun)
 }

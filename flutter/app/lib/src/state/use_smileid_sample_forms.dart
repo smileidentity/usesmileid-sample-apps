@@ -10,6 +10,7 @@ class UseSmileIDSampleForms {
     this.saveToProfile = true,
     this.organisation = '',
     this.authUserId = '',
+    this.flowStarted = false,
   });
 
   /// The consent form's four fields.
@@ -27,6 +28,9 @@ class UseSmileIDSampleForms {
   /// The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up.
   final String authUserId;
 
+  /// Whether the SDK flow started with what these forms hold, since a product tap last reset them.
+  final bool flowStarted;
+
   /// A copy with one part replaced.
   UseSmileIDSampleForms copyWith({
     UseSmileIDSampleUserDetails? userDetails,
@@ -34,12 +38,14 @@ class UseSmileIDSampleForms {
     bool? saveToProfile,
     String? organisation,
     String? authUserId,
+    bool? flowStarted,
   }) => UseSmileIDSampleForms(
     userDetails: userDetails ?? this.userDetails,
     idDetails: idDetails ?? this.idDetails,
     saveToProfile: saveToProfile ?? this.saveToProfile,
     organisation: organisation ?? this.organisation,
     authUserId: authUserId ?? this.authUserId,
+    flowStarted: flowStarted ?? this.flowStarted,
   );
 }
 
@@ -86,7 +92,11 @@ class UseSmileIDSampleFormsNotifier extends Notifier<UseSmileIDSampleForms> {
       state = (profile == null ? state : _filled(profile)).copyWith(
         idDetails: const UseSmileIDSampleIdDetails(),
         authUserId: '',
+        flowStarted: false,
       );
+
+  /// The SDK flow has started with what the forms hold.
+  void markFlowStarted() => state = state.copyWith(flowStarted: true);
 
   /// Chooses a country; a different one clears the ID type, document and "Capture as" override, and the typed number stays.
   void setCountry(UseSmileIDSampleCountry country) =>

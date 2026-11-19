@@ -28,6 +28,8 @@ type State = {
   readonly organisation: string;
   /// The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up.
   readonly authUserId: string;
+  /// Whether the SDK flow started with what these forms hold, since a product tap last reset them.
+  readonly flowStarted: boolean;
 };
 
 type Actions = {
@@ -39,6 +41,8 @@ type Actions = {
   fillFrom: (profile: UseSmileIDSampleProfile) => void;
   /// A product tap: fills from the active profile, and never carries the last run's ID details into this one.
   startRun: (profile: UseSmileIDSampleProfile | null) => void;
+  /// The SDK flow has started with what the forms hold.
+  markFlowStarted: () => void;
   setCountry: (country: UseSmileIDSampleCountry) => void;
   setIdType: (idType: UseSmileIDSampleKycIdType) => void;
   setDocument: (document: UseSmileIDSampleDocument) => void;
@@ -64,6 +68,7 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
   saveToProfile: true,
   organisation: '',
   authUserId: '',
+  flowStarted: false,
 
   setUserField: (field, value) =>
     set((state) => ({ userDetails: smileIDSampleUserFieldWrite(field, state.userDetails, value) })),
@@ -81,7 +86,10 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       ...(profile === null ? {} : { userDetails: profile.defaults, saveToProfile: true, organisation: '' }),
       idDetails: smileIDSampleIdDetailsDefaults,
       authUserId: '',
+      flowStarted: false,
     }),
+
+  markFlowStarted: () => set({ flowStarted: true }),
 
   /// A different country clears the ID type, document and "Capture as" override, which may not apply to it; the typed number stays.
   setCountry: (country) =>

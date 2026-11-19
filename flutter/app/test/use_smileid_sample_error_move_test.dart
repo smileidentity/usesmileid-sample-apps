@@ -19,6 +19,7 @@ void main() {
     String? runPartnerId = 'partner_1',
     UseSmileIDSampleIdDetailsSource idDetails =
         UseSmileIDSampleIdDetailsSource.form,
+    bool formsHoldRun = true,
   }) => useSmileIDSampleErrorMove(
     action,
     product,
@@ -26,6 +27,7 @@ void main() {
     livePartnerId: livePartnerId,
     runPartnerId: runPartnerId,
     idDetails: idDetails,
+    formsHoldRun: formsHoldRun,
   );
 
   Matcher newToken(UseSmileIDSampleResumePoint resumeAt) =>
@@ -144,6 +146,32 @@ void main() {
     );
   });
 
+  test(
+    'once another product tap has reset the forms every move starts the product afresh',
+    () {
+      for (final UseSmileIDSampleErrorAction action in reruns) {
+        expect(
+          move(action, formsHoldRun: false),
+          isA<UseSmileIDSampleRunFromStart>(),
+          reason: action.name,
+        );
+        expect(
+          move(action, sessionLive: false, formsHoldRun: false),
+          newToken(UseSmileIDSampleResumePoint.firstStep),
+          reason: action.name,
+        );
+      }
+      expect(
+        move(UseSmileIDSampleErrorAction.fixInput, formsHoldRun: false),
+        isA<UseSmileIDSampleRunFromStart>(),
+      );
+      expect(
+        move(UseSmileIDSampleErrorAction.newSession, formsHoldRun: false),
+        newToken(UseSmileIDSampleResumePoint.firstStep),
+      );
+    },
+  );
+
   test('a run whose product was not kept can only leave', () {
     for (final UseSmileIDSampleErrorAction action
         in UseSmileIDSampleErrorAction.values) {
@@ -155,6 +183,7 @@ void main() {
           livePartnerId: 'p',
           runPartnerId: 'p',
           idDetails: UseSmileIDSampleIdDetailsSource.form,
+          formsHoldRun: true,
         ),
         isA<UseSmileIDSampleLeave>(),
         reason: action.name,

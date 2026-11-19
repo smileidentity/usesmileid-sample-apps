@@ -11,6 +11,7 @@ describe('smileIDSampleErrorMove', () => {
     livePartnerId: 'partner_1',
     runPartnerId: 'partner_1',
     idDetails: 'form',
+    formsHoldRun: true,
     ...overrides,
   });
 
@@ -74,6 +75,26 @@ describe('smileIDSampleErrorMove', () => {
 
   it('close leaves the run', () => {
     expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.Exit, product, gate())).toEqual({ kind: 'leave' });
+  });
+
+  it('once another product tap has reset the forms every move starts the product afresh', () => {
+    for (const action of reruns) {
+      expect(smileIDSampleErrorMove(action, product, gate({ formsHoldRun: false }))).toEqual({ kind: 'runFromStart', product });
+      expect(smileIDSampleErrorMove(action, product, gate({ sessionLive: false, formsHoldRun: false }))).toEqual({
+        kind: 'newToken',
+        product,
+        resumeAt: 'firstStep',
+      });
+    }
+    expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.FixInput, product, gate({ formsHoldRun: false }))).toEqual({
+      kind: 'runFromStart',
+      product,
+    });
+    expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.NewSession, product, gate({ formsHoldRun: false }))).toEqual({
+      kind: 'newToken',
+      product,
+      resumeAt: 'firstStep',
+    });
   });
 
   it('a run whose product was not kept can only leave', () => {
