@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   AppearanceSheet,
   CaptureModeSheet,
@@ -85,8 +85,12 @@ export const UseSmileIDSampleDebugSheetStep = ({ scope }: { scope: UseSmileIDSam
   const extension = useSmileIDSampleShellExtension;
   const sheetId = scope.entry.arg ?? '';
   const opens = smileIDSampleDebugSheetOpens(__DEV__, extension, sheetId);
+  // Once, so a re-render before the step leaves can't close the page under it too.
+  const closed = useRef(false);
   useEffect(() => {
-    if (!opens) scope.navigator.back();
+    if (opens || closed.current) return;
+    closed.current = true;
+    scope.navigator.back();
   }, [opens, scope.navigator]);
   return opens ? extension?.debugSheet?.(sheetId, () => scope.navigator.back()) : null;
 };
