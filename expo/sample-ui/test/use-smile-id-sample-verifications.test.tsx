@@ -168,7 +168,7 @@ describe('the recording environment', () => {
 describe('verifications coverage', () => {
   it('records both schemes for every state', () => {
     const total = cases.reduce((sum, entry) => sum + Object.keys(entry.states).length, 0);
-    expect(total * schemes.length).toBe(18);
+    expect(total * schemes.length).toBe(22);
   });
 });
 
