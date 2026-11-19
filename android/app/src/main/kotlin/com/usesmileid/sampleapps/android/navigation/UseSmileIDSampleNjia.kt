@@ -16,6 +16,7 @@ internal enum class UseSmileIDSampleStep(val wireName: String) {
     Appearance("appearance"),
     Language("language"),
     ScenarioDrawer("scenarioDrawer"),
+    DebugSheet("debugSheet"),
     VerificationDetails("verificationDetails"),
     ProfileSwitch("profileSwitch"),
     Profiles("profiles"),

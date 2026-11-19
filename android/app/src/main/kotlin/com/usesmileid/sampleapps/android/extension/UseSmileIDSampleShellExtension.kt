@@ -20,6 +20,14 @@ interface UseSmileIDSampleShellExtension {
     @Composable
     fun DebugRows() {}
 
+    /** The same rows, given [openSheet] to open one of this extension's [DebugSheet]s by id. */
+    @Composable
+    fun DebugRows(openSheet: (sheetId: String) -> Unit) = DebugRows()
+
+    /** The content of the sheet [sheetId] names, inside the shell's sheet step; never drawn in a release build. */
+    @Composable
+    fun DebugSheet(sheetId: String, onDismissRequest: () -> Unit) {}
+
     /** Runs after the shell has configured a flow, so it may replace any of that configuration. */
     fun customiseFlow(builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) {}
 

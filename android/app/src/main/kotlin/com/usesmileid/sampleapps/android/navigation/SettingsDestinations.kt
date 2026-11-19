@@ -96,7 +96,9 @@ internal fun SettingsScreen(scope: UseSmileIDSampleStepScope) {
                 when (group) {
                     UseSmileIDSampleDebugRowGroup.ExtensionLeading -> useSmileIDSampleShellExtension?.LeadingDebugRows()
                     UseSmileIDSampleDebugRowGroup.Shell -> NetworkLogsRow()
-                    UseSmileIDSampleDebugRowGroup.Extension -> useSmileIDSampleShellExtension?.DebugRows()
+                    UseSmileIDSampleDebugRowGroup.Extension -> useSmileIDSampleShellExtension?.DebugRows(
+                        openSheet = { scope.navigator.go(UseSmileIDSampleStep.DebugSheet, arg = it) },
+                    )
                 }
             }
         },
@@ -112,6 +114,7 @@ private fun NetworkLogsRow() {
             title = "Network logs",
             supportingText = "Requests from the last hour",
             onClick = { context.startActivity(intent) },
+            leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_receipt_long, tint = tint) },
             trailing = { UseSmileIDSampleSettingRowChevron() },
         )
     }

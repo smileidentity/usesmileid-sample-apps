@@ -44,11 +44,16 @@ abstract final class SmileIcons {
   static const String tokenScan = '$_base/token_scan.svg';
   static const String trash = '$_base/trash.svg';
   static const String verifications = '$_base/verifications.svg';
+  static const String materialBugReport =
+      '$_base/material-symbols/bug_report.svg';
   static const String materialCheck = '$_base/material-symbols/check.svg';
   static const String materialCopy = '$_base/material-symbols/copy.svg';
   static const String materialPlus = '$_base/material-symbols/plus.svg';
   static const String materialProductMark =
       '$_base/material-symbols/product_mark.svg';
+  static const String materialReceiptLong =
+      '$_base/material-symbols/receipt_long.svg';
+  static const String materialSchedule = '$_base/material-symbols/schedule.svg';
   static const String materialSettingLanguage =
       '$_base/material-symbols/setting_language.svg';
   static const String materialSettingScenarios =
@@ -87,10 +92,13 @@ abstract final class SmileIcons {
     tokenScan,
     trash,
     verifications,
+    materialBugReport,
     materialCheck,
     materialCopy,
     materialPlus,
     materialProductMark,
+    materialReceiptLong,
+    materialSchedule,
     materialSettingLanguage,
     materialSettingScenarios,
   ];

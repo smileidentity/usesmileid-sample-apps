@@ -2,8 +2,11 @@ package com.usesmileid.sampleapps.android.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import com.smileid.designsystem.SmileDimens
+import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
+import com.usesmileid.sampleapps.android.extension.useSmileIDSampleShellExtension
 import com.usesmileid.sampleapps.android.gallery.ComponentGalleryScreen as ComponentGalleryContent
 import com.usesmileid.sampleapps.ui.screens.ScenarioDrawerSheet as ScenarioDrawerContent
 
@@ -29,3 +32,17 @@ internal fun ComponentGalleryScreen() {
         contentPadding = PaddingValues(bottom = chrome.navBarHeight + SmileDimens.spacingMd),
     )
 }
+
+/** A sheet the extension draws for one of its DEBUG rows; a release build, or one with no extension, closes it at once. */
+@Composable
+internal fun DebugSheet(scope: UseSmileIDSampleStepScope) {
+    val extension = useSmileIDSampleShellExtension
+    if (extension == null || !debugSheetOpens(BuildConfig.DEBUG, hasExtension = true)) {
+        LaunchedEffect(Unit) { scope.navigator.back() }
+        return
+    }
+    extension.DebugSheet(sheetId = scope.entry.arg.orEmpty(), onDismissRequest = scope.navigator::back)
+}
+
+/** Whether a debug sheet opens: only a debug build with an extension has one to draw. */
+internal fun debugSheetOpens(debugBuild: Boolean, hasExtension: Boolean): Boolean = debugBuild && hasExtension

@@ -33,6 +33,7 @@ internal val UseSmileIDSampleSteps: NjiaSteps<UseSmileIDSampleStep, UseSmileIDSa
     step(UseSmileIDSampleStep.Appearance) { AppearanceSheet(this) }
     step(UseSmileIDSampleStep.Language) { LanguageSheet(this) }
     step(UseSmileIDSampleStep.ScenarioDrawer) { ScenarioDrawerSheet(this) }
+    step(UseSmileIDSampleStep.DebugSheet) { DebugSheet(this) }
     step(UseSmileIDSampleStep.VerificationDetails) { VerificationDetailsScreen(this) }
     step(UseSmileIDSampleStep.ProfileSwitch) { ProfileSwitchSheet(this) }
     step(UseSmileIDSampleStep.Profiles) { ProfilesScreen(this) }
