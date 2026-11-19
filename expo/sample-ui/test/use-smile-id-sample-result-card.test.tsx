@@ -9,6 +9,7 @@ import {
   smileIDSampleResultSelecting,
   type UseSmileIDSampleRunContext,
 } from '../src/model/use-smile-id-sample-result';
+import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
 import { smileIDSampleRunRecorder, useSmileIDSampleResultStore } from '../src/state/use-smile-id-sample-result-store';
 import { UseSmileIDSampleThemeProvider } from '../src/theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
@@ -119,6 +120,21 @@ describe('a run recorder', () => {
     recorder.deliver('failed', { error: 'no camera' });
     recorder.ensureStarted();
     expect(store().result).toMatchObject({ resultCallbackCount: 1, jobStatus: 'failed', environment: 'production' });
+  });
+
+  it('keeps the run product for the failure actions, apart from the card', () => {
+    const product = smileIDSampleProducts.find((it) => it.id === 'enhancedKyc')!;
+    const recorder = smileIDSampleRunRecorder({ ...run, product });
+    recorder.deliver('failed', { error: 'HTTP 503' });
+    expect(store().product).toBe(product);
+    expect(store().result).not.toHaveProperty('product');
+  });
+
+  it("keeps a blocked run's own product, not the previous run's", () => {
+    const [first, second] = smileIDSampleProducts;
+    store().start({ ...run, product: first });
+    store().block('no token', { ...run, product: second });
+    expect(store().product).toBe(second);
   });
 
   it('counts one delivery once when the host starts first', () => {

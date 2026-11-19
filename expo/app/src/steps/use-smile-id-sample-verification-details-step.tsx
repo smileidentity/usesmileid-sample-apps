@@ -10,6 +10,7 @@ import {
   useSmileIDSampleStrings,
   UseSmileIDSampleStatus,
   smileIDSampleLandedFailure,
+  smileIDSampleLiveSession,
   type UseSmileIDSampleErrorAction,
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
@@ -18,7 +19,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import { smileIDSampleErrorMove } from '../flow/use-smile-id-sample-error-move';
-import { smileIDSampleRunOnly } from '../flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleRunEntryFor, smileIDSampleRunOnly } from '../flow/use-smile-id-sample-flow-journey';
 import { smileIDSampleLiveBindingsNow } from '../flow/use-smile-id-sample-token-binding-rules';
 import {
   smileIDSampleLeaveToProducts,
@@ -111,14 +112,25 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   /// Runs a failure's action for `product` in place of this entry.
   const run = (action: UseSmileIDSampleErrorAction, product: UseSmileIDSampleProduct | null) => {
     const route = result.route;
-    const move = smileIDSampleErrorMove(action, product);
+    const session = useSmileIDSampleSessionStore.getState();
+    const live = smileIDSampleLiveSession(session, Date.now());
+    const move = smileIDSampleErrorMove(action, product, {
+      sessionLive: live !== null,
+      livePartnerId: live?.partnerId ?? null,
+      runPartnerId: session.runPartnerId,
+    });
+    const runOnly = (it: UseSmileIDSampleProduct) =>
+      smileIDSampleRunOnly(it, route, smileIDSampleLiveBindingsNow(args.scenario));
     switch (move.kind) {
       case 'runAgain':
+        smileIDSampleStartRun(engine, scope.entry, move.product, runOnly(move.product), scope.entry.id);
+        return;
+      case 'runFromStart':
         smileIDSampleStartRun(
           engine,
           scope.entry,
           move.product,
-          smileIDSampleRunOnly(move.product, route, smileIDSampleLiveBindingsNow(args.scenario)),
+          smileIDSampleRunEntryFor(engine.graph, move.product, route, smileIDSampleLiveBindingsNow(args.scenario)),
           scope.entry.id,
         );
         return;
@@ -127,20 +139,15 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           engine,
           scope.entry,
           move.product,
-          {
-            facts: smileIDSampleRunOnly(move.product, route, smileIDSampleLiveBindingsNow(args.scenario)).facts,
-            step: 'idDetailsForm',
-          },
+          { facts: runOnly(move.product).facts, step: 'idDetailsForm' },
           scope.entry.id,
         );
         return;
-      case 'newToken': {
-        const session = useSmileIDSampleSessionStore.getState();
-        session.recordRunPartner(session.live?.partnerId ?? null);
-        session.sendRun({ productId: move.product.id, route, resumeAt: 'flow' });
+      // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
+      case 'newToken':
+        session.sendRun({ productId: move.product.id, route, resumeAt: move.resumeAt });
         scope.navigator.go('scanToken', undefined, scope.entry.id);
         return;
-      }
       case 'leave':
         smileIDSampleLeaveToProducts(engine);
     }

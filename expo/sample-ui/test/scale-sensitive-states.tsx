@@ -1,4 +1,5 @@
 import { UseSmileIDSampleAvatar } from '../src/components/use-smile-id-sample-avatar';
+import { UseSmileIDSampleBanner } from '../src/components/use-smile-id-sample-banner';
 import { UseSmileIDSampleButton } from '../src/components/use-smile-id-sample-button';
 import { UseSmileIDSampleDataFieldRow } from '../src/components/use-smile-id-sample-data-field-row';
 import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
@@ -16,6 +17,15 @@ const product = smileIDSampleProducts[0]!;
 /// The states whose LAYOUT changes with the font scale, so each needs a second baseline; the rest are covered once.
 export const scaleSensitive: Record<string, () => React.ReactElement> = {
   avatar: () => <UseSmileIDSampleAvatar initials="KA" />,
+  // The table's longest message, beside the glyph, over the button that wraps with it.
+  banner_longest_message: () => (
+    <UseSmileIDSampleBanner
+      message="We couldn't start this verification. Please try again, or contact the app's support."
+      tone="warning"
+      actionLabel="Try again"
+      onAction={noop}
+    />
+  ),
   button_wrapping: () => (
     <UseSmileIDSampleButton text="Continue to the ID details form" onPress={noop} />
   ),
