@@ -101,8 +101,13 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   }
 
   /// The gate refused the run, so the SDK never mounted. Not counted as a result callback.
-  public mutating func recordBlocked(reason: String, environment: UseSmileIDSampleEnvironment) {
+  public mutating func recordBlocked(
+    reason: String,
+    environment: UseSmileIDSampleEnvironment,
+    product: UseSmileIDSampleProduct? = nil
+  ) {
     self.environment = environment
+    self.product = product
     status = .failed
     jobId = nil
     userId = nil

@@ -456,15 +456,26 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
   /// Runs a failure's action for the job's product, or the failed run's, in place of this entry.
   private func run(_ action: UseSmileIDSampleErrorAction) {
     let product = app.jobs?.first { $0.id == jobId }?.product ?? app.flowResult.product
-    switch useSmileIDSampleErrorMove(action, product: product) {
+    let live = app.session.flatMap { $0.hasExpired(at: Date()) ? nil : $0 }
+    let move = useSmileIDSampleErrorMove(
+      action,
+      product: product,
+      sessionLive: live != nil,
+      livePartnerId: live?.partnerId,
+      runPartnerId: app.runPartnerId
+    )
+    switch move {
     case let .runAgain(product):
       engine.startRun(from: entry, product: product, run: app.runOnly(product, route: app.flowResult.route), replace: entry.id)
+    case let .runFromStart(product):
+      engine.startRun(from: entry, product: product, run: app.runEntry(in: engine.graph, for: product), replace: entry.id)
     case let .editIdDetails(product):
-      let run = UseSmileIDSampleRunEntry(facts: app.njiaFacts(for: product), step: UseSmileIDSampleStep.idDetailsForm.rawValue)
+      let facts = app.runOnly(product, route: app.flowResult.route).facts
+      let run = UseSmileIDSampleRunEntry(facts: facts, step: UseSmileIDSampleStep.idDetailsForm.rawValue)
       engine.startRun(from: entry, product: product, run: run, replace: entry.id)
-    case let .newToken(product):
-      app.runPartnerId = app.session?.partnerId
-      app.interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: app.flowResult.route, resumeAt: .flow)
+    case let .newToken(product, resumeAt):
+      // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
+      app.interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: app.flowResult.route, resumeAt: resumeAt)
       engine.navigator(entry).go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: entry.id)
     case .leave:
       engine.leaveToProducts()

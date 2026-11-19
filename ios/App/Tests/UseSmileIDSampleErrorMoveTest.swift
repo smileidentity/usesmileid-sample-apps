@@ -2,29 +2,55 @@ import SampleUI
 @testable import UseSmileIDSample
 import XCTest
 
-/// Where each failure action takes the user, per the `does` lines of spec/error-handling.json.
+/// Where each failure action takes the user, per the `does` lines of spec/error-handling.json, under the gate a product tap passes.
 final class UseSmileIDSampleErrorMoveTest: XCTestCase {
-  func testARetryALaterRetryAndARecaptureRunTheVerificationAgain() {
-    for action in [UseSmileIDSampleErrorAction.retry, .retryLater, .recapture] {
-      XCTAssertEqual(useSmileIDSampleErrorMove(action, product: .biometricKyc), .runAgain(.biometricKyc), action.rawValue)
+  private let reruns: [UseSmileIDSampleErrorAction] = [.retry, .retryLater, .recapture]
+
+  func testARetryALaterRetryAndARecaptureRunTheVerificationAgainOnTheRunsOwnPartner() {
+    for action in reruns {
+      XCTAssertEqual(move(action, livePartnerId: "partner_1", runPartnerId: "partner_1"), .runAgain(.biometricKyc), action.rawValue)
     }
   }
 
-  func testFixingTheInputReturnsToTheIdForm() {
-    XCTAssertEqual(useSmileIDSampleErrorMove(.fixInput, product: .biometricKyc), .editIdDetails(.biometricKyc))
+  func testARerunOnAnotherOrAnUnknownPartnerStartsFromTheFirstStep() {
+    for action in reruns {
+      XCTAssertEqual(move(action, livePartnerId: "partner_2", runPartnerId: "partner_1"), .runFromStart(.biometricKyc), action.rawValue)
+      XCTAssertEqual(move(action, livePartnerId: "partner_2", runPartnerId: nil), .runFromStart(.biometricKyc), action.rawValue)
+    }
+  }
+
+  func testARerunWithNoLiveSessionScansFirstAndResumesInTheFlow() {
+    for action in reruns {
+      XCTAssertEqual(move(action, sessionLive: false), .newToken(.biometricKyc, resumeAt: .flow), action.rawValue)
+    }
+  }
+
+  func testFixingTheInputReturnsToTheIdFormOrScansFirstWithNoLiveSession() {
+    XCTAssertEqual(move(.fixInput), .editIdDetails(.biometricKyc))
+    XCTAssertEqual(move(.fixInput, sessionLive: false), .newToken(.biometricKyc, resumeAt: .firstStep))
   }
 
   func testStartingAgainTakesANewTokenFirst() {
-    XCTAssertEqual(useSmileIDSampleErrorMove(.newSession, product: .biometricKyc), .newToken(.biometricKyc))
+    XCTAssertEqual(move(.newSession), .newToken(.biometricKyc, resumeAt: .flow))
   }
 
   func testCloseLeavesTheRun() {
-    XCTAssertEqual(useSmileIDSampleErrorMove(.exit, product: .biometricKyc), .leave)
+    XCTAssertEqual(move(.exit), .leave)
   }
 
   func testARunWhoseProductWasNotKeptCanOnlyLeave() {
     for action in UseSmileIDSampleErrorAction.allCases {
-      XCTAssertEqual(useSmileIDSampleErrorMove(action, product: nil), .leave, action.rawValue)
+      let move = useSmileIDSampleErrorMove(action, product: nil, sessionLive: true, livePartnerId: "p", runPartnerId: "p")
+      XCTAssertEqual(move, .leave, action.rawValue)
     }
+  }
+
+  private func move(
+    _ action: UseSmileIDSampleErrorAction,
+    sessionLive: Bool = true,
+    livePartnerId: String? = "partner_1",
+    runPartnerId: String? = "partner_1"
+  ) -> UseSmileIDSampleErrorMove {
+    useSmileIDSampleErrorMove(action, product: .biometricKyc, sessionLive: sessionLive, livePartnerId: livePartnerId, runPartnerId: runPartnerId)
   }
 }

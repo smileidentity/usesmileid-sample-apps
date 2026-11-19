@@ -70,6 +70,15 @@ final class UseSmileIDSampleFlowResultTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).product, .enhancedKyc)
   }
 
+  func testABlockedRunKeepsItsOwnProductNotThePreviousRuns() {
+    var flow = UseSmileIDSampleFlowResult()
+    flow.startFlow(environment: .sandbox, product: .smartSelfieEnrollment)
+
+    flow.recordBlocked(reason: "no token", environment: .sandbox, product: .enhancedKyc)
+
+    XCTAssertEqual(flow.product, .enhancedKyc)
+  }
+
   func testStartingARunClearsThePreviousRow() {
     var flow = UseSmileIDSampleFlowResult()
     flow.recordResultCallback(
