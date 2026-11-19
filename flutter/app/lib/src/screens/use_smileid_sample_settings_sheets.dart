@@ -144,15 +144,21 @@ class UseSmileIDSampleDebugSheetStep extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleDebugSheetStepState
     extends ConsumerState<UseSmileIDSampleDebugSheetStep> {
+  /// The extension that draws the sheet, or null when the step closes; decided once, so drawing and closing always agree.
+  UseSmileIDSampleShellExtension? _drawing;
+
   @override
   void initState() {
     super.initState();
-    // Decided once, so a rebuild before the step leaves can't close a second entry.
+    final UseSmileIDSampleShellExtension? extension = ref.read(
+      useSmileIDSampleShellExtensionProvider,
+    );
     final bool opens = useSmileIDSampleDebugSheetOpens(
       debugBuild: kDebugMode,
-      extension: ref.read(useSmileIDSampleShellExtensionProvider),
+      extension: extension,
       sheetId: widget.sheetId,
     );
+    _drawing = opens ? extension : null;
     if (!opens) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) widget.onDismiss();
@@ -161,16 +167,7 @@ class _UseSmileIDSampleDebugSheetStepState
   }
 
   @override
-  Widget build(BuildContext context) {
-    final UseSmileIDSampleShellExtension? extension = ref.watch(
-      useSmileIDSampleShellExtensionProvider,
-    );
-    return useSmileIDSampleDebugSheetOpens(
-          debugBuild: kDebugMode,
-          extension: extension,
-          sheetId: widget.sheetId,
-        )
-        ? extension!.debugSheet(widget.sheetId, widget.onDismiss)
-        : const SizedBox.shrink();
-  }
+  Widget build(BuildContext context) =>
+      _drawing?.debugSheet(widget.sheetId, widget.onDismiss) ??
+      const SizedBox.shrink();
 }

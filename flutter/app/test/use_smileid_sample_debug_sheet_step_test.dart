@@ -9,11 +9,15 @@ void main() {
   Future<void> mount(
     WidgetTester tester,
     String sheetId,
-    VoidCallback onDismiss,
-  ) => tester.pumpWidget(
+    VoidCallback onDismiss, {
+    UseSmileIDSampleShellExtension? extension,
+    bool withExtension = true,
+  }) => tester.pumpWidget(
     ProviderScope(
       overrides: [
-        useSmileIDSampleShellExtensionProvider.overrideWithValue(_Timings()),
+        useSmileIDSampleShellExtensionProvider.overrideWithValue(
+          withExtension ? extension ?? _Timings() : null,
+        ),
       ],
       child: Directionality(
         textDirection: TextDirection.ltr,
@@ -44,6 +48,23 @@ void main() {
       await tester.pump();
       expect(closes, 1);
       expect(find.textContaining('sheet'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'keeps drawing the sheet it opened with if the extension changes',
+    (WidgetTester tester) async {
+      int closes = 0;
+      await mount(tester, 'captureTimings', () => closes++);
+      await mount(
+        tester,
+        'captureTimings',
+        () => closes++,
+        withExtension: false,
+      );
+      await tester.pump();
+      expect(find.text('sheet captureTimings'), findsOne);
+      expect(closes, 0);
     },
   );
 }
