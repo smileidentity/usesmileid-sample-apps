@@ -63,11 +63,18 @@ struct UseSmileIDSampleDebugSheet: View {
   let `extension`: (any UseSmileIDSampleShellExtending.Type)?
   let onDismiss: () -> Void
 
+  /// Set on the first close, so a second `onAppear` can't close the page under the sheet too.
+  @State private var closed = false
+
   var body: some View {
     if let `extension`, useSmileIDSampleDebugSheetOpens(debugBuild: UseSmileIDSampleAppState.isDebugBuild, extension: `extension`, sheetId: sheetId) {
       `extension`.debugSheet(sheetId, onDismiss: onDismiss)
     } else {
-      Color.clear.onAppear(perform: onDismiss)
+      Color.clear.onAppear {
+        guard !closed else { return }
+        closed = true
+        onDismiss()
+      }
     }
   }
 }
