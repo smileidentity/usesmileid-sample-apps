@@ -22,6 +22,7 @@ import { UseSmileIDSampleSdkFlowStep } from '../steps/use-smile-id-sample-sdk-fl
 import {
   UseSmileIDSampleAppearanceStep,
   UseSmileIDSampleCaptureModeStep,
+  UseSmileIDSampleDebugSheetStep,
   UseSmileIDSampleLanguageStep,
   UseSmileIDSampleScenarioDrawerStep,
 } from '../steps/use-smile-id-sample-settings-sheets';
@@ -65,6 +66,7 @@ export const smileIDSampleSteps: NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampl
   steps.step('appearance', (scope) => <UseSmileIDSampleAppearanceStep scope={scope} />);
   steps.step('language', (scope) => <UseSmileIDSampleLanguageStep scope={scope} />);
   steps.step('scenarioDrawer', (scope) => <UseSmileIDSampleScenarioDrawerStep scope={scope} />);
+  steps.step('debugSheet', (scope) => <UseSmileIDSampleDebugSheetStep scope={scope} />);
   steps.step('verificationDetails', (scope) => <UseSmileIDSampleVerificationDetailsStep scope={scope} />);
   steps.step('profileSwitch', (scope) => <UseSmileIDSampleProfileSwitchStep scope={scope} />);
   steps.step('profiles', (scope) => <UseSmileIDSampleProfilesStep scope={scope} />);

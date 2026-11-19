@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   AppearanceSheet,
   CaptureModeSheet,
@@ -7,7 +8,9 @@ import {
   useSmileIDSampleSettingsStore,
 } from '@smileid/sample-ui';
 
+import { useSmileIDSampleShellExtension } from '../extension';
 import type { UseSmileIDSampleStepScope } from '../navigation/use-smile-id-sample-navigation';
+import { smileIDSampleDebugSheetOpens } from '../use-smile-id-sample-shell-extension';
 import { useSmileIDSampleDeviceScheme } from '../use-smile-id-sample-device-scheme';
 import { smileIDSamplePickScenario, smileIDSamplePickTheme, useLaunchArgs } from '../use-smile-id-sample-launch';
 
@@ -75,4 +78,14 @@ export const UseSmileIDSampleScenarioDrawerStep = ({ scope }: { scope: UseSmileI
       onDismiss={() => scope.navigator.back()}
     />
   );
+};
+
+/// A sheet the extension draws for one of its DEBUG rows; a release build, or one with no extension, closes it at once.
+export const UseSmileIDSampleDebugSheetStep = ({ scope }: { scope: UseSmileIDSampleStepScope }) => {
+  const extension = useSmileIDSampleShellExtension;
+  const opens = extension?.debugSheet !== undefined && smileIDSampleDebugSheetOpens(__DEV__, true);
+  useEffect(() => {
+    if (!opens) scope.navigator.back();
+  }, [opens, scope.navigator]);
+  return opens ? extension?.debugSheet?.(scope.entry.arg ?? '', () => scope.navigator.back()) : null;
 };

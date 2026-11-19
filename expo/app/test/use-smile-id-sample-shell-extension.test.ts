@@ -1,6 +1,6 @@
 import { isValidElement, type ReactElement } from 'react';
 import { useSmileIDSampleShellExtension } from '../src/extension';
-import { smileIDSampleDebugRows } from '../src/use-smile-id-sample-shell-extension';
+import { smileIDSampleDebugRows, smileIDSampleDebugSheetOpens } from '../src/use-smile-id-sample-shell-extension';
 
 describe('the shell extension', () => {
   it('is absent from a registry build', () => {
@@ -17,5 +17,20 @@ describe('the shell extension', () => {
   it('draws no rows without an extension, so a release build has no DEBUG section', () => {
     expect(smileIDSampleDebugRows(null)).toBeUndefined();
     expect(smileIDSampleDebugRows({})).toBeUndefined();
+  });
+});
+
+/// A debug sheet opens only in a debug build that has an extension to draw it; a release build closes it at once.
+describe('smileIDSampleDebugSheetOpens', () => {
+  it('a debug build with an extension opens the sheet', () => {
+    expect(smileIDSampleDebugSheetOpens(true, true)).toBe(true);
+  });
+
+  it('a release build never opens it even with an extension', () => {
+    expect(smileIDSampleDebugSheetOpens(false, true)).toBe(false);
+  });
+
+  it('a build with no extension has nothing to draw', () => {
+    expect(smileIDSampleDebugSheetOpens(true, false)).toBe(false);
   });
 });

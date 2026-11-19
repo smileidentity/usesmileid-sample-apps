@@ -21,6 +21,7 @@ export const smileIDSampleSteps = [
   'language',
   /// The scenario drawer over settings.
   'scenarioDrawer',
+  'debugSheet',
   /// One verification's details.
   'verificationDetails',
   /// The profile-switch sheet.
