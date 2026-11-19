@@ -121,7 +121,7 @@ class UseSmileIDSampleFlowResultTest {
         val flow = UseSmileIDSampleFlowResult()
         val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(flow) } as List<*>
 
-        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.dropLast(1) + "a-row-that-is-gone")
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.take(10) + "a-row-that-is-gone")
 
         assertNull(restored?.errorResolution)
     }
@@ -131,7 +131,7 @@ class UseSmileIDSampleFlowResultTest {
         val flow = UseSmileIDSampleFlowResult()
         val saved = with(UseSmileIDSampleFlowResult.Saver) { SaverScope { true }.save(flow) } as List<*>
 
-        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.dropLast(1))
+        val restored = UseSmileIDSampleFlowResult.Saver.restore(saved.take(10))
 
         assertNull(restored?.errorResolution)
         assertEquals(flow.snapshot, restored?.snapshot)
