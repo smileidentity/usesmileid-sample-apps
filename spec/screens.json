@@ -239,12 +239,12 @@
         {
           "state": "failed",
           "design": "in-repo",
-          "note": "A run that ended with no job, landed on the unsubmitted id: the product's name, then a warning Banner with the row's message. Replaces sample_details_empty; the result card stays under it."
+          "note": "A run that ended with no job, landed on the unsubmitted id: the product's name, then the Banner captioned 'Verification not completed' over the row's message. Replaces sample_details_empty; the result card stays under it."
         },
         {
           "state": "failedFinal",
           "design": "in-repo",
-          "note": "The same landing for a row whose action is Close: the error tone and the 'Verification failed' title."
+          "note": "The same landing for a row whose action is Close, captioned 'Verification failed'."
         }
       ],
       "components": [
