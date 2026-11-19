@@ -15,8 +15,12 @@ abstract class UseSmileIDSampleShellExtension {
   List<Widget> debugRowsWithSheets(ValueChanged<String> openSheet) =>
       debugRows();
 
+  /// Whether [debugSheet] draws the sheet [sheetId] names; the shell closes any other id at once.
+  bool hasDebugSheet(String sheetId) => false;
+
   /// The content of the sheet [sheetId] names, inside the shell's sheet step; never drawn in a release build.
-  Widget? debugSheet(String sheetId, VoidCallback onDismiss) => null;
+  Widget debugSheet(String sheetId, VoidCallback onDismiss) =>
+      const SizedBox.shrink();
 
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   void customiseFlow(
@@ -87,8 +91,9 @@ List<Widget> useSmileIDSampleDebugRows(
   ...?extension?.debugRowsWithSheets(openSheet ?? (String _) {}),
 ];
 
-/// Whether a debug sheet opens: only a debug build with an extension has one to draw.
+/// Whether the sheet [sheetId] opens: only in a debug build whose [extension] draws that sheet.
 bool useSmileIDSampleDebugSheetOpens({
   required bool debugBuild,
-  required bool hasExtension,
-}) => debugBuild && hasExtension;
+  required UseSmileIDSampleShellExtension? extension,
+  required String sheetId,
+}) => debugBuild && (extension?.hasDebugSheet(sheetId) ?? false);

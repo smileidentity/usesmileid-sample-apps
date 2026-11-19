@@ -122,8 +122,8 @@ class UseSmileIDSampleScenarioDrawerStep extends ConsumerWidget {
   }
 }
 
-/// A sheet the extension draws for one of its DEBUG rows; a release build, or one with no extension, closes it at once.
-class UseSmileIDSampleDebugSheetStep extends ConsumerWidget {
+/// A sheet the extension draws for one of its DEBUG rows; a release build, no extension or an unknown id closes it at once.
+class UseSmileIDSampleDebugSheetStep extends ConsumerStatefulWidget {
   /// Draws the sheet [sheetId] names; [onDismiss] closes it.
   const UseSmileIDSampleDebugSheetStep({
     required this.sheetId,
@@ -138,20 +138,37 @@ class UseSmileIDSampleDebugSheetStep extends ConsumerWidget {
   final VoidCallback onDismiss;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<UseSmileIDSampleDebugSheetStep> createState() =>
+      _UseSmileIDSampleDebugSheetStepState();
+}
+
+class _UseSmileIDSampleDebugSheetStepState
+    extends ConsumerState<UseSmileIDSampleDebugSheetStep> {
+  @override
+  void initState() {
+    super.initState();
+    // Decided once, so a rebuild before the step leaves can't close a second entry.
+    final bool opens = useSmileIDSampleDebugSheetOpens(
+      debugBuild: kDebugMode,
+      extension: ref.read(useSmileIDSampleShellExtensionProvider),
+      sheetId: widget.sheetId,
+    );
+    if (!opens) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => widget.onDismiss());
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final UseSmileIDSampleShellExtension? extension = ref.watch(
       useSmileIDSampleShellExtensionProvider,
     );
-    final Widget? content =
-        extension != null &&
-            useSmileIDSampleDebugSheetOpens(
-              debugBuild: kDebugMode,
-              hasExtension: true,
-            )
-        ? extension.debugSheet(sheetId, onDismiss)
-        : null;
-    if (content != null) return content;
-    WidgetsBinding.instance.addPostFrameCallback((_) => onDismiss());
-    return const SizedBox.shrink();
+    return useSmileIDSampleDebugSheetOpens(
+          debugBuild: kDebugMode,
+          extension: extension,
+          sheetId: widget.sheetId,
+        )
+        ? extension!.debugSheet(widget.sheetId, widget.onDismiss)
+        : const SizedBox.shrink();
   }
 }

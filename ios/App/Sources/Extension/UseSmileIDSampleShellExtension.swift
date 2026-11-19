@@ -11,6 +11,8 @@ protocol UseSmileIDSampleShellExtending {
   static func debugRows() -> AnyView
   /// The same rows, given `openSheet` to open one of this extension's `debugSheet`s by id.
   static func debugRows(openSheet: @escaping (String) -> Void) -> AnyView
+  /// Whether `debugSheet` draws the sheet `sheetId` names; the shell closes any other id at once.
+  static func hasDebugSheet(_ sheetId: String) -> Bool
   /// The content of the sheet `sheetId` names, inside the shell's sheet step; never drawn in a release build.
   static func debugSheet(_ sheetId: String, onDismiss: @escaping () -> Void) -> AnyView
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
@@ -34,6 +36,10 @@ extension UseSmileIDSampleShellExtending {
 
   static func debugRows(openSheet _: @escaping (String) -> Void) -> AnyView {
     debugRows()
+  }
+
+  static func hasDebugSheet(_: String) -> Bool {
+    false
   }
 
   static func debugSheet(_: String, onDismiss _: @escaping () -> Void) -> AnyView {

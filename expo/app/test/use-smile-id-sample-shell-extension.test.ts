@@ -20,17 +20,23 @@ describe('the shell extension', () => {
   });
 });
 
-/// A debug sheet opens only in a debug build that has an extension to draw it; a release build closes it at once.
+/// A debug sheet opens only in a debug build whose extension draws it; a release build, no extension or an unknown id closes it at once.
 describe('smileIDSampleDebugSheetOpens', () => {
-  it('a debug build with an extension opens the sheet', () => {
-    expect(smileIDSampleDebugSheetOpens(true, true)).toBe(true);
+  const timings = { hasDebugSheet: (sheetId: string) => sheetId === 'captureTimings' };
+
+  it('a debug build opens a sheet its extension draws', () => {
+    expect(smileIDSampleDebugSheetOpens(true, timings, 'captureTimings')).toBe(true);
   });
 
-  it('a release build never opens it even with an extension', () => {
-    expect(smileIDSampleDebugSheetOpens(false, true)).toBe(false);
+  it('a release build never opens it', () => {
+    expect(smileIDSampleDebugSheetOpens(false, timings, 'captureTimings')).toBe(false);
+  });
+
+  it('an id the extension does not draw closes', () => {
+    expect(smileIDSampleDebugSheetOpens(true, timings, 'unknown')).toBe(false);
   });
 
   it('a build with no extension has nothing to draw', () => {
-    expect(smileIDSampleDebugSheetOpens(true, false)).toBe(false);
+    expect(smileIDSampleDebugSheetOpens(true, null, 'captureTimings')).toBe(false);
   });
 });

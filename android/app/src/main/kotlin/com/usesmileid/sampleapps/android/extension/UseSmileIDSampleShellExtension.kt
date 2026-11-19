@@ -24,6 +24,9 @@ interface UseSmileIDSampleShellExtension {
     @Composable
     fun DebugRows(openSheet: (sheetId: String) -> Unit) = DebugRows()
 
+    /** Whether [DebugSheet] draws the sheet [sheetId] names; the shell closes any other id at once. */
+    fun hasDebugSheet(sheetId: String): Boolean = false
+
     /** The content of the sheet [sheetId] names, inside the shell's sheet step; never drawn in a release build. */
     @Composable
     fun DebugSheet(sheetId: String, onDismissRequest: () -> Unit) {}

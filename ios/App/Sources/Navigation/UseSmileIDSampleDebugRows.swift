@@ -64,7 +64,7 @@ struct UseSmileIDSampleDebugSheet: View {
   let onDismiss: () -> Void
 
   var body: some View {
-    if let `extension`, useSmileIDSampleDebugSheetOpens(debugBuild: useSmileIDSampleIsDebugBuild, hasExtension: true) {
+    if let `extension`, useSmileIDSampleDebugSheetOpens(debugBuild: UseSmileIDSampleAppState.isDebugBuild, extension: `extension`, sheetId: sheetId) {
       `extension`.debugSheet(sheetId, onDismiss: onDismiss)
     } else {
       Color.clear.onAppear(perform: onDismiss)
@@ -72,16 +72,12 @@ struct UseSmileIDSampleDebugSheet: View {
   }
 }
 
-/// Whether a debug sheet opens: only a debug build with an extension has one to draw.
-func useSmileIDSampleDebugSheetOpens(debugBuild: Bool, hasExtension: Bool) -> Bool {
-  debugBuild && hasExtension
+/// Whether the sheet `sheetId` opens: only in a debug build whose extension draws that sheet.
+@MainActor
+func useSmileIDSampleDebugSheetOpens(
+  debugBuild: Bool,
+  extension: (any UseSmileIDSampleShellExtending.Type)?,
+  sheetId: String
+) -> Bool {
+  debugBuild && `extension`?.hasDebugSheet(sheetId) == true
 }
-
-/// Whether this binary is a debug build.
-let useSmileIDSampleIsDebugBuild: Bool = {
-  #if DEBUG
-    true
-  #else
-    false
-  #endif
-}()

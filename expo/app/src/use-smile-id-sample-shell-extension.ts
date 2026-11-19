@@ -8,6 +8,8 @@ export type UseSmileIDSampleShellExtension = {
   leadingDebugRows?: () => ReactNode;
   /// Extra rows for the Settings DEBUG section, below the shell's own, given `openSheet` to open one of its `debugSheet`s by id.
   debugRows?: (openSheet: (sheetId: string) => void) => ReactNode;
+  /// Whether `debugSheet` draws the sheet `sheetId` names; the shell closes any other id at once.
+  hasDebugSheet?: (sheetId: string) => boolean;
   /// The content of the sheet `sheetId` names, inside the shell's sheet step; never drawn in a release build.
   debugSheet?: (sheetId: string, onDismiss: () => void) => ReactNode;
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
@@ -45,6 +47,9 @@ export const smileIDSampleDebugRows = (
   return rows.length > 0 ? createElement(Fragment, null, ...rows) : undefined;
 };
 
-/// Whether a debug sheet opens: only a debug build with an extension has one to draw.
-export const smileIDSampleDebugSheetOpens = (debugBuild: boolean, hasExtension: boolean): boolean =>
-  debugBuild && hasExtension;
+/// Whether the sheet `sheetId` opens: only in a debug build whose extension draws that sheet.
+export const smileIDSampleDebugSheetOpens = (
+  debugBuild: boolean,
+  extension: UseSmileIDSampleShellExtension | null | undefined,
+  sheetId: string,
+): boolean => debugBuild && extension?.hasDebugSheet?.(sheetId) === true;

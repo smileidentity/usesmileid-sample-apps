@@ -83,9 +83,10 @@ export const UseSmileIDSampleScenarioDrawerStep = ({ scope }: { scope: UseSmileI
 /// A sheet the extension draws for one of its DEBUG rows; a release build, or one with no extension, closes it at once.
 export const UseSmileIDSampleDebugSheetStep = ({ scope }: { scope: UseSmileIDSampleStepScope }) => {
   const extension = useSmileIDSampleShellExtension;
-  const opens = extension?.debugSheet !== undefined && smileIDSampleDebugSheetOpens(__DEV__, true);
+  const sheetId = scope.entry.arg ?? '';
+  const opens = smileIDSampleDebugSheetOpens(__DEV__, extension, sheetId);
   useEffect(() => {
     if (!opens) scope.navigator.back();
   }, [opens, scope.navigator]);
-  return opens ? extension?.debugSheet?.(scope.entry.arg ?? '', () => scope.navigator.back()) : null;
+  return opens ? extension?.debugSheet?.(sheetId, () => scope.navigator.back()) : null;
 };
