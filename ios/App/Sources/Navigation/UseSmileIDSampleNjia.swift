@@ -11,6 +11,7 @@ enum UseSmileIDSampleStep: String, CaseIterable {
   case appearance
   case language
   case scenarioDrawer
+  case debugSheet
   case verificationDetails
   case profileSwitch
   case profiles
