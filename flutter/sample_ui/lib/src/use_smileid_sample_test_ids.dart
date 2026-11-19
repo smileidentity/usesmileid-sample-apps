@@ -164,6 +164,12 @@ abstract final class UseSmileIDSampleTestIds {
   /// What the detail page shows for a job this build never stored.
   static const String detailsEmpty = 'sample_details_empty';
 
+  /// The failure banner: a failed run's message, or a stored job's that ended in error or block.
+  static const String errorBanner = 'sample_error_banner';
+
+  /// The banner's one action.
+  static const String errorAction = 'sample_error_action';
+
   /// The profiles list.
   static const String profilesScreen = 'sample_profiles_screen';
 
@@ -505,6 +511,8 @@ abstract final class UseSmileIDSampleTestIds {
     detailsDelete,
     detailsRefresh,
     detailsEmpty,
+    errorBanner,
+    errorAction,
     profilesScreen,
     createProfile,
     profileConfigScreen,

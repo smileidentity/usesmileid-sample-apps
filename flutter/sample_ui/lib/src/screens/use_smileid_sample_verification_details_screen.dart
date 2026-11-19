@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../components/use_smileid_sample_banner.dart';
 import '../components/use_smileid_sample_data_field_row.dart';
 import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_glyphs.dart';
@@ -8,8 +9,11 @@ import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_status_badge.dart';
 import '../components/use_smileid_sample_toast.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
+import '../model/use_smileid_sample_error_resolution.dart';
 import '../model/use_smileid_sample_job.dart';
+import '../model/use_smileid_sample_product.dart';
 import '../model/use_smileid_sample_result.dart';
+import '../state/use_smileid_sample_details_failure.dart';
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
@@ -30,6 +34,9 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     this.onCopy,
     this.notice,
     this.result,
+    this.landedFailure,
+    this.landedProduct,
+    this.onErrorAction,
     super.key,
   });
 
@@ -57,12 +64,23 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
   /// The last run's result card; null hides it, which is the host's probes decision.
   final UseSmileIDSampleResult? result;
 
+  /// The row the run that landed here with no job failed with; null for any other visit.
+  final UseSmileIDSampleErrorResolution? landedFailure;
+
+  /// That run's product, named over its banner.
+  final UseSmileIDSampleProduct? landedProduct;
+
+  /// Runs the banner's one action.
+  final ValueChanged<UseSmileIDSampleErrorAction>? onErrorAction;
+
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
     final UseSmileIDSampleJob? found = job.value;
+    final UseSmileIDSampleErrorResolution? failure =
+        useSmileIDSampleDetailsFailure(job: found, landedRun: landedFailure);
     final Widget page = Semantics(
       identifier: UseSmileIDSampleTestIds.verificationDetailsScreen,
       child: Column(
@@ -90,7 +108,18 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(SmileDimens.spacingMd),
                   children: <Widget>[
-                    if (job.pending)
+                    if (found == null && failure != null) ...<Widget>[
+                      if (landedProduct != null) ...<Widget>[
+                        Text(
+                          landedProduct!.title(context.strings),
+                          style: UseSmileIDSampleType.textStyleTitle.copyWith(
+                            color: colors.textTitle,
+                          ),
+                        ),
+                        const SizedBox(height: SmileDimens.spacingMd),
+                      ],
+                      _banner(context, failure, onStoredJob: false),
+                    ] else if (job.pending)
                       const SizedBox.shrink()
                     else if (found == null)
                       UseSmileIDSampleEmptyState(
@@ -101,7 +130,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
                         testId: UseSmileIDSampleTestIds.detailsEmpty,
                       )
                     else
-                      ..._fields(context, found, colors),
+                      ..._fields(context, found, colors, failure),
                     // Rendered even with no job: a flow that failed before submission has nothing else to show.
                     if (result != null) ...<Widget>[
                       const SizedBox(height: SmileDimens.spacingSm),
@@ -134,10 +163,27 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     );
   }
 
+  Widget _banner(
+    BuildContext context,
+    UseSmileIDSampleErrorResolution failure, {
+    required bool onStoredJob,
+  }) => UseSmileIDSampleBanner(
+    message: failure.message.text(context.strings),
+    tone: failure.bannerTone,
+    actionLabel: failure.offersAction(onStoredJob: onStoredJob)
+        ? failure.action.label(context.strings)
+        : null,
+    onAction: () => onErrorAction?.call(failure.action),
+    actionProminent: failure.action != UseSmileIDSampleErrorAction.exit,
+    testId: UseSmileIDSampleTestIds.errorBanner,
+    actionTestId: UseSmileIDSampleTestIds.errorAction,
+  );
+
   List<Widget> _fields(
     BuildContext context,
     UseSmileIDSampleJob found,
     UseSmileIDSampleColors colors,
+    UseSmileIDSampleErrorResolution? failure,
   ) => <Widget>[
     Row(
       children: <Widget>[
@@ -156,6 +202,10 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
         ),
       ],
     ),
+    if (failure != null) ...<Widget>[
+      const SizedBox(height: SmileDimens.spacingMd),
+      _banner(context, failure, onStoredJob: true),
+    ],
     const SizedBox(height: SmileDimens.spacingMd),
     UseSmileIDSampleSectionLabel(text: context.strings.detailsSection),
     const SizedBox(height: SmileDimens.spacingXs),

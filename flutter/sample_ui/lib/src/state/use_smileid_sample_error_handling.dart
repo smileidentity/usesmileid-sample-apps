@@ -228,6 +228,10 @@ abstract final class UseSmileIDSampleErrorHandling {
         _resultRows.map((_Row row) => row.resolution),
       );
 
+  /// The row a submission the table does not name resolves as.
+  static UseSmileIDSampleErrorResolution get submissionFallback =>
+      _requestInvalid;
+
   /// A submission the server refused with [status]; [serverMessage] only tells rows apart and is never shown.
   static UseSmileIDSampleErrorResolution forStatus(
     int status, {

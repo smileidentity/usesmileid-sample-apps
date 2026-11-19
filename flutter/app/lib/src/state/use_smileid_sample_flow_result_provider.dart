@@ -50,6 +50,7 @@ class UseSmileIDSampleFlowResultNotifier
         theme: snapshot.theme,
         route: snapshot.route,
         environment: _environment(snapshot),
+        product: snapshot.product,
       );
 
   /// One host result callback.
@@ -75,6 +76,7 @@ class UseSmileIDSampleFlowResultNotifier
         theme: snapshot.theme,
         route: snapshot.route,
         environment: _environment(snapshot),
+        product: snapshot.product,
       );
 
   /// One token refresh callback.

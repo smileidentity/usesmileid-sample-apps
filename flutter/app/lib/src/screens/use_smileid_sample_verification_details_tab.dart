@@ -4,12 +4,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_njia/usesmileid_njia.dart';
 
+import '../flow/use_smileid_sample_error_move.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
+import '../navigation/use_smileid_sample_navigation.dart';
+import '../navigation/use_smileid_sample_njia.dart';
 import '../state/use_smileid_sample_flow_result_provider.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
+import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_remove_jobs.dart';
+import 'use_smileid_sample_sdk_flow_tab.dart';
 
 /// One verification's detail page, pushed inside the verifications tab so back stays within it.
 class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
@@ -17,6 +23,7 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
   const UseSmileIDSampleVerificationDetailsTab({
     required this.jobId,
     required this.onBack,
+    required this.entry,
     super.key,
   });
 
@@ -25,6 +32,9 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
 
   /// Leaves the page.
   final VoidCallback onBack;
+
+  /// This page's entry, which a failure's action replaces.
+  final NjiaEntry entry;
 
   @override
   ConsumerState<UseSmileIDSampleVerificationDetailsTab> createState() =>
@@ -93,6 +103,10 @@ class _UseSmileIDSampleVerificationDetailsTabState
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleJob? found = _stored();
+    final UseSmileIDSampleResult run = ref.watch(
+      useSmileIDSampleFlowResultProvider,
+    );
+    final bool landed = widget.jobId == unsubmittedJobId;
     return UseSmileIDSampleVerificationDetailsScreen(
       jobId: widget.jobId,
       result: ref.watch(useSmileIDSampleShowProbesProvider)
@@ -125,7 +139,63 @@ class _UseSmileIDSampleVerificationDetailsTabState
       onRefresh: _refresh,
       onCopy: (String label, String value) => unawaited(_copy(label, value)),
       notice: _notice,
+      landedFailure: landed
+          ? useSmileIDSampleLandedFailure(
+              status: run.jobStatus,
+              row: run.errorResolution,
+            )
+          : null,
+      landedProduct: landed ? run.product : null,
+      onErrorAction: (UseSmileIDSampleErrorAction action) =>
+          unawaited(_run(action, found?.product ?? run.product)),
     );
+  }
+
+  /// Runs a failure's [action] for [product] in place of this page's entry.
+  Future<void> _run(
+    UseSmileIDSampleErrorAction action,
+    UseSmileIDSampleProduct? product,
+  ) async {
+    final UseSmileIDSampleEngine engine =
+        UseSmileIDSampleNavigationScope.engineOf(context);
+    final UseSmileIDSampleFlowRoute route = ref
+        .read(useSmileIDSampleFlowResultProvider)
+        .route;
+    switch (useSmileIDSampleErrorMove(action, product)) {
+      case UseSmileIDSampleRunAgain(:final UseSmileIDSampleProduct product):
+        await engine.startRun(
+          widget.entry,
+          product,
+          useSmileIDSampleRunOnly(ref, product, route),
+          replace: widget.entry.id,
+        );
+      case UseSmileIDSampleEditIdDetails(
+        :final UseSmileIDSampleProduct product,
+      ):
+        await engine.startRun(
+          widget.entry,
+          product,
+          UseSmileIDSampleRunEntry(
+            facts: useSmileIDSampleRunOnly(ref, product, route).facts,
+            step: UseSmileIDSampleStep.idDetailsForm.name,
+          ),
+          replace: widget.entry.id,
+        );
+      case UseSmileIDSampleNewToken(:final UseSmileIDSampleProduct product):
+        ref
+            .read(useSmileIDSampleRunPartnerProvider.notifier)
+            .record(ref.read(useSmileIDSampleSessionProvider).live?.partnerId);
+        ref
+            .read(useSmileIDSampleInterruptedRunProvider.notifier)
+            .send(
+              UseSmileIDSampleRunIntent(productId: product.id, route: route),
+            );
+        await engine
+            .navigator(widget.entry)
+            .go(UseSmileIDSampleStep.scanToken.name, replace: widget.entry.id);
+      case UseSmileIDSampleLeave():
+        await engine.leaveToProducts();
+    }
   }
 
   UseSmileIDSampleJob? _stored() {

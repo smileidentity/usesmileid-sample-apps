@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import 'use_smileid_sample_environment.dart';
 import 'use_smileid_sample_error_resolution.dart';
+import 'use_smileid_sample_product.dart';
 import 'use_smileid_sample_scenario.dart';
 
 /// One route, two presentations.
@@ -64,6 +65,7 @@ class UseSmileIDSampleResult {
     this.userId,
     this.lastError,
     this.errorResolution,
+    this.product,
     this.sdkVersion,
   });
 
@@ -101,6 +103,9 @@ class UseSmileIDSampleResult {
   /// the failure has none. Not a card field, so [toMap] leaves it out.
   final UseSmileIDSampleErrorResolution? errorResolution;
 
+  /// The product the latest run started, which a failure's action runs again; not a card field either.
+  final UseSmileIDSampleProduct? product;
+
   /// The SDK version resolved at runtime, which proves which published artifact the run exercised.
   final String? sdkVersion;
 
@@ -124,6 +129,7 @@ class UseSmileIDSampleResult {
     required UseSmileIDSampleThemeScenario theme,
     required UseSmileIDSampleFlowRoute route,
     required UseSmileIDSampleEnvironment environment,
+    UseSmileIDSampleProduct? product,
   }) => UseSmileIDSampleResult(
     activeScenario: scenario,
     activeTheme: theme,
@@ -132,6 +138,7 @@ class UseSmileIDSampleResult {
     jobStatus: UseSmileIDSampleFlowStatus.running,
     resultCallbackCount: 0,
     refreshCallbackCount: 0,
+    product: product,
     sdkVersion: sdkVersion,
   );
 
@@ -158,6 +165,7 @@ class UseSmileIDSampleResult {
     required UseSmileIDSampleThemeScenario theme,
     required UseSmileIDSampleFlowRoute route,
     required UseSmileIDSampleEnvironment environment,
+    UseSmileIDSampleProduct? product,
   }) => UseSmileIDSampleResult(
     activeScenario: scenario,
     activeTheme: theme,
@@ -167,6 +175,7 @@ class UseSmileIDSampleResult {
     resultCallbackCount: resultCallbackCount,
     refreshCallbackCount: refreshCallbackCount,
     lastError: reason,
+    product: product,
     sdkVersion: sdkVersion,
   );
 
@@ -187,6 +196,7 @@ class UseSmileIDSampleResult {
           jobStatus: jobStatus,
           resultCallbackCount: resultCallbackCount,
           refreshCallbackCount: refreshCallbackCount,
+          product: product,
           sdkVersion: sdkVersion,
         )
       : this;
@@ -212,6 +222,7 @@ class UseSmileIDSampleResult {
     userId: jobStatus == null ? this.userId : userId,
     lastError: jobStatus == null ? this.lastError : lastError,
     errorResolution: jobStatus == null ? this.errorResolution : errorResolution,
+    product: product,
     sdkVersion: sdkVersion,
   );
 

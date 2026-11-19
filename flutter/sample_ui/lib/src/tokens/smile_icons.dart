@@ -44,6 +44,7 @@ abstract final class SmileIcons {
   static const String tokenScan = '$_base/token_scan.svg';
   static const String trash = '$_base/trash.svg';
   static const String verifications = '$_base/verifications.svg';
+  static const String materialCancel = '$_base/material-symbols/cancel.svg';
   static const String materialCheck = '$_base/material-symbols/check.svg';
   static const String materialCopy = '$_base/material-symbols/copy.svg';
   static const String materialPlus = '$_base/material-symbols/plus.svg';
@@ -53,6 +54,7 @@ abstract final class SmileIcons {
       '$_base/material-symbols/setting_language.svg';
   static const String materialSettingScenarios =
       '$_base/material-symbols/setting_scenarios.svg';
+  static const String materialWarning = '$_base/material-symbols/warning.svg';
 
   /// All of them, which the generator's test counts against the shared record.
   static const List<String> all = <String>[
@@ -87,11 +89,13 @@ abstract final class SmileIcons {
     tokenScan,
     trash,
     verifications,
+    materialCancel,
     materialCheck,
     materialCopy,
     materialPlus,
     materialProductMark,
     materialSettingLanguage,
     materialSettingScenarios,
+    materialWarning,
   ];
 }

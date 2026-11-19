@@ -73,6 +73,7 @@ useSmileIDSampleSteps = NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampleFact>(
           UseSmileIDSampleVerificationDetailsTab(
             jobId: scope.entry.arg ?? '',
             onBack: scope.navigator.back,
+            entry: scope.entry,
           ),
     )
     ..step(
