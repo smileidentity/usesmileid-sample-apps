@@ -9,15 +9,27 @@ import {
   useSmileIDSampleTransientNotice,
   useSmileIDSampleStrings,
   UseSmileIDSampleStatus,
+  smileIDSampleLandedFailure,
+  type UseSmileIDSampleErrorAction,
+  type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
 import * as Clipboard from 'expo-clipboard';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import type { UseSmileIDSampleStepScope } from '../navigation/use-smile-id-sample-navigation';
+import { smileIDSampleErrorMove } from '../flow/use-smile-id-sample-error-move';
+import { smileIDSampleRunOnly } from '../flow/use-smile-id-sample-flow-journey';
+import { smileIDSampleLiveBindingsNow } from '../flow/use-smile-id-sample-token-binding-rules';
+import {
+  smileIDSampleLeaveToProducts,
+  smileIDSampleStartRun,
+  useSmileIDSampleEngine,
+  type UseSmileIDSampleStepScope,
+} from '../navigation/use-smile-id-sample-navigation';
 import { smileIDSampleStatusApi } from '../status/use-smile-id-sample-status-api';
 import { useLaunchArgs } from '../use-smile-id-sample-launch';
 import { useSmileIDSampleNoticeStyle } from '../use-smile-id-sample-notice-inset';
+import { unsubmittedJobId } from './use-smile-id-sample-sdk-flow-step';
 
 /// One verification, the job id its entry carries; also where a finished run lands.
 export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseSmileIDSampleStepScope }) => {
@@ -34,6 +46,10 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const notice = useSmileIDSampleTransientNotice();
   const args = useLaunchArgs();
   const result = useSmileIDSampleResultStore((state) => state.result);
+  const errorResolution = useSmileIDSampleResultStore((state) => state.errorResolution);
+  const runProduct = useSmileIDSampleResultStore((state) => state.product);
+  const engine = useSmileIDSampleEngine();
+  const landed = jobId === unsubmittedJobId;
   const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
@@ -92,6 +108,44 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
     // The session is a dependency so a session linked after a check ended without one starts another.
   }, [job, liveSessionId, refreshUntilSettled, show, strings]);
 
+  /// Runs a failure's action for `product` in place of this entry.
+  const run = (action: UseSmileIDSampleErrorAction, product: UseSmileIDSampleProduct | null) => {
+    const route = result.route;
+    const move = smileIDSampleErrorMove(action, product);
+    switch (move.kind) {
+      case 'runAgain':
+        smileIDSampleStartRun(
+          engine,
+          scope.entry,
+          move.product,
+          smileIDSampleRunOnly(move.product, route, smileIDSampleLiveBindingsNow(args.scenario)),
+          scope.entry.id,
+        );
+        return;
+      case 'editIdDetails':
+        smileIDSampleStartRun(
+          engine,
+          scope.entry,
+          move.product,
+          {
+            facts: smileIDSampleRunOnly(move.product, route, smileIDSampleLiveBindingsNow(args.scenario)).facts,
+            step: 'idDetailsForm',
+          },
+          scope.entry.id,
+        );
+        return;
+      case 'newToken': {
+        const session = useSmileIDSampleSessionStore.getState();
+        session.recordRunPartner(session.live?.partnerId ?? null);
+        session.sendRun({ productId: move.product.id, route, resumeAt: 'flow' });
+        scope.navigator.go('scanToken', undefined, scope.entry.id);
+        return;
+      }
+      case 'leave':
+        smileIDSampleLeaveToProducts(engine);
+    }
+  };
+
   return (
     <View style={styles.host}>
       <VerificationDetailsScreen
@@ -101,7 +155,10 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           refreshing,
           pending: jobs === null,
           result: showProbes ? smileIDSampleResultSelecting(result, args.scenario, args.theme) : null,
+          landedFailure: landed ? smileIDSampleLandedFailure(result.jobStatus, errorResolution ?? undefined) : undefined,
+          landedProduct: landed ? (runProduct ?? undefined) : undefined,
         }}
+        onErrorAction={(action) => run(action, job?.product ?? runProduct)}
         onBack={() => back()}
         onDelete={() => {
           if (job !== null) void remove([job.id]);

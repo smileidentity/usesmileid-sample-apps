@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 
 import type { UseSmileIDSampleErrorResolution } from '../model/use-smile-id-sample-error-resolution';
+import type { UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
 import {
   smileIDSampleResultBlocked,
   smileIDSampleResultDefaults,
@@ -15,6 +16,8 @@ type State = {
   readonly result: UseSmileIDSampleResult;
   /// The row a failed submission resolved to, for the message and action the app offers; null when the failure has none. Kept beside the result, which mirrors the card's schema.
   readonly errorResolution: UseSmileIDSampleErrorResolution | null;
+  /// The product the latest run started, which a failure's action runs again.
+  readonly product: UseSmileIDSampleProduct | null;
 };
 
 type Actions = {
@@ -37,17 +40,23 @@ type Actions = {
 export const useSmileIDSampleResultStore = create<State & Actions>((set, get) => ({
   result: smileIDSampleResultDefaults,
   errorResolution: null,
-  start: (run) => set({ result: smileIDSampleResultStarted(get().result, run), errorResolution: null }),
+  product: null,
+  start: (run) =>
+    set({ result: smileIDSampleResultStarted(get().result, run), errorResolution: null, product: run.product ?? null }),
   record: (status, outcome) =>
     set({
       result: smileIDSampleResultRecorded(get().result, status, outcome),
       errorResolution: outcome?.errorResolution ?? null,
     }),
   block: (reason, run) =>
-    set({ result: smileIDSampleResultBlocked(get().result, reason, run), errorResolution: null }),
+    set({
+      result: smileIDSampleResultBlocked(get().result, reason, run),
+      errorResolution: null,
+      product: run.product ?? null,
+    }),
   refreshed: () =>
     set({ result: { ...get().result, refreshCallbackCount: get().result.refreshCallbackCount + 1 } }),
-  reset: () => set({ result: smileIDSampleResultDefaults, errorResolution: null }),
+  reset: () => set({ result: smileIDSampleResultDefaults, errorResolution: null, product: null }),
 }));
 
 /// One run's link to the card: started exactly once, before its first delivery, whichever comes first.

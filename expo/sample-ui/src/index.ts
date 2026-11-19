@@ -99,6 +99,7 @@ export {
 export { UseSmileIDSampleIcon, UseSmileIDSampleMarkNames } from './components/use-smile-id-sample-icon';
 export { smileIcons, type SmileIcon, type SmileIconName, type SmileIconPart } from './smile-icons';
 
+export { UseSmileIDSampleBanner } from './components/use-smile-id-sample-banner';
 export { UseSmileIDSampleBottomSheet } from './components/use-smile-id-sample-bottom-sheet';
 export { UseSmileIDSampleDataFieldRow } from './components/use-smile-id-sample-data-field-row';
 export { UseSmileIDSampleDateGroupHeader } from './components/use-smile-id-sample-date-group-header';
@@ -274,8 +275,18 @@ export {
   smileIDSampleErrorForStatus,
   smileIDSampleErrorForTransport,
   smileIDSampleErrorResultRows,
+  smileIDSampleErrorSubmissionFallback,
   smileIDSampleErrorSubmissionRows,
 } from './state/use-smile-id-sample-error-handling';
+export {
+  smileIDSampleBannerTone,
+  smileIDSampleDetailsFailure,
+  smileIDSampleErrorActionLabel,
+  smileIDSampleErrorMessageText,
+  smileIDSampleLandedFailure,
+  smileIDSampleOffersAction,
+  type UseSmileIDSampleBannerTone,
+} from './state/use-smile-id-sample-details-failure';
 export { smileIDSampleErrorForFailure } from './state/use-smile-id-sample-failure-row';
 export {
   smileIDSampleAspectRatios,

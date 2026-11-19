@@ -9,6 +9,8 @@ import {
 } from '../src/model/use-smile-id-sample-job-dates';
 import { smileIDSampleHttpLabel } from '../src/model/use-smile-id-sample-job';
 import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status';
+import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
+import { smileIDSampleErrorForStatus } from '../src/state/use-smile-id-sample-error-handling';
 import { VerificationDetailsScreen } from '../src/screens/verification-details-screen';
 import {
   VerificationsScreen,
@@ -111,6 +113,32 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
               job: { ...fixtures[0]!, status: UseSmileIDSampleStatus.Error, message: 'Job failed', httpStatus: 200 },
               jobId: fixtures[0]!.id,
               refreshing: false,
+            },
+          }),
+      },
+      // A run whose submission the server refused, landed with no job: its message and the action past it.
+      failed: {
+        element: () =>
+          details({
+            state: {
+              job: null,
+              jobId: 'unsubmitted',
+              refreshing: false,
+              landedFailure: smileIDSampleErrorForStatus(503),
+              landedProduct: smileIDSampleProducts.find((it) => it.id === 'biometricKyc'),
+            },
+          }),
+      },
+      // A refusal no retry gets past: the error tone, and Close.
+      failedFinal: {
+        element: () =>
+          details({
+            state: {
+              job: null,
+              jobId: 'unsubmitted',
+              refreshing: false,
+              landedFailure: smileIDSampleErrorForStatus(403),
+              landedProduct: smileIDSampleProducts.find((it) => it.id === 'biometricKyc'),
             },
           }),
       },

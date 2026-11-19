@@ -247,13 +247,15 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
 const acceptedCode = 202;
 
 /// The details entry for a run that never produced a job: the screen shows the run's result instead.
-const unsubmittedJobId = 'unsubmitted';
+/// The details route's id for a run that ended with no job, where its failure is stated.
+export const unsubmittedJobId = 'unsubmitted';
 
 const runOf = (snapshot: UseSmileIDSampleFlowLaunchSnapshot): UseSmileIDSampleRunContext => ({
   scenario: snapshot.scenario,
   theme: snapshot.theme,
   route: snapshot.route,
   environment: snapshot.sandbox ? 'sandbox' : 'production',
+  product: snapshot.product,
 });
 
 /// Records the refusal, then leaves.

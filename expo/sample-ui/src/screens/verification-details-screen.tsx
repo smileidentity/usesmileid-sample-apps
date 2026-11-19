@@ -1,5 +1,6 @@
 import { RefreshControl, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
+import { UseSmileIDSampleBanner } from '../components/use-smile-id-sample-banner';
 import { UseSmileIDSampleDataFieldRow } from '../components/use-smile-id-sample-data-field-row';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
 import { UseSmileIDSampleResultCard } from '../components/use-smile-id-sample-result-card';
@@ -25,7 +26,18 @@ import {
 import type { BadgeTokens } from '../theme/smile-colors';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
-import { smileIDSampleProductTitle } from '../model/use-smile-id-sample-product';
+import { smileIDSampleProductTitle, type UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
+import {
+  UseSmileIDSampleErrorAction,
+  type UseSmileIDSampleErrorResolution,
+} from '../model/use-smile-id-sample-error-resolution';
+import {
+  smileIDSampleBannerTone,
+  smileIDSampleDetailsFailure,
+  smileIDSampleErrorActionLabel,
+  smileIDSampleErrorMessageText,
+  smileIDSampleOffersAction,
+} from '../state/use-smile-id-sample-details-failure';
 
 /// Everything the details screen renders. `job` is null for a deep link naming a row this build has no copy of.
 export type UseSmileIDSampleVerificationDetailsState = {
@@ -37,6 +49,10 @@ export type UseSmileIDSampleVerificationDetailsState = {
   readonly pending?: boolean;
   /// The last run's result card; absent hides it, which is the host's probes decision.
   readonly result?: UseSmileIDSampleResult | null;
+  /// The row the run that landed here with no job failed with; absent for any other visit.
+  readonly landedFailure?: UseSmileIDSampleErrorResolution;
+  /// That run's product, named over its banner.
+  readonly landedProduct?: UseSmileIDSampleProduct;
 };
 
 type Props = {
@@ -45,6 +61,7 @@ type Props = {
   onDelete: () => void;
   onRefresh: () => void;
   onCopy: (label: string, value: string) => void;
+  onErrorAction?: (action: UseSmileIDSampleErrorAction) => void;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -55,11 +72,26 @@ export const VerificationDetailsScreen = ({
   onDelete,
   onRefresh,
   onCopy,
+  onErrorAction = () => {},
   style,
 }: Props) => {
   const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const { job } = state;
+  const failure = smileIDSampleDetailsFailure(job ?? undefined, state.landedFailure);
+  const banner = (shown: UseSmileIDSampleErrorResolution, onStoredJob: boolean) => (
+    <UseSmileIDSampleBanner
+      message={smileIDSampleErrorMessageText(shown.message, strings)}
+      tone={smileIDSampleBannerTone(shown)}
+      actionLabel={
+        smileIDSampleOffersAction(shown, onStoredJob) ? smileIDSampleErrorActionLabel(shown.action, strings) : undefined
+      }
+      onAction={() => onErrorAction(shown.action)}
+      actionProminent={shown.action !== UseSmileIDSampleErrorAction.Exit}
+      testID={UseSmileIDSampleTestIds.ERROR_BANNER}
+      actionTestID={UseSmileIDSampleTestIds.ERROR_ACTION}
+    />
+  );
 
   return (
     <View style={[styles.screen, { backgroundColor: theme.colors.background }, style]}>
@@ -94,7 +126,18 @@ export const VerificationDetailsScreen = ({
           />
         }
       >
-        {state.pending === true ? null : job === null ? (
+        {job === null && failure !== undefined ? (
+          <>
+            {state.landedProduct === undefined ? null : (
+              <View style={[styles.title, { paddingVertical: theme.dimens.spacing.xs }]}>
+                <Text style={[theme.type.textStyleTitle, styles.titleText, { color: theme.colors.textTitle }]}>
+                  {smileIDSampleProductTitle(state.landedProduct, strings)}
+                </Text>
+              </View>
+            )}
+            {banner(failure, false)}
+          </>
+        ) : state.pending === true ? null : job === null ? (
           <UseSmileIDSampleEmptyState
             text={strings.detailsMissingTitle}
             // The id asked for is the whole diagnostic, which a deep link is how you reach.
@@ -117,6 +160,7 @@ export const VerificationDetailsScreen = ({
                 testID={UseSmileIDSampleTestIds.STATUS_BADGE}
               />
             </View>
+            {failure === undefined ? null : banner(failure, true)}
 
             <UseSmileIDSampleSectionSurface label={strings.detailsSection}>
               <UseSmileIDSampleDataFieldRow
