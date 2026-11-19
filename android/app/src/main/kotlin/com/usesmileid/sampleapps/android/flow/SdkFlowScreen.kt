@@ -112,9 +112,10 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
 
     // Effects run after the SDK's first composition, which is early enough to deliver a Failure.
     LaunchedEffect(Unit) {
-        if (viewModel.markRunStarted() && !viewModel.resultDelivered) {
-            app.flowResult.startFlow(snapshot.environment, snapshot.product)
+        if (viewModel.markRunStarted()) {
+            // Marked even when that Failure came first, so its Try again keeps the forms it ran with.
             app.forms.markFlowStarted()
+            if (!viewModel.resultDelivered) app.flowResult.startFlow(snapshot.environment, snapshot.product)
         }
     }
 
