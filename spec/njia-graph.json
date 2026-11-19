@@ -89,7 +89,15 @@
       "kind": "verificationDetails",
       "reach": "go",
       "link": "verifications/:jobId",
-      "tab": "verifications"
+      "tab": "verifications",
+      "to": [
+        "scanToken",
+        "consentDetailsForm",
+        "authUserId",
+        "idDetailsForm",
+        "sdkFlow",
+        "sdkFlowFullScreen"
+      ]
     },
     {
       "step": "profileSwitch",
