@@ -10,6 +10,7 @@ describe('smileIDSampleErrorMove', () => {
     sessionLive: true,
     livePartnerId: 'partner_1',
     runPartnerId: 'partner_1',
+    idDetails: 'form',
     ...overrides,
   });
 
@@ -46,6 +47,18 @@ describe('smileIDSampleErrorMove', () => {
 
   it('fixing the input on another partner starts from the first step with fresh forms', () => {
     expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.FixInput, product, gate({ livePartnerId: 'partner_2' }))).toEqual({
+      kind: 'runFromStart',
+      product,
+    });
+  });
+
+  it('fixing input the token carries takes a new token and a product with no id form starts again', () => {
+    expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.FixInput, product, gate({ idDetails: 'token' }))).toEqual({
+      kind: 'newToken',
+      product,
+      resumeAt: 'firstStep',
+    });
+    expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.FixInput, product, gate({ idDetails: 'none' }))).toEqual({
       kind: 'runFromStart',
       product,
     });

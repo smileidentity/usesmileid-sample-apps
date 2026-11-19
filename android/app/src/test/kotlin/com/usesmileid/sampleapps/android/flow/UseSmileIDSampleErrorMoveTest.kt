@@ -52,6 +52,18 @@ class UseSmileIDSampleErrorMoveTest {
     }
 
     @Test
+    fun fixing_input_the_token_carries_takes_a_new_token_and_a_product_with_no_id_form_starts_again() {
+        assertEquals(
+            UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep),
+            move(UseSmileIDSampleErrorAction.FixInput, idDetails = UseSmileIDSampleIdDetailsSource.Token),
+        )
+        assertEquals(
+            UseSmileIDSampleErrorMove.RunFromStart(product),
+            move(UseSmileIDSampleErrorAction.FixInput, idDetails = UseSmileIDSampleIdDetailsSource.None),
+        )
+    }
+
+    @Test
     fun starting_again_takes_a_new_token_first() {
         assertEquals(UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow), move(UseSmileIDSampleErrorAction.NewSession))
     }
@@ -64,7 +76,7 @@ class UseSmileIDSampleErrorMoveTest {
     @Test
     fun a_run_whose_product_was_not_kept_can_only_leave() {
         UseSmileIDSampleErrorAction.entries.forEach {
-            assertEquals(it.id, UseSmileIDSampleErrorMove.Leave, errorMove(it, product = null, sessionLive = true, livePartnerId = "p", runPartnerId = "p"))
+            assertEquals(it.id, UseSmileIDSampleErrorMove.Leave, errorMove(it, product = null, sessionLive = true, livePartnerId = "p", runPartnerId = "p", idDetails = UseSmileIDSampleIdDetailsSource.Form))
         }
     }
 
@@ -73,5 +85,6 @@ class UseSmileIDSampleErrorMoveTest {
         sessionLive: Boolean = true,
         livePartnerId: String? = "partner_1",
         runPartnerId: String? = "partner_1",
-    ) = errorMove(action, product, sessionLive, livePartnerId, runPartnerId)
+        idDetails: UseSmileIDSampleIdDetailsSource = UseSmileIDSampleIdDetailsSource.Form,
+    ) = errorMove(action, product, sessionLive, livePartnerId, runPartnerId, idDetails)
 }

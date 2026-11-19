@@ -153,7 +153,12 @@ class _UseSmileIDSampleVerificationDetailsTabState
         // One move per page: a second tap would act on an entry the first has already replaced.
         if (_acted) return;
         _acted = true;
-        unawaited(_run(action, found?.product ?? run.product));
+        // A move that fails frees the button rather than leaving it dead.
+        unawaited(
+          _run(action, found?.product ?? run.product).catchError((Object _) {
+            if (mounted) _acted = false;
+          }),
+        );
       },
     );
   }
@@ -178,6 +183,11 @@ class _UseSmileIDSampleVerificationDetailsTabState
       sessionLive: live != null,
       livePartnerId: live?.partnerId,
       runPartnerId: ref.read(useSmileIDSampleRunPartnerProvider),
+      idDetails: product == null || !product.needsIdDetails
+          ? UseSmileIDSampleIdDetailsSource.none
+          : useSmileIDSampleLiveBindings(ref)?.bindsIdDetails(product) ?? false
+          ? UseSmileIDSampleIdDetailsSource.token
+          : UseSmileIDSampleIdDetailsSource.form,
     );
     switch (move) {
       case UseSmileIDSampleRunAgain(:final UseSmileIDSampleProduct product):

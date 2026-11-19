@@ -461,7 +461,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       product: product,
       sessionLive: live != nil,
       livePartnerId: live?.partnerId,
-      runPartnerId: app.runPartnerId
+      runPartnerId: app.runPartnerId,
+      idDetails: product.map { $0.needsIdDetails ? (app.tokenBindsIdDetails($0) ? .token : .form) : .none } ?? .none
     )
     switch move {
     case let .runAgain(product):

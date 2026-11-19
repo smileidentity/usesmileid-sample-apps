@@ -17,12 +17,15 @@ void main() {
     bool sessionLive = true,
     String? livePartnerId = 'partner_1',
     String? runPartnerId = 'partner_1',
+    UseSmileIDSampleIdDetailsSource idDetails =
+        UseSmileIDSampleIdDetailsSource.form,
   }) => useSmileIDSampleErrorMove(
     action,
     product,
     sessionLive: sessionLive,
     livePartnerId: livePartnerId,
     runPartnerId: runPartnerId,
+    idDetails: idDetails,
   );
 
   Matcher newToken(UseSmileIDSampleResumePoint resumeAt) =>
@@ -107,6 +110,26 @@ void main() {
     },
   );
 
+  test(
+    'fixing input the token carries takes a new token and a product with no id form starts again',
+    () {
+      expect(
+        move(
+          UseSmileIDSampleErrorAction.fixInput,
+          idDetails: UseSmileIDSampleIdDetailsSource.token,
+        ),
+        newToken(UseSmileIDSampleResumePoint.firstStep),
+      );
+      expect(
+        move(
+          UseSmileIDSampleErrorAction.fixInput,
+          idDetails: UseSmileIDSampleIdDetailsSource.none,
+        ),
+        isA<UseSmileIDSampleRunFromStart>(),
+      );
+    },
+  );
+
   test('starting again takes a new token first', () {
     expect(
       move(UseSmileIDSampleErrorAction.newSession),
@@ -131,6 +154,7 @@ void main() {
           sessionLive: true,
           livePartnerId: 'p',
           runPartnerId: 'p',
+          idDetails: UseSmileIDSampleIdDetailsSource.form,
         ),
         isA<UseSmileIDSampleLeave>(),
         reason: action.name,

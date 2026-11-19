@@ -42,6 +42,7 @@ fun UseSmileIDSampleBanner(
     actionLabel: String? = null,
     onAction: () -> Unit = {},
     actionProminent: Boolean = true,
+    actionEnabled: Boolean = true,
     testId: String? = null,
     actionTestId: String? = null,
 ) {
@@ -74,7 +75,7 @@ fun UseSmileIDSampleBanner(
                     Text(text = message, style = UseSmileIDSampleTheme.type.textStyleBodySm, color = colors.banner.text)
                     if (actionLabel != null && actionProminent) {
                         Spacer(Modifier.height(SmileDimens.spacingMd))
-                        UseSmileIDSampleButton(text = actionLabel, onClick = onAction, testId = actionTestId)
+                        UseSmileIDSampleButton(text = actionLabel, onClick = onAction, enabled = actionEnabled, testId = actionTestId)
                     } else if (actionLabel != null) {
                         Text(
                             text = actionLabel,
@@ -83,7 +84,7 @@ fun UseSmileIDSampleBanner(
                             modifier = Modifier
                                 .align(Alignment.End)
                                 // Clickable before the sizing modifiers, so the tap target is the padded box.
-                                .clickable(role = Role.Button, onClick = onAction)
+                                .clickable(enabled = actionEnabled, role = Role.Button, onClick = onAction)
                                 .minimumInteractiveComponentSize()
                                 .padding(horizontal = SmileDimens.spacingXs)
                                 .tagged(actionTestId),

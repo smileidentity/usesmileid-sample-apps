@@ -50,6 +50,18 @@ final class UseSmileIDSampleLeave extends UseSmileIDSampleErrorMove {
   const UseSmileIDSampleLeave();
 }
 
+/// Where the run's ID details come from, which decides what fixing them means.
+enum UseSmileIDSampleIdDetailsSource {
+  /// The ID form, which the run asks for.
+  form,
+
+  /// The token, which only a new token can change.
+  token,
+
+  /// Nowhere: the product takes no ID details.
+  none,
+}
+
 /// The move [action] makes for the run of [product], gated as a product tap is: a live session, on the run's own partner.
 UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
   UseSmileIDSampleErrorAction action,
@@ -57,6 +69,7 @@ UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
   required bool sessionLive,
   required String? livePartnerId,
   required String? runPartnerId,
+  required UseSmileIDSampleIdDetailsSource idDetails,
 }) {
   if (product == null) return const UseSmileIDSampleLeave();
   final bool ownPartner = runPartnerId != null && runPartnerId == livePartnerId;
@@ -70,12 +83,12 @@ UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
           ? UseSmileIDSampleRunAgain(product)
           : UseSmileIDSampleRunFromStart(product),
     UseSmileIDSampleErrorAction.fixInput =>
-      !sessionLive
+      !sessionLive || idDetails == UseSmileIDSampleIdDetailsSource.token
           ? UseSmileIDSampleNewToken(
               product,
               UseSmileIDSampleResumePoint.firstStep,
             )
-          : ownPartner
+          : ownPartner && idDetails == UseSmileIDSampleIdDetailsSource.form
           ? UseSmileIDSampleEditIdDetails(product)
           : UseSmileIDSampleRunFromStart(product),
     UseSmileIDSampleErrorAction.newSession => UseSmileIDSampleNewToken(

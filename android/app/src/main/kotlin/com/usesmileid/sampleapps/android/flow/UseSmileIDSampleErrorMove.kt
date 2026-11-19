@@ -22,6 +22,18 @@ internal sealed interface UseSmileIDSampleErrorMove {
     data object Leave : UseSmileIDSampleErrorMove
 }
 
+/** Where the run's ID details come from, which decides what fixing them means. */
+internal enum class UseSmileIDSampleIdDetailsSource {
+    /** The ID form, which the run asks for. */
+    Form,
+
+    /** The token, which only a new token can change. */
+    Token,
+
+    /** Nowhere: the product takes no ID details. */
+    None,
+}
+
 /** The move [action] makes for the run of [product], gated as a product tap is: a live session, on the run's own partner. */
 internal fun errorMove(
     action: UseSmileIDSampleErrorAction,
@@ -29,6 +41,7 @@ internal fun errorMove(
     sessionLive: Boolean,
     livePartnerId: String?,
     runPartnerId: String?,
+    idDetails: UseSmileIDSampleIdDetailsSource,
 ): UseSmileIDSampleErrorMove {
     if (product == null) return UseSmileIDSampleErrorMove.Leave
     val ownPartner = runPartnerId != null && runPartnerId == livePartnerId
@@ -42,8 +55,9 @@ internal fun errorMove(
             else -> UseSmileIDSampleErrorMove.RunFromStart(product)
         }
         UseSmileIDSampleErrorAction.FixInput -> when {
-            !sessionLive -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep)
-            ownPartner -> UseSmileIDSampleErrorMove.EditIdDetails(product)
+            !sessionLive || idDetails == UseSmileIDSampleIdDetailsSource.Token ->
+                UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep)
+            ownPartner && idDetails == UseSmileIDSampleIdDetailsSource.Form -> UseSmileIDSampleErrorMove.EditIdDetails(product)
             else -> UseSmileIDSampleErrorMove.RunFromStart(product)
         }
         UseSmileIDSampleErrorAction.NewSession -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow)

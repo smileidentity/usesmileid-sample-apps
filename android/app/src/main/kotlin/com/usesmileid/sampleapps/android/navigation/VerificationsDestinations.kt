@@ -31,6 +31,8 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UNSUBMITTED_JOB_ID
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleErrorMove
+import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleIdDetailsSource
+import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleRunEntry
 import com.usesmileid.sampleapps.android.flow.errorMove
 import com.usesmileid.sampleapps.android.flow.runOnly
@@ -188,9 +190,11 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             pending = app.jobs == null,
             landedFailure = landedFailure(app.flowResult.status, app.flowResult.errorResolution).takeIf { jobId == UNSUBMITTED_JOB_ID },
             landedProduct = app.flowResult.product.takeIf { jobId == UNSUBMITTED_JOB_ID },
+            // Disabled until the stored session is known, as a product tap waits for it too.
+            errorActionEnabled = app.sessionLoaded,
             onErrorAction = { action ->
-                // One move per page, and none before the stored session is known: a product tap waits for it too.
-                if (!acted && (app.sessionLoaded || action == UseSmileIDSampleErrorAction.Exit)) {
+                // One move per page: a second tap would act on an entry the first has already replaced.
+                if (!acted) {
                     acted = true
                     app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry)
                 }
@@ -224,7 +228,12 @@ private fun UseSmileIDSampleAppState.runErrorAction(
     from: NjiaEntry,
 ) {
     val live = session?.takeIf { !it.hasExpired(System.currentTimeMillis()) }
-    when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId)) {
+    val idDetails = when {
+        product?.needsIdDetails != true -> UseSmileIDSampleIdDetailsSource.None
+        tokenBindsIdDetails(product) -> UseSmileIDSampleIdDetailsSource.Token
+        else -> UseSmileIDSampleIdDetailsSource.Form
+    }
+    when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId, idDetails)) {
         is UseSmileIDSampleErrorMove.RunAgain ->
             engine.startRun(from, move.product, runOnly(move.product, flowResult.route), replace = from.id)
         is UseSmileIDSampleErrorMove.RunFromStart -> startProductRun(engine, from, move.product, replace = from.id)

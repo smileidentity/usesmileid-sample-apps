@@ -11,6 +11,7 @@ import {
   UseSmileIDSampleStatus,
   smileIDSampleLandedFailure,
   smileIDSampleLiveSession,
+  smileIDSampleBindsIdDetails,
   useSmileIDSampleActiveProfile,
   type UseSmileIDSampleErrorAction,
   type UseSmileIDSampleProduct,
@@ -122,6 +123,12 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
       sessionLive: live !== null,
       livePartnerId: live?.partnerId ?? null,
       runPartnerId: session.runPartnerId,
+      idDetails:
+        product === null || !product.needsIdDetails
+          ? 'none'
+          : smileIDSampleBindsIdDetails(smileIDSampleLiveBindingsNow(args.scenario), product)
+            ? 'token'
+            : 'form',
     });
     const runOnly = (it: UseSmileIDSampleProduct) =>
       smileIDSampleRunOnly(it, route, smileIDSampleLiveBindingsNow(args.scenario));

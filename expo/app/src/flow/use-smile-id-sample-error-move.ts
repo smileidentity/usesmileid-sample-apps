@@ -17,11 +17,15 @@ export type UseSmileIDSampleErrorMove =
   /// Out of the run, to the products tab.
   | { readonly kind: 'leave' };
 
-/// What the gate a product tap passes knows: whether a session is live, its partner, and the run's own.
+/// Where the run's ID details come from: the form it asks for, the token (which only a new token can change), or nowhere.
+export type UseSmileIDSampleIdDetailsSource = 'form' | 'token' | 'none';
+
+/// What the gate a product tap passes knows: whether a session is live, its partner, the run's own, and its ID details' source.
 export type UseSmileIDSampleErrorGate = {
   readonly sessionLive: boolean;
   readonly livePartnerId: string | null;
   readonly runPartnerId: string | null;
+  readonly idDetails: UseSmileIDSampleIdDetailsSource;
 };
 
 /// The move `action` makes for the run of `product`, gated as a product tap is: a live session, on the run's own partner.
@@ -39,8 +43,8 @@ export const smileIDSampleErrorMove = (
       if (!gate.sessionLive) return { kind: 'newToken', product, resumeAt: 'flow' };
       return ownPartner ? { kind: 'runAgain', product } : { kind: 'runFromStart', product };
     case UseSmileIDSampleErrorAction.FixInput:
-      if (!gate.sessionLive) return { kind: 'newToken', product, resumeAt: 'firstStep' };
-      return ownPartner ? { kind: 'editIdDetails', product } : { kind: 'runFromStart', product };
+      if (!gate.sessionLive || gate.idDetails === 'token') return { kind: 'newToken', product, resumeAt: 'firstStep' };
+      return ownPartner && gate.idDetails === 'form' ? { kind: 'editIdDetails', product } : { kind: 'runFromStart', product };
     case UseSmileIDSampleErrorAction.NewSession:
       return { kind: 'newToken', product, resumeAt: 'flow' };
     case UseSmileIDSampleErrorAction.Exit:
