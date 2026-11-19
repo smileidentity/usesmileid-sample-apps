@@ -2,57 +2,111 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:usesmileid_sample_flutter/src/flow/use_smileid_sample_error_move.dart';
 
-/// Where each failure action takes the user, per the `does` lines of spec/error-handling.json.
+/// Where each failure action takes the user, per the `does` lines of spec/error-handling.json, under the gate a product tap passes.
 void main() {
   const UseSmileIDSampleProduct product = UseSmileIDSampleProduct.biometricKyc;
+  const List<UseSmileIDSampleErrorAction> reruns =
+      <UseSmileIDSampleErrorAction>[
+        UseSmileIDSampleErrorAction.retry,
+        UseSmileIDSampleErrorAction.retryLater,
+        UseSmileIDSampleErrorAction.recapture,
+      ];
 
-  test('a retry a later retry and a recapture run the verification again', () {
-    for (final UseSmileIDSampleErrorAction action
-        in <UseSmileIDSampleErrorAction>[
-          UseSmileIDSampleErrorAction.retry,
-          UseSmileIDSampleErrorAction.retryLater,
-          UseSmileIDSampleErrorAction.recapture,
-        ]) {
+  UseSmileIDSampleErrorMove move(
+    UseSmileIDSampleErrorAction action, {
+    bool sessionLive = true,
+    String? livePartnerId = 'partner_1',
+    String? runPartnerId = 'partner_1',
+  }) => useSmileIDSampleErrorMove(
+    action,
+    product,
+    sessionLive: sessionLive,
+    livePartnerId: livePartnerId,
+    runPartnerId: runPartnerId,
+  );
+
+  Matcher newToken(UseSmileIDSampleResumePoint resumeAt) =>
+      isA<UseSmileIDSampleNewToken>()
+          .having(
+            (UseSmileIDSampleNewToken it) => it.product,
+            'product',
+            product,
+          )
+          .having(
+            (UseSmileIDSampleNewToken it) => it.resumeAt,
+            'resumeAt',
+            resumeAt,
+          );
+
+  test(
+    "a retry a later retry and a recapture run the verification again on the run's own partner",
+    () {
+      for (final UseSmileIDSampleErrorAction action in reruns) {
+        expect(
+          move(action),
+          isA<UseSmileIDSampleRunAgain>().having(
+            (UseSmileIDSampleRunAgain it) => it.product,
+            'product',
+            product,
+          ),
+          reason: action.name,
+        );
+      }
+    },
+  );
+
+  test(
+    'a rerun on another or an unknown partner starts from the first step',
+    () {
+      for (final UseSmileIDSampleErrorAction action in reruns) {
+        expect(
+          move(action, livePartnerId: 'partner_2'),
+          isA<UseSmileIDSampleRunFromStart>(),
+          reason: action.name,
+        );
+        expect(
+          move(action, livePartnerId: 'partner_2', runPartnerId: null),
+          isA<UseSmileIDSampleRunFromStart>(),
+          reason: action.name,
+        );
+      }
+    },
+  );
+
+  test('a rerun with no live session scans first and resumes in the flow', () {
+    for (final UseSmileIDSampleErrorAction action in reruns) {
       expect(
-        useSmileIDSampleErrorMove(action, product),
-        isA<UseSmileIDSampleRunAgain>().having(
-          (UseSmileIDSampleRunAgain it) => it.product,
-          'product',
-          product,
-        ),
+        move(action, sessionLive: false),
+        newToken(UseSmileIDSampleResumePoint.flow),
         reason: action.name,
       );
     }
   });
 
-  test('fixing the input returns to the id form', () {
-    expect(
-      useSmileIDSampleErrorMove(UseSmileIDSampleErrorAction.fixInput, product),
-      isA<UseSmileIDSampleEditIdDetails>().having(
-        (UseSmileIDSampleEditIdDetails it) => it.product,
-        'product',
-        product,
-      ),
-    );
-  });
+  test(
+    'fixing the input returns to the id form or scans first with no live session',
+    () {
+      expect(
+        move(UseSmileIDSampleErrorAction.fixInput),
+        isA<UseSmileIDSampleEditIdDetails>(),
+      );
+      expect(
+        move(UseSmileIDSampleErrorAction.fixInput, sessionLive: false),
+        newToken(UseSmileIDSampleResumePoint.firstStep),
+      );
+    },
+  );
 
   test('starting again takes a new token first', () {
     expect(
-      useSmileIDSampleErrorMove(
-        UseSmileIDSampleErrorAction.newSession,
-        product,
-      ),
-      isA<UseSmileIDSampleNewToken>().having(
-        (UseSmileIDSampleNewToken it) => it.product,
-        'product',
-        product,
-      ),
+      move(UseSmileIDSampleErrorAction.newSession),
+      newToken(UseSmileIDSampleResumePoint.flow),
     );
   });
 
   test('close leaves the run', () {
     expect(
-      useSmileIDSampleErrorMove(UseSmileIDSampleErrorAction.exit, product),
+      move(UseSmileIDSampleErrorAction.exit),
       isA<UseSmileIDSampleLeave>(),
     );
   });
@@ -61,7 +115,13 @@ void main() {
     for (final UseSmileIDSampleErrorAction action
         in UseSmileIDSampleErrorAction.values) {
       expect(
-        useSmileIDSampleErrorMove(action, null),
+        useSmileIDSampleErrorMove(
+          action,
+          null,
+          sessionLive: true,
+          livePartnerId: 'p',
+          runPartnerId: 'p',
+        ),
         isA<UseSmileIDSampleLeave>(),
         reason: action.name,
       );

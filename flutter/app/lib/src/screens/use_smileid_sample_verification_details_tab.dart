@@ -161,12 +161,30 @@ class _UseSmileIDSampleVerificationDetailsTabState
     final UseSmileIDSampleFlowRoute route = ref
         .read(useSmileIDSampleFlowResultProvider)
         .route;
-    switch (useSmileIDSampleErrorMove(action, product)) {
+    final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
+      ref.read(useSmileIDSampleSessionProvider).live,
+      DateTime.now().millisecondsSinceEpoch,
+    );
+    final UseSmileIDSampleErrorMove move = useSmileIDSampleErrorMove(
+      action,
+      product,
+      sessionLive: live != null,
+      livePartnerId: live?.partnerId,
+      runPartnerId: ref.read(useSmileIDSampleRunPartnerProvider),
+    );
+    switch (move) {
       case UseSmileIDSampleRunAgain(:final UseSmileIDSampleProduct product):
         await engine.startRun(
           widget.entry,
           product,
           useSmileIDSampleRunOnly(ref, product, route),
+          replace: widget.entry.id,
+        );
+      case UseSmileIDSampleRunFromStart(:final UseSmileIDSampleProduct product):
+        await engine.startRun(
+          widget.entry,
+          product,
+          useSmileIDSampleRunEntryFor(ref, engine.graph, product),
           replace: widget.entry.id,
         );
       case UseSmileIDSampleEditIdDetails(
@@ -181,14 +199,19 @@ class _UseSmileIDSampleVerificationDetailsTabState
           ),
           replace: widget.entry.id,
         );
-      case UseSmileIDSampleNewToken(:final UseSmileIDSampleProduct product):
-        ref
-            .read(useSmileIDSampleRunPartnerProvider.notifier)
-            .record(ref.read(useSmileIDSampleSessionProvider).live?.partnerId);
+      // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
+      case UseSmileIDSampleNewToken(
+        :final UseSmileIDSampleProduct product,
+        :final UseSmileIDSampleResumePoint resumeAt,
+      ):
         ref
             .read(useSmileIDSampleInterruptedRunProvider.notifier)
             .send(
-              UseSmileIDSampleRunIntent(productId: product.id, route: route),
+              UseSmileIDSampleRunIntent(
+                productId: product.id,
+                route: route,
+                resumeAt: resumeAt,
+              ),
             );
         await engine
             .navigator(widget.entry)
