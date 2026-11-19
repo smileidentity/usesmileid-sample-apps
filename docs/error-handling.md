@@ -65,7 +65,7 @@ apps ship.
 | `retry` | Try again | Runs the verification again as a new job | The row's `maxUses` |
 | `retryLater` | Try again | The same, with a longer delay and a single use | The row's `maxUses` |
 | `recapture` | Retake photo | Restarts capture, then submits a new job | Three in a session |
-| `fixInput` | Edit ID number | Returns to the ID form | None |
+| `fixInput` | Edit ID number | Returns to the ID form, whose Continue starts a new job | None |
 | `newSession` | Start again | Takes a new token and restarts the flow | One for each error |
 | `exit` | Close | Ends the flow | None |
 
@@ -74,6 +74,10 @@ waits 5 seconds before the first use, 15 before the second and 30 before the thi
 last entry waits the last entry again, so a timeout, which has one entry and no limit, waits 5 seconds
 before every use. `waitsFor: connection` keeps the button dimmed while the device is offline. When a
 limit is reached, Close replaces the button.
+
+The SDK's processing screen applies this pacing to its own Try again, which resubmits the same capture
+while the flow is open. Verification details is reached only after the user leaves that screen, so its
+banner offers the action once more, as a new run, with no delay or count of its own.
 
 ## 4. The resolver
 
@@ -140,7 +144,9 @@ a flow asserts on.
 ## 7. Automatic retry
 
 The SDK does not retry a request by itself. Its `retry` block's `strategy` is none unless an app sets
-it, on all four platforms, and no sample app sets it. So the banner's Try again is the only retry.
+it, on all four platforms, and no sample app sets it. Every retry is the user's: the processing screen's
+Try again resubmits the same capture while the flow is open, and the banner's action runs the
+verification again as a new job after it closes.
 
 ## Related
 
