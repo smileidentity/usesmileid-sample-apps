@@ -28,7 +28,8 @@ Every member is optional and does nothing by default:
 | `customiseFlow` | each time it configures an SDK flow, after its own configuration, so the extension can replace any of it |
 | `customiseNetwork` | last inside its network block, so the extension adds to that configuration |
 | `leadingDebugRows` | in the Settings DEBUG section, which debug builds show, above the shell's own rows (Network logs on Android and iOS), so an identity the rows below refer to comes first |
-| `debugRows` | in the same section, below the shell's own rows |
+| `debugRows` | in the same section, below the shell's own rows, with `openSheet`, which opens one of the extension's own debug sheets by id |
+| `debugSheet` | inside the shell's `debugSheet` step (`/debug/sheet/:sheetId`), with the id a row opened and a callback that closes it; the shell draws it in the shared sheet, and a release build closes the step at once and draws nothing |
 
 **The order is a guarantee:** `onLaunch`, then `launchSession`, then autostart, then the flow hooks.
 A unit test pins it on Android, Flutter and Expo with a recording extension; on iOS `App.init` runs
