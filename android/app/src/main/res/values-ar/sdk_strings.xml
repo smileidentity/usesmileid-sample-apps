@@ -72,7 +72,7 @@
     <string name="si_processing_error_unavailable">حدث خطأ ما. يرجى التواصل مع الدعم.</string>
     <string name="si_processing_error_generic">حدث خطأ ما. يرجى المحاولة مرة أخرى.</string>
     <string name="si_processing_retry">إعادة المحاولة</string>
-    <string name="si_processing_retry_in">إعادة المحاولة خلال {seconds} ث</string>
+    <string name="si_processing_retry_in">إعادة المحاولة خلال {seconds} ث</string>
     <string name="si_processing_retry_in_a11y">إعادة المحاولة، الثواني المتبقية: {seconds}</string>
     <string name="si_processing_exit">خروج</string>
     <string name="si_accessibility_capture_progress">تقدّم الالتقاط</string>
