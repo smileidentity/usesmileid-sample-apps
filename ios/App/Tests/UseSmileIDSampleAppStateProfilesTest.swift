@@ -82,26 +82,6 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
     XCTAssertEqual(app.idDetails, UseSmileIDSampleIdDetails())
   }
 
-  func testAStartedFlowHoldsTheFormsUntilTheNextProductTap() {
-    let app = appState()
-    XCTAssertFalse(app.formsFlowStarted)
-
-    app.markFormsFlowStarted()
-    XCTAssertTrue(app.formsFlowStarted)
-
-    app.fillFormForRun(.smartSelfieEnrollment)
-    XCTAssertFalse(app.formsFlowStarted)
-  }
-
-  func testSigningOutForgetsTheStartedFlow() {
-    let app = appState()
-    app.markFormsFlowStarted()
-
-    app.signOut()
-
-    XCTAssertFalse(app.formsFlowStarted)
-  }
-
   func testAnEntryAfterTheActiveProfileChangedFillsFromTheNewOne() {
     let amina = UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
     store.setProfiles(UseSmileIDSampleProfiles([

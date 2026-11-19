@@ -68,8 +68,6 @@ final class UseSmileIDSampleAppState: ObservableObject {
   @Published var idDetails = UseSmileIDSampleIdDetails()
   /// The enrolled user SmartSelfie Authentication runs as, typed or picked; never made up.
   @Published var authUserId = ""
-  /// Whether the SDK flow started with what the forms hold, since a product tap last reset them.
-  private(set) var formsFlowStarted = false
 
   /// The pickers' search text, cleared on open so a sheet never reopens filtered.
   @Published var countryQuery = ""
@@ -241,7 +239,6 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: nil)
     idDetails = UseSmileIDSampleIdDetails()
     authUserId = ""
-    formsFlowStarted = false
     profiles.clear()
     store.setProfiles(UseSmileIDSampleProfiles())
     profileDrafts = [:]
@@ -456,17 +453,11 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: profiles.active)
   }
 
-  /// The SDK flow has started with what the forms hold.
-  func markFormsFlowStarted() {
-    formsFlowStarted = true
-  }
-
   /// A product tap: fills from the active profile, clears the last run's ID details, and fetches the lists ahead.
   func fillFormForRun(_ product: UseSmileIDSampleProduct) {
     fillFromActive()
     idDetails = UseSmileIDSampleIdDetails()
     authUserId = ""
-    formsFlowStarted = false
     if product.catalogueFamily != nil, sessionActive {
       catalogue.begin(environment: environment, locale: catalogueLocale)
       ensureCatalogue(product)

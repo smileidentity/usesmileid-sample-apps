@@ -84,14 +84,10 @@ struct UseSmileIDSampleScanTokenHost: View {
       return
     }
     let intoFlow = resuming.resumesInFlow(runPartnerId: app.runPartnerId, linkedPartnerId: linked.partnerId)
-    let keepsForms = resuming.keepsForms(runPartnerId: app.runPartnerId, linkedPartnerId: linked.partnerId, formsFlowStarted: app.formsFlowStarted)
     app.runPartnerId = linked.partnerId
     guard let product = UseSmileIDSampleProduct.allCases.first(where: { $0.id == resuming.productId }) else {
       scope.navigator.back()
       return
-    }
-    if !keepsForms {
-      app.fillFormForRun(product)
     }
     let engine = navigation.engine
     let run = intoFlow ? app.runOnly(product, route: resuming.route) : app.runEntry(in: engine.graph, for: product)

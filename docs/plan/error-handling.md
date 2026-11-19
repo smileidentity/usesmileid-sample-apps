@@ -1,7 +1,6 @@
 # Friendly errors: the screen and its actions
 
-Status: the table, the resolver and the banner on verification details are in all four apps. The
-retry's delays and limits are the SDKs', on their processing screen.
+Status: the table and the resolver are in all four apps. The screen that uses them is not built.
 
 ## 1. The problem
 
@@ -22,21 +21,26 @@ Partners copy these apps as the reference integration, so they copy that handlin
   result: a refused submission by its HTTP status and the server's message, a timeout and a lost
   connection as transport failures, and no row for a failure no submission returned. A new run, or
   one the app refuses to start, clears it. The result card is unchanged.
-- Verification details shows the row as a banner, for a run that failed with no job and under the badge
-  of a job that ended in `error` or `block`, and its action runs: Try again and Retake photo start the
-  product's flow again, Edit ID number opens the ID form, Start again opens the scanner, Close leaves.
-  A run that failed before any submission explained it shows the submission fallback. The states, ids and
-  goldens are in `spec/` and each app.
 
 [Handling errors](../error-handling.md) describes all of it.
 
 ## 3. What is left
 
-Nothing on this plan. The row's `backoffSeconds` and `maxUses` were to dim the banner's button, but every
-flow in these apps ends on the SDK's processing screen. That screen already resends the same images with
-the same delays and limits by error code, and the failure reaches `onResult` only once the user leaves
-it. The banner's Try again starts a new capture, so a second delay there would make the user wait twice.
-The rows keep those fields as the record of what the SDKs apply.
+Each item is one pull request on all four apps, in this order.
+
+1. Show the message and the action on verification details: in place of "No verification here" for a
+   run that failed, and under the badge for a job that ended in `error` or `block`. The result card
+   stays, because the error still has to reach the host app.
+2. Run the actions:
+   - Try again and Retake photo start the product's flow again with the same details.
+   - Edit ID number opens the ID form, and Continue there starts the flow.
+   - Start again opens the scan sheet for a new token, then starts the flow.
+   - Close leaves the screen.
+3. Dim the button for the row's delay, with the seconds left in the label and in what a screen reader
+   announces, and enable it when the delay ends. Count uses, and replace the button with Close at the
+   limit.
+4. Add the states to `spec/screens.json`, the ids to `spec/test-ids.json`, goldens in light and dark,
+   and the font-scale predicate for the longest message.
 
 ## 4. Open questions
 

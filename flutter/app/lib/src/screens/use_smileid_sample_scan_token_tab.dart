@@ -9,8 +9,6 @@ import '../flow/use_smileid_sample_flow_tokens.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
 import '../navigation/use_smileid_sample_navigation.dart';
 import '../scan/use_smileid_sample_qr_scanner.dart';
-import '../state/use_smileid_sample_forms.dart';
-import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
 import '../use_smileid_sample_journey.dart';
 import 'use_smileid_sample_settings_tab.dart';
@@ -93,22 +91,12 @@ class _UseSmileIDSampleScanTokenTabState
       runPartnerId: ref.read(useSmileIDSampleRunPartnerProvider),
       linkedPartnerId: session.partnerId,
     );
-    final bool keepsForms = resuming.keepsForms(
-      runPartnerId: ref.read(useSmileIDSampleRunPartnerProvider),
-      linkedPartnerId: session.partnerId,
-      formsFlowStarted: ref.read(useSmileIDSampleFormsProvider).flowStarted,
-    );
     ref
         .read(useSmileIDSampleRunPartnerProvider.notifier)
         .record(session.partnerId);
     if (product == null) {
       _back();
       return;
-    }
-    if (!keepsForms) {
-      ref
-          .read(useSmileIDSampleFormsProvider.notifier)
-          .startRun(ref.read(useSmileIDSampleProfilesProvider).active);
     }
     // In the scanner's place, so a second quick tap is stale against an entry that has gone.
     unawaited(

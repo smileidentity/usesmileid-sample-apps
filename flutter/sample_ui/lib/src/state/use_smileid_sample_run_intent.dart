@@ -36,20 +36,6 @@ class UseSmileIDSampleRunIntent {
       runPartnerId != null &&
       runPartnerId == linkedPartnerId;
 
-  /// Whether the resumed run keeps the forms: into the flow, or on the run's own partner while they still hold its details.
-  bool keepsForms({
-    String? runPartnerId,
-    String? linkedPartnerId,
-    required bool formsFlowStarted,
-  }) =>
-      resumesInFlow(
-        runPartnerId: runPartnerId,
-        linkedPartnerId: linkedPartnerId,
-      ) ||
-      (formsFlowStarted &&
-          runPartnerId != null &&
-          runPartnerId == linkedPartnerId);
-
   @override
   bool operator ==(Object other) =>
       other is UseSmileIDSampleRunIntent &&

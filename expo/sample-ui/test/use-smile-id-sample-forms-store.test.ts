@@ -15,24 +15,3 @@ describe('a product tap', () => {
     expect(store().idDetails).toEqual(smileIDSampleIdDetailsDefaults);
   });
 });
-
-describe('a started flow', () => {
-  it('holds the forms until the next product tap', () => {
-    store().startRun(null);
-    expect(store().flowStarted).toBe(false);
-
-    store().markFlowStarted();
-    expect(store().flowStarted).toBe(true);
-
-    store().startRun(null);
-    expect(store().flowStarted).toBe(false);
-  });
-
-  it('is forgotten on signing out', () => {
-    store().markFlowStarted();
-
-    store().clear();
-
-    expect(store().flowStarted).toBe(false);
-  });
-});

@@ -24,10 +24,4 @@ public extension UseSmileIDSampleRunIntent {
   func resumesInFlow(runPartnerId: String?, linkedPartnerId: String?) -> Bool {
     resumeAt == .flow && runPartnerId != nil && runPartnerId == linkedPartnerId
   }
-
-  /// Whether the resumed run keeps the forms: into the flow, or on the run's own partner while they still hold its details.
-  func keepsForms(runPartnerId: String?, linkedPartnerId: String?, formsFlowStarted: Bool) -> Bool {
-    resumesInFlow(runPartnerId: runPartnerId, linkedPartnerId: linkedPartnerId)
-      || (formsFlowStarted && runPartnerId != nil && runPartnerId == linkedPartnerId)
-  }
 }

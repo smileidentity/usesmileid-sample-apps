@@ -1,5 +1,4 @@
 import Foundation
-import Njia
 import SampleUI
 
 /// Where a run starts: the facts it runs under and the step a product tap goes to.
@@ -29,20 +28,5 @@ extension UseSmileIDSampleAppState {
       facts: useSmileIDSampleFacts(product, bindsIdDetails: tokenBindsIdDetails(product), route: route),
       step: (route == .fullscreen ? UseSmileIDSampleStep.sdkFlowFullScreen : .sdkFlow).rawValue
     )
-  }
-}
-
-extension UseSmileIDSampleAppState {
-  /// A product tap's run from `from`, in place of `replace` if given: fresh forms, the run's partner, and the scanner first with no live session.
-  func startProductRun(engine: UseSmileIDSampleEngine, from: NjiaEntry, product: UseSmileIDSampleProduct, replace: Int64? = nil) {
-    // Fresh from the profile, so one run's ID details never carry into another, least of all another partner's.
-    fillFormForRun(product)
-    let run = entry(in: engine.graph, for: product)
-    runPartnerId = run == nil ? nil : session?.partnerId
-    if let run {
-      engine.startRun(from: from, product: product, run: run, replace: replace)
-    } else {
-      engine.navigator(from).go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: replace)
-    }
   }
 }

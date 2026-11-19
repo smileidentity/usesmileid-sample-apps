@@ -4,7 +4,7 @@
   "actions": {
     "retry": {
       "button": "common_try_again",
-      "does": "Runs the verification again as a new job, once the row's `backoffSeconds` entry for this use has passed and `waitsFor` no longer holds."
+      "does": "Runs the verification again as a new job. The button stays visible and is dimmed for the row's `backoffSeconds`, one entry per use, and for `waitsFor` while that holds."
     },
     "retryLater": {
       "button": "common_try_again",
@@ -18,7 +18,7 @@
     },
     "fixInput": {
       "button": "error_action_edit_id_number",
-      "does": "Returns to the ID form, whose Continue runs the verification again as a new job."
+      "does": "Returns to the ID form. No new capture."
     },
     "newSession": {
       "button": "error_action_start_again",
@@ -31,7 +31,7 @@
       "does": "Ends the flow. No retry is offered, and the error still reaches the host app."
     }
   },
-  "limits": "`maxUses` on a row overrides its action's. `per: session` counts every use of the action in the session, `per: error` counts uses for one error. A row with neither has no limit. A use past the last `backoffSeconds` entry waits the last entry again, so a row with one entry waits that long before every use. When a limit is reached the button is replaced by Close. The SDK's processing screen applies these to its own Try again, which resubmits the same capture while the flow is open. Verification details is reached only after the user leaves that screen, so its banner offers the action once more, as a new run, with no delay or count of its own.",
+  "limits": "`maxUses` on a row overrides its action's. `per: session` counts every use of the action in the session, `per: error` counts uses for one error. A row with neither has no limit. A use past the last `backoffSeconds` entry waits the last entry again, so a row with one entry waits that long before every use. When a limit is reached the button is replaced by Close.",
   "submission": [
     { "id": "idNumberInvalid", "status": [400], "serverMessageContains": ["id number format", "id_number", "id_type"], "message": "error_id_number_invalid", "action": "fixInput" },
     { "id": "callbackUrlMissing", "status": [400], "serverMessageContains": ["callback"], "message": "error_service_not_set_up", "action": "exit" },

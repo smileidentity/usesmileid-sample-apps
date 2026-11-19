@@ -193,13 +193,3 @@ export const smileIDSampleResumesInFlow = (
   runPartnerId: string | null,
   linkedPartnerId: string | null,
 ): boolean => intent.resumeAt === 'flow' && runPartnerId !== null && runPartnerId === linkedPartnerId;
-
-/// Whether the resumed run keeps the forms: into the flow, or on the run's own partner while they still hold its details.
-export const smileIDSampleKeepsForms = (
-  intent: UseSmileIDSampleRunIntent,
-  runPartnerId: string | null,
-  linkedPartnerId: string | null,
-  formsFlowStarted: boolean,
-): boolean =>
-  smileIDSampleResumesInFlow(intent, runPartnerId, linkedPartnerId) ||
-  (formsFlowStarted && runPartnerId !== null && runPartnerId === linkedPartnerId);

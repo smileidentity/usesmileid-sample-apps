@@ -2,13 +2,10 @@ import {
   ScanTokenScreen,
   SMILE_ID_PORTAL_URL,
   smileIDSampleProducts,
-  smileIDSampleKeepsForms,
   smileIDSampleResumesInFlow,
   smileIDSampleSessionExpired,
   smileIDSampleSessionHasExpired,
   smileIDSampleTokenSession,
-  useSmileIDSampleFormsStore,
-  useSmileIDSampleProfileStore,
   useSmileIDSampleSessionStore,
   type UseSmileIDSampleScanFeedback,
   type UseSmileIDSampleTokenSession,
@@ -91,16 +88,10 @@ export const UseSmileIDSampleScanTokenStep = ({ scope }: { scope: UseSmileIDSamp
     const product = smileIDSampleProducts.find((candidate) => candidate.id === resuming.productId);
     const store = useSmileIDSampleSessionStore.getState();
     const intoFlow = smileIDSampleResumesInFlow(resuming, store.runPartnerId, current.partnerId);
-    const forms = useSmileIDSampleFormsStore.getState();
-    const keepsForms = smileIDSampleKeepsForms(resuming, store.runPartnerId, current.partnerId, forms.flowStarted);
     store.recordRunPartner(current.partnerId);
     if (product === undefined) {
       back();
       return;
-    }
-    if (!keepsForms) {
-      const profiles = useSmileIDSampleProfileStore.getState();
-      forms.startRun(profiles.items.find((item) => item.id === profiles.activeId) ?? null);
     }
     const bindings = smileIDSampleLiveBindingsNow(scenario);
     smileIDSampleStartRun(
