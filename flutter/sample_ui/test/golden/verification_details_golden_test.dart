@@ -86,7 +86,7 @@ void main() {
     );
   });
 
-  /// A run whose submission the server refused, landed with no job: its message and the action that can get past it.
+  /// A run whose submission the server refused, landed with no job: its message, as a release build draws it.
   testWidgets('verification details failed', (WidgetTester tester) async {
     await _screenGoldens(
       tester,

@@ -116,7 +116,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
-      // A run whose submission the server refused, landed with no job: its message and the action past it.
       failed: {
         element: () =>
           details({

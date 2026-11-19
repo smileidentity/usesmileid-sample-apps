@@ -114,6 +114,8 @@ accent edge and glyph, and a short title over the row's message.
 - A run that failed before any submission explained it, such as a flow the SDK refused to build or a
   camera that could not start, shows the submission fallback.
 - The result card stays under the banner in debug builds, so the SDK's own error is still on screen.
+- A run with no job lands on the one `unsubmitted` page, so that page always states the latest such run, as the
+  result card does.
 - `sample_error_banner` is the id a flow asserts on.
 
 ## 6. What an app cannot tell apart
