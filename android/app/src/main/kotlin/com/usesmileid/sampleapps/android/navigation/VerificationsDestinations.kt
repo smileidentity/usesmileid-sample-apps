@@ -193,11 +193,8 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             // Disabled until the stored session is known, as a product tap waits for it too.
             errorActionEnabled = app.sessionLoaded,
             onErrorAction = { action ->
-                // One move per page: a second tap would act on an entry the first has already replaced.
-                if (!acted) {
-                    acted = true
-                    app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry)
-                }
+                // One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
+                if (!acted) acted = app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry)
             },
         )
         // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
@@ -220,13 +217,13 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
     }
 }
 
-/** Runs a failure's [action] for [product] from the details entry, which the move replaces. */
+/** Runs a failure's [action] for [product] from the details entry; true when the move replaced that entry, false when Close kept it. */
 private fun UseSmileIDSampleAppState.runErrorAction(
     action: UseSmileIDSampleErrorAction,
     product: UseSmileIDSampleProduct?,
     engine: UseSmileIDSampleEngine,
     from: NjiaEntry,
-) {
+): Boolean {
     val live = session?.takeIf { !it.hasExpired(System.currentTimeMillis()) }
     val idDetails = when {
         product?.needsIdDetails != true -> UseSmileIDSampleIdDetailsSource.None
@@ -248,6 +245,10 @@ private fun UseSmileIDSampleAppState.runErrorAction(
             interruptedRun.send(UseSmileIDSampleRunIntent(move.product.id, flowResult.route, move.resumeAt))
             engine.navigator(from).go(UseSmileIDSampleStep.ScanToken.wireName, replace = from.id)
         }
-        UseSmileIDSampleErrorMove.Leave -> engine.leaveToProducts()
+        UseSmileIDSampleErrorMove.Leave -> {
+            engine.leaveToProducts()
+            return false
+        }
     }
+    return true
 }

@@ -150,21 +150,26 @@ class _UseSmileIDSampleVerificationDetailsTabState
           : null,
       landedProduct: landed ? run.product : null,
       onErrorAction: (UseSmileIDSampleErrorAction action) {
-        // One move per page: a second tap would act on an entry the first has already replaced.
+        // One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
         if (_acted) return;
         _acted = true;
-        // A move that fails frees the button rather than leaving it dead.
+        // Freed again when the move kept this page (Close) or failed, so the button is never left dead.
         unawaited(
-          _run(action, found?.product ?? run.product).catchError((Object _) {
-            if (mounted) _acted = false;
-          }),
+          _run(action, found?.product ?? run.product).then(
+            (bool replaced) {
+              if (!replaced && mounted) _acted = false;
+            },
+            onError: (Object _) {
+              if (mounted) _acted = false;
+            },
+          ),
         );
       },
     );
   }
 
-  /// Runs a failure's [action] for [product] in place of this page's entry.
-  Future<void> _run(
+  /// Runs a failure's [action] for [product]; true when it replaced this page's entry, false when Close kept it.
+  Future<bool> _run(
     UseSmileIDSampleErrorAction action,
     UseSmileIDSampleProduct? product,
   ) async {
@@ -236,7 +241,9 @@ class _UseSmileIDSampleVerificationDetailsTabState
             .go(UseSmileIDSampleStep.scanToken.name, replace: widget.entry.id);
       case UseSmileIDSampleLeave():
         await engine.leaveToProducts();
+        return false;
     }
+    return true;
   }
 
   UseSmileIDSampleJob? _stored() {

@@ -408,7 +408,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
 
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var notice: UseSmileIDSampleTransientNotice?
-  /// One move per page: a second tap would act on an entry the first has already replaced.
+  /// One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
   @State private var acted = false
 
   var body: some View {
@@ -433,8 +433,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onRefresh: { await refresh() },
       onErrorAction: { action in
         guard !acted else { return }
-        acted = true
-        run(action)
+        acted = run(action)
       }
     )
     // Asked again with the list's backoff while the server still has it processing, and afresh under a new session.
@@ -452,8 +451,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     }
   }
 
-  /// Runs a failure's action for the job's product, or the failed run's, in place of this entry.
-  private func run(_ action: UseSmileIDSampleErrorAction) {
+  /// Runs a failure's action for the job's product, or the failed run's; true when it replaced this entry, false when Close kept it.
+  private func run(_ action: UseSmileIDSampleErrorAction) -> Bool {
     let product = app.jobs?.first { $0.id == jobId }?.product ?? app.flowResult.product
     let live = app.session.flatMap { $0.hasExpired(at: Date()) ? nil : $0 }
     let move = useSmileIDSampleErrorMove(
@@ -479,7 +478,9 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       engine.navigator(entry).go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: entry.id)
     case .leave:
       engine.leaveToProducts()
+      return false
     }
+    return true
   }
 
   /// The row once the store has emitted at all; nil if the list arrives without it.

@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/navigation/use_smileid_sample_njia.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'support/use_smileid_sample_test_njia.dart';
@@ -512,6 +513,39 @@ void main() {
       findsOne,
     );
   });
+
+  testWidgets(
+    "a failed run's Close leaves to products again on a later visit, as its page stays on the verifications tab",
+    (WidgetTester tester) async {
+      await pumpAt(
+        tester,
+        UseSmileIDSampleRoutes.verificationDetails('unsubmitted'),
+        stored: <UseSmileIDSampleJob>[],
+      );
+      container
+          .read(useSmileIDSampleFlowResultProvider.notifier)
+          .record(
+            UseSmileIDSampleFlowStatus.failed,
+            errorResolution: UseSmileIDSampleErrorHandling.submissionFallback,
+          );
+      await tester.pumpAndSettle();
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.errorAction));
+      await tester.pumpAndSettle();
+      expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.products);
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.navVerifications));
+      await tester.pumpAndSettle();
+      expect(
+        useSmileIDSampleTestTop(tester),
+        UseSmileIDSampleStep.verificationDetails,
+      );
+
+      await tester.tap(byId(UseSmileIDSampleTestIds.errorAction));
+      await tester.pumpAndSettle();
+      expect(useSmileIDSampleTestTop(tester), UseSmileIDSampleStep.products);
+    },
+  );
 }
 
 class _SlowReadRepository extends UseSmileIDSampleMemoryJobsRepository {
