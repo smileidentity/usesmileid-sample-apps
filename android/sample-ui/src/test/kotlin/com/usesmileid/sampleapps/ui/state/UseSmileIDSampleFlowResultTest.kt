@@ -103,6 +103,16 @@ class UseSmileIDSampleFlowResultTest {
     }
 
     @Test
+    fun a_blocked_run_keeps_its_own_product_not_the_previous_runs() {
+        val flow = UseSmileIDSampleFlowResult()
+        flow.startFlow(UseSmileIDSampleEnvironment.Sandbox, UseSmileIDSampleProduct.SmartSelfieEnrollment)
+
+        flow.recordBlocked("no token", UseSmileIDSampleEnvironment.Sandbox, UseSmileIDSampleProduct.EnhancedKyc)
+
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flow.product)
+    }
+
+    @Test
     fun a_blocked_run_has_no_row() {
         val flow = UseSmileIDSampleFlowResult()
         flow.recordResultCallback(

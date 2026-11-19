@@ -7,6 +7,7 @@ import com.usesmileid.data.model.CapturedJob
 import com.usesmileid.sampleapps.android.flow.deleteFiles
 import com.usesmileid.sampleapps.android.flow.recordResult
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleErrorHandling
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleFlowResult
 import org.junit.Assert.assertEquals
@@ -43,6 +44,15 @@ class SdkFlowResultTest {
 
         assertEquals(UseSmileIDSampleFlowStatus.Failed, flowResult.status)
         assertEquals(UseSmileIDSampleErrorHandling.forStatus(429), flowResult.errorResolution)
+    }
+
+    @Test
+    fun `a failure delivered before the run started still records its product`() {
+        val flowResult = UseSmileIDSampleFlowResult()
+
+        recordResult(flowResult, UseSmileIDResult.Failure(NetworkServerException(statusCode = 503)), UseSmileIDSampleProduct.EnhancedKyc)
+
+        assertEquals(UseSmileIDSampleProduct.EnhancedKyc, flowResult.product)
     }
 
     @Test

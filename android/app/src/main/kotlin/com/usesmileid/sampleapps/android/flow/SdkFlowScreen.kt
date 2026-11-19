@@ -98,6 +98,7 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
                     issues.joinToString("; ") { it.message ?: it::class.simpleName.orEmpty() }
                         .ifBlank { "The flow did not validate" },
                     snapshot.environment,
+                    snapshot.product,
                 )
                 engine.leaveRun(scope.entry, UseSmileIDSampleStep.VerificationDetails.wireName, arg = UNSUBMITTED_JOB_ID)
             }
@@ -143,7 +144,7 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
                 if (snapshot.scenario != UseSmileIDSampleScenario.NoCallback) {
                     onResult = { result ->
                         viewModel.markResultDelivered()
-                        recordResult(app.flowResult, result)
+                        recordResult(app.flowResult, result, snapshot.product)
                         // Before the throw: a callback that throws must not leave the captured images on disk.
                         if (result is UseSmileIDResult.Captured) app.storeScope.launch { result.job.deleteFiles() }
                         if (snapshot.scenario == UseSmileIDSampleScenario.ThrowingCallback) {
@@ -173,7 +174,13 @@ internal fun SdkFlowScreen(scope: UseSmileIDSampleStepScope, viewModel: SdkFlowV
 }
 
 /** What the result card records for a terminal result. */
-internal fun recordResult(flowResult: UseSmileIDSampleFlowResult, result: UseSmileIDResult<JobSubmissionResponse>) {
+internal fun recordResult(
+    flowResult: UseSmileIDSampleFlowResult,
+    result: UseSmileIDResult<JobSubmissionResponse>,
+    product: UseSmileIDSampleProduct? = null,
+) {
+    // A first-composition Failure arrives before startFlow, so the product is recorded with the result too.
+    product?.let(flowResult::recordProduct)
     when (result) {
         is UseSmileIDResult.Success -> flowResult.recordResultCallback(
             status = UseSmileIDSampleFlowStatus.Succeeded,
@@ -211,5 +218,4 @@ private fun processingJob(snapshot: FlowLaunchSnapshot, response: JobSubmissionR
 )
 
 /** A failed or captured run has no server-issued job id, so the landing route carries a stable non-id. */
-/** The details route's id for a run that ended with no job, where its failure is stated. */
 internal const val UNSUBMITTED_JOB_ID = "unsubmitted"

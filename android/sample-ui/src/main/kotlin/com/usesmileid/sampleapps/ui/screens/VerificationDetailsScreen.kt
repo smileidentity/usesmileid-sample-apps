@@ -62,6 +62,7 @@ fun VerificationDetailsScreen(
     landedFailure: UseSmileIDSampleErrorResolution? = null,
     /** That run's product, named over its banner. */
     landedProduct: UseSmileIDSampleProduct? = null,
+    /** Runs the banner's one action. */
     onErrorAction: (UseSmileIDSampleErrorAction) -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),

@@ -124,9 +124,15 @@ class UseSmileIDSampleFlowResult(
         this.errorResolution = errorResolution
     }
 
+    /** The run of [product] whose failure actions run again. */
+    fun recordProduct(product: UseSmileIDSampleProduct) {
+        this.product = product
+    }
+
     /** The gate refused the run, so the SDK never mounted. Not counted as a result callback. */
-    fun recordBlocked(reason: String, environment: UseSmileIDSampleEnvironment) {
+    fun recordBlocked(reason: String, environment: UseSmileIDSampleEnvironment, product: UseSmileIDSampleProduct? = null) {
         this.environment = environment
+        this.product = product
         status = UseSmileIDSampleFlowStatus.Failed
         jobId = null
         userId = null

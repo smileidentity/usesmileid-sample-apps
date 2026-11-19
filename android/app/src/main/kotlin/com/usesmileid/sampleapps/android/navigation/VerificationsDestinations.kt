@@ -33,12 +33,12 @@ import com.usesmileid.sampleapps.android.flow.UNSUBMITTED_JOB_ID
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleErrorMove
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleRunEntry
 import com.usesmileid.sampleapps.android.flow.errorMove
+import com.usesmileid.sampleapps.android.flow.runEntryFor
 import com.usesmileid.sampleapps.android.flow.runOnly
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.njia.NjiaEntry
 import com.usesmileid.njia.navigator
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleResumePoint
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 import com.usesmileid.sampleapps.ui.state.landedFailure
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
@@ -217,18 +217,21 @@ private fun UseSmileIDSampleAppState.runErrorAction(
     engine: UseSmileIDSampleEngine,
     from: NjiaEntry,
 ) {
-    when (val move = errorMove(action, product)) {
+    val live = session?.takeIf { !it.hasExpired(System.currentTimeMillis()) }
+    when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId)) {
         is UseSmileIDSampleErrorMove.RunAgain ->
             engine.startRun(from, move.product, runOnly(move.product, flowResult.route), replace = from.id)
+        is UseSmileIDSampleErrorMove.RunFromStart ->
+            engine.startRun(from, move.product, runEntryFor(engine.graph, move.product), replace = from.id)
         is UseSmileIDSampleErrorMove.EditIdDetails -> engine.startRun(
             from,
             move.product,
-            UseSmileIDSampleRunEntry(njiaFactsFor(move.product), UseSmileIDSampleStep.IdDetailsForm.wireName),
+            UseSmileIDSampleRunEntry(runOnly(move.product, flowResult.route).facts, UseSmileIDSampleStep.IdDetailsForm.wireName),
             replace = from.id,
         )
+        // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
         is UseSmileIDSampleErrorMove.NewToken -> {
-            interruptedRun.runPartnerId = session?.partnerId
-            interruptedRun.send(UseSmileIDSampleRunIntent(move.product.id, flowResult.route, UseSmileIDSampleResumePoint.Flow))
+            interruptedRun.send(UseSmileIDSampleRunIntent(move.product.id, flowResult.route, move.resumeAt))
             engine.navigator(from).go(UseSmileIDSampleStep.ScanToken.wireName, replace = from.id)
         }
         UseSmileIDSampleErrorMove.Leave -> engine.leaveToProducts()
