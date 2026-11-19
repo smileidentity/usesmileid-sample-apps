@@ -64,7 +64,6 @@ public struct UseSmileIDSampleBanner: View {
     }
     .padding(SmileSpacing.spacingMd)
     .frame(maxWidth: .infinity, alignment: .leading)
-    // The bar on the leading edge, the full height, clipped by the card's corners as the contract draws it.
     .background(alignment: .leading) {
       ZStack(alignment: .leading) {
         colors.card.background

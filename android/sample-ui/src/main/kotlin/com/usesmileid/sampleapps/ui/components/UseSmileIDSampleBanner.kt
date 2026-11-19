@@ -30,7 +30,7 @@ import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 /** Which accent a banner carries: warning for a failure the user can act on, error for one that is final. */
 enum class UseSmileIDSampleBannerTone { Warning, Error }
 
-/** The design system's banner on the card surface: an accent bar and glyph, the message, and at most one action under it, a button when it moves the user on and a text action when it only closes. */
+/** The design system's banner on the card surface: an accent bar and glyph, the message, and at most one action under it. */
 @Composable
 fun UseSmileIDSampleBanner(
     message: String,
