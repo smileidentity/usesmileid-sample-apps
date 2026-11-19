@@ -93,6 +93,15 @@ final class UseSmileIDSampleAppStateProfilesTest: XCTestCase {
     XCTAssertFalse(app.formsFlowStarted)
   }
 
+  func testSigningOutForgetsTheStartedFlow() {
+    let app = appState()
+    app.markFormsFlowStarted()
+
+    app.signOut()
+
+    XCTAssertFalse(app.formsFlowStarted)
+  }
+
   func testAnEntryAfterTheActiveProfileChangedFillsFromTheNewOne() {
     let amina = UseSmileIDSampleUserDetails(firstName: "Amina", lastName: "Diallo")
     store.setProfiles(UseSmileIDSampleProfiles([

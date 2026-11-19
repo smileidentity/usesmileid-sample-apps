@@ -241,6 +241,7 @@ final class UseSmileIDSampleAppState: ObservableObject {
     fillForm(from: nil)
     idDetails = UseSmileIDSampleIdDetails()
     authUserId = ""
+    formsFlowStarted = false
     profiles.clear()
     store.setProfiles(UseSmileIDSampleProfiles())
     profileDrafts = [:]

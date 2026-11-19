@@ -138,5 +138,6 @@ export const useSmileIDSampleFormsStore = create<State & Actions>((set) => ({
       saveToProfile: true,
       organisation: '',
       authUserId: '',
+      flowStarted: false,
     }),
 }));

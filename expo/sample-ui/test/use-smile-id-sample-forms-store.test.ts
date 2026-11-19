@@ -27,4 +27,12 @@ describe('a started flow', () => {
     store().startRun(null);
     expect(store().flowStarted).toBe(false);
   });
+
+  it('is forgotten on signing out', () => {
+    store().markFlowStarted();
+
+    store().clear();
+
+    expect(store().flowStarted).toBe(false);
+  });
 });

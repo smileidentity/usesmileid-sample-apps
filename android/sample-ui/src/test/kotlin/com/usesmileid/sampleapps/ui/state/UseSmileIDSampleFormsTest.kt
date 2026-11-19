@@ -99,6 +99,16 @@ class UseSmileIDSampleFormsTest {
     }
 
     @Test
+    fun signing_out_forgets_the_started_flow() {
+        val forms = UseSmileIDSampleForms()
+        forms.markFlowStarted()
+
+        forms.clear()
+
+        assertFalse(forms.flowStarted)
+    }
+
+    @Test
     fun the_authentication_user_id_survives_the_saver_and_a_new_run_or_sign_out_drops_it() {
         val scope = SaverScope { true }
         val chosen = UseSmileIDSampleForms().apply { authUserId("user_01m4gahg4ceceatsw25mc5dd1h") }

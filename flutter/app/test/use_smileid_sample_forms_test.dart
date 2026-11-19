@@ -211,6 +211,16 @@ void main() {
     expect(flowStarted(), isFalse);
   });
 
+  test('signing out forgets the started flow', () {
+    final ProviderContainer container = ProviderContainer();
+    addTearDown(container.dispose);
+    container.read(useSmileIDSampleFormsProvider.notifier)
+      ..markFlowStarted()
+      ..clear();
+
+    expect(container.read(useSmileIDSampleFormsProvider).flowStarted, isFalse);
+  });
+
   group('the ID form', () {
     Future<void> openForm(WidgetTester tester) =>
         pumpAt(tester, UseSmileIDSampleRoutes.idDetailsForm('biometricKyc'));

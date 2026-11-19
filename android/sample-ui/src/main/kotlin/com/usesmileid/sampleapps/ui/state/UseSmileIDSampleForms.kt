@@ -126,6 +126,7 @@ class UseSmileIDSampleForms(
         fillFrom(null)
         idDetails = UseSmileIDSampleIdDetails()
         authUserId = ""
+        flowStarted = false
     }
 
     companion object {
