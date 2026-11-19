@@ -349,6 +349,8 @@ final class UseSmileIDSampleStrings {
   String get errorActionEditIdNumber => _values['error_action_edit_id_number']!;
   String get errorActionStartAgain => _values['error_action_start_again']!;
   String get errorActionClose => _values['error_action_close']!;
+  String get errorTitleNotCompleted => _values['error_title_not_completed']!;
+  String get errorTitleFailed => _values['error_title_failed']!;
   String get detailsTitle => _values['details_title']!;
   String get detailsMissingTitle => _values['details_missing_title']!;
   String detailsMissingBody({required String jobId}) =>
@@ -783,6 +785,8 @@ final class UseSmileIDSampleStrings {
       'error_action_edit_id_number': 'Edit ID number',
       'error_action_start_again': 'Start again',
       'error_action_close': 'Close',
+      'error_title_not_completed': 'Verification not completed',
+      'error_title_failed': 'Verification failed',
       'details_title': 'Verification details',
       'details_missing_title': 'No verification here',
       'details_missing_body': 'Nothing stored for jobId = {jobId}',
@@ -1200,6 +1204,8 @@ final class UseSmileIDSampleStrings {
       'error_action_edit_id_number': 'Modifier le numéro de pièce',
       'error_action_start_again': 'Recommencer',
       'error_action_close': 'Fermer',
+      'error_title_not_completed': 'Vérification non terminée',
+      'error_title_failed': 'Échec de la vérification',
       'details_title': 'Détails de la vérification',
       'details_missing_title': 'Aucune vérification ici',
       'details_missing_body': 'Rien d’enregistré pour jobId = {jobId}',
@@ -1614,6 +1620,8 @@ final class UseSmileIDSampleStrings {
       'error_action_edit_id_number': 'تعديل رقم الهوية',
       'error_action_start_again': 'البدء من جديد',
       'error_action_close': 'إغلاق',
+      'error_title_not_completed': 'لم يكتمل التحقق',
+      'error_title_failed': 'فشل التحقق',
       'details_title': 'تفاصيل عملية التحقق',
       'details_missing_title': 'لا توجد عملية تحقق هنا',
       'details_missing_body': 'لا شيء محفوظ لـ jobId = {jobId}',
@@ -2004,6 +2012,8 @@ final class UseSmileIDSampleStrings {
       'error_action_edit_id_number': 'עריכת מספר התעודה',
       'error_action_start_again': 'התחלה מחדש',
       'error_action_close': 'סגירה',
+      'error_title_not_completed': 'האימות לא הושלם',
+      'error_title_failed': 'האימות נכשל',
       'details_title': 'פרטי האימות',
       'details_missing_title': 'אין כאן אימות',
       'details_missing_body': 'לא נשמר דבר עבור jobId = {jobId}',

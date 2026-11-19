@@ -242,6 +242,8 @@
     <string name="sample_error_action_edit_id_number">تعديل رقم الهوية</string>
     <string name="sample_error_action_start_again">البدء من جديد</string>
     <string name="sample_error_action_close">إغلاق</string>
+    <string name="sample_error_title_not_completed">لم يكتمل التحقق</string>
+    <string name="sample_error_title_failed">فشل التحقق</string>
     <string name="sample_details_title">تفاصيل عملية التحقق</string>
     <string name="sample_details_missing_title">لا توجد عملية تحقق هنا</string>
     <string name="sample_details_missing_body">لا شيء محفوظ لـ jobId = %1$s</string>

@@ -251,6 +251,8 @@
   "error_action_edit_id_number": "Modifier le numéro de pièce",
   "error_action_start_again": "Recommencer",
   "error_action_close": "Fermer",
+  "error_title_not_completed": "Vérification non terminée",
+  "error_title_failed": "Échec de la vérification",
 
   "details_title": "Détails de la vérification",
   "details_missing_title": "Aucune vérification ici",

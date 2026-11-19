@@ -247,6 +247,8 @@ object UseSmileIDSampleStrings {
     val errorActionEditIdNumber: String @Composable get() = stringResource(R.string.sample_error_action_edit_id_number)
     val errorActionStartAgain: String @Composable get() = stringResource(R.string.sample_error_action_start_again)
     val errorActionClose: String @Composable get() = stringResource(R.string.sample_error_action_close)
+    val errorTitleNotCompleted: String @Composable get() = stringResource(R.string.sample_error_title_not_completed)
+    val errorTitleFailed: String @Composable get() = stringResource(R.string.sample_error_title_failed)
     val detailsTitle: String @Composable get() = stringResource(R.string.sample_details_title)
     val detailsMissingTitle: String @Composable get() = stringResource(R.string.sample_details_missing_title)
     @Composable fun detailsMissingBody(jobId: String): String = stringResource(R.string.sample_details_missing_body, jobId)

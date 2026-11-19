@@ -100,8 +100,8 @@ A lookup returns a resolution:
 
 ## 5. The banner
 
-Verification details shows a failure as a banner: the design system's banner on the card surface, with
-an accent bar and glyph, the message, and the row's action under it.
+Verification details shows a failure as the design system's banner: a neutral surface with the tone's
+accent edge and glyph, a short title over the row's message, and the row's action under it.
 
 | Visit | What it shows |
 |---|---|
@@ -109,8 +109,9 @@ an accent bar and glyph, the message, and the row's action under it.
 | A stored job that ended in `error` or `block` | The banner under the status badge |
 | Any other visit | No banner |
 
-- The tone is warning, with a filled button, while the action can get past the failure. A row whose only
-  action is Close takes the error tone, and Close is a text action.
+- The tone is warning, titled "Verification not completed", with a filled button, while the action can
+  get past the failure. A row whose only action is Close takes the error tone, titled "Verification
+  failed", and Close is a text action.
 - On a stored job the banner has no Close: the app bar's back already leaves the page.
 - A run that failed before any submission explained it, such as a camera that could not start, shows the
   submission fallback: the message for a request the table does not name, and Close.

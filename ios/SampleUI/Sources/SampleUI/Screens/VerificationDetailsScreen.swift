@@ -163,6 +163,7 @@ public struct VerificationDetailsScreen: View {
 
   private func banner(_ failure: UseSmileIDSampleErrorResolution, onStoredJob: Bool) -> some View {
     UseSmileIDSampleBanner(
+      title: failure.bannerTone == .warning ? UseSmileIDSampleStrings.errorTitleNotCompleted : UseSmileIDSampleStrings.errorTitleFailed,
       message: failure.message.text,
       tone: failure.bannerTone,
       actionLabel: failure.offersAction(onStoredJob: onStoredJob) ? failure.action.label : nil,

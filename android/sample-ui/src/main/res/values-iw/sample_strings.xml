@@ -242,6 +242,8 @@
     <string name="sample_error_action_edit_id_number">עריכת מספר התעודה</string>
     <string name="sample_error_action_start_again">התחלה מחדש</string>
     <string name="sample_error_action_close">סגירה</string>
+    <string name="sample_error_title_not_completed">האימות לא הושלם</string>
+    <string name="sample_error_title_failed">האימות נכשל</string>
     <string name="sample_details_title">פרטי האימות</string>
     <string name="sample_details_missing_title">אין כאן אימות</string>
     <string name="sample_details_missing_body">לא נשמר דבר עבור jobId = %1$s</string>

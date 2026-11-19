@@ -967,6 +967,14 @@ public enum UseSmileIDSampleStrings {
     text("error_action_close")
   }
 
+  public static var errorTitleNotCompleted: String {
+    text("error_title_not_completed")
+  }
+
+  public static var errorTitleFailed: String {
+    text("error_title_failed")
+  }
+
   public static var detailsTitle: String {
     text("details_title")
   }

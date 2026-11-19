@@ -168,6 +168,9 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     UseSmileIDSampleErrorResolution failure, {
     required bool onStoredJob,
   }) => UseSmileIDSampleBanner(
+    title: failure.bannerTone == UseSmileIDSampleBannerTone.warning
+        ? context.strings.errorTitleNotCompleted
+        : context.strings.errorTitleFailed,
     message: failure.message.text(context.strings),
     tone: failure.bannerTone,
     actionLabel: failure.offersAction(onStoredJob: onStoredJob)

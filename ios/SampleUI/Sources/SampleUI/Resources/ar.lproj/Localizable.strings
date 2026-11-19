@@ -240,6 +240,8 @@
 "error_action_edit_id_number" = "تعديل رقم الهوية";
 "error_action_start_again" = "البدء من جديد";
 "error_action_close" = "إغلاق";
+"error_title_not_completed" = "لم يكتمل التحقق";
+"error_title_failed" = "فشل التحقق";
 "details_title" = "تفاصيل عملية التحقق";
 "details_missing_title" = "لا توجد عملية تحقق هنا";
 "details_missing_body" = "لا شيء محفوظ لـ jobId = %1$@";

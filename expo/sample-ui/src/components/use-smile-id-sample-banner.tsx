@@ -8,6 +8,7 @@ import { UseSmileIDSampleButton } from './use-smile-id-sample-button';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 
 type Props = {
+  title: string;
   message: string;
   tone: UseSmileIDSampleBannerTone;
   /// The one action's label; none draws no action.
@@ -20,11 +21,12 @@ type Props = {
   style?: StyleProp<ViewStyle>;
 };
 
-/// The banner contract's leading bar.
-const ACCENT_WIDTH = 4;
+/// The banner contract's leading edge.
+const ACCENT_WIDTH = 3;
 
-/// The design system's banner on the card surface: an accent bar and glyph, the message, and at most one action under it.
+/// The design system's banner: a neutral surface with the tone's accent edge and glyph, a title over the message, and at most one action.
 export const UseSmileIDSampleBanner = ({
+  title,
   message,
   tone,
   actionLabel,
@@ -42,8 +44,9 @@ export const UseSmileIDSampleBanner = ({
       style={[
         styles.card,
         {
-          borderRadius: theme.shapes.card,
-          backgroundColor: theme.colors.card.background,
+          borderRadius: theme.shapes.field,
+          backgroundColor: theme.colors.banner.background,
+          // The card stroke, as the session-ended banner takes: banner.border carries one light value in both schemes.
           borderWidth: smileCardStrokeWidth,
           borderColor: theme.colors.cardStroke,
         },
@@ -51,13 +54,15 @@ export const UseSmileIDSampleBanner = ({
       ]}
     >
       <View style={{ width: ACCENT_WIDTH, backgroundColor: accent }} />
-      <View style={[styles.body, { padding: theme.dimens.spacing.md, rowGap: theme.dimens.spacing.md }]}>
-        <View style={[styles.message, { columnGap: theme.dimens.spacing.sm }]}>
-          <UseSmileIDSampleIcon name={tone === 'warning' ? 'warning' : 'cancel'} tint={accent} />
-          <Text style={[styles.text, theme.type.textStyleBody, { color: theme.colors.banner.title }]}>{message}</Text>
-        </View>
+      <View style={[styles.body, { padding: theme.dimens.spacing.md, columnGap: theme.dimens.spacing.sm }]}>
+        <UseSmileIDSampleIcon name={tone === 'warning' ? 'warning' : 'cancel'} tint={accent} />
+        <View style={[styles.text, { rowGap: theme.dimens.spacing.xxs }]}>
+          <Text style={[theme.type.textStyleBodyStrong, { color: theme.colors.banner.title }]}>{title}</Text>
+          <Text style={[theme.type.textStyleBodySm, { color: theme.colors.banner.text }]}>{message}</Text>
         {actionLabel === undefined ? null : actionProminent ? (
-          <UseSmileIDSampleButton text={actionLabel} onPress={onAction} testID={actionTestID} />
+          <View style={{ marginTop: theme.dimens.spacing.md - theme.dimens.spacing.xxs }}>
+            <UseSmileIDSampleButton text={actionLabel} onPress={onAction} testID={actionTestID} />
+          </View>
         ) : (
           <Pressable
             testID={actionTestID}
@@ -68,6 +73,7 @@ export const UseSmileIDSampleBanner = ({
             <Text style={[theme.type.linkFont, { color: theme.colors.primary }]}>{actionLabel}</Text>
           </Pressable>
         )}
+        </View>
       </View>
     </View>
   );
@@ -75,8 +81,7 @@ export const UseSmileIDSampleBanner = ({
 
 const styles = StyleSheet.create({
   card: { alignSelf: 'stretch', flexDirection: 'row', overflow: 'hidden' },
-  body: { flex: 1 },
-  message: { alignItems: 'flex-start', flexDirection: 'row' },
+  body: { alignItems: 'flex-start', flex: 1, flexDirection: 'row' },
   text: { flex: 1 },
   textAction: { alignItems: 'center', alignSelf: 'flex-end', justifyContent: 'center' },
 });

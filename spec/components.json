@@ -886,16 +886,18 @@
       "owner": "sample",
       "dsContract": "components/banner.md",
       "tokens": [
+        "banner.bg",
+        "banner.radius",
+        "banner.padding",
+        "banner.gap",
+        "banner.title",
+        "banner.text",
+        "banner.title-font",
+        "banner.text-font",
         "banner.warning-accent",
         "banner.error-accent",
-        "banner.title",
-        "card.background",
         "color.card-stroke",
-        "color.primary",
-        "radius.surface",
-        "text-style.body",
-        "spacing.md",
-        "spacing.sm"
+        "color.primary"
       ],
       "variants": [
         "warningWithButton",
@@ -903,15 +905,15 @@
         "errorMessageOnly"
       ],
       "metrics": {
-        "accentBar": "4 wide, the full height, at the leading edge",
-        "glyph": "sizeIconMd, the tone's accent: Material Symbols warning, or cancel for error",
-        "padding": "spacing.md around the message and action, spacing.sm between glyph and message",
-        "action": "a full-width primary Button when it moves the user on; a trailing text action in color.primary when it only closes"
+        "accentEdge": "3 wide at the leading edge, the full height, in the tone's accent",
+        "glyph": "sizeIconMd in the tone's accent: Material Symbols warning, or cancel for error",
+        "layout": "banner.padding around the glyph and text, banner.gap between them, spacing.xxs between title and message",
+        "action": "a full-width primary Button under the message when it moves the user on; a trailing text action in color.primary when it only closes"
       },
       "usedBy": [
         "verificationDetails"
       ],
-      "notes": "The design system's banner, drawn on the card surface rather than banner.bg: the SDK result card under it already fills with banner.bg, so the two would merge. Warning tone for a row whose action can get past the failure, error tone for one that ends in Close. Holds one row of spec/error-handling.json: its message and its one action."
+      "notes": "The design system's banner contract: neutral banner.bg surface, radius.field corners, a body-strong title over a body-sm message. The outline is color.card-stroke, as SessionEndedBanner's is, because banner.border carries one light value in both schemes. Warning tone and 'Verification not completed' for a row whose action can get past the failure; error tone and 'Verification failed' for one that ends in Close."
     },
     {
       "name": "SessionEndedBanner",

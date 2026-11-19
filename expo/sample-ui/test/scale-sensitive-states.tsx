@@ -20,6 +20,7 @@ export const scaleSensitive: Record<string, () => React.ReactElement> = {
   // The table's longest message, beside the glyph, over the button that wraps with it.
   banner_longest_message: () => (
     <UseSmileIDSampleBanner
+      title="Verification not completed"
       message="We couldn't start this verification. Please try again, or contact the app's support."
       tone="warning"
       actionLabel="Try again"

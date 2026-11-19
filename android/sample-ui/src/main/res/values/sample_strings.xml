@@ -242,6 +242,8 @@
     <string name="sample_error_action_edit_id_number">Edit ID number</string>
     <string name="sample_error_action_start_again">Start again</string>
     <string name="sample_error_action_close">Close</string>
+    <string name="sample_error_title_not_completed">Verification not completed</string>
+    <string name="sample_error_title_failed">Verification failed</string>
     <string name="sample_details_title">Verification details</string>
     <string name="sample_details_missing_title">No verification here</string>
     <string name="sample_details_missing_body">Nothing stored for jobId = %1$s</string>

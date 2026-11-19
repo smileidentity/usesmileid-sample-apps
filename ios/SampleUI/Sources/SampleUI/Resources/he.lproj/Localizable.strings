@@ -240,6 +240,8 @@
 "error_action_edit_id_number" = "עריכת מספר התעודה";
 "error_action_start_again" = "התחלה מחדש";
 "error_action_close" = "סגירה";
+"error_title_not_completed" = "האימות לא הושלם";
+"error_title_failed" = "האימות נכשל";
 "details_title" = "פרטי האימות";
 "details_missing_title" = "אין כאן אימות";
 "details_missing_body" = "לא נשמר דבר עבור jobId = %1$@";

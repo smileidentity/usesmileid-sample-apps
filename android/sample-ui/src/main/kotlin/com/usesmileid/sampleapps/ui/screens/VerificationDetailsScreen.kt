@@ -21,6 +21,7 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBanner
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBannerTone
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
@@ -174,6 +175,7 @@ private fun FailureBanner(
     onErrorAction: (UseSmileIDSampleErrorAction) -> Unit,
 ) {
     UseSmileIDSampleBanner(
+        title = if (failure.bannerTone == UseSmileIDSampleBannerTone.Warning) UseSmileIDSampleStrings.errorTitleNotCompleted else UseSmileIDSampleStrings.errorTitleFailed,
         message = failure.message.text(),
         tone = failure.bannerTone,
         actionLabel = failure.action.label().takeIf { failure.offersAction(onStoredJob) },

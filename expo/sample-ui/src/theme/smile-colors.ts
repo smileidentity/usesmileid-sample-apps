@@ -38,8 +38,9 @@ type InputTokens = {
 
 type SearchTokens = InputTokens & { readonly icon: string };
 
-/// The inline banners' prose and each tone's bar and glyph.
+/// The inline banners' fill, prose and each tone's edge and glyph.
 type BannerTokens = {
+  readonly background: string;
   readonly title: string;
   readonly text: string;
   readonly warningAccent: string;
@@ -204,6 +205,7 @@ type SmileColorSource = {
   };
   readonly skeleton: { readonly bg: string; readonly highlight: string };
   readonly banner: {
+    readonly bg: string;
     readonly title: string;
     readonly text: string;
     readonly 'warning-accent': string;
@@ -286,6 +288,7 @@ const group = (
     body: source.card['body-text'],
   },
   banner: {
+    background: source.banner.bg,
     title: source.banner.title,
     text: source.banner.text,
     warningAccent: source.banner['warning-accent'],

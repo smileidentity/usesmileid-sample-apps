@@ -251,6 +251,8 @@
   "error_action_edit_id_number": "Edit ID number",
   "error_action_start_again": "Start again",
   "error_action_close": "Close",
+  "error_title_not_completed": "Verification not completed",
+  "error_title_failed": "Verification failed",
 
   "details_title": "Verification details",
   "details_missing_title": "No verification here",
