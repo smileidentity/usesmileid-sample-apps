@@ -1,4 +1,5 @@
 import { act, fireEvent } from '@testing-library/react-native';
+import { View } from 'react-native';
 
 import { LicensesScreen, type UseSmileIDSampleLicence } from '../src/screens/licenses-screen';
 import { ProductsScreen } from '../src/screens/products-screen';
@@ -242,6 +243,15 @@ describe('settings', () => {
     expect(without.queryByTestId(UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON)).toBeNull();
     const with_ = await renderInTheme(settings({ onOpenScenarioDrawer: noop }), false);
     expect(with_.queryByTestId(UseSmileIDSampleTestIds.SCENARIO_DRAWER_BUTTON)).not.toBeNull();
+  });
+
+  it('hides the DEBUG section, and the rows a host adds to it, unless the host supplies the callback', async () => {
+    const rows = <View testID="sample_test_debug_row" />;
+    const without = await renderInTheme(settings({ debugRows: rows }), false);
+    expect(without.queryByText('DEBUG')).toBeNull();
+    expect(without.queryByTestId('sample_test_debug_row')).toBeNull();
+    const with_ = await renderInTheme(settings({ onOpenScenarioDrawer: noop, debugRows: rows }), false);
+    expect(with_.queryByTestId('sample_test_debug_row')).not.toBeNull();
   });
 
   it('says each capture row turns the other off while the other is on', async () => {
