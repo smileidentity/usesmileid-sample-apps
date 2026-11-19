@@ -10,7 +10,7 @@ export type UseSmileIDSampleShellExtension = {
   debugRows?: (openSheet: (sheetId: string) => void) => ReactNode;
   /// Whether `debugSheet` draws the sheet `sheetId` names; the shell closes any other id at once.
   hasDebugSheet?: (sheetId: string) => boolean;
-  /// The content of the sheet `sheetId` names, inside the shell's sheet step; never drawn in a release build.
+  /// The sheet `sheetId` names, its panel drawn with `sample-ui`'s bottom sheet inside the shell's sheet step; never drawn in a release build.
   debugSheet?: (sheetId: string, onDismiss: () => void) => ReactNode;
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   customiseFlow?: (builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) => void;

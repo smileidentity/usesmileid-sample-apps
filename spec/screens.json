@@ -960,7 +960,7 @@
         "BottomSheet"
       ],
       "testIds": [],
-      "note": "The shell's sheet step for a source build's extension, which draws the content in the shared BottomSheet. A registry build has no extension, and a release build closes the step at once, so this app has no state of its own to golden."
+      "note": "The shell's sheet step for a source build's extension, which draws the whole panel with the shared BottomSheet, as the shell's own sheet steps do; the step supplies the window, scrim and dismissal. A registry build has no extension, and a release build closes the step at once, so this app has no state of its own to golden."
     }
   ],
   "openQuestions": [

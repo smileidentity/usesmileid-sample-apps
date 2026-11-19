@@ -27,7 +27,7 @@ interface UseSmileIDSampleShellExtension {
     /** Whether [DebugSheet] draws the sheet [sheetId] names; the shell closes any other id at once. */
     fun hasDebugSheet(sheetId: String): Boolean = false
 
-    /** The content of the sheet [sheetId] names, inside the shell's sheet step; never drawn in a release build. */
+    /** The sheet [sheetId] names, its panel drawn with `sample-ui`'s bottom sheet inside the shell's sheet step; never drawn in a release build. */
     @Composable
     fun DebugSheet(sheetId: String, onDismissRequest: () -> Unit) {}
 

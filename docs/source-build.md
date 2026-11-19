@@ -30,7 +30,7 @@ Every member is optional and does nothing by default:
 | `leadingDebugRows` | in the Settings DEBUG section, which debug builds show, above the shell's own rows (Network logs on Android and iOS), so an identity the rows below refer to comes first |
 | `debugRows` | in the same section, below the shell's own rows, with `openSheet`, which opens one of the extension's own debug sheets by id |
 | `hasDebugSheet` | when the shell's `debugSheet` step opens, to ask whether the extension draws that id; the step closes at once for any other id, in a release build and without an extension |
-| `debugSheet` | inside that step (`/debug/sheet/:sheetId`), with the id a row opened and a callback that closes it, drawn in the shared sheet |
+| `debugSheet` | inside that step (`/debug/sheet/:sheetId`), with the id a row opened and a callback that closes it; the extension draws the whole panel with `sample-ui`'s shared bottom sheet, as the shell's own sheet steps do, and the step supplies the window, scrim and dismissal |
 
 **The order is a guarantee:** `onLaunch`, then `launchSession`, then autostart, then the flow hooks.
 A unit test pins it on Android, Flutter and Expo with a recording extension; on iOS `App.init` runs

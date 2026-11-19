@@ -13,7 +13,7 @@ protocol UseSmileIDSampleShellExtending {
   static func debugRows(openSheet: @escaping (String) -> Void) -> AnyView
   /// Whether `debugSheet` draws the sheet `sheetId` names; the shell closes any other id at once.
   static func hasDebugSheet(_ sheetId: String) -> Bool
-  /// The content of the sheet `sheetId` names, inside the shell's sheet step; never drawn in a release build.
+  /// The sheet `sheetId` names, its panel drawn with `sample-ui`'s bottom sheet inside the shell's sheet step; never drawn in a release build.
   static func debugSheet(_ sheetId: String, onDismiss: @escaping () -> Void) -> AnyView
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   static func customiseFlow(_ builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct)

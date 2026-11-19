@@ -154,7 +154,9 @@ class _UseSmileIDSampleDebugSheetStepState
       sheetId: widget.sheetId,
     );
     if (!opens) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => widget.onDismiss());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onDismiss();
+      });
     }
   }
 

@@ -18,7 +18,7 @@ abstract class UseSmileIDSampleShellExtension {
   /// Whether [debugSheet] draws the sheet [sheetId] names; the shell closes any other id at once.
   bool hasDebugSheet(String sheetId) => false;
 
-  /// The content of the sheet [sheetId] names, inside the shell's sheet step; never drawn in a release build.
+  /// The sheet [sheetId] names, its panel drawn with `sample-ui`'s bottom sheet inside the shell's sheet step; never drawn in a release build.
   Widget debugSheet(String sheetId, VoidCallback onDismiss) =>
       const SizedBox.shrink();
 
