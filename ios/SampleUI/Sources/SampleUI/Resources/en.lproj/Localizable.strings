@@ -213,7 +213,7 @@
 "status_refresh_other_partner" = "Submitted by a different partner";
 "status_refresh_failed" = "Could not check status: %1$@";
 "error_could_not_start" = "We couldn't start this verification. Please try again, or contact the app's support.";
-"error_ended_early" = "This verification stopped before it finished. You can start it again.";
+"error_ended_early" = "This verification stopped before it finished.";
 "error_id_number_invalid" = "That ID number doesn't look right. Check it and try again.";
 "error_service_not_set_up" = "This service isn't set up to complete verifications yet. Please contact the app's support.";
 "error_session_expired" = "Your session has expired. Please start again.";

@@ -93,6 +93,17 @@ do, run by `flutter/verify.sh` on the Mac.
 
 ## Spec and code health
 
+### Error handling: four questions the table cannot answer yet
+
+`spec/error-handling.json` resolves each failure to a message, and four of its answers wait on the API or
+on a wording call. `GET /v3/status/{jobId}` returns no `reason`, so a job that ends in `error` or `block`
+always resolves as the fallback and the result rows for recapture, fixing input and retry are tested but
+reached by no app. Two 403 causes, a security-rule refusal and a token rejected after the flow began, have
+no documented response text to tell them apart. A 408 is not in the table, so it resolves as the fallback
+and ends in Close rather than as a timeout. And "We couldn't start this verification. Please try again, or
+contact the app's support." takes the failed caption while still asking the user to try again. Done looks
+like each answered in the spec, with its case added and the four apps' tests following it.
+
 ### Flutter iOS: retire the first-push launch listener
 
 `UseSmileIDSampleColdLink` takes a cold link from the first route push within two seconds of the first

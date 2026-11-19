@@ -120,10 +120,10 @@ class VerificationsGoldenTest : GoldenTest() {
         FailedRun(UseSmileIDSampleErrorHandling.forStatus(400), showProbes = false)
     }
 
-    /** The table's longest message, which wraps furthest beside the glyph. */
+    /** The table's longest message in English, which wraps furthest. */
     @Test
     fun verification_details_failed_max_font_scale() =
-        assertSurvivesMaxFontScale { FailedRun(UseSmileIDSampleErrorHandling.forStatus(400)) }
+        assertSurvivesMaxFontScale { FailedRun(UseSmileIDSampleErrorHandling.forStatus(400, "Callback URL is required")) }
 
     @Test
     fun verification_details_without_probes() =

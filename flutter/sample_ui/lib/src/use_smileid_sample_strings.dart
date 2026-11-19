@@ -557,8 +557,7 @@ final class UseSmileIDSampleStrings {
       'scan_flash_on': 'Turn flash on',
       'scan_flash_off': 'Turn flash off',
       'scan_point': 'Point at a Smile token QR',
-      'scan_line_up':
-          'Line up the code inside the frame to link this device to a verification session.',
+      'scan_line_up': 'Line up the code inside the frame to link this device to a verification session.',
       'scan_portal_prefix': 'Get a v3 token from the ',
       'scan_portal_link': 'Smile ID Portal',
       'scan_portal_suffix': ', under Developers › Security settings.',
@@ -591,10 +590,8 @@ final class UseSmileIDSampleStrings {
       'token_error_exp': 'The token carries no numeric exp claim.',
       'token_error_exp_order':
           'The token\'s exp claim is not after its iat claim.',
-      'token_error_api_url_missing':
-          'The token carries no api_url claim, so nothing says which environment it was minted for.',
-      'token_error_api_url_unknown':
-          'The token\'s api_url names {host}, which is not a Smile ID environment.',
+      'token_error_api_url_missing': 'The token carries no api_url claim, so nothing says which environment it was minted for.',
+      'token_error_api_url_unknown': 'The token\'s api_url names {host}, which is not a Smile ID environment.',
       'token_error_api_url_invalid':
           'The token\'s api_url is not a URL, so it names no environment.',
       'token_callback_set': 'Set by the scanned token',
@@ -607,15 +604,13 @@ final class UseSmileIDSampleStrings {
       'auth_user_id_section': 'USER ID',
       'auth_user_id_placeholder': 'user_…',
       'auth_user_id_previous': 'PREVIOUS USER IDS',
-      'auth_user_id_previous_hint':
-          'Users enrolled by your earlier verifications, newest first. Tap one to use its ID.',
+      'auth_user_id_previous_hint': 'Users enrolled by your earlier verifications, newest first. Tap one to use its ID.',
       'auth_user_id_latest': 'LATEST',
       'auth_user_id_hint':
           'Type or paste the user ID of someone who is already enrolled.',
       'auth_user_id_or': 'OR',
       'auth_user_id_run': 'RUN A VERIFICATION',
-      'auth_user_id_run_body':
-          'A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you a user ID.',
+      'auth_user_id_run_body': 'A successful SmartSelfie Enrollment, document verification or Biometric KYC gives you a user ID.',
       'user_details_profile_name': 'Profile name (optional)',
       'user_details_profile_name_hint': 'Shown on the consent screen',
       'user_details_from_token': 'Provided by token',
@@ -653,10 +648,8 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid_example':
           'Doesn\'t match the {idType} format, e.g. {example}',
       'kyc_id_number_invalid': 'Doesn\'t match the {idType} format',
-      'catalogue_advice_unauthorised':
-          'The server refused this session\'s token. Link a new session, then try again',
-      'catalogue_advice_forbidden':
-          'Access denied: production may not be enabled for this partner, or this network is not allowed',
+      'catalogue_advice_unauthorised': 'The server refused this session\'s token. Link a new session, then try again',
+      'catalogue_advice_forbidden': 'Access denied: production may not be enabled for this partner, or this network is not allowed',
       'catalogue_advice_offline': 'Check your connection, then try again',
       'picker_country_title': 'Country',
       'picker_country_search': 'Search country',
@@ -740,21 +733,16 @@ final class UseSmileIDSampleStrings {
       'status_refresh_not_token_job': 'Not submitted under a scanned token',
       'status_refresh_other_partner': 'Submitted by a different partner',
       'status_refresh_failed': 'Could not check status: {reason}',
-      'error_could_not_start':
-          'We couldn\'t start this verification. Please try again, or contact the app\'s support.',
-      'error_ended_early':
-          'This verification stopped before it finished. You can start it again.',
+      'error_could_not_start': 'We couldn\'t start this verification. Please try again, or contact the app\'s support.',
+      'error_ended_early': 'This verification stopped before it finished.',
       'error_id_number_invalid':
           'That ID number doesn\'t look right. Check it and try again.',
-      'error_service_not_set_up':
-          'This service isn\'t set up to complete verifications yet. Please contact the app\'s support.',
+      'error_service_not_set_up': 'This service isn\'t set up to complete verifications yet. Please contact the app\'s support.',
       'error_session_expired': 'Your session has expired. Please start again.',
       'error_service_unavailable':
           'This service is temporarily unavailable. Please try again later.',
-      'error_not_available':
-          'This verification isn\'t available right now. Please contact the app\'s support.',
-      'error_update_app':
-          'This app needs to be updated to continue. Please update and try again.',
+      'error_not_available': 'This verification isn\'t available right now. Please contact the app\'s support.',
+      'error_update_app': 'This app needs to be updated to continue. Please update and try again.',
       'error_not_found':
           'We couldn\'t find this verification. Please start again.',
       'error_already_started':
@@ -764,17 +752,14 @@ final class UseSmileIDSampleStrings {
           'Your photos were too large to send. Please try again.',
       'error_too_many_attempts':
           'Too many attempts. Please wait a moment and try again.',
-      'error_server':
-          'Something went wrong on our side. Please try again in a few minutes.',
+      'error_server': 'Something went wrong on our side. Please try again in a few minutes.',
       'error_no_connection': 'Check your internet connection and try again.',
       'error_timeout': 'The request took too long. Please try again.',
       'error_photo_unusable':
           'We couldn\'t use your photo. Please retake it in good light.',
       'error_photo_rejected': 'We couldn\'t use that photo. Please retake it.',
-      'error_document_not_recognised':
-          'We couldn\'t recognise this document. Please use a supported ID and retake the photo.',
-      'error_face_check_unavailable':
-          'We couldn\'t complete the face check for this ID. Please try another ID or contact support.',
+      'error_document_not_recognised': 'We couldn\'t recognise this document. Please use a supported ID and retake the photo.',
+      'error_face_check_unavailable': 'We couldn\'t complete the face check for this ID. Please try another ID or contact support.',
       'error_no_saved_selfie':
           'We couldn\'t find your saved selfie. Please register first.',
       'error_id_number_not_accepted':
@@ -883,8 +868,7 @@ final class UseSmileIDSampleStrings {
       'settings_licenses': 'Open-source licenses',
       'settings_sign_out': 'Sign out',
       'settings_sign_out_title': 'Sign out?',
-      'settings_sign_out_body':
-          'This ends the token session and deletes every profile on this device.',
+      'settings_sign_out_body': 'This ends the token session and deletes every profile on this device.',
       'flow_invalid': 'The flow did not validate',
       'capture_mode_title': 'Capture mode',
       'capture_mode_auto': 'Automatic',
@@ -967,8 +951,7 @@ final class UseSmileIDSampleStrings {
       'scan_flash_on': 'Activer le flash',
       'scan_flash_off': 'Désactiver le flash',
       'scan_point': 'Visez un QR de jeton Smile',
-      'scan_line_up':
-          'Placez le code dans le cadre pour relier cet appareil à une session de vérification.',
+      'scan_line_up': 'Placez le code dans le cadre pour relier cet appareil à une session de vérification.',
       'scan_portal_prefix': 'Obtenez un jeton v3 depuis le ',
       'scan_portal_link': 'portail Smile ID',
       'scan_portal_suffix': ', dans Développeurs › Paramètres de sécurité.',
@@ -986,15 +969,13 @@ final class UseSmileIDSampleStrings {
       'scan_remaining': '{handle} · {remaining} restantes',
       'scan_clipboard_empty':
           'Le presse-papiers ne contient aucun texte à coller.',
-      'scan_reason_session_ended':
-          'La session de jeton est terminée. Scannez pour reprendre là où vous vous étiez arrêté.',
+      'scan_reason_session_ended': 'La session de jeton est terminée. Scannez pour reprendre là où vous vous étiez arrêté.',
       'scan_reason_needed':
           'Scannez un jeton pour commencer cette vérification.',
       'scan_span_expired': 'Expiré',
       'scan_environment_sandbox': 'Sandbox',
       'scan_environment_production': 'Production',
-      'token_error_segments':
-          'Un jeton comporte trois segments base64url séparés par des points ; ce n’est pas le cas ici.',
+      'token_error_segments': 'Un jeton comporte trois segments base64url séparés par des points ; ce n’est pas le cas ici.',
       'token_error_payload_encoding':
           'Le segment de charge utile du jeton n’est pas en base64url.',
       'token_error_payload_json':
@@ -1003,14 +984,10 @@ final class UseSmileIDSampleStrings {
           'Le jeton ne contient pas de revendication iat numérique.',
       'token_error_exp':
           'Le jeton ne contient pas de revendication exp numérique.',
-      'token_error_exp_order':
-          'La revendication exp du jeton n’est pas postérieure à sa revendication iat.',
-      'token_error_api_url_missing':
-          'Le jeton ne contient pas de revendication api_url : rien n’indique pour quel environnement il a été émis.',
-      'token_error_api_url_unknown':
-          'L’api_url du jeton désigne {host}, qui n’est pas un environnement Smile ID.',
-      'token_error_api_url_invalid':
-          'L’api_url du jeton n’est pas une URL : elle ne désigne aucun environnement.',
+      'token_error_exp_order': 'La revendication exp du jeton n’est pas postérieure à sa revendication iat.',
+      'token_error_api_url_missing': 'Le jeton ne contient pas de revendication api_url : rien n’indique pour quel environnement il a été émis.',
+      'token_error_api_url_unknown': 'L’api_url du jeton désigne {host}, qui n’est pas un environnement Smile ID.',
+      'token_error_api_url_invalid': 'L’api_url du jeton n’est pas une URL : elle ne désigne aucun environnement.',
       'token_callback_set': 'Défini par le jeton scanné',
       'token_callback_default':
           'La valeur par défaut du partenaire du jeton s’applique',
@@ -1022,15 +999,13 @@ final class UseSmileIDSampleStrings {
       'auth_user_id_section': 'ID UTILISATEUR',
       'auth_user_id_placeholder': 'user_…',
       'auth_user_id_previous': 'ID UTILISATEUR PRÉCÉDENTS',
-      'auth_user_id_previous_hint':
-          'Utilisateurs enregistrés lors de vos vérifications précédentes, du plus récent au plus ancien. Touchez-en un pour utiliser son ID.',
+      'auth_user_id_previous_hint': 'Utilisateurs enregistrés lors de vos vérifications précédentes, du plus récent au plus ancien. Touchez-en un pour utiliser son ID.',
       'auth_user_id_latest': 'DERNIER',
       'auth_user_id_hint':
           'Saisissez ou collez l\'ID d\'un utilisateur déjà enregistré.',
       'auth_user_id_or': 'OU',
       'auth_user_id_run': 'LANCER UNE VÉRIFICATION',
-      'auth_user_id_run_body':
-          'Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous donne un ID utilisateur.',
+      'auth_user_id_run_body': 'Un SmartSelfie Enrollment, une vérification de document ou un Biometric KYC réussi vous donne un ID utilisateur.',
       'user_details_profile_name': 'Nom du profil (facultatif)',
       'user_details_profile_name_hint': 'Affiché sur l’écran de consentement',
       'user_details_from_token': 'Fourni par le jeton',
@@ -1068,10 +1043,8 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid_example':
           'Ne correspond pas au format {idType}, p. ex. {example}',
       'kyc_id_number_invalid': 'Ne correspond pas au format {idType}',
-      'catalogue_advice_unauthorised':
-          'Le serveur a refusé le jeton de cette session. Associez une nouvelle session, puis réessayez',
-      'catalogue_advice_forbidden':
-          'Accès refusé : la production n\'est peut-être pas activée pour ce partenaire, ou ce réseau n\'est pas autorisé',
+      'catalogue_advice_unauthorised': 'Le serveur a refusé le jeton de cette session. Associez une nouvelle session, puis réessayez',
+      'catalogue_advice_forbidden': 'Accès refusé : la production n\'est peut-être pas activée pour ce partenaire, ou ce réseau n\'est pas autorisé',
       'catalogue_advice_offline': 'Vérifiez votre connexion, puis réessayez',
       'picker_country_title': 'Pays',
       'picker_country_search': 'Rechercher un pays',
@@ -1159,51 +1132,36 @@ final class UseSmileIDSampleStrings {
       'status_refresh_not_token_job': 'Non soumis avec un jeton scanné',
       'status_refresh_other_partner': 'Soumis par un autre partenaire',
       'status_refresh_failed': 'Impossible de vérifier le statut : {reason}',
-      'error_could_not_start':
-          'Nous n’avons pas pu démarrer cette vérification. Veuillez réessayer ou contacter l’assistance de l’application.',
-      'error_ended_early':
-          'Cette vérification s’est arrêtée avant la fin. Vous pouvez la recommencer.',
+      'error_could_not_start': 'Nous n’avons pas pu démarrer cette vérification. Veuillez réessayer ou contacter l’assistance de l’application.',
+      'error_ended_early': 'Cette vérification s’est arrêtée avant la fin.',
       'error_id_number_invalid':
           'Ce numéro de pièce semble incorrect. Vérifiez-le et réessayez.',
-      'error_service_not_set_up':
-          'Ce service n’est pas encore configuré pour effectuer des vérifications. Veuillez contacter l’assistance de l’application.',
+      'error_service_not_set_up': 'Ce service n’est pas encore configuré pour effectuer des vérifications. Veuillez contacter l’assistance de l’application.',
       'error_session_expired': 'Votre session a expiré. Veuillez recommencer.',
-      'error_service_unavailable':
-          'Ce service est temporairement indisponible. Veuillez réessayer plus tard.',
-      'error_not_available':
-          'Cette vérification n’est pas disponible pour le moment. Veuillez contacter l’assistance de l’application.',
-      'error_update_app':
-          'Cette application doit être mise à jour pour continuer. Veuillez la mettre à jour et réessayer.',
+      'error_service_unavailable': 'Ce service est temporairement indisponible. Veuillez réessayer plus tard.',
+      'error_not_available': 'Cette vérification n’est pas disponible pour le moment. Veuillez contacter l’assistance de l’application.',
+      'error_update_app': 'Cette application doit être mise à jour pour continuer. Veuillez la mettre à jour et réessayer.',
       'error_not_found':
           'Nous n’avons pas trouvé cette vérification. Veuillez recommencer.',
-      'error_already_started':
-          'Cette vérification a déjà été lancée. Veuillez en démarrer une nouvelle.',
+      'error_already_started': 'Cette vérification a déjà été lancée. Veuillez en démarrer une nouvelle.',
       'error_link_expired':
           'Ce lien a expiré. Veuillez en demander un nouveau.',
-      'error_photos_too_large':
-          'Vos photos étaient trop volumineuses pour être envoyées. Veuillez réessayer.',
+      'error_photos_too_large': 'Vos photos étaient trop volumineuses pour être envoyées. Veuillez réessayer.',
       'error_too_many_attempts':
           'Trop de tentatives. Veuillez patienter un instant et réessayer.',
-      'error_server':
-          'Un problème est survenu de notre côté. Veuillez réessayer dans quelques minutes.',
+      'error_server': 'Un problème est survenu de notre côté. Veuillez réessayer dans quelques minutes.',
       'error_no_connection': 'Vérifiez votre connexion Internet et réessayez.',
       'error_timeout': 'La requête a pris trop de temps. Veuillez réessayer.',
-      'error_photo_unusable':
-          'Nous n’avons pas pu utiliser votre photo. Veuillez la reprendre avec un bon éclairage.',
+      'error_photo_unusable': 'Nous n’avons pas pu utiliser votre photo. Veuillez la reprendre avec un bon éclairage.',
       'error_photo_rejected':
           'Nous n’avons pas pu utiliser cette photo. Veuillez la reprendre.',
-      'error_document_not_recognised':
-          'Nous n’avons pas reconnu ce document. Veuillez utiliser une pièce prise en charge et reprendre la photo.',
-      'error_face_check_unavailable':
-          'Nous n’avons pas pu effectuer la vérification faciale pour cette pièce. Veuillez essayer une autre pièce ou contacter l’assistance.',
-      'error_no_saved_selfie':
-          'Nous n’avons pas trouvé votre selfie enregistré. Veuillez d’abord vous inscrire.',
+      'error_document_not_recognised': 'Nous n’avons pas reconnu ce document. Veuillez utiliser une pièce prise en charge et reprendre la photo.',
+      'error_face_check_unavailable': 'Nous n’avons pas pu effectuer la vérification faciale pour cette pièce. Veuillez essayer une autre pièce ou contacter l’assistance.',
+      'error_no_saved_selfie': 'Nous n’avons pas trouvé votre selfie enregistré. Veuillez d’abord vous inscrire.',
       'error_id_number_not_accepted':
           'Le numéro de pièce n’a pas été accepté. Vérifiez-le et réessayez.',
-      'error_id_service_down':
-          'Le service de vérification des pièces est temporairement indisponible. Veuillez réessayer plus tard.',
-      'error_could_not_finish':
-          'Nous n’avons pas pu terminer cette vérification. Veuillez réessayer.',
+      'error_id_service_down': 'Le service de vérification des pièces est temporairement indisponible. Veuillez réessayer plus tard.',
+      'error_could_not_finish': 'Nous n’avons pas pu terminer cette vérification. Veuillez réessayer.',
       'error_not_verified': 'Nous n’avons pas pu vérifier votre identité.',
       'error_action_retake_photo': 'Reprendre la photo',
       'error_action_edit_id_number': 'Modifier le numéro de pièce',
@@ -1245,8 +1203,7 @@ final class UseSmileIDSampleStrings {
       'profile_config_save': 'Enregistrer',
       'profile_config_use': 'Utiliser ce profil',
       'profile_config_delete_title': 'Supprimer {profile} ?',
-      'profile_config_delete_body':
-          'Ses informations et son URL de rappel seront supprimées de cet appareil.',
+      'profile_config_delete_body': 'Ses informations et son URL de rappel seront supprimées de cet appareil.',
       'profile_switch_title': 'Changer de profil',
       'profile_switch_new': 'Nouveau profil',
       'profile_switch_new_hint':
@@ -1313,8 +1270,7 @@ final class UseSmileIDSampleStrings {
       'settings_licenses': 'Licences open source',
       'settings_sign_out': 'Se déconnecter',
       'settings_sign_out_title': 'Se déconnecter ?',
-      'settings_sign_out_body':
-          'La session de jeton prend fin et tous les profils de cet appareil sont supprimés.',
+      'settings_sign_out_body': 'La session de jeton prend fin et tous les profils de cet appareil sont supprimés.',
       'flow_invalid': 'Le parcours n\'a pas été validé',
       'capture_mode_title': 'Mode de capture',
       'capture_mode_auto': 'Automatique',
@@ -1421,16 +1377,14 @@ final class UseSmileIDSampleStrings {
       'scan_span_expired': 'منتهي الصلاحية',
       'scan_environment_sandbox': 'بيئة الاختبار',
       'scan_environment_production': 'بيئة الإنتاج',
-      'token_error_segments':
-          'يتكوّن الرمز من ثلاثة مقاطع base64url تفصل بينها نقاط، وهذا ليس كذلك.',
+      'token_error_segments': 'يتكوّن الرمز من ثلاثة مقاطع base64url تفصل بينها نقاط، وهذا ليس كذلك.',
       'token_error_payload_encoding':
           'مقطع الحمولة في الرمز ليس بترميز base64url.',
       'token_error_payload_json': 'مقطع الحمولة في الرمز ليس كائن JSON.',
       'token_error_iat': 'لا يحتوي الرمز على مطالبة iat رقمية.',
       'token_error_exp': 'لا يحتوي الرمز على مطالبة exp رقمية.',
       'token_error_exp_order': 'مطالبة exp في الرمز ليست بعد مطالبة iat.',
-      'token_error_api_url_missing':
-          'لا يحتوي الرمز على مطالبة api_url، لذا لا شيء يحدد البيئة التي صدر لها.',
+      'token_error_api_url_missing': 'لا يحتوي الرمز على مطالبة api_url، لذا لا شيء يحدد البيئة التي صدر لها.',
       'token_error_api_url_unknown':
           'يشير api_url في الرمز إلى {host}، وهي ليست بيئة من بيئات Smile ID.',
       'token_error_api_url_invalid':
@@ -1446,14 +1400,12 @@ final class UseSmileIDSampleStrings {
       'auth_user_id_section': 'معرّف المستخدم',
       'auth_user_id_placeholder': 'user_…',
       'auth_user_id_previous': 'معرّفات المستخدمين السابقة',
-      'auth_user_id_previous_hint':
-          'مستخدمون سُجّلوا في عمليات تحقق سابقة، الأحدث أولًا. انقر على أحدهم لاستخدام معرّفه.',
+      'auth_user_id_previous_hint': 'مستخدمون سُجّلوا في عمليات تحقق سابقة، الأحدث أولًا. انقر على أحدهم لاستخدام معرّفه.',
       'auth_user_id_latest': 'الأحدث',
       'auth_user_id_hint': 'اكتب أو الصق معرّف مستخدم مسجّل مسبقًا.',
       'auth_user_id_or': 'أو',
       'auth_user_id_run': 'إجراء تحقق',
-      'auth_user_id_run_body':
-          'تحصل على معرّف مستخدم من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
+      'auth_user_id_run_body': 'تحصل على معرّف مستخدم من SmartSelfie Enrollment أو التحقق من مستند أو Biometric KYC ناجح.',
       'user_details_profile_name': 'اسم الملف الشخصي (اختياري)',
       'user_details_profile_name_hint': 'يظهر في شاشة الموافقة',
       'user_details_from_token': 'مقدَّم من الرمز',
@@ -1493,8 +1445,7 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid': 'لا يطابق تنسيق {idType}',
       'catalogue_advice_unauthorised':
           'رفض الخادم رمز هذه الجلسة. اربط جلسة جديدة، ثم حاول مرة أخرى',
-      'catalogue_advice_forbidden':
-          'تم رفض الوصول: قد لا تكون بيئة الإنتاج مفعّلة لهذا الشريك، أو أن هذه الشبكة غير مسموح بها',
+      'catalogue_advice_forbidden': 'تم رفض الوصول: قد لا تكون بيئة الإنتاج مفعّلة لهذا الشريك، أو أن هذه الشبكة غير مسموح بها',
       'catalogue_advice_offline': 'تحقق من اتصالك، ثم حاول مرة أخرى',
       'picker_country_title': 'البلد',
       'picker_country_search': 'ابحث عن بلد',
@@ -1578,13 +1529,11 @@ final class UseSmileIDSampleStrings {
       'status_refresh_not_token_job': 'لم يُرسل باستخدام رمز ممسوح',
       'status_refresh_other_partner': 'أُرسل بواسطة شريك آخر',
       'status_refresh_failed': 'تعذّر التحقق من الحالة: {reason}',
-      'error_could_not_start':
-          'تعذّر علينا بدء عملية التحقق هذه. يُرجى المحاولة مرة أخرى أو التواصل مع دعم التطبيق.',
-      'error_ended_early': 'توقّف هذا التحقق قبل اكتماله. يمكنك البدء من جديد.',
+      'error_could_not_start': 'تعذّر علينا بدء عملية التحقق هذه. يُرجى المحاولة مرة أخرى أو التواصل مع دعم التطبيق.',
+      'error_ended_early': 'توقّف هذا التحقق قبل اكتماله.',
       'error_id_number_invalid':
           'يبدو أن رقم الهوية هذا غير صحيح. تحقّق منه وحاول مرة أخرى.',
-      'error_service_not_set_up':
-          'هذه الخدمة غير مهيّأة بعد لإتمام عمليات التحقق. يُرجى التواصل مع دعم التطبيق.',
+      'error_service_not_set_up': 'هذه الخدمة غير مهيّأة بعد لإتمام عمليات التحقق. يُرجى التواصل مع دعم التطبيق.',
       'error_session_expired': 'انتهت صلاحية جلستك. يُرجى البدء من جديد.',
       'error_service_unavailable':
           'هذه الخدمة غير متاحة مؤقتًا. يُرجى المحاولة لاحقًا.',
@@ -1609,10 +1558,8 @@ final class UseSmileIDSampleStrings {
           'تعذّر علينا استخدام صورتك. يُرجى التقاطها من جديد في إضاءة جيدة.',
       'error_photo_rejected':
           'تعذّر علينا استخدام تلك الصورة. يُرجى التقاطها من جديد.',
-      'error_document_not_recognised':
-          'تعذّر علينا التعرّف على هذا المستند. يُرجى استخدام هوية مدعومة والتقاط الصورة من جديد.',
-      'error_face_check_unavailable':
-          'تعذّر علينا إتمام فحص الوجه لهذه الهوية. يُرجى تجربة هوية أخرى أو التواصل مع الدعم.',
+      'error_document_not_recognised': 'تعذّر علينا التعرّف على هذا المستند. يُرجى استخدام هوية مدعومة والتقاط الصورة من جديد.',
+      'error_face_check_unavailable': 'تعذّر علينا إتمام فحص الوجه لهذه الهوية. يُرجى تجربة هوية أخرى أو التواصل مع الدعم.',
       'error_no_saved_selfie':
           'تعذّر علينا العثور على صورتك الذاتية المحفوظة. يُرجى التسجيل أولًا.',
       'error_id_number_not_accepted':
@@ -1720,8 +1667,7 @@ final class UseSmileIDSampleStrings {
       'settings_licenses': 'تراخيص المصادر المفتوحة',
       'settings_sign_out': 'تسجيل الخروج',
       'settings_sign_out_title': 'تسجيل الخروج؟',
-      'settings_sign_out_body':
-          'سيؤدي هذا إلى إنهاء جلسة الرمز وحذف كل الملفات الشخصية على هذا الجهاز.',
+      'settings_sign_out_body': 'سيؤدي هذا إلى إنهاء جلسة الرمز وحذف كل الملفات الشخصية على هذا الجهاز.',
       'flow_invalid': 'لم يجتز مسار التحقق التحقق من الصحة',
       'capture_mode_title': 'وضع الالتقاط',
       'capture_mode_auto': 'تلقائي',
@@ -1833,8 +1779,7 @@ final class UseSmileIDSampleStrings {
       'token_error_exp': 'בטוקן אין טענת exp מספרית.',
       'token_error_exp_order':
           'טענת ה-exp של הטוקן אינה מאוחרת מטענת ה-iat שלו.',
-      'token_error_api_url_missing':
-          'בטוקן אין טענת api_url, ולכן שום דבר לא מציין לאיזו סביבה הוא הונפק.',
+      'token_error_api_url_missing': 'בטוקן אין טענת api_url, ולכן שום דבר לא מציין לאיזו סביבה הוא הונפק.',
       'token_error_api_url_unknown':
           'ה-api_url של הטוקן מציין את {host}, שאינו סביבה של Smile ID.',
       'token_error_api_url_invalid':
@@ -1849,14 +1794,12 @@ final class UseSmileIDSampleStrings {
       'auth_user_id_section': 'מזהה משתמש',
       'auth_user_id_placeholder': 'user_…',
       'auth_user_id_previous': 'מזהי משתמש קודמים',
-      'auth_user_id_previous_hint':
-          'משתמשים שנרשמו באימותים קודמים, מהחדש לישן. הקישו על אחד כדי להשתמש במזהה שלו.',
+      'auth_user_id_previous_hint': 'משתמשים שנרשמו באימותים קודמים, מהחדש לישן. הקישו על אחד כדי להשתמש במזהה שלו.',
       'auth_user_id_latest': 'האחרון',
       'auth_user_id_hint': 'הקלידו או הדביקו מזהה של משתמש שכבר נרשם.',
       'auth_user_id_or': 'או',
       'auth_user_id_run': 'הפעל אימות',
-      'auth_user_id_run_body':
-          'תקבלו מזהה משתמש מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
+      'auth_user_id_run_body': 'תקבלו מזהה משתמש מ-SmartSelfie Enrollment, אימות מסמך או Biometric KYC מוצלחים.',
       'user_details_profile_name': 'שם הפרופיל (אופציונלי)',
       'user_details_profile_name_hint': 'מוצג במסך ההסכמה',
       'user_details_from_token': 'סופק על ידי הטוקן',
@@ -1896,8 +1839,7 @@ final class UseSmileIDSampleStrings {
       'kyc_id_number_invalid': 'לא תואם לפורמט {idType}',
       'catalogue_advice_unauthorised':
           'השרת דחה את הטוקן של הסשן הזה. קשרו סשן חדש ונסו שוב',
-      'catalogue_advice_forbidden':
-          'הגישה נדחתה: ייתכן שסביבת הייצור לא הופעלה עבור השותף הזה, או שהרשת הזו אינה מורשית',
+      'catalogue_advice_forbidden': 'הגישה נדחתה: ייתכן שסביבת הייצור לא הופעלה עבור השותף הזה, או שהרשת הזו אינה מורשית',
       'catalogue_advice_offline': 'בדקו את החיבור ונסו שוב',
       'picker_country_title': 'מדינה',
       'picker_country_search': 'חיפוש מדינה',
@@ -1981,8 +1923,7 @@ final class UseSmileIDSampleStrings {
       'status_refresh_failed': 'לא ניתן לבדוק את הסטטוס: {reason}',
       'error_could_not_start':
           'לא הצלחנו להתחיל את האימות הזה. נסו שוב או פנו לתמיכה של האפליקציה.',
-      'error_ended_early':
-          'האימות הזה נעצר לפני שהסתיים. אפשר להתחיל אותו מחדש.',
+      'error_ended_early': 'האימות הזה נעצר לפני שהסתיים.',
       'error_id_number_invalid':
           'מספר התעודה הזה לא נראה תקין. בדקו אותו ונסו שוב.',
       'error_service_not_set_up':
@@ -2007,8 +1948,7 @@ final class UseSmileIDSampleStrings {
       'error_photo_rejected': 'לא הצלחנו להשתמש בתמונה הזו. צלמו אותה שוב.',
       'error_document_not_recognised':
           'לא הצלחנו לזהות את המסמך הזה. השתמשו בתעודה נתמכת וצלמו שוב.',
-      'error_face_check_unavailable':
-          'לא הצלחנו להשלים את בדיקת הפנים עבור התעודה הזו. נסו תעודה אחרת או פנו לתמיכה.',
+      'error_face_check_unavailable': 'לא הצלחנו להשלים את בדיקת הפנים עבור התעודה הזו. נסו תעודה אחרת או פנו לתמיכה.',
       'error_no_saved_selfie': 'לא מצאנו את הסלפי השמור שלכם. הירשמו תחילה.',
       'error_id_number_not_accepted':
           'מספר התעודה לא התקבל. בדקו אותו ונסו שוב.',

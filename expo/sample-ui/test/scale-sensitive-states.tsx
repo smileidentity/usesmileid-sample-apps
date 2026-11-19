@@ -20,7 +20,7 @@ export const scaleSensitive: Record<string, () => React.ReactElement> = {
   banner_longest_message: () => (
     <UseSmileIDSampleBanner
       caption="Verification failed"
-      message="We couldn't start this verification. Please try again, or contact the app's support."
+      message="This service isn't set up to complete verifications yet. Please contact the app's support."
     />
   ),
   button_wrapping: () => (

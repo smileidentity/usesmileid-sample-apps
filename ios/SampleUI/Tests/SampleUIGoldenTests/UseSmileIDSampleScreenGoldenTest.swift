@@ -126,10 +126,10 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
-  /// The table's longest message, which wraps furthest beside the glyph.
+  /// The table's longest message in English, which wraps furthest.
   func testVerificationDetailsFailedMaxDynamicType() {
     assertSurvivesMaxDynamicType(growsWithContentSize: false) {
-      failedRun(UseSmileIDSampleErrorHandling.forStatus(400), height: 1400)
+      failedRun(UseSmileIDSampleErrorHandling.forStatus(400, serverMessage: "Callback URL is required"), height: 1400)
     }
   }
 

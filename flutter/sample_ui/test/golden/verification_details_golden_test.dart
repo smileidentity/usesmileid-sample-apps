@@ -104,13 +104,18 @@ void main() {
     );
   });
 
-  /// The table's longest message, which wraps furthest beside the glyph.
+  /// The table's longest message in English, which wraps furthest.
   testWidgets('verification details failed survives max text scale', (
     WidgetTester tester,
   ) async {
     await assertSurvivesMaxTextScale(
       tester,
-      _failedRun(UseSmileIDSampleErrorHandling.forStatus(400)),
+      _failedRun(
+        UseSmileIDSampleErrorHandling.forStatus(
+          400,
+          serverMessage: 'Callback URL is required',
+        ),
+      ),
       ownsScrolling: true,
       hostHeight: goldenScreenHeight * 2,
       knownOpenWords: _openWords,
