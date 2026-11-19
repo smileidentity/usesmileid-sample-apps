@@ -100,7 +100,7 @@ exports[`at the largest content size, dark banner_longest_message 1`] = `
       ]
     }
   >
-    We couldn't start this verification. Please try again, or contact the app's support.
+    This service isn't set up to complete verifications yet. Please contact the app's support.
   </Text>
 </View>
 `;
@@ -1400,7 +1400,7 @@ exports[`at the largest content size, light banner_longest_message 1`] = `
       ]
     }
   >
-    We couldn't start this verification. Please try again, or contact the app's support.
+    This service isn't set up to complete verifications yet. Please contact the app's support.
   </Text>
 </View>
 `;
