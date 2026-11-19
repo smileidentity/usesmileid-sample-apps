@@ -31,6 +31,8 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
+import com.usesmileid.sampleapps.ui.R
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
