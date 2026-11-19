@@ -45,7 +45,7 @@ jest.mock('react-native-safe-area-context', () => ({
 const mockReact = { useEffect };
 /// The first screen the shell draws, reaching the extension in its render and in its first effect.
 const mockScreen = () => {
-  useSmileIDSampleShellExtension?.debugRows?.();
+  useSmileIDSampleShellExtension?.debugRows?.(() => {});
   mockReact.useEffect(() => {
     useSmileIDSampleShellExtension?.customiseFlow?.({} as never, 'biometricKyc' as never);
   }, []);

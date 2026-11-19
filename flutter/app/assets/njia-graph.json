@@ -40,6 +40,7 @@
             "language",
             "profiles",
             "scenarioDrawer",
+            "debugSheet",
             "scanToken"
           ]
         }
@@ -81,6 +82,14 @@
       "kind": "scenarioDrawer",
       "reach": "go",
       "link": "debug/scenarios",
+      "tab": "settings",
+      "presentation": "sheet"
+    },
+    {
+      "step": "debugSheet",
+      "kind": "debugSheet",
+      "reach": "go",
+      "link": "debug/sheet/:sheetId",
       "tab": "settings",
       "presentation": "sheet"
     },

@@ -67,6 +67,7 @@ final class UseSmileIDSampleScreenStateGoldenTest: XCTestCase {
   ]
 
   private static let exempt: [String: String] = [
+    "debugSheet.extensionContent": "a source build's extension draws it; a registry build has none and a release build closes it",
     "consent.notAgreed": "the SDK's own screen: this app decides whether the step runs, never draws it",
     "consent.agreed": "the SDK's own screen: this app decides whether the step runs, never draws it",
     "products.supersededListLayout":

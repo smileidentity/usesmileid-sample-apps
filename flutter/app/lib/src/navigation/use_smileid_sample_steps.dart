@@ -68,6 +68,13 @@ useSmileIDSampleSteps = NjiaSteps<UseSmileIDSampleStep, UseSmileIDSampleFact>(
           const UseSmileIDSampleScenarioDrawerStep(),
     )
     ..step(
+      UseSmileIDSampleStep.debugSheet,
+      (_, UseSmileIDSampleStepScope scope) => UseSmileIDSampleDebugSheetStep(
+        sheetId: scope.entry.arg ?? '',
+        onDismiss: scope.navigator.back,
+      ),
+    )
+    ..step(
       UseSmileIDSampleStep.verificationDetails,
       (_, UseSmileIDSampleStepScope scope) =>
           UseSmileIDSampleVerificationDetailsTab(

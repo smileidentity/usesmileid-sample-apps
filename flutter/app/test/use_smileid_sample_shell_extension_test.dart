@@ -20,6 +20,50 @@ void main() {
     );
   });
 
+  test('a debug build opens a sheet its extension draws', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(
+        debugBuild: true,
+        extension: _Timings(),
+        sheetId: 'captureTimings',
+      ),
+      isTrue,
+    );
+  });
+
+  test('a release build never opens it', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(
+        debugBuild: false,
+        extension: _Timings(),
+        sheetId: 'captureTimings',
+      ),
+      isFalse,
+    );
+  });
+
+  test('an id the extension does not draw closes', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(
+        debugBuild: true,
+        extension: _Timings(),
+        sheetId: 'unknown',
+      ),
+      isFalse,
+    );
+  });
+
+  test('a build with no extension has nothing to draw', () {
+    expect(
+      useSmileIDSampleDebugSheetOpens(
+        debugBuild: true,
+        extension: null,
+        sheetId: 'captureTimings',
+      ),
+      isFalse,
+    );
+  });
+
   test('a build without an extension has no debug rows', () {
     expect(useSmileIDSampleDebugRows(null), isEmpty);
   });
@@ -37,4 +81,10 @@ class _Rows extends UseSmileIDSampleShellExtension {
 
   @override
   List<Widget> debugRows() => <Widget>[others];
+}
+
+/// An extension that draws one debug sheet.
+class _Timings extends UseSmileIDSampleShellExtension {
+  @override
+  bool hasDebugSheet(String sheetId) => sheetId == 'captureTimings';
 }
