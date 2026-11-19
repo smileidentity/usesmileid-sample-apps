@@ -1,21 +1,17 @@
 import SwiftUI
 
-/// Which accent a banner carries: warning for a failure the user can act on, error for one that is final.
+/// Which accent a banner carries: warning for a failure trying again later can get past, error for one it can't.
 public enum UseSmileIDSampleBannerTone: Sendable {
   case warning
   case error
 }
 
-/// The design system's banner: a neutral surface with the tone's accent edge and glyph, a title over the message, and at most one action.
+/// The design system's banner: a neutral surface with the tone's accent edge and glyph, and a title over the message.
 public struct UseSmileIDSampleBanner: View {
   private let title: String
   private let message: String
   private let tone: UseSmileIDSampleBannerTone
-  private let actionLabel: String?
-  private let actionProminent: Bool
   private let testId: String?
-  private let actionTestId: String?
-  private let onAction: () -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
 
@@ -23,20 +19,12 @@ public struct UseSmileIDSampleBanner: View {
     title: String,
     message: String,
     tone: UseSmileIDSampleBannerTone,
-    actionLabel: String? = nil,
-    actionProminent: Bool = true,
-    testId: String? = nil,
-    actionTestId: String? = nil,
-    onAction: @escaping () -> Void = {}
+    testId: String? = nil
   ) {
     self.title = title
     self.message = message
     self.tone = tone
-    self.actionLabel = actionLabel
-    self.actionProminent = actionProminent
     self.testId = testId
-    self.actionTestId = actionTestId
-    self.onAction = onAction
   }
 
   public var body: some View {
@@ -49,23 +37,6 @@ public struct UseSmileIDSampleBanner: View {
         UseSmileIDSampleText(message, style: UseSmileIDSampleTheme.type.textStyleBodySm)
           .foregroundColor(colors.banner.text)
           .fixedSize(horizontal: false, vertical: true)
-        if let actionLabel, actionProminent {
-          UseSmileIDSampleButton(text: actionLabel, testId: actionTestId, action: onAction)
-            .padding(.top, SmileSpacing.spacingMd - SmileSpacing.spacingXxs)
-        } else if let actionLabel {
-          // Widened to the touch target, as the session-ended banner's text action is.
-          Button(action: onAction) {
-            UseSmileIDSampleText(actionLabel, style: UseSmileIDSampleTheme.type.linkFont)
-              .foregroundColor(colors.primary)
-              .fixedSize()
-              .padding(.horizontal, SmileSpacing.spacingXs)
-              .frame(minHeight: SmileSpacing.sizeControlMd)
-              .contentShape(Rectangle())
-          }
-          .buttonStyle(.plain)
-          .frame(maxWidth: .infinity, alignment: .trailing)
-          .useSmileIDSampleTestId(actionTestId)
-        }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -83,7 +54,7 @@ public struct UseSmileIDSampleBanner: View {
       RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.field, style: .continuous)
         .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
     )
-    // Contain, or the banner's id replaces the action's in the accessibility tree.
+    // Contain, so the banner's id doesn't swallow its text in the accessibility tree.
     .accessibilityElement(children: .contain)
     .useSmileIDSampleTestId(testId)
   }

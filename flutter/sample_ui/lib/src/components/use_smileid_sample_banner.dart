@@ -6,30 +6,25 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_icons.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
-import 'use_smileid_sample_button.dart';
 import 'use_smileid_sample_icon.dart';
 
-/// Which accent a banner carries: warning for a failure the user can act on, error for one that is final.
+/// Which accent a banner carries: warning for a failure trying again later can get past, error for one it can't.
 enum UseSmileIDSampleBannerTone {
-  /// The user can get past it.
+  /// Trying again later can get past it.
   warning,
 
-  /// Close is all it offers.
+  /// Trying again won't get past it.
   error,
 }
 
-/// The design system's banner: a neutral surface with the tone's accent edge and glyph, a title over the message, and at most one action.
+/// The design system's banner: a neutral surface with the tone's accent edge and glyph, and a title over the message.
 class UseSmileIDSampleBanner extends StatelessWidget {
-  /// A button when [actionProminent], a trailing text action otherwise.
+  /// [title] over [message], in [tone].
   const UseSmileIDSampleBanner({
     required this.title,
     required this.message,
     required this.tone,
-    this.actionLabel,
-    this.onAction,
-    this.actionProminent = true,
     this.testId,
-    this.actionTestId,
     super.key,
   });
 
@@ -42,20 +37,8 @@ class UseSmileIDSampleBanner extends StatelessWidget {
   /// The accent the bar and glyph take.
   final UseSmileIDSampleBannerTone tone;
 
-  /// The one action's label; null draws none.
-  final String? actionLabel;
-
-  /// What the action does.
-  final VoidCallback? onAction;
-
-  /// A full-width button when it moves the user on, a text action when it only closes.
-  final bool actionProminent;
-
   /// The banner's accessibility id.
   final String? testId;
-
-  /// The action's accessibility id.
-  final String? actionTestId;
 
   /// The banner contract's leading edge.
   static const double _accentWidth = 3;
@@ -69,7 +52,6 @@ class UseSmileIDSampleBanner extends StatelessWidget {
       UseSmileIDSampleBannerTone.warning => colors.banner.warningAccent,
       UseSmileIDSampleBannerTone.error => colors.banner.errorAccent,
     };
-    final String? label = actionLabel;
     return Semantics(
       identifier: testId,
       container: true,
@@ -122,46 +104,6 @@ class UseSmileIDSampleBanner extends StatelessWidget {
                                 style: UseSmileIDSampleType.textStyleBodySm
                                     .copyWith(color: colors.banner.text),
                               ),
-                              if (label != null && actionProminent) ...<Widget>[
-                                const SizedBox(height: SmileDimens.spacingMd),
-                                UseSmileIDSampleButton(
-                                  text: label,
-                                  onPressed: onAction ?? () {},
-                                  testId: actionTestId,
-                                ),
-                              ] else if (label != null)
-                                Align(
-                                  alignment: AlignmentDirectional.centerEnd,
-                                  child: Semantics(
-                                    identifier: actionTestId,
-                                    button: true,
-                                    child: GestureDetector(
-                                      onTap: onAction,
-                                      behavior: HitTestBehavior.opaque,
-                                      child: ConstrainedBox(
-                                        constraints: const BoxConstraints(
-                                          minHeight: SmileDimens.sizeControlMd,
-                                        ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: SmileDimens.spacingXs,
-                                          ),
-                                          child: Center(
-                                            widthFactor: 1,
-                                            child: Text(
-                                              label,
-                                              style: UseSmileIDSampleType
-                                                  .linkFont
-                                                  .copyWith(
-                                                    color: colors.primary,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
                             ],
                           ),
                         ),

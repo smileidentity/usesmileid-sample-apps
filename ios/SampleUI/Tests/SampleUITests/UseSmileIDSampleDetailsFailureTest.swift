@@ -37,17 +37,9 @@ final class UseSmileIDSampleDetailsFailureTest: XCTestCase {
     }
   }
 
-  func testAFailureTheUserCanActOnIsAWarningAndAFinalOneAnError() {
+  func testAFailureTryingAgainLaterCanGetPastIsAWarningAndAFinalOneAnError() {
     XCTAssertEqual(serverError.bannerTone, .warning)
     XCTAssertEqual(UseSmileIDSampleErrorHandling.forReason(nil).bannerTone, .error)
-  }
-
-  func testAStoredJobLeavesCloseToTheBackButtonButAFailedRunOffersIt() {
-    let final = UseSmileIDSampleErrorHandling.forReason(nil)
-    XCTAssertEqual(final.action, .exit)
-    XCTAssertFalse(final.offersAction(onStoredJob: true))
-    XCTAssertTrue(final.offersAction(onStoredJob: false))
-    XCTAssertTrue(serverError.offersAction(onStoredJob: true))
   }
 
   func testAFailedRunIsNotDrawnAsMissing() {

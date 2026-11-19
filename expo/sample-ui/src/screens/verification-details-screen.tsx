@@ -27,16 +27,11 @@ import type { BadgeTokens } from '../theme/smile-colors';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 import { smileIDSampleProductTitle, type UseSmileIDSampleProduct } from '../model/use-smile-id-sample-product';
-import {
-  UseSmileIDSampleErrorAction,
-  type UseSmileIDSampleErrorResolution,
-} from '../model/use-smile-id-sample-error-resolution';
+import { type UseSmileIDSampleErrorResolution } from '../model/use-smile-id-sample-error-resolution';
 import {
   smileIDSampleBannerTone,
   smileIDSampleDetailsFailure,
-  smileIDSampleErrorActionLabel,
   smileIDSampleErrorMessageText,
-  smileIDSampleOffersAction,
 } from '../state/use-smile-id-sample-details-failure';
 
 /// Everything the details screen renders. `job` is null for a deep link naming a row this build has no copy of.
@@ -61,7 +56,6 @@ type Props = {
   onDelete: () => void;
   onRefresh: () => void;
   onCopy: (label: string, value: string) => void;
-  onErrorAction?: (action: UseSmileIDSampleErrorAction) => void;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -72,25 +66,18 @@ export const VerificationDetailsScreen = ({
   onDelete,
   onRefresh,
   onCopy,
-  onErrorAction = () => {},
   style,
 }: Props) => {
   const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
   const { job } = state;
   const failure = smileIDSampleDetailsFailure(job ?? undefined, state.landedFailure);
-  const banner = (shown: UseSmileIDSampleErrorResolution, onStoredJob: boolean) => (
+  const banner = (shown: UseSmileIDSampleErrorResolution) => (
     <UseSmileIDSampleBanner
       title={smileIDSampleBannerTone(shown) === 'warning' ? strings.errorTitleNotCompleted : strings.errorTitleFailed}
       message={smileIDSampleErrorMessageText(shown.message, strings)}
       tone={smileIDSampleBannerTone(shown)}
-      actionLabel={
-        smileIDSampleOffersAction(shown, onStoredJob) ? smileIDSampleErrorActionLabel(shown.action, strings) : undefined
-      }
-      onAction={() => onErrorAction(shown.action)}
-      actionProminent={shown.action !== UseSmileIDSampleErrorAction.Exit}
       testID={UseSmileIDSampleTestIds.ERROR_BANNER}
-      actionTestID={UseSmileIDSampleTestIds.ERROR_ACTION}
     />
   );
 
@@ -136,7 +123,7 @@ export const VerificationDetailsScreen = ({
                 </Text>
               </View>
             )}
-            {banner(failure, false)}
+            {banner(failure)}
           </>
         ) : state.pending === true ? null : job === null ? (
           <UseSmileIDSampleEmptyState
@@ -161,7 +148,7 @@ export const VerificationDetailsScreen = ({
                 testID={UseSmileIDSampleTestIds.STATUS_BADGE}
               />
             </View>
-            {failure === undefined ? null : banner(failure, true)}
+            {failure === undefined ? null : banner(failure)}
 
             <UseSmileIDSampleSectionSurface label={strings.detailsSection}>
               <UseSmileIDSampleDataFieldRow

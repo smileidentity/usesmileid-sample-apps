@@ -109,7 +109,7 @@ class VerificationsGoldenTest : GoldenTest() {
     fun verification_details_failed() =
         goldens("screen_verification_details_failed") { FailedRun(UseSmileIDSampleErrorHandling.forStatus(503)) }
 
-    /** A refusal no retry gets past: the error tone, and Close. */
+    /** A refusal no retry gets past: the error tone and its title. */
     @Test
     fun verification_details_failed_final() =
         goldens("screen_verification_details_failed_final") { FailedRun(UseSmileIDSampleErrorHandling.forStatus(403)) }

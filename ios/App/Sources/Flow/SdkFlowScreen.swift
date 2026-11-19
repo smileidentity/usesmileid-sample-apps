@@ -77,7 +77,6 @@ struct SdkFlowScreen: View {
       exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
     case .ready:
       app.flowResult.startFlow(environment: snapshot.environment, product: snapshot.product)
-      app.markFormsFlowStarted()
       let handler = SdkFlowResultHandler(app: app, exit: exit, snapshot: snapshot)
       run.start(product: snapshot.product, builder: builder(snapshot, app: app, handler: handler))
     }

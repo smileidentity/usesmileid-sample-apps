@@ -102,25 +102,13 @@ void main() {
   );
 
   test(
-    'a failure the user can act on is a warning and a final one an error',
+    'a failure trying again later can get past is a warning and a final one an error',
     () {
       expect(serverError.bannerTone, UseSmileIDSampleBannerTone.warning);
       expect(
         UseSmileIDSampleErrorHandling.forReason(null).bannerTone,
         UseSmileIDSampleBannerTone.error,
       );
-    },
-  );
-
-  test(
-    'a stored job leaves close to the back button but a failed run offers it',
-    () {
-      final UseSmileIDSampleErrorResolution finalRow =
-          UseSmileIDSampleErrorHandling.forReason(null);
-      expect(finalRow.action, UseSmileIDSampleErrorAction.exit);
-      expect(finalRow.offersAction(onStoredJob: true), isFalse);
-      expect(finalRow.offersAction(onStoredJob: false), isTrue);
-      expect(serverError.offersAction(onStoredJob: true), isTrue);
     },
   );
 }

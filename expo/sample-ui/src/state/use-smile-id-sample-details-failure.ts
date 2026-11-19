@@ -31,13 +31,9 @@ export const smileIDSampleLandedFailure = (
 ): UseSmileIDSampleErrorResolution | undefined =>
   status === 'failed' ? (row ?? smileIDSampleErrorSubmissionFallback) : undefined;
 
-/// Warning while the user can act on the failure, error once Close is all it offers.
+/// Warning when trying again later can get past the failure, error when the row's own action is Close.
 export const smileIDSampleBannerTone = (failure: UseSmileIDSampleErrorResolution): UseSmileIDSampleBannerTone =>
   failure.action === UseSmileIDSampleErrorAction.Exit ? 'error' : 'warning';
-
-/// Whether the banner shows its button: on a stored job the app bar's back already closes the screen.
-export const smileIDSampleOffersAction = (failure: UseSmileIDSampleErrorResolution, onStoredJob: boolean): boolean =>
-  !(onStoredJob && failure.action === UseSmileIDSampleErrorAction.Exit);
 
 /// A failure's message in the app's language.
 export const smileIDSampleErrorMessageText = (
@@ -93,25 +89,5 @@ export const smileIDSampleErrorMessageText = (
       return strings.errorCouldNotFinish;
     case UseSmileIDSampleErrorMessage.NotVerified:
       return strings.errorNotVerified;
-  }
-};
-
-/// The label on a failure's one button.
-export const smileIDSampleErrorActionLabel = (
-  action: UseSmileIDSampleErrorAction,
-  strings: UseSmileIDSampleStrings,
-): string => {
-  switch (action) {
-    case UseSmileIDSampleErrorAction.Retry:
-    case UseSmileIDSampleErrorAction.RetryLater:
-      return strings.commonTryAgain;
-    case UseSmileIDSampleErrorAction.Recapture:
-      return strings.errorActionRetakePhoto;
-    case UseSmileIDSampleErrorAction.FixInput:
-      return strings.errorActionEditIdNumber;
-    case UseSmileIDSampleErrorAction.NewSession:
-      return strings.errorActionStartAgain;
-    case UseSmileIDSampleErrorAction.Exit:
-      return strings.errorActionClose;
   }
 };

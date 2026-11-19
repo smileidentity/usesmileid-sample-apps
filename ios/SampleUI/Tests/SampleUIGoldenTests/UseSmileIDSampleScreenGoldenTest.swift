@@ -114,7 +114,7 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     goldens("verification_details_failed") { failedRun(UseSmileIDSampleErrorHandling.forStatus(503)) }
   }
 
-  /// A refusal no retry gets past: the error tone, and Close.
+  /// A refusal no retry gets past: the error tone and its title.
   func testVerificationDetailsFailedFinal() {
     goldens("verification_details_failed_final") { failedRun(UseSmileIDSampleErrorHandling.forStatus(403)) }
   }

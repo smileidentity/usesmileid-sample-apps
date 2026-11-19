@@ -281,10 +281,8 @@ export {
 export {
   smileIDSampleBannerTone,
   smileIDSampleDetailsFailure,
-  smileIDSampleErrorActionLabel,
   smileIDSampleErrorMessageText,
   smileIDSampleLandedFailure,
-  smileIDSampleOffersAction,
   type UseSmileIDSampleBannerTone,
 } from './state/use-smile-id-sample-details-failure';
 export { smileIDSampleErrorForFailure } from './state/use-smile-id-sample-failure-row';
@@ -488,6 +486,5 @@ export {
   type UseSmileIDSampleResumePoint,
   type UseSmileIDSampleRunIntent,
   type UseSmileIDSampleSessionStorage,
-  smileIDSampleKeepsForms,
   smileIDSampleResumesInFlow,
 } from './state/use-smile-id-sample-session-store';

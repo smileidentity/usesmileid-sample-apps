@@ -95,7 +95,7 @@ void main() {
     );
   });
 
-  /// A refusal no retry gets past: the error tone, and Close.
+  /// A refusal no retry gets past: the error tone and its title.
   testWidgets('verification details failed final', (WidgetTester tester) async {
     await _screenGoldens(
       tester,
@@ -167,7 +167,6 @@ Widget _failedRun(UseSmileIDSampleErrorResolution failure) =>
       onCopy: _ignoreCopy,
       landedFailure: failure,
       landedProduct: UseSmileIDSampleProduct.biometricKyc,
-      onErrorAction: (_) {},
     );
 
 UseSmileIDSampleJob _job({

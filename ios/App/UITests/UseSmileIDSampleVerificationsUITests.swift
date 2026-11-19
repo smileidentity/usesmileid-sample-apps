@@ -191,13 +191,12 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(app.staticTexts["Not submitted under a scanned token"].waitForExistence(timeout: 10))
   }
 
-  /// A blocked job says why under its badge, and leaves closing to the app bar's back.
-  func testABlockedJobStatesWhyAndOffersNoClose() {
+  /// A blocked job says why under its badge.
+  func testABlockedJobStatesWhy() {
     element("sample_filter_chip_blocked").tap()
     element("sample_job_row_0").tap()
     XCTAssertTrue(element("sample_error_banner").waitForExistence(timeout: 10))
     XCTAssertTrue(app.staticTexts["We couldn't verify your identity."].exists)
-    XCTAssertFalse(element("sample_error_action").exists, "a stored job offered Close beside the back button")
   }
 
   /// iOS shows nothing when the pasteboard changes, so without the app's own notice a copy looks like a dead tap.

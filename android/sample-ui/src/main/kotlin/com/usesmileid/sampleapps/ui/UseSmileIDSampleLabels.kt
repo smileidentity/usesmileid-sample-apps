@@ -6,7 +6,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalResources
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleEnvironment
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorMessage
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -94,16 +93,6 @@ fun UseSmileIDSampleErrorMessage.text(): String = when (this) {
     UseSmileIDSampleErrorMessage.IdServiceDown -> UseSmileIDSampleStrings.errorIdServiceDown
     UseSmileIDSampleErrorMessage.CouldNotFinish -> UseSmileIDSampleStrings.errorCouldNotFinish
     UseSmileIDSampleErrorMessage.NotVerified -> UseSmileIDSampleStrings.errorNotVerified
-}
-
-/** The label on a failure's one button. */
-@Composable
-fun UseSmileIDSampleErrorAction.label(): String = when (this) {
-    UseSmileIDSampleErrorAction.Retry, UseSmileIDSampleErrorAction.RetryLater -> UseSmileIDSampleStrings.commonTryAgain
-    UseSmileIDSampleErrorAction.Recapture -> UseSmileIDSampleStrings.errorActionRetakePhoto
-    UseSmileIDSampleErrorAction.FixInput -> UseSmileIDSampleStrings.errorActionEditIdNumber
-    UseSmileIDSampleErrorAction.NewSession -> UseSmileIDSampleStrings.errorActionStartAgain
-    UseSmileIDSampleErrorAction.Exit -> UseSmileIDSampleStrings.errorActionClose
 }
 
 @Composable

@@ -2,16 +2,14 @@ package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onNodeWithText
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.golden.ResultFixtures
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleErrorHandling
-import org.junit.Assert.assertEquals
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Rule
 import org.junit.Test
@@ -39,20 +37,17 @@ class VerificationDetailsScreenTest {
     }
 
     @Test
-    fun a_failed_run_states_its_message_in_place_of_missing_and_its_button_runs_the_action() {
-        val pressed = mutableListOf<UseSmileIDSampleErrorAction>()
-        details(pending = false, landedFailure = UseSmileIDSampleErrorHandling.forStatus(503), onErrorAction = { pressed += it })
+    fun a_failed_run_states_its_message_in_place_of_missing() {
+        details(pending = false, landedFailure = UseSmileIDSampleErrorHandling.forStatus(503))
         compose.onNodeWithTag(UseSmileIDSampleTestIds.DETAILS_EMPTY).assertDoesNotExist()
         compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_BANNER).assertExists()
-        compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_ACTION).performClick()
-        assertEquals(listOf(UseSmileIDSampleErrorAction.Retry), pressed)
+        compose.onNodeWithText("Something went wrong on our side. Please try again in a few minutes.").assertExists()
     }
 
     @Test
-    fun a_stored_job_that_ended_in_error_states_why_and_leaves_closing_to_the_back_button() {
+    fun a_stored_job_that_ended_in_error_states_why() {
         details(pending = false, job = job(UseSmileIDSampleStatus.Error))
         compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_BANNER).assertExists()
-        compose.onNodeWithTag(UseSmileIDSampleTestIds.ERROR_ACTION).assertDoesNotExist()
     }
 
     @Test
@@ -75,7 +70,6 @@ class VerificationDetailsScreenTest {
         pending: Boolean,
         job: UseSmileIDSampleJob? = null,
         landedFailure: UseSmileIDSampleErrorResolution? = null,
-        onErrorAction: (UseSmileIDSampleErrorAction) -> Unit = {},
     ) = compose.setContent {
         UseSmileIDSampleTheme {
             VerificationDetailsScreen(
@@ -87,7 +81,6 @@ class VerificationDetailsScreenTest {
                 onCopy = { _, _ -> },
                 pending = pending,
                 landedFailure = landedFailure,
-                onErrorAction = onErrorAction,
             )
         }
     }

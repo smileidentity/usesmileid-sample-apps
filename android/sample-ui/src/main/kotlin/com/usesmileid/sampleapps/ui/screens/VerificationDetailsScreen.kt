@@ -31,7 +31,6 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarButton
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTopAppBarEmphasis
 import com.usesmileid.sampleapps.ui.label
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -39,7 +38,6 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.createdAtLabel
 import com.usesmileid.sampleapps.ui.state.bannerTone
 import com.usesmileid.sampleapps.ui.state.detailsFailure
-import com.usesmileid.sampleapps.ui.state.offersAction
 import com.usesmileid.sampleapps.ui.text
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
@@ -63,10 +61,6 @@ fun VerificationDetailsScreen(
     landedFailure: UseSmileIDSampleErrorResolution? = null,
     /** That run's product, named over its banner. */
     landedProduct: UseSmileIDSampleProduct? = null,
-    /** Runs the banner's one action. */
-    onErrorAction: (UseSmileIDSampleErrorAction) -> Unit = {},
-    /** False while the action could not run yet, which draws it disabled. */
-    errorActionEnabled: Boolean = true,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
 ) {
@@ -99,7 +93,7 @@ fun VerificationDetailsScreen(
             val failure = detailsFailure(job, landedFailure)
             if (job == null && failure != null) {
                 if (landedProduct != null) item { TitleRow(landedProduct.localizedTitle()) }
-                item { FailureBanner(failure, onStoredJob = false, onErrorAction, errorActionEnabled) }
+                item { FailureBanner(failure) }
             } else if (job == null) {
                 if (!pending) {
                     item {
@@ -120,7 +114,7 @@ fun VerificationDetailsScreen(
                         )
                     }
                 }
-                if (failure != null) item { FailureBanner(failure, onStoredJob = true, onErrorAction) }
+                if (failure != null) item { FailureBanner(failure) }
                 item {
                     UseSmileIDSampleSectionSurface(
                         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
@@ -171,23 +165,13 @@ private fun TitleRow(title: String, trailing: @Composable () -> Unit = {}) {
 }
 
 @Composable
-private fun FailureBanner(
-    failure: UseSmileIDSampleErrorResolution,
-    onStoredJob: Boolean,
-    onErrorAction: (UseSmileIDSampleErrorAction) -> Unit,
-    actionEnabled: Boolean = true,
-) {
+private fun FailureBanner(failure: UseSmileIDSampleErrorResolution) {
     UseSmileIDSampleBanner(
         title = if (failure.bannerTone == UseSmileIDSampleBannerTone.Warning) UseSmileIDSampleStrings.errorTitleNotCompleted else UseSmileIDSampleStrings.errorTitleFailed,
         message = failure.message.text(),
         tone = failure.bannerTone,
-        actionLabel = failure.action.label().takeIf { failure.offersAction(onStoredJob) },
-        onAction = { onErrorAction(failure.action) },
-        actionProminent = failure.action != UseSmileIDSampleErrorAction.Exit,
-        actionEnabled = actionEnabled || failure.action == UseSmileIDSampleErrorAction.Exit,
         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
         testId = UseSmileIDSampleTestIds.ERROR_BANNER,
-        actionTestId = UseSmileIDSampleTestIds.ERROR_ACTION,
     )
 }
 

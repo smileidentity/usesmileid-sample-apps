@@ -1,4 +1,3 @@
-import { UseSmileIDSampleErrorAction } from '../src/model/use-smile-id-sample-error-resolution';
 import { type UseSmileIDSampleJob } from '../src/model/use-smile-id-sample-job';
 import { smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
 import { UseSmileIDSampleStatus } from '../src/model/use-smile-id-sample-status';
@@ -6,7 +5,6 @@ import {
   smileIDSampleBannerTone,
   smileIDSampleDetailsFailure,
   smileIDSampleLandedFailure,
-  smileIDSampleOffersAction,
 } from '../src/state/use-smile-id-sample-details-failure';
 import { smileIDSampleErrorForReason, smileIDSampleErrorForStatus } from '../src/state/use-smile-id-sample-error-handling';
 
@@ -57,16 +55,8 @@ describe('the details failure', () => {
     }
   });
 
-  it('a failure the user can act on is a warning and a final one an error', () => {
+  it('a failure trying again later can get past is a warning and a final one an error', () => {
     expect(smileIDSampleBannerTone(serverError)).toBe('warning');
     expect(smileIDSampleBannerTone(smileIDSampleErrorForReason(null))).toBe('error');
-  });
-
-  it('a stored job leaves close to the back button but a failed run offers it', () => {
-    const final = smileIDSampleErrorForReason(null);
-    expect(final.action).toBe(UseSmileIDSampleErrorAction.Exit);
-    expect(smileIDSampleOffersAction(final, true)).toBe(false);
-    expect(smileIDSampleOffersAction(final, false)).toBe(true);
-    expect(smileIDSampleOffersAction(serverError, true)).toBe(true);
   });
 });

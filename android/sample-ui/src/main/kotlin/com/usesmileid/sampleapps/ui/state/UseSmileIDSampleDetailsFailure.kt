@@ -19,10 +19,6 @@ fun detailsFailure(job: UseSmileIDSampleJob?, landedRun: UseSmileIDSampleErrorRe
 fun landedFailure(status: UseSmileIDSampleFlowStatus, row: UseSmileIDSampleErrorResolution?): UseSmileIDSampleErrorResolution? =
     if (status == UseSmileIDSampleFlowStatus.Failed) row ?: UseSmileIDSampleErrorHandling.submissionFallback else null
 
-/** Warning while the user can act on the failure, error once Close is all it offers. */
+/** Warning when trying again later can get past the failure, error when the row's own action is Close. */
 val UseSmileIDSampleErrorResolution.bannerTone: UseSmileIDSampleBannerTone
     get() = if (action == UseSmileIDSampleErrorAction.Exit) UseSmileIDSampleBannerTone.Error else UseSmileIDSampleBannerTone.Warning
-
-/** Whether the banner shows its button: on a stored job the app bar's back already closes the screen. */
-fun UseSmileIDSampleErrorResolution.offersAction(onStoredJob: Boolean): Boolean =
-    !(onStoredJob && action == UseSmileIDSampleErrorAction.Exit)

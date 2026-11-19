@@ -36,7 +36,6 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     this.result,
     this.landedFailure,
     this.landedProduct,
-    this.onErrorAction,
     super.key,
   });
 
@@ -69,9 +68,6 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
 
   /// That run's product, named over its banner.
   final UseSmileIDSampleProduct? landedProduct;
-
-  /// Runs the banner's one action.
-  final ValueChanged<UseSmileIDSampleErrorAction>? onErrorAction;
 
   @override
   Widget build(BuildContext context) {
@@ -118,7 +114,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: SmileDimens.spacingMd),
                       ],
-                      _banner(context, failure, onStoredJob: false),
+                      _banner(context, failure),
                     ] else if (job.pending)
                       const SizedBox.shrink()
                     else if (found == null)
@@ -165,21 +161,14 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
 
   Widget _banner(
     BuildContext context,
-    UseSmileIDSampleErrorResolution failure, {
-    required bool onStoredJob,
-  }) => UseSmileIDSampleBanner(
+    UseSmileIDSampleErrorResolution failure,
+  ) => UseSmileIDSampleBanner(
     title: failure.bannerTone == UseSmileIDSampleBannerTone.warning
         ? context.strings.errorTitleNotCompleted
         : context.strings.errorTitleFailed,
     message: failure.message.text(context.strings),
     tone: failure.bannerTone,
-    actionLabel: failure.offersAction(onStoredJob: onStoredJob)
-        ? failure.action.label(context.strings)
-        : null,
-    onAction: () => onErrorAction?.call(failure.action),
-    actionProminent: failure.action != UseSmileIDSampleErrorAction.exit,
     testId: UseSmileIDSampleTestIds.errorBanner,
-    actionTestId: UseSmileIDSampleTestIds.errorAction,
   );
 
   List<Widget> _fields(
@@ -207,7 +196,7 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     ),
     if (failure != null) ...<Widget>[
       const SizedBox(height: SmileDimens.spacingMd),
-      _banner(context, failure, onStoredJob: true),
+      _banner(context, failure),
     ],
     const SizedBox(height: SmileDimens.spacingMd),
     UseSmileIDSampleSectionLabel(text: context.strings.detailsSection),

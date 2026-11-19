@@ -30,15 +30,11 @@ UseSmileIDSampleErrorResolution? useSmileIDSampleLandedFailure({
 /// How a failure's banner reads.
 extension UseSmileIDSampleErrorResolutionBanner
     on UseSmileIDSampleErrorResolution {
-  /// Warning while the user can act on the failure, error once Close is all it offers.
+  /// Warning when trying again later can get past the failure, error when the row's own action is Close.
   UseSmileIDSampleBannerTone get bannerTone =>
       action == UseSmileIDSampleErrorAction.exit
       ? UseSmileIDSampleBannerTone.error
       : UseSmileIDSampleBannerTone.warning;
-
-  /// Whether the banner shows its button: on a stored job the app bar's back already closes the screen.
-  bool offersAction({required bool onStoredJob}) =>
-      !(onStoredJob && action == UseSmileIDSampleErrorAction.exit);
 }
 
 /// A failure's message in the app's language.
@@ -76,18 +72,5 @@ extension UseSmileIDSampleErrorMessageText on UseSmileIDSampleErrorMessage {
     UseSmileIDSampleErrorMessage.idServiceDown => strings.errorIdServiceDown,
     UseSmileIDSampleErrorMessage.couldNotFinish => strings.errorCouldNotFinish,
     UseSmileIDSampleErrorMessage.notVerified => strings.errorNotVerified,
-  };
-}
-
-/// The label on a failure's one button.
-extension UseSmileIDSampleErrorActionLabel on UseSmileIDSampleErrorAction {
-  /// The label, from [strings].
-  String label(UseSmileIDSampleStrings strings) => switch (this) {
-    UseSmileIDSampleErrorAction.retry ||
-    UseSmileIDSampleErrorAction.retryLater => strings.commonTryAgain,
-    UseSmileIDSampleErrorAction.recapture => strings.errorActionRetakePhoto,
-    UseSmileIDSampleErrorAction.fixInput => strings.errorActionEditIdNumber,
-    UseSmileIDSampleErrorAction.newSession => strings.errorActionStartAgain,
-    UseSmileIDSampleErrorAction.exit => strings.errorActionClose,
   };
 }

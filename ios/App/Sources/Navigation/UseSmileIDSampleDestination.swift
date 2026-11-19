@@ -186,7 +186,7 @@ struct UseSmileIDSampleDestination: View {
         navigator.back()
       }
     case .verificationDetails:
-      UseSmileIDSampleVerificationDetailsHost(jobId: scope.entry.arg ?? "", navigator: navigator, engine: engine, entry: scope.entry)
+      UseSmileIDSampleVerificationDetailsHost(jobId: scope.entry.arg ?? "", navigator: navigator)
         .navigationBarHidden(true)
     case .profiles:
       UseSmileIDSampleProfilesHost(navigator: navigator)
@@ -285,7 +285,14 @@ struct UseSmileIDSampleDestination: View {
 
   /// A product tap: the run's first form, or the scanner first when no live session backs it.
   private func startRun(_ product: UseSmileIDSampleProduct) {
-    app.startProductRun(engine: engine, from: scope.entry, product: product)
+    app.fillFormForRun(product)
+    let run = app.entry(in: engine.graph, for: product)
+    app.runPartnerId = run == nil ? nil : app.session?.partnerId
+    if let run {
+      engine.startRun(from: scope.entry, product: product, run: run)
+    } else {
+      navigator.go(.scanToken)
+    }
   }
 
   /// SmartSelfie Registration in this run's place, for a user with no enrolment to authenticate.
@@ -403,13 +410,9 @@ struct UseSmileIDSampleDestination: View {
 private struct UseSmileIDSampleVerificationDetailsHost: View {
   let jobId: String
   let navigator: NjiaNavigator
-  let engine: UseSmileIDSampleEngine
-  let entry: NjiaEntry
 
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var notice: UseSmileIDSampleTransientNotice?
-  /// One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
-  @State private var acted = false
 
   var body: some View {
     VerificationDetailsScreen(
@@ -430,11 +433,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onDelete: { app.removeJobs([jobId])
         navigator.back() },
       onCopy: { label, value in copy(label, value) },
-      onRefresh: { await refresh() },
-      onErrorAction: { action in
-        guard !acted else { return }
-        acted = run(action)
-      }
+      onRefresh: { await refresh() }
     )
     // Asked again with the list's backoff while the server still has it processing, and afresh under a new session.
     .task(id: [jobId, app.session?.id ?? ""]) {
@@ -449,39 +448,6 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
         .padding(.horizontal, SmileSpacing.spacingMd)
         .padding(.vertical, SmileSpacing.spacingLg)
     }
-  }
-
-  /// Runs a failure's action for the job's product, or the failed run's; true when it replaced this entry, false when Close kept it.
-  private func run(_ action: UseSmileIDSampleErrorAction) -> Bool {
-    let product = app.jobs?.first { $0.id == jobId }?.product ?? app.flowResult.product
-    let live = app.session.flatMap { $0.hasExpired(at: Date()) ? nil : $0 }
-    let move = useSmileIDSampleErrorMove(
-      action,
-      product: product,
-      sessionLive: live != nil,
-      livePartnerId: live?.partnerId,
-      runPartnerId: app.runPartnerId,
-      idDetails: product.map { $0.needsIdDetails ? (app.tokenBindsIdDetails($0) ? .token : .form) : .none } ?? .none,
-      formsHoldRun: app.formsFlowStarted
-    )
-    switch move {
-    case .runAgain(let product):
-      engine.startRun(from: entry, product: product, run: app.runOnly(product, route: app.flowResult.route), replace: entry.id)
-    case .runFromStart(let product):
-      app.startProductRun(engine: engine, from: entry, product: product, replace: entry.id)
-    case .editIdDetails(let product):
-      let facts = app.runOnly(product, route: app.flowResult.route).facts
-      let run = UseSmileIDSampleRunEntry(facts: facts, step: UseSmileIDSampleStep.idDetailsForm.rawValue)
-      engine.startRun(from: entry, product: product, run: run, replace: entry.id)
-    case .newToken(let product, let resumeAt):
-      // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
-      app.interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: app.flowResult.route, resumeAt: resumeAt)
-      engine.navigator(entry).go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: entry.id)
-    case .leave:
-      engine.leaveToProducts()
-      return false
-    }
-    return true
   }
 
   /// The row once the store has emitted at all; nil if the list arrives without it.

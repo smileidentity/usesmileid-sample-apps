@@ -4,19 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
-import 'package:usesmileid_njia/usesmileid_njia.dart';
 
-import '../flow/use_smileid_sample_error_move.dart';
 import '../flow/use_smileid_sample_token_binding_rules.dart';
-import '../navigation/use_smileid_sample_navigation.dart';
-import '../navigation/use_smileid_sample_njia.dart';
 import '../state/use_smileid_sample_flow_result_provider.dart';
-import '../state/use_smileid_sample_forms.dart';
 import '../state/use_smileid_sample_providers.dart';
 import '../state/use_smileid_sample_session_providers.dart';
-import '../use_smileid_sample_journey.dart';
 import '../use_smileid_sample_remove_jobs.dart';
-import 'use_smileid_sample_products_tab.dart';
 import 'use_smileid_sample_sdk_flow_tab.dart';
 
 /// One verification's detail page, pushed inside the verifications tab so back stays within it.
@@ -25,7 +18,6 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
   const UseSmileIDSampleVerificationDetailsTab({
     required this.jobId,
     required this.onBack,
-    required this.entry,
     super.key,
   });
 
@@ -35,9 +27,6 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
   /// Leaves the page.
   final VoidCallback onBack;
 
-  /// This page's entry, which a failure's action replaces.
-  final NjiaEntry entry;
-
   @override
   ConsumerState<UseSmileIDSampleVerificationDetailsTab> createState() =>
       _UseSmileIDSampleVerificationDetailsTabState();
@@ -45,8 +34,6 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleVerificationDetailsTabState
     extends ConsumerState<UseSmileIDSampleVerificationDetailsTab> {
-  bool _acted = false;
-
   /// The last refresh outcome, or a copy's confirmation while its window stands.
   String? _notice;
 
@@ -150,102 +137,7 @@ class _UseSmileIDSampleVerificationDetailsTabState
             )
           : null,
       landedProduct: landed ? run.product : null,
-      onErrorAction: (UseSmileIDSampleErrorAction action) {
-        // One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
-        if (_acted) return;
-        _acted = true;
-        // Freed again when the move kept this page (Close) or failed, so the button is never left dead.
-        unawaited(
-          _run(action, found?.product ?? run.product).then(
-            (bool replaced) {
-              if (!replaced && mounted) _acted = false;
-            },
-            onError: (Object _) {
-              if (mounted) _acted = false;
-            },
-          ),
-        );
-      },
     );
-  }
-
-  /// Runs a failure's [action] for [product]; true when it replaced this page's entry, false when Close kept it.
-  Future<bool> _run(
-    UseSmileIDSampleErrorAction action,
-    UseSmileIDSampleProduct? product,
-  ) async {
-    final UseSmileIDSampleEngine engine =
-        UseSmileIDSampleNavigationScope.engineOf(context);
-    final UseSmileIDSampleFlowRoute route = ref
-        .read(useSmileIDSampleFlowResultProvider)
-        .route;
-    final UseSmileIDSampleTokenSession? live = useSmileIDSampleLiveSession(
-      ref.read(useSmileIDSampleSessionProvider).live,
-      DateTime.now().millisecondsSinceEpoch,
-    );
-    final UseSmileIDSampleErrorMove move = useSmileIDSampleErrorMove(
-      action,
-      product,
-      sessionLive: live != null,
-      livePartnerId: live?.partnerId,
-      runPartnerId: ref.read(useSmileIDSampleRunPartnerProvider),
-      idDetails: product == null || !product.needsIdDetails
-          ? UseSmileIDSampleIdDetailsSource.none
-          : useSmileIDSampleLiveBindings(ref)?.bindsIdDetails(product) ?? false
-          ? UseSmileIDSampleIdDetailsSource.token
-          : UseSmileIDSampleIdDetailsSource.form,
-      formsHoldRun: ref.read(useSmileIDSampleFormsProvider).flowStarted,
-    );
-    switch (move) {
-      case UseSmileIDSampleRunAgain(:final UseSmileIDSampleProduct product):
-        await engine.startRun(
-          widget.entry,
-          product,
-          useSmileIDSampleRunOnly(ref, product, route),
-          replace: widget.entry.id,
-        );
-      case UseSmileIDSampleRunFromStart(:final UseSmileIDSampleProduct product):
-        await useSmileIDSampleStartProductRun(
-          ref,
-          engine,
-          widget.entry,
-          product,
-          replace: widget.entry.id,
-        );
-      case UseSmileIDSampleEditIdDetails(
-        :final UseSmileIDSampleProduct product,
-      ):
-        await engine.startRun(
-          widget.entry,
-          product,
-          UseSmileIDSampleRunEntry(
-            facts: useSmileIDSampleRunOnly(ref, product, route).facts,
-            step: UseSmileIDSampleStep.idDetailsForm.name,
-          ),
-          replace: widget.entry.id,
-        );
-      // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
-      case UseSmileIDSampleNewToken(
-        :final UseSmileIDSampleProduct product,
-        :final UseSmileIDSampleResumePoint resumeAt,
-      ):
-        ref
-            .read(useSmileIDSampleInterruptedRunProvider.notifier)
-            .send(
-              UseSmileIDSampleRunIntent(
-                productId: product.id,
-                route: route,
-                resumeAt: resumeAt,
-              ),
-            );
-        await engine
-            .navigator(widget.entry)
-            .go(UseSmileIDSampleStep.scanToken.name, replace: widget.entry.id);
-      case UseSmileIDSampleLeave():
-        await engine.leaveToProducts();
-        return false;
-    }
-    return true;
   }
 
   UseSmileIDSampleJob? _stored() {

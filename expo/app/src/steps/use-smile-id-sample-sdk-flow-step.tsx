@@ -149,10 +149,7 @@ export const UseSmileIDSampleSdkFlowStep = ({ scope }: { scope: UseSmileIDSample
   const recorder = useMemo(() => (snapshot === null ? null : smileIDSampleRunRecorder(runOf(snapshot))), [snapshot]);
 
   useEffect(() => {
-    if (preflight?.kind === 'ready') {
-      recorder?.ensureStarted();
-      useSmileIDSampleFormsStore.getState().markFlowStarted();
-    }
+    if (preflight?.kind === 'ready') recorder?.ensureStarted();
     // Entry-only, like the snapshot it records.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

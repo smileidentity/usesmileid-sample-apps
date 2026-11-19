@@ -19,14 +19,9 @@ public func useSmileIDSampleLandedFailure(
 }
 
 public extension UseSmileIDSampleErrorResolution {
-  /// Warning while the user can act on the failure, error once Close is all it offers.
+  /// Warning when trying again later can get past the failure, error when the row's own action is Close.
   var bannerTone: UseSmileIDSampleBannerTone {
     action == .exit ? .error : .warning
-  }
-
-  /// Whether the banner shows its button: on a stored job the app bar's back already closes the screen.
-  func offersAction(onStoredJob: Bool) -> Bool {
-    !(onStoredJob && action == .exit)
   }
 }
 
@@ -58,19 +53,6 @@ public extension UseSmileIDSampleErrorMessage {
     case .idServiceDown: UseSmileIDSampleStrings.errorIdServiceDown
     case .couldNotFinish: UseSmileIDSampleStrings.errorCouldNotFinish
     case .notVerified: UseSmileIDSampleStrings.errorNotVerified
-    }
-  }
-}
-
-public extension UseSmileIDSampleErrorAction {
-  /// The label on the failure's one button.
-  var label: String {
-    switch self {
-    case .retry, .retryLater: UseSmileIDSampleStrings.commonTryAgain
-    case .recapture: UseSmileIDSampleStrings.errorActionRetakePhoto
-    case .fixInput: UseSmileIDSampleStrings.errorActionEditIdNumber
-    case .newSession: UseSmileIDSampleStrings.errorActionStartAgain
-    case .exit: UseSmileIDSampleStrings.errorActionClose
     }
   }
 }

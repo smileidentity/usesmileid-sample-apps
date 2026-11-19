@@ -896,24 +896,21 @@
         "banner.text-font",
         "banner.warning-accent",
         "banner.error-accent",
-        "color.card-stroke",
-        "color.primary"
+        "color.card-stroke"
       ],
       "variants": [
-        "warningWithButton",
-        "errorWithTextAction",
-        "errorMessageOnly"
+        "warning",
+        "error"
       ],
       "metrics": {
         "accentEdge": "3 wide at the leading edge, the full height, in the tone's accent",
         "glyph": "sizeIconMd in the tone's accent: Material Symbols warning, or cancel for error",
-        "layout": "banner.padding around the glyph and text, banner.gap between them, spacing.xxs between title and message",
-        "action": "a full-width primary Button under the message when it moves the user on; a trailing text action in color.primary when it only closes"
+        "layout": "banner.padding around the glyph and text, banner.gap between them, spacing.xxs between title and message"
       },
       "usedBy": [
         "verificationDetails"
       ],
-      "notes": "The design system's banner contract: neutral banner.bg surface, radius.field corners, a body-strong title over a body-sm message. The outline is color.card-stroke, as SessionEndedBanner's is, because banner.border carries one light value in both schemes. Warning tone and 'Verification not completed' for a row whose action can get past the failure; error tone and 'Verification failed' for one that ends in Close."
+      "notes": "The design system's banner contract: neutral banner.bg surface, radius.field corners, a body-strong title over a body-sm message. The outline is color.card-stroke, as SessionEndedBanner's is, because banner.border carries one light value in both schemes. Warning tone and 'Verification not completed' for a row whose failure trying again later can get past; error tone and 'Verification failed' for one whose action is Close. It carries no button: the SDK's processing screen already offered Retry within its limits, and a run restarts from the products tab under a live token."
     },
     {
       "name": "SessionEndedBanner",

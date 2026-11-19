@@ -10,30 +10,15 @@ import {
   useSmileIDSampleStrings,
   UseSmileIDSampleStatus,
   smileIDSampleLandedFailure,
-  smileIDSampleLiveSession,
-  smileIDSampleBindsIdDetails,
-  useSmileIDSampleActiveProfile,
-  useSmileIDSampleFormsStore,
-  type UseSmileIDSampleErrorAction,
-  type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
 import * as Clipboard from 'expo-clipboard';
-import { use, useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
-import { smileIDSampleErrorMove } from '../flow/use-smile-id-sample-error-move';
-import { smileIDSampleRunOnly } from '../flow/use-smile-id-sample-flow-journey';
-import { smileIDSampleLiveBindingsNow } from '../flow/use-smile-id-sample-token-binding-rules';
-import {
-  smileIDSampleLeaveToProducts,
-  smileIDSampleStartRun,
-  UseSmileIDSampleNavigationContext,
-  type UseSmileIDSampleStepScope,
-} from '../navigation/use-smile-id-sample-navigation';
+import type { UseSmileIDSampleStepScope } from '../navigation/use-smile-id-sample-navigation';
 import { smileIDSampleStatusApi } from '../status/use-smile-id-sample-status-api';
 import { useLaunchArgs } from '../use-smile-id-sample-launch';
 import { useSmileIDSampleNoticeStyle } from '../use-smile-id-sample-notice-inset';
-import { smileIDSampleStartProductRun } from './use-smile-id-sample-products-step';
 import { unsubmittedJobId } from './use-smile-id-sample-sdk-flow-step';
 
 /// One verification, the job id its entry carries; also where a finished run lands.
@@ -53,16 +38,12 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const result = useSmileIDSampleResultStore((state) => state.result);
   const errorResolution = useSmileIDSampleResultStore((state) => state.errorResolution);
   const runProduct = useSmileIDSampleResultStore((state) => state.product);
-  /// Read when a banner acts, not on render, so the page also draws outside a started flow.
-  const navigation = use(UseSmileIDSampleNavigationContext);
-  const profile = useSmileIDSampleActiveProfile();
   const landed = jobId === unsubmittedJobId;
   const showProbes = __DEV__ || args.probes;
   const noticeStyle = useSmileIDSampleNoticeStyle();
   const { show } = notice;
   /// Whether the processing row is being asked about, so its own state write cannot start a second check.
   const polling = useRef(false);
-  const acted = useRef(false);
   /// Cleared on leaving, which is what ends a check still waiting out its backoff.
   const mounted = useRef(true);
 
@@ -116,61 +97,6 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
     // The session is a dependency so a session linked after a check ended without one starts another.
   }, [job, liveSessionId, refreshUntilSettled, show, strings]);
 
-  /// Runs a failure's action for `product` in place of this entry.
-  /// Runs a failure's action; true when it replaced this entry, false when Close kept it.
-  const run = (action: UseSmileIDSampleErrorAction, product: UseSmileIDSampleProduct | null): boolean => {
-    const engine = navigation?.engine;
-    if (engine == null) return false;
-    const route = result.route;
-    const session = useSmileIDSampleSessionStore.getState();
-    const live = smileIDSampleLiveSession(session, Date.now());
-    const move = smileIDSampleErrorMove(action, product, {
-      sessionLive: live !== null,
-      livePartnerId: live?.partnerId ?? null,
-      runPartnerId: session.runPartnerId,
-      idDetails:
-        product === null || !product.needsIdDetails
-          ? 'none'
-          : smileIDSampleBindsIdDetails(smileIDSampleLiveBindingsNow(args.scenario), product)
-            ? 'token'
-            : 'form',
-      formsHoldRun: useSmileIDSampleFormsStore.getState().flowStarted,
-    });
-    const runOnly = (it: UseSmileIDSampleProduct) =>
-      smileIDSampleRunOnly(it, route, smileIDSampleLiveBindingsNow(args.scenario));
-    switch (move.kind) {
-      case 'runAgain':
-        smileIDSampleStartRun(engine, scope.entry, move.product, runOnly(move.product), scope.entry.id);
-        return true;
-      case 'runFromStart':
-        smileIDSampleStartProductRun(
-          engine,
-          scope,
-          move.product,
-          { profile, route, scenario: args.scenario, catalogue: args.catalogue },
-          scope.entry.id,
-        );
-        return true;
-      case 'editIdDetails':
-        smileIDSampleStartRun(
-          engine,
-          scope.entry,
-          move.product,
-          { facts: runOnly(move.product).facts, step: 'idDetailsForm' },
-          scope.entry.id,
-        );
-        return true;
-      // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
-      case 'newToken':
-        session.sendRun({ productId: move.product.id, route, resumeAt: move.resumeAt });
-        scope.navigator.go('scanToken', undefined, scope.entry.id);
-        return true;
-      case 'leave':
-        smileIDSampleLeaveToProducts(engine);
-        return false;
-    }
-  };
-
   return (
     <View style={styles.host}>
       <VerificationDetailsScreen
@@ -182,11 +108,6 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           result: showProbes ? smileIDSampleResultSelecting(result, args.scenario, args.theme) : null,
           landedFailure: landed ? smileIDSampleLandedFailure(result.jobStatus, errorResolution ?? undefined) : undefined,
           landedProduct: landed ? (runProduct ?? undefined) : undefined,
-        }}
-        onErrorAction={(action) => {
-          // One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
-          if (acted.current) return;
-          acted.current = run(action, job?.product ?? runProduct);
         }}
         onBack={() => back()}
         onDelete={() => {

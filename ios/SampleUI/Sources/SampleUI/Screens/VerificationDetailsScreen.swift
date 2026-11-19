@@ -53,7 +53,6 @@ public struct VerificationDetailsScreen: View {
   private let onDelete: () -> Void
   private let onCopy: (String, String) -> Void
   private let onRefresh: () async -> Void
-  private let onErrorAction: (UseSmileIDSampleErrorAction) -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
   @Environment(\.sizeCategory) private var sizeCategory
@@ -65,8 +64,7 @@ public struct VerificationDetailsScreen: View {
     onDelete: @escaping () -> Void,
     onCopy: @escaping (String, String) -> Void,
     // Always wired, never conditionally hidden: a refresh that cannot succeed says why instead.
-    onRefresh: @escaping () async -> Void = {},
-    onErrorAction: @escaping (UseSmileIDSampleErrorAction) -> Void = { _ in }
+    onRefresh: @escaping () async -> Void = {}
   ) {
     self.state = state
     _resultExpanded = resultExpanded
@@ -74,7 +72,6 @@ public struct VerificationDetailsScreen: View {
     self.onDelete = onDelete
     self.onCopy = onCopy
     self.onRefresh = onRefresh
-    self.onErrorAction = onErrorAction
   }
 
   public var body: some View {
@@ -87,14 +84,14 @@ public struct VerificationDetailsScreen: View {
           if let job = state.job {
             heading(job)
             if let failure = state.failure {
-              banner(failure, onStoredJob: true)
+              banner(failure)
             }
             details(job)
           } else if let failure = state.failure {
             if let product = state.landedProduct {
               title(product.label)
             }
-            banner(failure, onStoredJob: false)
+            banner(failure)
           } else if state.missing {
             UseSmileIDSampleEmptyState(
               text: UseSmileIDSampleStrings.detailsMissingTitle,
@@ -165,17 +162,14 @@ public struct VerificationDetailsScreen: View {
       .padding(.vertical, SmileSpacing.spacingXxs)
   }
 
-  private func banner(_ failure: UseSmileIDSampleErrorResolution, onStoredJob: Bool) -> some View {
+  private func banner(_ failure: UseSmileIDSampleErrorResolution) -> some View {
     UseSmileIDSampleBanner(
       title: failure.bannerTone == .warning ? UseSmileIDSampleStrings.errorTitleNotCompleted : UseSmileIDSampleStrings.errorTitleFailed,
       message: failure.message.text,
       tone: failure.bannerTone,
-      actionLabel: failure.offersAction(onStoredJob: onStoredJob) ? failure.action.label : nil,
-      actionProminent: failure.action != .exit,
-      testId: UseSmileIDSampleTestIds.errorBanner,
-      actionTestId: UseSmileIDSampleTestIds.errorAction
-    ) { onErrorAction(failure.action) }
-      .padding(.horizontal, SmileSpacing.spacingMd)
+      testId: UseSmileIDSampleTestIds.errorBanner
+    )
+    .padding(.horizontal, SmileSpacing.spacingMd)
   }
 
   private func details(_ job: UseSmileIDSampleJob) -> some View {

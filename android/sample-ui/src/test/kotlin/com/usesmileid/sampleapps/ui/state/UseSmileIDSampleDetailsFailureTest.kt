@@ -1,15 +1,12 @@
 package com.usesmileid.sampleapps.ui.state
 
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBannerTone
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleStatus
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Which failure verification details states, and how its banner reads. */
@@ -55,18 +52,9 @@ class UseSmileIDSampleDetailsFailureTest {
     }
 
     @Test
-    fun a_failure_the_user_can_act_on_is_a_warning_and_a_final_one_an_error() {
+    fun a_failure_trying_again_later_can_get_past_is_a_warning_and_a_final_one_an_error() {
         assertEquals(UseSmileIDSampleBannerTone.Warning, serverError.bannerTone)
         assertEquals(UseSmileIDSampleBannerTone.Error, UseSmileIDSampleErrorHandling.forReason(null).bannerTone)
-    }
-
-    @Test
-    fun a_stored_job_leaves_close_to_the_back_button_but_a_failed_run_offers_it() {
-        val final = UseSmileIDSampleErrorHandling.forReason(null)
-        assertEquals(UseSmileIDSampleErrorAction.Exit, final.action)
-        assertFalse(final.offersAction(onStoredJob = true))
-        assertTrue(final.offersAction(onStoredJob = false))
-        assertTrue(serverError.offersAction(onStoredJob = true))
     }
 
     private fun job(status: UseSmileIDSampleStatus) = UseSmileIDSampleJob(

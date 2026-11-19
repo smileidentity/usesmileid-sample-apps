@@ -129,7 +129,6 @@ const cases: { screen: string; states: Record<string, Case> }[] = [
             },
           }),
       },
-      // A refusal no retry gets past: the error tone, and Close.
       failedFinal: {
         element: () =>
           details({
@@ -374,28 +373,24 @@ describe('the details screen', () => {
     }
   });
 
-  it('states a failed run in place of missing, and its button runs the action', async () => {
-    const pressed: string[] = [];
+  it('states a failed run in place of missing', async () => {
     const rendered = await renderInTheme(
       details({
         state: { job: null, jobId: 'unsubmitted', refreshing: false, landedFailure: smileIDSampleErrorForStatus(503) },
-        onErrorAction: (action) => pressed.push(action),
       }),
       false,
     );
     expect(rendered.queryByTestId(UseSmileIDSampleTestIds.DETAILS_EMPTY)).toBeNull();
     expect(rendered.getByTestId(UseSmileIDSampleTestIds.ERROR_BANNER)).toBeTruthy();
-    await fireEvent.press(rendered.getByTestId(UseSmileIDSampleTestIds.ERROR_ACTION));
-    expect(pressed).toEqual(['retry']);
+    expect(rendered.getByText('Something went wrong on our side. Please try again in a few minutes.')).toBeTruthy();
   });
 
-  it('states why a stored job ended in error, and leaves closing to the back button', async () => {
+  it('states why a stored job ended in error', async () => {
     const rendered = await renderInTheme(
       details({ state: { job: { ...fixtures[0]!, status: UseSmileIDSampleStatus.Error }, jobId: 'x', refreshing: false } }),
       false,
     );
     expect(rendered.getByTestId(UseSmileIDSampleTestIds.ERROR_BANNER)).toBeTruthy();
-    expect(rendered.queryByTestId(UseSmileIDSampleTestIds.ERROR_ACTION)).toBeNull();
   });
 
   it('states no failure on a job that passed, even after a failed run', async () => {

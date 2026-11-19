@@ -12,7 +12,6 @@ object UseSmileIDSampleTestIds {
     const val VERIFICATIONS_EMPTY = "sample_verifications_empty"
     const val DETAILS_EMPTY = "sample_details_empty"
     const val ERROR_BANNER = "sample_error_banner"
-    const val ERROR_ACTION = "sample_error_action"
     const val COUNTRY_EMPTY = "sample_country_empty"
     const val ID_TYPE_EMPTY = "sample_idtype_empty"
     const val DOCUMENT_EMPTY = "sample_document_empty"
@@ -144,7 +143,6 @@ object UseSmileIDSampleTestIds {
         VERIFICATIONS_EMPTY,
         DETAILS_EMPTY,
         ERROR_BANNER,
-        ERROR_ACTION,
         COUNTRY_EMPTY,
         ID_TYPE_EMPTY,
         DOCUMENT_EMPTY,

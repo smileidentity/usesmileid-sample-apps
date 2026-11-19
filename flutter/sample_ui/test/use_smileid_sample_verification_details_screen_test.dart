@@ -18,7 +18,6 @@ void main() {
     WidgetTester tester, {
     UseSmileIDSampleJob? stored,
     UseSmileIDSampleErrorResolution? landedFailure,
-    ValueChanged<UseSmileIDSampleErrorAction>? onErrorAction,
   }) => tester.pumpWidget(
     MaterialApp(
       theme: UseSmileIDSampleTheme.light(),
@@ -30,55 +29,45 @@ void main() {
               : UseSmileIDSampleJobLookup.found(stored),
           onBack: () {},
           landedFailure: landedFailure,
-          onErrorAction: onErrorAction,
         ),
       ),
     ),
   );
 
-  testWidgets(
-    'a failed run states its message in place of missing and its button runs the action',
-    (WidgetTester tester) async {
-      final List<UseSmileIDSampleErrorAction> pressed =
-          <UseSmileIDSampleErrorAction>[];
-      await details(
-        tester,
-        landedFailure: UseSmileIDSampleErrorHandling.forStatus(503),
-        onErrorAction: pressed.add,
-      );
+  testWidgets('a failed run states its message in place of missing', (
+    WidgetTester tester,
+  ) async {
+    await details(
+      tester,
+      landedFailure: UseSmileIDSampleErrorHandling.forStatus(503),
+    );
 
-      expect(
-        find.bySemanticsIdentifier(UseSmileIDSampleTestIds.detailsEmpty),
-        findsNothing,
-      );
-      expect(
-        find.bySemanticsIdentifier(UseSmileIDSampleTestIds.errorBanner),
-        findsOne,
-      );
-      await tester.tap(
-        find.bySemanticsIdentifier(UseSmileIDSampleTestIds.errorAction),
-      );
-      expect(pressed, <UseSmileIDSampleErrorAction>[
-        UseSmileIDSampleErrorAction.retry,
-      ]);
-    },
-  );
+    expect(
+      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.detailsEmpty),
+      findsNothing,
+    );
+    expect(
+      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.errorBanner),
+      findsOne,
+    );
+    expect(
+      find.text(
+        'Something went wrong on our side. Please try again in a few minutes.',
+      ),
+      findsOne,
+    );
+  });
 
-  testWidgets(
-    'a stored job that ended in error states why and leaves closing to the back button',
-    (WidgetTester tester) async {
-      await details(tester, stored: job(UseSmileIDSampleStatus.error));
+  testWidgets('a stored job that ended in error states why', (
+    WidgetTester tester,
+  ) async {
+    await details(tester, stored: job(UseSmileIDSampleStatus.error));
 
-      expect(
-        find.bySemanticsIdentifier(UseSmileIDSampleTestIds.errorBanner),
-        findsOne,
-      );
-      expect(
-        find.bySemanticsIdentifier(UseSmileIDSampleTestIds.errorAction),
-        findsNothing,
-      );
-    },
-  );
+    expect(
+      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.errorBanner),
+      findsOne,
+    );
+  });
 
   testWidgets(
     'a stored job that passed states no failure even after a failed run',

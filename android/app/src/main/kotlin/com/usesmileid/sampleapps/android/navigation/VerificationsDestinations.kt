@@ -28,19 +28,7 @@ import androidx.compose.ui.platform.LocalClipboard
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
-import com.usesmileid.sampleapps.android.UseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UNSUBMITTED_JOB_ID
-import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleErrorMove
-import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleIdDetailsSource
-import com.usesmileid.sampleapps.android.flow.tokenBindsIdDetails
-import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleRunEntry
-import com.usesmileid.sampleapps.android.flow.errorMove
-import com.usesmileid.sampleapps.android.flow.runOnly
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
-import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
-import com.usesmileid.njia.NjiaEntry
-import com.usesmileid.njia.navigator
-import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleRunIntent
 import com.usesmileid.sampleapps.ui.state.landedFailure
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
@@ -159,8 +147,6 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
     val resources = LocalResources.current
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
-    val engine = LocalUseSmileIDSampleEngine.current
-    var acted by remember(jobId) { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
@@ -190,12 +176,6 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             pending = app.jobs == null,
             landedFailure = landedFailure(app.flowResult.status, app.flowResult.errorResolution).takeIf { jobId == UNSUBMITTED_JOB_ID },
             landedProduct = app.flowResult.product.takeIf { jobId == UNSUBMITTED_JOB_ID },
-            // Disabled until the stored session is known, as a product tap waits for it too.
-            errorActionEnabled = app.sessionLoaded,
-            onErrorAction = { action ->
-                // One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
-                if (!acted) acted = app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry)
-            },
         )
         // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
         LaunchedEffect(jobId, app.session?.id) {
@@ -215,40 +195,4 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
                 .padding(horizontal = SmileDimens.spacingMd, vertical = SmileDimens.spacingMd),
         )
     }
-}
-
-/** Runs a failure's [action] for [product] from the details entry; true when the move replaced that entry, false when Close kept it. */
-private fun UseSmileIDSampleAppState.runErrorAction(
-    action: UseSmileIDSampleErrorAction,
-    product: UseSmileIDSampleProduct?,
-    engine: UseSmileIDSampleEngine,
-    from: NjiaEntry,
-): Boolean {
-    val live = session?.takeIf { !it.hasExpired(System.currentTimeMillis()) }
-    val idDetails = when {
-        product?.needsIdDetails != true -> UseSmileIDSampleIdDetailsSource.None
-        tokenBindsIdDetails(product) -> UseSmileIDSampleIdDetailsSource.Token
-        else -> UseSmileIDSampleIdDetailsSource.Form
-    }
-    when (val move = errorMove(action, product, live != null, live?.partnerId, interruptedRun.runPartnerId, idDetails, forms.flowStarted)) {
-        is UseSmileIDSampleErrorMove.RunAgain ->
-            engine.startRun(from, move.product, runOnly(move.product, flowResult.route), replace = from.id)
-        is UseSmileIDSampleErrorMove.RunFromStart -> startProductRun(engine, from, move.product, replace = from.id)
-        is UseSmileIDSampleErrorMove.EditIdDetails -> engine.startRun(
-            from,
-            move.product,
-            UseSmileIDSampleRunEntry(runOnly(move.product, flowResult.route).facts, UseSmileIDSampleStep.IdDetailsForm.wireName),
-            replace = from.id,
-        )
-        // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
-        is UseSmileIDSampleErrorMove.NewToken -> {
-            interruptedRun.send(UseSmileIDSampleRunIntent(move.product.id, flowResult.route, move.resumeAt))
-            engine.navigator(from).go(UseSmileIDSampleStep.ScanToken.wireName, replace = from.id)
-        }
-        UseSmileIDSampleErrorMove.Leave -> {
-            engine.leaveToProducts()
-            return false
-        }
-    }
-    return true
 }

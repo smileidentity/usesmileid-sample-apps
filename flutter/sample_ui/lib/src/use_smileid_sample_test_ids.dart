@@ -168,7 +168,6 @@ abstract final class UseSmileIDSampleTestIds {
   static const String errorBanner = 'sample_error_banner';
 
   /// The banner's one action.
-  static const String errorAction = 'sample_error_action';
 
   /// The profiles list.
   static const String profilesScreen = 'sample_profiles_screen';
@@ -512,7 +511,6 @@ abstract final class UseSmileIDSampleTestIds {
     detailsRefresh,
     detailsEmpty,
     errorBanner,
-    errorAction,
     profilesScreen,
     createProfile,
     profileConfigScreen,
