@@ -14,9 +14,9 @@ fun detailsFailure(job: UseSmileIDSampleJob?, landedRun: UseSmileIDSampleErrorRe
     else -> null
 }
 
-/** What a run that landed with no job states: its row, or that it ended before submission when no submission explained the failure. */
+/** What a run that landed with no job states: its row, or that it stopped early when no row explains the failure. */
 fun landedFailure(status: UseSmileIDSampleFlowStatus, row: UseSmileIDSampleErrorResolution?): UseSmileIDSampleErrorResolution? =
-    if (status == UseSmileIDSampleFlowStatus.Failed) row ?: UseSmileIDSampleErrorHandling.unsubmitted else null
+    if (status == UseSmileIDSampleFlowStatus.Failed) row ?: UseSmileIDSampleErrorHandling.unexplained else null
 
 /** Which failure a banner names: warning for one trying again later can get past, error for one it can't. */
 enum class UseSmileIDSampleBannerTone { Warning, Error }

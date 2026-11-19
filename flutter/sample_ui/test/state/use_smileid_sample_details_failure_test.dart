@@ -23,18 +23,15 @@ void main() {
     );
   });
 
-  test(
-    'a failed run no submission explains states that it ended before submission',
-    () {
-      final UseSmileIDSampleErrorResolution? landed =
-          useSmileIDSampleLandedFailure(
-            status: UseSmileIDSampleFlowStatus.failed,
-            row: null,
-          );
-      expect(landed?.id, 'endedBeforeSubmission');
-      expect(landed?.bannerTone, UseSmileIDSampleBannerTone.warning);
-    },
-  );
+  test('a failed run no row explains states that it stopped early', () {
+    final UseSmileIDSampleErrorResolution? landed =
+        useSmileIDSampleLandedFailure(
+          status: UseSmileIDSampleFlowStatus.failed,
+          row: null,
+        );
+    expect(landed?.id, 'endedEarly');
+    expect(landed?.bannerTone, UseSmileIDSampleBannerTone.warning);
+  });
 
   test('a run that did not fail lands with no failure', () {
     for (final UseSmileIDSampleFlowStatus status

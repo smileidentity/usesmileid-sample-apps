@@ -18,12 +18,12 @@ UseSmileIDSampleErrorResolution? useSmileIDSampleDetailsFailure({
       : null;
 }
 
-/// What a run that landed with no job states: its row, or that it ended before submission when no submission explained the failure.
+/// What a run that landed with no job states: its row, or that it stopped early when no row explains the failure.
 UseSmileIDSampleErrorResolution? useSmileIDSampleLandedFailure({
   required UseSmileIDSampleFlowStatus status,
   required UseSmileIDSampleErrorResolution? row,
 }) => status == UseSmileIDSampleFlowStatus.failed
-    ? row ?? UseSmileIDSampleErrorHandling.unsubmitted
+    ? row ?? UseSmileIDSampleErrorHandling.unexplained
     : null;
 
 /// Which failure a banner names: warning for one trying again later can get past, error for one it can't.
@@ -50,8 +50,7 @@ extension UseSmileIDSampleErrorMessageText on UseSmileIDSampleErrorMessage {
   /// The message, from [strings].
   String text(UseSmileIDSampleStrings strings) => switch (this) {
     UseSmileIDSampleErrorMessage.couldNotStart => strings.errorCouldNotStart,
-    UseSmileIDSampleErrorMessage.endedBeforeSubmission =>
-      strings.errorEndedBeforeSubmission,
+    UseSmileIDSampleErrorMessage.endedEarly => strings.errorEndedEarly,
     UseSmileIDSampleErrorMessage.idNumberInvalid =>
       strings.errorIdNumberInvalid,
     UseSmileIDSampleErrorMessage.serviceNotSetUp =>

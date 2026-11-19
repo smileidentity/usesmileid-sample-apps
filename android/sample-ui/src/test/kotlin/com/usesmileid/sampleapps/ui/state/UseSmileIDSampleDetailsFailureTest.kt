@@ -19,9 +19,9 @@ class UseSmileIDSampleDetailsFailureTest {
     }
 
     @Test
-    fun a_failed_run_no_submission_explains_states_that_it_ended_before_submission() {
+    fun a_failed_run_no_submission_explains_states_that_it_ended_early() {
         val landed = landedFailure(UseSmileIDSampleFlowStatus.Failed, row = null)
-        assertEquals("endedBeforeSubmission", landed?.id)
+        assertEquals("endedEarly", landed?.id)
         assertEquals(UseSmileIDSampleBannerTone.Warning, landed?.bannerTone)
     }
 

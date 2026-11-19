@@ -276,7 +276,7 @@ export {
   smileIDSampleErrorForTransport,
   smileIDSampleErrorResultRows,
   smileIDSampleErrorSubmissionRows,
-  smileIDSampleErrorUnsubmitted,
+  smileIDSampleErrorUnexplained,
 } from './state/use-smile-id-sample-error-handling';
 export {
   smileIDSampleBannerTone,

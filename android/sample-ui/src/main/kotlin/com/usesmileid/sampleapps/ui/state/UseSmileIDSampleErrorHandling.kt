@@ -89,11 +89,11 @@ object UseSmileIDSampleErrorHandling {
     /** Every result row's resolution, in the table's order. */
     val result: List<UseSmileIDSampleErrorResolution> = resultRows.map { it.resolution }
 
-    /** What a run that failed before any submission resolves as: it says only that nothing was sent. */
-    val unsubmitted = Resolution("endedBeforeSubmission", Message.EndedBeforeSubmission, Action.Retry)
+    /** What a failed run no row explains resolves as: it says only that the run stopped before it finished. */
+    val unexplained = Resolution("endedEarly", Message.EndedEarly, Action.Retry)
 
     /** The row a saved [id] names; null for none, or for one this build no longer has. */
-    fun resolution(id: String?): UseSmileIDSampleErrorResolution? = (submission + result + unsubmitted).firstOrNull { it.id == id }
+    fun resolution(id: String?): UseSmileIDSampleErrorResolution? = (submission + result + unexplained).firstOrNull { it.id == id }
 
     /** A submission the server refused with [status]; [serverMessage] only tells rows apart and is never shown. */
     fun forStatus(status: Int, serverMessage: String? = null): UseSmileIDSampleErrorResolution =

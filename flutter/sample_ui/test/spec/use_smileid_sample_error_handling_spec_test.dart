@@ -11,8 +11,8 @@ void main() {
   final List<Map<String, Object?>> result = objects(file['result']);
   final Map<String, Object?> fallback =
       file['fallback']! as Map<String, Object?>;
-  final Map<String, Object?> unsubmitted =
-      file['unsubmitted']! as Map<String, Object?>;
+  final Map<String, Object?> unexplained =
+      file['unexplained']! as Map<String, Object?>;
   final Map<String, Object?> strings = spec('l10n/app/en.json');
 
   List<T> list<T>(Object? value) =>
@@ -152,15 +152,12 @@ void main() {
     );
   });
 
-  test(
-    'a run that ended before submission resolves as the unsubmitted row',
-    () {
-      expect(
-        stated(UseSmileIDSampleErrorHandling.unsubmitted),
-        expected(unsubmitted),
-      );
-    },
-  );
+  test('a failed run no row explains resolves as the unexplained row', () {
+    expect(
+      stated(UseSmileIDSampleErrorHandling.unexplained),
+      expected(unexplained),
+    );
+  });
 
   test('every fraud and compliance outcome shows the one message', () {
     final List<String> reasons = list<String>(
@@ -208,7 +205,7 @@ void main() {
     final Set<Object?> used = <Map<String, Object?>>[
       ...submission,
       ...result,
-      unsubmitted,
+      unexplained,
     ].map((Map<String, Object?> row) => row['message']).toSet();
     expect(
       UseSmileIDSampleErrorMessage.values

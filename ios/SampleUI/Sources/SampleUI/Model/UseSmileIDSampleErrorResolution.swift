@@ -31,7 +31,7 @@ public enum UseSmileIDSampleErrorAction: String, CaseIterable, Sendable {
 /// The message a failure shows; the raw value is its key in `spec/l10n/app/`.
 public enum UseSmileIDSampleErrorMessage: String, CaseIterable, Sendable {
   case couldNotStart = "error_could_not_start"
-  case endedBeforeSubmission = "error_ended_before_submission"
+  case endedEarly = "error_ended_early"
   case idNumberInvalid = "error_id_number_invalid"
   case serviceNotSetUp = "error_service_not_set_up"
   case sessionExpired = "error_session_expired"

@@ -228,10 +228,10 @@ abstract final class UseSmileIDSampleErrorHandling {
         _resultRows.map((_Row row) => row.resolution),
       );
 
-  /// What a run that failed before any submission resolves as: it says only that nothing was sent.
-  static const UseSmileIDSampleErrorResolution unsubmitted = _Resolution(
-    'endedBeforeSubmission',
-    _Message.endedBeforeSubmission,
+  /// What a failed run no row explains resolves as: it says only that the run stopped before it finished.
+  static const UseSmileIDSampleErrorResolution unexplained = _Resolution(
+    'endedEarly',
+    _Message.endedEarly,
     _Action.retry,
   );
 

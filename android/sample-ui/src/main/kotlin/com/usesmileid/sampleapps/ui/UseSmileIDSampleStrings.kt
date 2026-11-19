@@ -220,7 +220,7 @@ object UseSmileIDSampleStrings {
     val statusRefreshOtherPartner: String @Composable get() = stringResource(R.string.sample_status_refresh_other_partner)
     @Composable fun statusRefreshFailed(reason: String): String = stringResource(R.string.sample_status_refresh_failed, reason)
     val errorCouldNotStart: String @Composable get() = stringResource(R.string.sample_error_could_not_start)
-    val errorEndedBeforeSubmission: String @Composable get() = stringResource(R.string.sample_error_ended_before_submission)
+    val errorEndedEarly: String @Composable get() = stringResource(R.string.sample_error_ended_early)
     val errorIdNumberInvalid: String @Composable get() = stringResource(R.string.sample_error_id_number_invalid)
     val errorServiceNotSetUp: String @Composable get() = stringResource(R.string.sample_error_service_not_set_up)
     val errorSessionExpired: String @Composable get() = stringResource(R.string.sample_error_session_expired)

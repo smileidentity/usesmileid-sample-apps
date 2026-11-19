@@ -70,7 +70,7 @@ fun UseSmileIDSampleStatus.label(): String = when (this) {
 @Composable
 fun UseSmileIDSampleErrorMessage.text(): String = when (this) {
     UseSmileIDSampleErrorMessage.CouldNotStart -> UseSmileIDSampleStrings.errorCouldNotStart
-    UseSmileIDSampleErrorMessage.EndedBeforeSubmission -> UseSmileIDSampleStrings.errorEndedBeforeSubmission
+    UseSmileIDSampleErrorMessage.EndedEarly -> UseSmileIDSampleStrings.errorEndedEarly
     UseSmileIDSampleErrorMessage.IdNumberInvalid -> UseSmileIDSampleStrings.errorIdNumberInvalid
     UseSmileIDSampleErrorMessage.ServiceNotSetUp -> UseSmileIDSampleStrings.errorServiceNotSetUp
     UseSmileIDSampleErrorMessage.SessionExpired -> UseSmileIDSampleStrings.errorSessionExpired

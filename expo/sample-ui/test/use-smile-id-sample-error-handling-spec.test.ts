@@ -11,7 +11,7 @@ import {
   smileIDSampleErrorForTransport,
   smileIDSampleErrorResultRows,
   smileIDSampleErrorSubmissionRows,
-  smileIDSampleErrorUnsubmitted,
+  smileIDSampleErrorUnexplained,
 } from '../src/state/use-smile-id-sample-error-handling';
 import { UseSmileIDSampleStrings } from '../src/use-smile-id-sample-strings';
 import { spec } from './spec-file';
@@ -40,7 +40,7 @@ const file = spec<{
   submission: SpecRow[];
   result: SpecRow[];
   fallback: { submission: string; result: string };
-  unsubmitted: SpecRow;
+  unexplained: SpecRow;
   cases: SpecCase[];
 }>('error-handling.json');
 const strings = spec<Record<string, string>>('l10n/app/en.json');
@@ -124,12 +124,12 @@ describe('the error handling table', () => {
     }
   });
 
-  it('resolves a run that ended before submission as the unsubmitted row', () => {
-    expect(stated(smileIDSampleErrorUnsubmitted)).toEqual(expected(file.unsubmitted));
+  it('resolves a failed run no row explains as the unexplained row', () => {
+    expect(stated(smileIDSampleErrorUnexplained)).toEqual(expected(file.unexplained));
   });
 
   it('has a string for every message and button', () => {
-    const used = new Set([...file.submission, ...file.result, file.unsubmitted].map((r) => r.message));
+    const used = new Set([...file.submission, ...file.result, file.unexplained].map((r) => r.message));
     expect(new Set<string>(Object.values(UseSmileIDSampleErrorMessage))).toEqual(used);
     for (const key of [...used, ...Object.values(smileIDSampleErrorActions).map((action) => action.buttonKey)]) {
       expect(strings[key]?.length ?? 0).toBeGreaterThan(0);

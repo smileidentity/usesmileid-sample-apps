@@ -28,9 +28,9 @@ describe('the details failure', () => {
     expect(smileIDSampleDetailsFailure(undefined, serverError)).toBe(serverError);
   });
 
-  it('a failed run no submission explains states that it ended before submission', () => {
+  it('a failed run no row explains states that it stopped early', () => {
     const landed = smileIDSampleLandedFailure('failed', undefined);
-    expect(landed?.id).toBe('endedBeforeSubmission');
+    expect(landed?.id).toBe('endedEarly');
     expect(landed && smileIDSampleBannerTone(landed)).toBe('warning');
   });
 

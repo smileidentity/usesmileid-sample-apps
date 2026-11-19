@@ -112,10 +112,11 @@ reads as part of the app rather than as the debug result card under it.
 
 - A row whose action could get past the failure later is captioned "Verification not completed". A row
   whose action is Close is captioned "Verification failed".
-- A run that failed before any submission explained it, such as a declined consent, a refused camera or
-  a flow the SDK could not build, says only that the verification ended before anything was sent, captioned
-  "Verification not completed". Nothing reached the server, so it blames no one; the result card keeps the
-  SDK's own error in debug builds. `spec/error-handling.json` holds it as `unsubmitted`.
+- A failed run no row explains, such as a declined consent, a refused camera, a flow the SDK could not
+  build or a submission that failed in a way the table does not name, says only that the verification
+  stopped before it finished, captioned "Verification not completed". The app cannot tell whether anything
+  reached the server, so it claims nothing about that and blames no one; the result card keeps the SDK's
+  own error in debug builds. `spec/error-handling.json` holds it as `unexplained`.
 - The result card stays under the banner in debug builds, so the SDK's own error is still on screen.
 - A run with no job lands on the one `unsubmitted` page, so that page always states the latest such run, as the
   result card does.

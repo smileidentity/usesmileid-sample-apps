@@ -146,10 +146,10 @@ const resolve = (
 ): UseSmileIDSampleErrorResolution =>
   rows.find((candidate) => matches(candidate) && accepts(candidate, serverMessage))?.resolution ?? fallback;
 
-/// What a run that failed before any submission resolves as: it says only that nothing was sent.
-export const smileIDSampleErrorUnsubmitted: UseSmileIDSampleErrorResolution = resolution(
-  'endedBeforeSubmission',
-  Message.EndedBeforeSubmission,
+/// What a failed run no row explains resolves as: it says only that the run stopped before it finished.
+export const smileIDSampleErrorUnexplained: UseSmileIDSampleErrorResolution = resolution(
+  'endedEarly',
+  Message.EndedEarly,
   Action.Retry,
 );
 

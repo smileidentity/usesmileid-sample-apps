@@ -10,9 +10,9 @@ final class UseSmileIDSampleDetailsFailureTest: XCTestCase {
     XCTAssertEqual(useSmileIDSampleDetailsFailure(job: nil, landedRun: serverError), serverError)
   }
 
-  func testAFailedRunNoSubmissionExplainsStatesThatItEndedBeforeSubmission() {
+  func testAFailedRunNoSubmissionExplainsStatesThatItEndedEarly() {
     let landed = useSmileIDSampleLandedFailure(status: .failed, row: nil)
-    XCTAssertEqual(landed?.id, "endedBeforeSubmission")
+    XCTAssertEqual(landed?.id, "endedEarly")
     XCTAssertEqual(landed?.bannerTone, .warning)
   }
 

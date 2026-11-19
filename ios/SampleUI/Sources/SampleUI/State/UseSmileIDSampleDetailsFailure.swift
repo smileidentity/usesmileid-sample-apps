@@ -10,12 +10,12 @@ public func useSmileIDSampleDetailsFailure(
   return job.status == .error || job.status == .blocked ? UseSmileIDSampleErrorHandling.forReason(nil) : nil
 }
 
-/// What a run that landed with no job states: its row, or that it ended before submission when no submission explained the failure.
+/// What a run that landed with no job states: its row, or that it stopped early when no row explains the failure.
 public func useSmileIDSampleLandedFailure(
   status: UseSmileIDSampleFlowStatus,
   row: UseSmileIDSampleErrorResolution?
 ) -> UseSmileIDSampleErrorResolution? {
-  status == .failed ? row ?? UseSmileIDSampleErrorHandling.unsubmitted : nil
+  status == .failed ? row ?? UseSmileIDSampleErrorHandling.unexplained : nil
 }
 
 /// Which failure a banner names: warning for one trying again later can get past, error for one it can't.
@@ -36,7 +36,7 @@ public extension UseSmileIDSampleErrorMessage {
   var text: String {
     switch self {
     case .couldNotStart: UseSmileIDSampleStrings.errorCouldNotStart
-    case .endedBeforeSubmission: UseSmileIDSampleStrings.errorEndedBeforeSubmission
+    case .endedEarly: UseSmileIDSampleStrings.errorEndedEarly
     case .idNumberInvalid: UseSmileIDSampleStrings.errorIdNumberInvalid
     case .serviceNotSetUp: UseSmileIDSampleStrings.errorServiceNotSetUp
     case .sessionExpired: UseSmileIDSampleStrings.errorSessionExpired
