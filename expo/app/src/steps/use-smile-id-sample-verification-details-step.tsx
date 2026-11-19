@@ -17,7 +17,7 @@ import {
   type UseSmileIDSampleProduct,
 } from '@smileid/sample-ui';
 import * as Clipboard from 'expo-clipboard';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { use, useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, View } from 'react-native';
 
 import { smileIDSampleErrorMove } from '../flow/use-smile-id-sample-error-move';
@@ -26,7 +26,7 @@ import { smileIDSampleLiveBindingsNow } from '../flow/use-smile-id-sample-token-
 import {
   smileIDSampleLeaveToProducts,
   smileIDSampleStartRun,
-  useSmileIDSampleEngine,
+  UseSmileIDSampleNavigationContext,
   type UseSmileIDSampleStepScope,
 } from '../navigation/use-smile-id-sample-navigation';
 import { smileIDSampleStatusApi } from '../status/use-smile-id-sample-status-api';
@@ -52,7 +52,8 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const result = useSmileIDSampleResultStore((state) => state.result);
   const errorResolution = useSmileIDSampleResultStore((state) => state.errorResolution);
   const runProduct = useSmileIDSampleResultStore((state) => state.product);
-  const engine = useSmileIDSampleEngine();
+  /// Read when a banner acts, not on render, so the page also draws outside a started flow.
+  const navigation = use(UseSmileIDSampleNavigationContext);
   const profile = useSmileIDSampleActiveProfile();
   const landed = jobId === unsubmittedJobId;
   const showProbes = __DEV__ || args.probes;
@@ -115,7 +116,10 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   }, [job, liveSessionId, refreshUntilSettled, show, strings]);
 
   /// Runs a failure's action for `product` in place of this entry.
-  const run = (action: UseSmileIDSampleErrorAction, product: UseSmileIDSampleProduct | null) => {
+  /// Runs a failure's action; true when it replaced this entry, false when Close kept it.
+  const run = (action: UseSmileIDSampleErrorAction, product: UseSmileIDSampleProduct | null): boolean => {
+    const engine = navigation?.engine;
+    if (engine == null) return false;
     const route = result.route;
     const session = useSmileIDSampleSessionStore.getState();
     const live = smileIDSampleLiveSession(session, Date.now());
@@ -135,7 +139,7 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
     switch (move.kind) {
       case 'runAgain':
         smileIDSampleStartRun(engine, scope.entry, move.product, runOnly(move.product), scope.entry.id);
-        return;
+        return true;
       case 'runFromStart':
         smileIDSampleStartProductRun(
           engine,
@@ -144,7 +148,7 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           { profile, route, scenario: args.scenario, catalogue: args.catalogue },
           scope.entry.id,
         );
-        return;
+        return true;
       case 'editIdDetails':
         smileIDSampleStartRun(
           engine,
@@ -153,14 +157,15 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           { facts: runOnly(move.product).facts, step: 'idDetailsForm' },
           scope.entry.id,
         );
-        return;
+        return true;
       // The run's partner stays recorded, so the scanner resumes in the flow only on that partner.
       case 'newToken':
         session.sendRun({ productId: move.product.id, route, resumeAt: move.resumeAt });
         scope.navigator.go('scanToken', undefined, scope.entry.id);
-        return;
+        return true;
       case 'leave':
         smileIDSampleLeaveToProducts(engine);
+        return false;
     }
   };
 
@@ -177,10 +182,9 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           landedProduct: landed ? (runProduct ?? undefined) : undefined,
         }}
         onErrorAction={(action) => {
-          // One move per page: a second tap would act on an entry the first has already replaced.
+          // One move per page: a second tap would act on an entry the first has already replaced; Close keeps the page live.
           if (acted.current) return;
-          acted.current = true;
-          run(action, job?.product ?? runProduct);
+          acted.current = run(action, job?.product ?? runProduct);
         }}
         onBack={() => back()}
         onDelete={() => {
