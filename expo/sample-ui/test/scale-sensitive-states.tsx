@@ -19,9 +19,8 @@ export const scaleSensitive: Record<string, () => React.ReactElement> = {
   avatar: () => <UseSmileIDSampleAvatar initials="KA" />,
   banner_longest_message: () => (
     <UseSmileIDSampleBanner
-      title="Verification failed"
+      caption="Verification failed"
       message="We couldn't start this verification. Please try again, or contact the app's support."
-      tone="error"
     />
   ),
   button_wrapping: () => (

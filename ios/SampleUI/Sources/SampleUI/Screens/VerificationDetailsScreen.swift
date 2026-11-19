@@ -164,9 +164,8 @@ public struct VerificationDetailsScreen: View {
 
   private func banner(_ failure: UseSmileIDSampleErrorResolution) -> some View {
     UseSmileIDSampleBanner(
-      title: failure.bannerTone == .warning ? UseSmileIDSampleStrings.errorTitleNotCompleted : UseSmileIDSampleStrings.errorTitleFailed,
+      caption: failure.bannerTone == .warning ? UseSmileIDSampleStrings.errorTitleNotCompleted : UseSmileIDSampleStrings.errorTitleFailed,
       message: failure.message.text,
-      tone: failure.bannerTone,
       testId: UseSmileIDSampleTestIds.errorBanner
     )
     .padding(.horizontal, SmileSpacing.spacingMd)

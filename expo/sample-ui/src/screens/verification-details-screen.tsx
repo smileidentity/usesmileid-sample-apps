@@ -74,9 +74,8 @@ export const VerificationDetailsScreen = ({
   const failure = smileIDSampleDetailsFailure(job ?? undefined, state.landedFailure);
   const banner = (shown: UseSmileIDSampleErrorResolution) => (
     <UseSmileIDSampleBanner
-      title={smileIDSampleBannerTone(shown) === 'warning' ? strings.errorTitleNotCompleted : strings.errorTitleFailed}
+      caption={smileIDSampleBannerTone(shown) === 'warning' ? strings.errorTitleNotCompleted : strings.errorTitleFailed}
       message={smileIDSampleErrorMessageText(shown.message, strings)}
-      tone={smileIDSampleBannerTone(shown)}
       testID={UseSmileIDSampleTestIds.ERROR_BANNER}
     />
   );

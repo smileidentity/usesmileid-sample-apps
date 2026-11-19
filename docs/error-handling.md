@@ -100,8 +100,9 @@ A lookup returns a resolution:
 
 ## 5. The banner
 
-Verification details shows a failure as the design system's banner: a neutral surface with the tone's
-accent edge and glyph, and a short title over the row's message.
+Verification details shows a failure in the app's own banner, the neutral card the products tab shows
+when a token session ends: an all-caps caption over the row's message, with no accent or icon, so it
+reads as part of the app rather than as the debug result card under it.
 
 | Visit | What it shows |
 |---|---|
@@ -109,8 +110,8 @@ accent edge and glyph, and a short title over the row's message.
 | A stored job that ended in `error` or `block` | The banner under the status badge |
 | Any other visit | No banner |
 
-- A row whose action could get past the failure later takes the warning tone, titled "Verification not
-  completed". A row whose action is Close takes the error tone, titled "Verification failed".
+- A row whose action could get past the failure later is captioned "Verification not completed". A row
+  whose action is Close is captioned "Verification failed".
 - A run that failed before any submission explained it, such as a flow the SDK refused to build or a
   camera that could not start, shows the submission fallback.
 - The result card stays under the banner in debug builds, so the SDK's own error is still on screen.

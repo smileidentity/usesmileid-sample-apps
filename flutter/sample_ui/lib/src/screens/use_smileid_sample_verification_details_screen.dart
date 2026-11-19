@@ -163,11 +163,10 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
     BuildContext context,
     UseSmileIDSampleErrorResolution failure,
   ) => UseSmileIDSampleBanner(
-    title: failure.bannerTone == UseSmileIDSampleBannerTone.warning
+    caption: failure.bannerTone == UseSmileIDSampleBannerTone.warning
         ? context.strings.errorTitleNotCompleted
         : context.strings.errorTitleFailed,
     message: failure.message.text(context.strings),
-    tone: failure.bannerTone,
     testId: UseSmileIDSampleTestIds.errorBanner,
   );
 

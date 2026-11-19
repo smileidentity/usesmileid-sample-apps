@@ -884,33 +884,27 @@
       "name": "Banner",
       "tier": "composite",
       "owner": "sample",
-      "dsContract": "components/banner.md",
       "tokens": [
-        "banner.bg",
-        "banner.radius",
-        "banner.padding",
-        "banner.gap",
-        "banner.title",
+        "color.surface-muted",
+        "color.card-stroke",
         "banner.text",
-        "banner.title-font",
-        "banner.text-font",
-        "banner.warning-accent",
-        "banner.error-accent",
-        "color.card-stroke"
+        "banner.title",
+        "text-style.overline",
+        "text-style.body-strong",
+        "radius.surface"
       ],
       "variants": [
         "warning",
         "error"
       ],
       "metrics": {
-        "accentEdge": "3 wide at the leading edge, the full height, in the tone's accent",
-        "glyph": "sizeIconMd in the tone's accent: Material Symbols warning, or cancel for error",
-        "layout": "banner.padding around the glyph and text, banner.gap between them, spacing.xxs between title and message"
+        "layout": "spacing.md padding, spacing.xxs between the caption and the message, space64 minimum height, as SessionEndedBanner",
+        "caption": "the title string, upper-cased at render in the current locale"
       },
       "usedBy": [
         "verificationDetails"
       ],
-      "notes": "The design system's banner contract: neutral banner.bg surface, radius.field corners, a body-strong title over a body-sm message. The outline is color.card-stroke, as SessionEndedBanner's is, because banner.border carries one light value in both schemes. Warning tone and 'Verification not completed' for a row whose failure trying again later can get past; error tone and 'Verification failed' for one whose action is Close. It carries no button: the SDK's processing screen already offered Retry within its limits, and a run restarts from the products tab under a live token."
+      "notes": "The app's own banner, drawn as SessionEndedBanner draws its card: surface-muted fill, radius.surface corners, the card stroke, an overline caption over a body-strong message. CORRECTED 2026-11-19: it first followed the design system's banner contract (banner.bg sand fill, an accent edge and a glyph), which read as the debug ResultCard below it and as nothing else in the app. 'Verification not completed' for a row whose failure trying again later can get past; 'Verification failed' for one whose action is Close. It carries no button: the SDK's processing screen already offered Retry within its limits, and a run restarts from the products tab under a live token."
     },
     {
       "name": "SessionEndedBanner",
