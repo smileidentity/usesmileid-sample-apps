@@ -262,6 +262,7 @@
         "sample_status_badge",
         "sample_details_delete",
         "sample_details_empty",
+        "sample_error_banner",
         "sample_details_refresh",
         "sample_result_environment"
       ],

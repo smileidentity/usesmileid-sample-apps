@@ -28,8 +28,6 @@ import androidx.compose.ui.platform.LocalClipboard
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.android.BuildConfig
 import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
-import com.usesmileid.sampleapps.android.flow.UNSUBMITTED_JOB_ID
-import com.usesmileid.sampleapps.ui.state.landedFailure
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleTransientNoticeHost
 import com.usesmileid.sampleapps.ui.components.rememberTransientNotice
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleStatusRefresh
@@ -147,6 +145,7 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
     val resources = LocalResources.current
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
+    val landing = detailsLanding(jobId, app.flowResult)
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
@@ -174,8 +173,8 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             // Computed here: `sample-ui` reads no host's BuildConfig.
             showProbes = BuildConfig.DEBUG || app.launchArgs.probes,
             pending = app.jobs == null,
-            landedFailure = landedFailure(app.flowResult.status, app.flowResult.errorResolution).takeIf { jobId == UNSUBMITTED_JOB_ID },
-            landedProduct = app.flowResult.product.takeIf { jobId == UNSUBMITTED_JOB_ID },
+            landedFailure = landing.failure,
+            landedProduct = landing.product,
         )
         // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
         LaunchedEffect(jobId, app.session?.id) {

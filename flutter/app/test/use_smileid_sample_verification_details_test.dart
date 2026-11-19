@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:usesmileid_sample_flutter/src/screens/use_smileid_sample_sdk_flow_tab.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_flow_result_provider.dart';
 import 'package:usesmileid_sample_flutter/src/state/use_smileid_sample_providers.dart';
 import 'support/use_smileid_sample_test_njia.dart';
@@ -487,6 +488,39 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(byId(UseSmileIDSampleTestIds.jobRow(1)), findsOne);
+  });
+
+  testWidgets('the unsubmitted page states the last run that failed', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails(unsubmittedJobId),
+    );
+    container
+        .read(useSmileIDSampleFlowResultProvider.notifier)
+        .record(UseSmileIDSampleFlowStatus.failed);
+    await tester.pumpAndSettle();
+
+    expect(byId(UseSmileIDSampleTestIds.errorBanner), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsNothing);
+  });
+
+  // Only the unsubmitted page states the last run, so a missing job never borrows its failure.
+  testWidgets('any other missing job states no failure after a failed run', (
+    WidgetTester tester,
+  ) async {
+    await pumpAt(
+      tester,
+      UseSmileIDSampleRoutes.verificationDetails('job_none'),
+    );
+    container
+        .read(useSmileIDSampleFlowResultProvider.notifier)
+        .record(UseSmileIDSampleFlowStatus.failed);
+    await tester.pumpAndSettle();
+
+    expect(byId(UseSmileIDSampleTestIds.detailsEmpty), findsOne);
+    expect(byId(UseSmileIDSampleTestIds.errorBanner), findsNothing);
   });
 
   // Debug builds show probes, which is what `flutter test` runs as.
