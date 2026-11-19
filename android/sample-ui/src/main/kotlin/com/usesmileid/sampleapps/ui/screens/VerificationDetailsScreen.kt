@@ -167,9 +167,8 @@ private fun TitleRow(title: String, trailing: @Composable () -> Unit = {}) {
 @Composable
 private fun FailureBanner(failure: UseSmileIDSampleErrorResolution) {
     UseSmileIDSampleBanner(
-        title = if (failure.bannerTone == UseSmileIDSampleBannerTone.Warning) UseSmileIDSampleStrings.errorTitleNotCompleted else UseSmileIDSampleStrings.errorTitleFailed,
+        caption = if (failure.bannerTone == UseSmileIDSampleBannerTone.Warning) UseSmileIDSampleStrings.errorTitleNotCompleted else UseSmileIDSampleStrings.errorTitleFailed,
         message = failure.message.text(),
-        tone = failure.bannerTone,
         modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
         testId = UseSmileIDSampleTestIds.ERROR_BANNER,
     )
