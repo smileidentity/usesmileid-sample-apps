@@ -7,7 +7,7 @@ import { type UseSmileIDSampleJob } from '../model/use-smile-id-sample-job';
 import { type UseSmileIDSampleFlowStatus } from '../model/use-smile-id-sample-result';
 import { UseSmileIDSampleStatus } from '../model/use-smile-id-sample-status';
 import { type UseSmileIDSampleStrings } from '../use-smile-id-sample-strings';
-import { smileIDSampleErrorForReason, smileIDSampleErrorSubmissionFallback } from './use-smile-id-sample-error-handling';
+import { smileIDSampleErrorForReason, smileIDSampleErrorUnsubmitted } from './use-smile-id-sample-error-handling';
 
 /// Which accent a banner carries: warning for a failure the user can act on, error for one that is final.
 export type UseSmileIDSampleBannerTone = 'warning' | 'error';
@@ -24,12 +24,12 @@ export const smileIDSampleDetailsFailure = (
     : undefined;
 };
 
-/// What a run that landed with no job states: its row, or the submission fallback when no submission explained the failure.
+/// What a run that landed with no job states: its row, or that it ended before submission when no submission explained the failure.
 export const smileIDSampleLandedFailure = (
   status: UseSmileIDSampleFlowStatus,
   row: UseSmileIDSampleErrorResolution | undefined,
 ): UseSmileIDSampleErrorResolution | undefined =>
-  status === 'failed' ? (row ?? smileIDSampleErrorSubmissionFallback) : undefined;
+  status === 'failed' ? (row ?? smileIDSampleErrorUnsubmitted) : undefined;
 
 /// Warning when trying again later can get past the failure, error when the row's own action is Close.
 export const smileIDSampleBannerTone = (failure: UseSmileIDSampleErrorResolution): UseSmileIDSampleBannerTone =>
@@ -43,6 +43,8 @@ export const smileIDSampleErrorMessageText = (
   switch (message) {
     case UseSmileIDSampleErrorMessage.CouldNotStart:
       return strings.errorCouldNotStart;
+    case UseSmileIDSampleErrorMessage.EndedBeforeSubmission:
+      return strings.errorEndedBeforeSubmission;
     case UseSmileIDSampleErrorMessage.IdNumberInvalid:
       return strings.errorIdNumberInvalid;
     case UseSmileIDSampleErrorMessage.ServiceNotSetUp:

@@ -221,6 +221,7 @@ type Key =
   | 'status_refresh_other_partner'
   | 'status_refresh_failed'
   | 'error_could_not_start'
+  | 'error_ended_before_submission'
   | 'error_id_number_invalid'
   | 'error_service_not_set_up'
   | 'error_session_expired'
@@ -1234,6 +1235,10 @@ export class UseSmileIDSampleStrings {
     return this.values.error_could_not_start;
   }
 
+  get errorEndedBeforeSubmission(): string {
+    return this.values.error_ended_before_submission;
+  }
+
   get errorIdNumberInvalid(): string {
     return this.values.error_id_number_invalid;
   }
@@ -2023,6 +2028,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_other_partner: 'Submitted by a different partner',
     status_refresh_failed: 'Could not check status: {reason}',
     error_could_not_start: 'We couldn\'t start this verification. Please try again, or contact the app\'s support.',
+    error_ended_before_submission: 'This verification ended before anything was sent.',
     error_id_number_invalid: 'That ID number doesn\'t look right. Check it and try again.',
     error_service_not_set_up: 'This service isn\'t set up to complete verifications yet. Please contact the app\'s support.',
     error_session_expired: 'Your session has expired. Please start again.',
@@ -2382,6 +2388,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_other_partner: 'Soumis par un autre partenaire',
     status_refresh_failed: 'Impossible de vérifier le statut : {reason}',
     error_could_not_start: 'Nous n’avons pas pu démarrer cette vérification. Veuillez réessayer ou contacter l’assistance de l’application.',
+    error_ended_before_submission: 'Cette vérification s’est arrêtée avant tout envoi.',
     error_id_number_invalid: 'Ce numéro de pièce semble incorrect. Vérifiez-le et réessayez.',
     error_service_not_set_up: 'Ce service n’est pas encore configuré pour effectuer des vérifications. Veuillez contacter l’assistance de l’application.',
     error_session_expired: 'Votre session a expiré. Veuillez recommencer.',
@@ -2741,6 +2748,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_other_partner: 'أُرسل بواسطة شريك آخر',
     status_refresh_failed: 'تعذّر التحقق من الحالة: {reason}',
     error_could_not_start: 'تعذّر علينا بدء عملية التحقق هذه. يُرجى المحاولة مرة أخرى أو التواصل مع دعم التطبيق.',
+    error_ended_before_submission: 'انتهى هذا التحقق قبل إرسال أي شيء.',
     error_id_number_invalid: 'يبدو أن رقم الهوية هذا غير صحيح. تحقّق منه وحاول مرة أخرى.',
     error_service_not_set_up: 'هذه الخدمة غير مهيّأة بعد لإتمام عمليات التحقق. يُرجى التواصل مع دعم التطبيق.',
     error_session_expired: 'انتهت صلاحية جلستك. يُرجى البدء من جديد.',
@@ -3100,6 +3108,7 @@ const byLanguage: Record<UseSmileIDSampleLanguage, Readonly<Record<Key, string>>
     status_refresh_other_partner: 'נשלח על ידי שותף אחר',
     status_refresh_failed: 'לא ניתן לבדוק את הסטטוס: {reason}',
     error_could_not_start: 'לא הצלחנו להתחיל את האימות הזה. נסו שוב או פנו לתמיכה של האפליקציה.',
+    error_ended_before_submission: 'האימות הזה הסתיים לפני שנשלח משהו.',
     error_id_number_invalid: 'מספר התעודה הזה לא נראה תקין. בדקו אותו ונסו שוב.',
     error_service_not_set_up: 'השירות הזה עדיין לא מוגדר להשלמת אימותים. פנו לתמיכה של האפליקציה.',
     error_session_expired: 'פג תוקף ההפעלה שלכם. התחילו מחדש.',

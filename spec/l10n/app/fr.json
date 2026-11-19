@@ -224,6 +224,7 @@
   "status_refresh_failed": "Impossible de vérifier le statut : {reason}",
 
   "error_could_not_start": "Nous n’avons pas pu démarrer cette vérification. Veuillez réessayer ou contacter l’assistance de l’application.",
+  "error_ended_before_submission": "Cette vérification s’est arrêtée avant tout envoi.",
   "error_id_number_invalid": "Ce numéro de pièce semble incorrect. Vérifiez-le et réessayez.",
   "error_service_not_set_up": "Ce service n’est pas encore configuré pour effectuer des vérifications. Veuillez contacter l’assistance de l’application.",
   "error_session_expired": "Votre session a expiré. Veuillez recommencer.",

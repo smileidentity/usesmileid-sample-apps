@@ -104,6 +104,12 @@ final class UseSmileIDSampleErrorHandlingSpecTest: XCTestCase {
     XCTAssertEqual(stated(UseSmileIDSampleErrorHandling.forReason(nil)), try row(fallback["result"] ?? ""))
   }
 
+  func testARunThatEndedBeforeSubmissionResolvesAsTheUnsubmittedRow() throws {
+    let unsubmitted = try XCTUnwrap(file["unsubmitted"] as? [String: Any])
+    XCTAssertEqual(stated(UseSmileIDSampleErrorHandling.unsubmitted), try expected(unsubmitted))
+    XCTAssertEqual(UseSmileIDSampleErrorHandling.resolution(id: unsubmitted["id"] as? String), UseSmileIDSampleErrorHandling.unsubmitted)
+  }
+
   func testEveryFraudAndComplianceOutcomeShowsTheOneMessage() throws {
     let notVerified = try XCTUnwrap(rows("result").first { $0["id"] as? String == "notVerified" })
     let reasons = try XCTUnwrap(notVerified["reasons"] as? [String])
@@ -127,7 +133,8 @@ final class UseSmileIDSampleErrorHandlingSpecTest: XCTestCase {
   }
 
   func testEveryMessageAndButtonHasAString() throws {
-    let used = try Set((rows("submission") + rows("result")).map { $0["message"] as? String ?? "" })
+    let unsubmitted = try XCTUnwrap(file["unsubmitted"] as? [String: Any])
+    let used = try Set((rows("submission") + rows("result") + [unsubmitted]).map { $0["message"] as? String ?? "" })
     XCTAssertEqual(Set(UseSmileIDSampleErrorMessage.allCases.map(\.rawValue)), used)
     for key in used.union(UseSmileIDSampleErrorAction.allCases.map(\.buttonKey)) {
       XCTAssertFalse((strings[key] as? String ?? "").isEmpty, key)

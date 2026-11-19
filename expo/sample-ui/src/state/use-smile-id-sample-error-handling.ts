@@ -146,8 +146,12 @@ const resolve = (
 ): UseSmileIDSampleErrorResolution =>
   rows.find((candidate) => matches(candidate) && accepts(candidate, serverMessage))?.resolution ?? fallback;
 
-/// The row a submission the table does not name resolves as.
-export const smileIDSampleErrorSubmissionFallback: UseSmileIDSampleErrorResolution = requestInvalid;
+/// What a run that failed before any submission resolves as: it says only that nothing was sent.
+export const smileIDSampleErrorUnsubmitted: UseSmileIDSampleErrorResolution = resolution(
+  'endedBeforeSubmission',
+  Message.EndedBeforeSubmission,
+  Action.Retry,
+);
 
 /// A submission the server refused with `status`; `serverMessage` only tells rows apart and is never shown.
 export const smileIDSampleErrorForStatus = (status: number, serverMessage?: string | null): UseSmileIDSampleErrorResolution =>

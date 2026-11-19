@@ -19,8 +19,10 @@ class UseSmileIDSampleDetailsFailureTest {
     }
 
     @Test
-    fun a_failed_run_no_submission_explains_states_the_submission_fallback() {
-        assertEquals("requestInvalid", landedFailure(UseSmileIDSampleFlowStatus.Failed, row = null)?.id)
+    fun a_failed_run_no_submission_explains_states_that_it_ended_before_submission() {
+        val landed = landedFailure(UseSmileIDSampleFlowStatus.Failed, row = null)
+        assertEquals("endedBeforeSubmission", landed?.id)
+        assertEquals(UseSmileIDSampleBannerTone.Warning, landed?.bannerTone)
     }
 
     @Test

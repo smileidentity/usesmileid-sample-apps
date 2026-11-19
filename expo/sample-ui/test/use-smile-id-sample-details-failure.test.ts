@@ -28,8 +28,10 @@ describe('the details failure', () => {
     expect(smileIDSampleDetailsFailure(undefined, serverError)).toBe(serverError);
   });
 
-  it('a failed run no submission explains states the submission fallback', () => {
-    expect(smileIDSampleLandedFailure('failed', undefined)?.id).toBe('requestInvalid');
+  it('a failed run no submission explains states that it ended before submission', () => {
+    const landed = smileIDSampleLandedFailure('failed', undefined);
+    expect(landed?.id).toBe('endedBeforeSubmission');
+    expect(landed && smileIDSampleBannerTone(landed)).toBe('warning');
   });
 
   it('a run that did not fail lands with no failure', () => {

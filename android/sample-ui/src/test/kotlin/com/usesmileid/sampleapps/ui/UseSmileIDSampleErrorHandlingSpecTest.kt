@@ -20,6 +20,7 @@ class UseSmileIDSampleErrorHandlingSpecTest {
     private val submission = file.list("submission")
     private val result = file.list("result")
     private val fallback = file.section("fallback")
+    private val unsubmitted = file.section("unsubmitted")
     private val strings = parseTokenJson(spec("l10n/app/en.json")) as TokenJson.Obj
 
     /** A resolution as the spec states one: keys and ids, with the action's limit where the row has none. */
@@ -102,6 +103,12 @@ class UseSmileIDSampleErrorHandlingSpecTest {
     }
 
     @Test
+    fun a_run_that_ended_before_submission_resolves_as_the_unsubmitted_row() {
+        assertEquals(unsubmitted.expected(), UseSmileIDSampleErrorHandling.unsubmitted.stated())
+        assertEquals(UseSmileIDSampleErrorHandling.unsubmitted, UseSmileIDSampleErrorHandling.resolution(unsubmitted.text("id")))
+    }
+
+    @Test
     fun every_fraud_and_compliance_outcome_shows_the_one_message() {
         val reasons = result.first { it.text("id") == "notVerified" }.strings("reasons")
         assertTrue(reasons.size > 1)
@@ -125,7 +132,7 @@ class UseSmileIDSampleErrorHandlingSpecTest {
 
     @Test
     fun every_message_and_button_has_a_string() {
-        val used = (submission + result).map { it.text("message") }.toSet()
+        val used = (submission + result + unsubmitted).map { it.text("message") }.toSet()
         assertEquals(used, UseSmileIDSampleErrorMessage.entries.map { it.key }.toSet())
         (used + UseSmileIDSampleErrorAction.entries.map { it.buttonKey }).forEach { key ->
             assertTrue(key, strings.string(key)?.isNotBlank() == true)

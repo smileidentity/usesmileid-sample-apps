@@ -24,15 +24,15 @@ void main() {
   });
 
   test(
-    'a failed run no submission explains states the submission fallback',
+    'a failed run no submission explains states that it ended before submission',
     () {
-      expect(
-        useSmileIDSampleLandedFailure(
-          status: UseSmileIDSampleFlowStatus.failed,
-          row: null,
-        )?.id,
-        'requestInvalid',
-      );
+      final UseSmileIDSampleErrorResolution? landed =
+          useSmileIDSampleLandedFailure(
+            status: UseSmileIDSampleFlowStatus.failed,
+            row: null,
+          );
+      expect(landed?.id, 'endedBeforeSubmission');
+      expect(landed?.bannerTone, UseSmileIDSampleBannerTone.warning);
     },
   );
 

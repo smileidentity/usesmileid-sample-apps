@@ -228,9 +228,12 @@ abstract final class UseSmileIDSampleErrorHandling {
         _resultRows.map((_Row row) => row.resolution),
       );
 
-  /// The row a submission the table does not name resolves as.
-  static UseSmileIDSampleErrorResolution get submissionFallback =>
-      _requestInvalid;
+  /// What a run that failed before any submission resolves as: it says only that nothing was sent.
+  static const UseSmileIDSampleErrorResolution unsubmitted = _Resolution(
+    'endedBeforeSubmission',
+    _Message.endedBeforeSubmission,
+    _Action.retry,
+  );
 
   /// A submission the server refused with [status]; [serverMessage] only tells rows apart and is never shown.
   static UseSmileIDSampleErrorResolution forStatus(

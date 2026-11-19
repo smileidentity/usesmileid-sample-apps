@@ -275,8 +275,8 @@ export {
   smileIDSampleErrorForStatus,
   smileIDSampleErrorForTransport,
   smileIDSampleErrorResultRows,
-  smileIDSampleErrorSubmissionFallback,
   smileIDSampleErrorSubmissionRows,
+  smileIDSampleErrorUnsubmitted,
 } from './state/use-smile-id-sample-error-handling';
 export {
   smileIDSampleBannerTone,

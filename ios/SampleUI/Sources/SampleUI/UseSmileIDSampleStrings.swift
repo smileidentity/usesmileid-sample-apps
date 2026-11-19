@@ -859,6 +859,10 @@ public enum UseSmileIDSampleStrings {
     text("error_could_not_start")
   }
 
+  public static var errorEndedBeforeSubmission: String {
+    text("error_ended_before_submission")
+  }
+
   public static var errorIdNumberInvalid: String {
     text("error_id_number_invalid")
   }

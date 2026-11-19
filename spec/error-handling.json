@@ -72,6 +72,12 @@
     "result": "notVerified",
     "why": "A status or reason the table does not name gets a message that names nothing and a Close button: a retry that fails the same way is not offered, and an unknown refusal is never explained."
   },
+  "unsubmitted": {
+    "id": "endedBeforeSubmission",
+    "message": "error_ended_before_submission",
+    "action": "retry",
+    "why": "A run that failed before any submission has no row: the user declined consent or the camera, or the flow could not be built. Nothing reached the server, so the message says only that and blames no one, and the result card keeps the SDK's own error in debug builds."
+  },
   "notDistinguished": [
     {
       "status": 403,
