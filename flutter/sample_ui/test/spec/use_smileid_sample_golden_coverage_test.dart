@@ -141,6 +141,8 @@ const Map<String, String> useSmileIDSampleGoldenFor = <String, String>{
 
 /// States with no baseline, each with the reason it has none.
 const Map<String, String> useSmileIDSampleGoldenExempt = <String, String>{
+  'debugSheet.extensionContent':
+      "a source build's extension draws it; a registry build has none and a release build closes it",
   'products.supersededListLayout':
       'Kept in the spec only so nobody re-implements it; the app never draws it.',
   'verifications.swipeToDelete':

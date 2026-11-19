@@ -27,6 +27,9 @@ enum UseSmileIDSampleStep {
   /// The scenario drawer over settings.
   scenarioDrawer,
 
+  /// A sheet the source build's extension draws for one of its DEBUG rows.
+  debugSheet,
+
   /// One verification's details.
   verificationDetails,
 

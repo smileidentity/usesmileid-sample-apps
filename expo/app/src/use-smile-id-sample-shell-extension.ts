@@ -6,8 +6,12 @@ import type { UseSmileIDFlowBuilder, UseSmileIDNetworkBuilder } from '@smileid/u
 export type UseSmileIDSampleShellExtension = {
   /// Rows for the Settings DEBUG section above the shell's own, such as an identity the rows below refer to.
   leadingDebugRows?: () => ReactNode;
-  /// Extra rows for the Settings DEBUG section, below the shell's own.
-  debugRows?: () => ReactNode;
+  /// Extra rows for the Settings DEBUG section, below the shell's own, given `openSheet` to open one of its `debugSheet`s by id.
+  debugRows?: (openSheet: (sheetId: string) => void) => ReactNode;
+  /// Whether `debugSheet` draws the sheet `sheetId` names; the shell closes any other id at once.
+  hasDebugSheet?: (sheetId: string) => boolean;
+  /// The sheet `sheetId` names, its panel drawn with `sample-ui`'s bottom sheet inside the shell's sheet step; never drawn in a release build.
+  debugSheet?: (sheetId: string, onDismiss: () => void) => ReactNode;
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   customiseFlow?: (builder: UseSmileIDFlowBuilder, product: UseSmileIDSampleProduct) => void;
   /// Runs last inside the shell's network block, so it may add to that configuration without replacing it.
@@ -32,10 +36,20 @@ export const linkLaunchSession = async (
 };
 
 /// The DEBUG section's rows below Scenarios: the extension's leading rows, then its others; none without an extension.
-export const smileIDSampleDebugRows = (extension: UseSmileIDSampleShellExtension | null | undefined): ReactNode => {
-  const rows = [extension?.leadingDebugRows?.(), extension?.debugRows?.()].filter(
+export const smileIDSampleDebugRows = (
+  extension: UseSmileIDSampleShellExtension | null | undefined,
+  openSheet: (sheetId: string) => void = () => {},
+): ReactNode => {
+  const rows = [extension?.leadingDebugRows?.(), extension?.debugRows?.(openSheet)].filter(
     (row) => row !== undefined && row !== null && row !== false,
   );
   // Undefined rather than an empty fragment, which the settings screen would read as rows to show.
   return rows.length > 0 ? createElement(Fragment, null, ...rows) : undefined;
 };
+
+/// Whether the sheet `sheetId` opens: only in a debug build whose extension draws that sheet.
+export const smileIDSampleDebugSheetOpens = (
+  debugBuild: boolean,
+  extension: UseSmileIDSampleShellExtension | null | undefined,
+  sheetId: string,
+): boolean => debugBuild && extension?.hasDebugSheet?.(sheetId) === true;

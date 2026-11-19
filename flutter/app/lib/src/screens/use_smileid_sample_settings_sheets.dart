@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sample_ui/sample_ui.dart';
 
 import '../navigation/use_smileid_sample_navigation.dart';
 import '../state/use_smileid_sample_providers.dart';
+import '../use_smileid_sample_shell_extension.dart';
 
 /// The capture-mode sheet over settings; a pick is kept and closes it.
 class UseSmileIDSampleCaptureModeStep extends ConsumerWidget {
@@ -118,4 +120,54 @@ class UseSmileIDSampleScenarioDrawerStep extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// A sheet the extension draws for one of its DEBUG rows; a release build, no extension or an unknown id closes it at once.
+class UseSmileIDSampleDebugSheetStep extends ConsumerStatefulWidget {
+  /// Draws the sheet [sheetId] names; [onDismiss] closes it.
+  const UseSmileIDSampleDebugSheetStep({
+    required this.sheetId,
+    required this.onDismiss,
+    super.key,
+  });
+
+  /// The sheet the extension's row asked for.
+  final String sheetId;
+
+  /// Closes the sheet.
+  final VoidCallback onDismiss;
+
+  @override
+  ConsumerState<UseSmileIDSampleDebugSheetStep> createState() =>
+      _UseSmileIDSampleDebugSheetStepState();
+}
+
+class _UseSmileIDSampleDebugSheetStepState
+    extends ConsumerState<UseSmileIDSampleDebugSheetStep> {
+  /// The extension that draws the sheet, or null when the step closes; decided once, so drawing and closing always agree.
+  UseSmileIDSampleShellExtension? _drawing;
+
+  @override
+  void initState() {
+    super.initState();
+    final UseSmileIDSampleShellExtension? extension = ref.read(
+      useSmileIDSampleShellExtensionProvider,
+    );
+    final bool opens = useSmileIDSampleDebugSheetOpens(
+      debugBuild: kDebugMode,
+      extension: extension,
+      sheetId: widget.sheetId,
+    );
+    _drawing = opens ? extension : null;
+    if (!opens) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.onDismiss();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      _drawing?.debugSheet(widget.sheetId, widget.onDismiss) ??
+      const SizedBox.shrink();
 }

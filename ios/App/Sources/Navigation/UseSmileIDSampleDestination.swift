@@ -241,7 +241,11 @@ struct UseSmileIDSampleDestination: View {
         onLanguage: { navigator.go(.language) },
         // No launch argument reveals it: every flow reaches the drawer by deep link.
         onOpenScenarioDrawer: UseSmileIDSampleAppState.isDebugBuild ? { navigator.go(.scenarioDrawer) } : nil,
-        debugRows: AnyView(UseSmileIDSampleDebugRows(extension: useSmileIDSampleShellExtension)),
+        debugRows: AnyView(
+          UseSmileIDSampleDebugRows(extension: useSmileIDSampleShellExtension) { sheetId in
+            navigator.go(UseSmileIDSampleStep.debugSheet.rawValue, arg: sheetId)
+          }
+        ),
         // There is no auth to leave; the session is the local state a partner would expect gone.
         onSignOut: { app.signOut()
           // The bar's own cross-tab switch, so the stack lands where selecting Products would.
@@ -279,6 +283,12 @@ struct UseSmileIDSampleDestination: View {
         activeTheme: app.flowResult.theme,
         onScenarioSelect: { app.flowResult.selectScenario($0) },
         onThemeSelect: { app.flowResult.selectTheme($0) }
+      )
+    case .debugSheet:
+      UseSmileIDSampleDebugSheet(
+        sheetId: scope.entry.arg ?? "",
+        extension: useSmileIDSampleShellExtension,
+        onDismiss: navigator.back
       )
     }
   }

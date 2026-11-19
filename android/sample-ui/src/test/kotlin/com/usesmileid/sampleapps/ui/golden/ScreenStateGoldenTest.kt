@@ -75,6 +75,7 @@ class ScreenStateGoldenTest {
     )
 
     private val exempt = mapOf(
+        "debugSheet.extensionContent" to "a source build's extension draws it; a registry build has none and a release build closes it",
         "consent.notAgreed" to "the SDK's own screen: this app decides whether the step runs, never draws it",
         "consent.agreed" to "the SDK's own screen: this app decides whether the step runs, never draws it",
         "products.supersededListLayout" to

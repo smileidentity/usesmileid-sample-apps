@@ -11,6 +11,17 @@ abstract class UseSmileIDSampleShellExtension {
   /// Extra rows for the Settings DEBUG section, below the shell's own, which debug builds show.
   List<Widget> debugRows() => const <Widget>[];
 
+  /// The same rows, given [openSheet] to open one of this extension's [debugSheet]s by id.
+  List<Widget> debugRowsWithSheets(ValueChanged<String> openSheet) =>
+      debugRows();
+
+  /// Whether [debugSheet] draws the sheet [sheetId] names; the shell closes any other id at once.
+  bool hasDebugSheet(String sheetId) => false;
+
+  /// The sheet [sheetId] names, its panel drawn with `sample-ui`'s bottom sheet inside the shell's sheet step; never drawn in a release build.
+  Widget debugSheet(String sheetId, VoidCallback onDismiss) =>
+      const SizedBox.shrink();
+
   /// Runs after the shell has configured a flow, so it may replace any of that configuration.
   void customiseFlow(
     UseSmileIDFlowBuilder builder,
@@ -73,5 +84,16 @@ useSmileIDSampleShellExtensionProvider =
 
 /// The DEBUG section's rows below Scenarios: the [extension]'s leading rows, then its others; this shell draws none of its own.
 List<Widget> useSmileIDSampleDebugRows(
-  UseSmileIDSampleShellExtension? extension,
-) => <Widget>[...?extension?.leadingDebugRows(), ...?extension?.debugRows()];
+  UseSmileIDSampleShellExtension? extension, {
+  ValueChanged<String>? openSheet,
+}) => <Widget>[
+  ...?extension?.leadingDebugRows(),
+  ...?extension?.debugRowsWithSheets(openSheet ?? (String _) {}),
+];
+
+/// Whether the sheet [sheetId] opens: only in a debug build whose [extension] draws that sheet.
+bool useSmileIDSampleDebugSheetOpens({
+  required bool debugBuild,
+  required UseSmileIDSampleShellExtension? extension,
+  required String sheetId,
+}) => debugBuild && (extension?.hasDebugSheet(sheetId) ?? false);

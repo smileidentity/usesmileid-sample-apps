@@ -953,6 +953,25 @@
         "sample_theme_item"
       ],
       "note": "A debug affordance, not a designed screen. AGENTS.md mandates it; the design does not cover it."
+    },
+    {
+      "id": "debugSheet",
+      "title": "Debug sheet",
+      "owner": "sample",
+      "notInDesign": true,
+      "board": null,
+      "route": "modalSheet",
+      "states": [
+        {
+          "state": "extensionContent",
+          "node": null
+        }
+      ],
+      "components": [
+        "BottomSheet"
+      ],
+      "testIds": [],
+      "note": "The shell's sheet step for a source build's extension, which draws the whole panel with the shared BottomSheet, as the shell's own sheet steps do; the step supplies the window, scrim and dismissal. A registry build has no extension, and a release build closes the step at once, so this app has no state of its own to golden."
     }
   ],
   "openQuestions": [

@@ -398,6 +398,26 @@
         "expo": "UseSmileIDSampleStep.scenarioDrawer"
       },
       "notes": "A debug affordance with no design frame. Deep-linkable so a flow can open it directly rather than reproducing a hidden gesture — the Settings row that opens it is debug-only, the link is not."
+    },
+    {
+      "id": "debugSheet",
+      "screen": "debugSheet",
+      "path": "/debug/sheet/:sheetId",
+      "presentation": "modalSheet",
+      "args": [
+        {
+          "name": "sheetId",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "platform": {
+        "android": "UseSmileIDSampleStep.DebugSheet",
+        "ios": "UseSmileIDSampleStep.debugSheet",
+        "flutter": "UseSmileIDSampleStep.debugSheet",
+        "expo": "UseSmileIDSampleStep.debugSheet"
+      },
+      "notes": "A sheet a source build's extension draws for one of its DEBUG rows, named by sheetId. Debug builds only: a release build closes it at once and draws nothing, so the link cannot open an empty sheet in a shipped app."
     }
   ],
   "automationEntry": {

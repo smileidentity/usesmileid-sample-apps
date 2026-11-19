@@ -69,6 +69,12 @@ class _UseSmileIDSampleSettingsTabState
           : null,
       debugRows: useSmileIDSampleDebugRows(
         ref.watch(useSmileIDSampleShellExtensionProvider),
+        openSheet: (String sheetId) => unawaited(
+          widget.scope.navigator.go(
+            UseSmileIDSampleStep.debugSheet.name,
+            arg: sheetId,
+          ),
+        ),
       ),
       onSignOut: () {
         unawaited(ref.read(useSmileIDSampleSessionProvider.notifier).clear());

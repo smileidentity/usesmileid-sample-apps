@@ -31,6 +31,8 @@ import com.usesmileid.sampleapps.android.LocalUseSmileIDSampleAppState
 import com.usesmileid.sampleapps.android.flow.UseSmileIDSampleNetworkLog
 import com.usesmileid.sampleapps.android.flow.tokenBindsConsent
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
+import com.usesmileid.sampleapps.ui.R
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleIcon
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleProfilesRecord
 import com.usesmileid.sampleapps.ui.components.avatarColorForProfile
@@ -96,7 +98,9 @@ internal fun SettingsScreen(scope: UseSmileIDSampleStepScope) {
                 when (group) {
                     UseSmileIDSampleDebugRowGroup.ExtensionLeading -> useSmileIDSampleShellExtension?.LeadingDebugRows()
                     UseSmileIDSampleDebugRowGroup.Shell -> NetworkLogsRow()
-                    UseSmileIDSampleDebugRowGroup.Extension -> useSmileIDSampleShellExtension?.DebugRows()
+                    UseSmileIDSampleDebugRowGroup.Extension -> useSmileIDSampleShellExtension?.DebugRows(
+                        openSheet = { scope.navigator.go(UseSmileIDSampleStep.DebugSheet, arg = it) },
+                    )
                 }
             }
         },
@@ -112,6 +116,7 @@ private fun NetworkLogsRow() {
             title = "Network logs",
             supportingText = "Requests from the last hour",
             onClick = { context.startActivity(intent) },
+            leading = { tint -> UseSmileIDSampleIcon(id = R.drawable.sample_ic_receipt_long, tint = tint) },
             trailing = { UseSmileIDSampleSettingRowChevron() },
         )
     }
