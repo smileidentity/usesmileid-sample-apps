@@ -11,6 +11,8 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   public private(set) var lastError: String?
   /// The row a failed submission resolved to, for the message and action the app offers; nil when the failure has none.
   public private(set) var errorResolution: UseSmileIDSampleErrorResolution?
+  /// The product the latest run started, which a failure's action runs again.
+  public private(set) var product: UseSmileIDSampleProduct?
   public private(set) var resultCallbackCount: Int
   public private(set) var refreshCallbackCount: Int
 
@@ -24,6 +26,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     userId: String? = nil,
     lastError: String? = nil,
     errorResolution: UseSmileIDSampleErrorResolution? = nil,
+    product: UseSmileIDSampleProduct? = nil,
     resultCallbackCount: Int = 0,
     refreshCallbackCount: Int = 0
   ) {
@@ -36,6 +39,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     self.userId = userId
     self.lastError = lastError
     self.errorResolution = errorResolution
+    self.product = product
     self.resultCallbackCount = resultCallbackCount
     self.refreshCallbackCount = refreshCallbackCount
   }
@@ -68,8 +72,9 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   }
 
   /// Both counts reset here, so "exactly once" is asserted per run rather than per app launch.
-  public mutating func startFlow(environment: UseSmileIDSampleEnvironment) {
+  public mutating func startFlow(environment: UseSmileIDSampleEnvironment, product: UseSmileIDSampleProduct? = nil) {
     self.environment = environment
+    self.product = product
     status = .running
     jobId = nil
     userId = nil
@@ -109,13 +114,14 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
     refreshCallbackCount += 1
   }
 
-  /// The eleven fields as strings in a fixed order; `init(saved:)` reads them back by position.
+  /// The twelve fields as strings in a fixed order; `init(saved:)` reads them back by position.
   public var saved: [String] {
     [
       scenario.id, theme.id, route.id, environment.id, status.id,
       jobId ?? "", userId ?? "", lastError ?? "",
       String(resultCallbackCount), String(refreshCallbackCount),
-      errorResolution?.id ?? ""
+      errorResolution?.id ?? "",
+      product?.rawValue ?? ""
     ]
   }
 
@@ -134,6 +140,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
       userId: field(6).isEmpty ? nil : field(6),
       lastError: field(7).isEmpty ? nil : field(7),
       errorResolution: UseSmileIDSampleErrorHandling.resolution(id: field(10)),
+      product: UseSmileIDSampleProduct(rawValue: field(11)),
       resultCallbackCount: Int(field(8)) ?? 0,
       refreshCallbackCount: Int(field(9)) ?? 0
     )

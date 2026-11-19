@@ -72,7 +72,7 @@ struct SdkFlowScreen: View {
       app.flowResult.recordBlocked(reason: issues.joined(separator: "; "), environment: snapshot.environment)
       exit.leave(landing: .verificationDetails, arg: unsubmittedJobId)
     case .ready:
-      app.flowResult.startFlow(environment: snapshot.environment)
+      app.flowResult.startFlow(environment: snapshot.environment, product: snapshot.product)
       let handler = SdkFlowResultHandler(app: app, exit: exit, snapshot: snapshot)
       run.start(product: snapshot.product, builder: builder(snapshot, app: app, handler: handler))
     }
@@ -199,4 +199,5 @@ extension Error {
 }
 
 /// The landing route for a run with no server-issued job id.
-private let unsubmittedJobId = "unsubmitted"
+/// The details route's id for a run that ended with no job, where its failure is stated.
+let unsubmittedJobId = "unsubmitted"

@@ -272,6 +272,8 @@ public enum UseSmileIDSampleTestIds {
   public static let statusBadge = "sample_status_badge"
   public static let detailsDelete = "sample_details_delete"
   public static let detailsEmpty = "sample_details_empty"
+  public static let errorBanner = "sample_error_banner"
+  public static let errorAction = "sample_error_action"
   /// The pull-to-refresh container, always present: a gesture that silently does nothing reads as a defect.
   public static let detailsRefresh = "sample_details_refresh"
 
@@ -293,7 +295,7 @@ public enum UseSmileIDSampleTestIds {
     navProducts, navVerifications, navSettings,
     toast, toastUndo,
     envChip, navToken, productCardPrefix, settingNavPrefix,
-    detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty, detailsRefresh,
+    detailFieldPrefix, detailCopyPrefix, statusBadge, detailsDelete, detailsEmpty, errorBanner, errorAction, detailsRefresh,
     userDetailsScreen, userDetailsFieldPrefix, userDetailsHint, userDetailsContinue,
     rememberDetailsSwitch, userDetailsProfile,
     authUserIdScreen, authUserIdInput, authUserIdOptionPrefix, authUserIdRegister, authUserIdContinue,

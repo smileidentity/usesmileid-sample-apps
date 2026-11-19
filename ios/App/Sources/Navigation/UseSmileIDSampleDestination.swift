@@ -186,7 +186,7 @@ struct UseSmileIDSampleDestination: View {
         navigator.back()
       }
     case .verificationDetails:
-      UseSmileIDSampleVerificationDetailsHost(jobId: scope.entry.arg ?? "", navigator: navigator)
+      UseSmileIDSampleVerificationDetailsHost(jobId: scope.entry.arg ?? "", navigator: navigator, engine: engine, entry: scope.entry)
         .navigationBarHidden(true)
     case .profiles:
       UseSmileIDSampleProfilesHost(navigator: navigator)
@@ -410,6 +410,8 @@ struct UseSmileIDSampleDestination: View {
 private struct UseSmileIDSampleVerificationDetailsHost: View {
   let jobId: String
   let navigator: NjiaNavigator
+  let engine: UseSmileIDSampleEngine
+  let entry: NjiaEntry
 
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var notice: UseSmileIDSampleTransientNotice?
@@ -421,7 +423,11 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
         job: app.jobs?.first { $0.id == jobId },
         result: app.flowResult.snapshot,
         showProbes: app.showProbes,
-        pending: app.jobs == nil
+        pending: app.jobs == nil,
+        landedFailure: jobId == unsubmittedJobId
+          ? useSmileIDSampleLandedFailure(status: app.flowResult.status, row: app.flowResult.errorResolution)
+          : nil,
+        landedProduct: jobId == unsubmittedJobId ? app.flowResult.product : nil
       ),
       resultExpanded: $app.resultCardExpanded,
       onBack: navigator.back,
@@ -429,7 +435,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       onDelete: { app.removeJobs([jobId])
         navigator.back() },
       onCopy: { label, value in copy(label, value) },
-      onRefresh: { await refresh() }
+      onRefresh: { await refresh() },
+      onErrorAction: { action in run(action) }
     )
     // Asked again with the list's backoff while the server still has it processing, and afresh under a new session.
     .task(id: [jobId, app.session?.id ?? ""]) {
@@ -443,6 +450,24 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       UseSmileIDSampleTransientNoticeHost(notice: notice, onDismiss: { notice = nil })
         .padding(.horizontal, SmileSpacing.spacingMd)
         .padding(.vertical, SmileSpacing.spacingLg)
+    }
+  }
+
+  /// Runs a failure's action for the job's product, or the failed run's, in place of this entry.
+  private func run(_ action: UseSmileIDSampleErrorAction) {
+    let product = app.jobs?.first { $0.id == jobId }?.product ?? app.flowResult.product
+    switch useSmileIDSampleErrorMove(action, product: product) {
+    case let .runAgain(product):
+      engine.startRun(from: entry, product: product, run: app.runOnly(product, route: app.flowResult.route), replace: entry.id)
+    case let .editIdDetails(product):
+      let run = UseSmileIDSampleRunEntry(facts: app.njiaFacts(for: product), step: UseSmileIDSampleStep.idDetailsForm.rawValue)
+      engine.startRun(from: entry, product: product, run: run, replace: entry.id)
+    case let .newToken(product):
+      app.runPartnerId = app.session?.partnerId
+      app.interruptedRun = UseSmileIDSampleRunIntent(productId: product.id, route: app.flowResult.route, resumeAt: .flow)
+      engine.navigator(entry).go(UseSmileIDSampleStep.scanToken.rawValue, arg: nil, replace: entry.id)
+    case .leave:
+      engine.leaveToProducts()
     }
   }
 

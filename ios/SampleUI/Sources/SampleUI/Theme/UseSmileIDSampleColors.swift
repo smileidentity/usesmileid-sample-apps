@@ -75,6 +75,10 @@ public struct UseSmileIDSampleBannerTokens: Equatable, Sendable {
   public let border: Color
   public let title: Color
   public let text: Color
+  /// The warning tone's bar and glyph.
+  public let warningAccent: Color
+  /// The error tone's bar and glyph.
+  public let errorAccent: Color
 }
 
 public struct UseSmileIDSampleDecorativeTokens: Equatable, Sendable {
@@ -244,7 +248,9 @@ public extension UseSmileIDSampleColors {
       background: SmileColorLight.bannerBg,
       border: SmileColorLight.bannerBorder,
       title: SmileColorLight.bannerTitle,
-      text: SmileColorLight.bannerText
+      text: SmileColorLight.bannerText,
+      warningAccent: SmileColorLight.bannerWarningAccent,
+      errorAccent: SmileColorLight.bannerErrorAccent
     ),
     decorative: UseSmileIDSampleDecorativeTokens(
       yellow: SmileColorLight.colorDecorativeYellow,
@@ -341,7 +347,9 @@ public extension UseSmileIDSampleColors {
       background: SmileColorDark.bannerBg,
       border: SmileColorDark.bannerBorder,
       title: SmileColorDark.bannerTitle,
-      text: SmileColorDark.bannerText
+      text: SmileColorDark.bannerText,
+      warningAccent: SmileColorDark.bannerWarningAccent,
+      errorAccent: SmileColorDark.bannerErrorAccent
     ),
     decorative: UseSmileIDSampleDecorativeTokens(
       yellow: SmileColorDark.colorDecorativeYellow,

@@ -56,6 +56,11 @@ public enum UseSmileIDSampleErrorHandling {
   /// Every result row's resolution, in the table's order.
   public static let result: [UseSmileIDSampleErrorResolution] = resultRows.map(\.resolution)
 
+  /// The row a submission the table does not name resolves as.
+  public static var submissionFallback: UseSmileIDSampleErrorResolution {
+    requestInvalid
+  }
+
   /// The row a saved `id` names; nil for none, or for one this build no longer has.
   public static func resolution(id: String?) -> UseSmileIDSampleErrorResolution? {
     (submission + result).first { $0.id == id }

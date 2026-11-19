@@ -154,6 +154,61 @@ public enum SmileIcons {
     ]
   )
 
+  public static let cancel = SmileIcon(
+    width: 960,
+    height: 960,
+    minX: 0,
+    minY: -960,
+    parts: [
+      SmileIconPart(stroke: .fill, opacity: 1) { path in
+        path.move(to: CGPoint(x: 336, y: -280))
+        path.addLine(to: CGPoint(x: 480, y: -424))
+        path.addLine(to: CGPoint(x: 624, y: -280))
+        path.addLine(to: CGPoint(x: 680, y: -336))
+        path.addLine(to: CGPoint(x: 536, y: -480))
+        path.addLine(to: CGPoint(x: 680, y: -624))
+        path.addLine(to: CGPoint(x: 624, y: -680))
+        path.addLine(to: CGPoint(x: 480, y: -536))
+        path.addLine(to: CGPoint(x: 336, y: -680))
+        path.addLine(to: CGPoint(x: 280, y: -624))
+        path.addLine(to: CGPoint(x: 424, y: -480))
+        path.addLine(to: CGPoint(x: 280, y: -336))
+        path.addLine(to: CGPoint(x: 336, y: -280))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 480, y: -80))
+        path.addQuadCurve(to: CGPoint(x: 324, y: -111.5), control: CGPoint(x: 397, y: -80))
+        path.addQuadCurve(to: CGPoint(x: 197, y: -197), control: CGPoint(x: 251, y: -143))
+        path.addQuadCurve(to: CGPoint(x: 111.5, y: -324), control: CGPoint(x: 143, y: -251))
+        path.addQuadCurve(to: CGPoint(x: 80, y: -480), control: CGPoint(x: 80, y: -397))
+        path.addQuadCurve(to: CGPoint(x: 111.5, y: -636), control: CGPoint(x: 80, y: -563))
+        path.addQuadCurve(to: CGPoint(x: 197, y: -763), control: CGPoint(x: 143, y: -709))
+        path.addQuadCurve(to: CGPoint(x: 324, y: -848.5), control: CGPoint(x: 251, y: -817))
+        path.addQuadCurve(to: CGPoint(x: 480, y: -880), control: CGPoint(x: 397, y: -880))
+        path.addQuadCurve(to: CGPoint(x: 636, y: -848.5), control: CGPoint(x: 563, y: -880))
+        path.addQuadCurve(to: CGPoint(x: 763, y: -763), control: CGPoint(x: 709, y: -817))
+        path.addQuadCurve(to: CGPoint(x: 848.5, y: -636), control: CGPoint(x: 817, y: -709))
+        path.addQuadCurve(to: CGPoint(x: 880, y: -480), control: CGPoint(x: 880, y: -563))
+        path.addQuadCurve(to: CGPoint(x: 848.5, y: -324), control: CGPoint(x: 880, y: -397))
+        path.addQuadCurve(to: CGPoint(x: 763, y: -197), control: CGPoint(x: 817, y: -251))
+        path.addQuadCurve(to: CGPoint(x: 636, y: -111.5), control: CGPoint(x: 709, y: -143))
+        path.addQuadCurve(to: CGPoint(x: 480, y: -80), control: CGPoint(x: 563, y: -80))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 480, y: -160))
+        path.addQuadCurve(to: CGPoint(x: 707, y: -253), control: CGPoint(x: 614, y: -160))
+        path.addQuadCurve(to: CGPoint(x: 800, y: -480), control: CGPoint(x: 800, y: -346))
+        path.addQuadCurve(to: CGPoint(x: 707, y: -707), control: CGPoint(x: 800, y: -614))
+        path.addQuadCurve(to: CGPoint(x: 480, y: -800), control: CGPoint(x: 614, y: -800))
+        path.addQuadCurve(to: CGPoint(x: 253, y: -707), control: CGPoint(x: 346, y: -800))
+        path.addQuadCurve(to: CGPoint(x: 160, y: -480), control: CGPoint(x: 160, y: -614))
+        path.addQuadCurve(to: CGPoint(x: 253, y: -253), control: CGPoint(x: 160, y: -346))
+        path.addQuadCurve(to: CGPoint(x: 480, y: -160), control: CGPoint(x: 346, y: -160))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 480, y: -480))
+        path.closeSubpath()
+      }
+    ]
+  )
+
   public static let check = SmileIcon(
     width: 960,
     height: 960,
@@ -1279,6 +1334,45 @@ public enum SmileIcons {
         path.move(to: CGPoint(x: 3.0625, y: 15.75))
         path.addLine(to: CGPoint(x: 3.9375, y: 16.625))
         path.addLine(to: CGPoint(x: 5.25, y: 14.875))
+      }
+    ]
+  )
+
+  public static let warning = SmileIcon(
+    width: 960,
+    height: 960,
+    minX: 0,
+    minY: -960,
+    parts: [
+      SmileIconPart(stroke: .fill, opacity: 1) { path in
+        path.move(to: CGPoint(x: 40, y: -120))
+        path.addLine(to: CGPoint(x: 480, y: -880))
+        path.addLine(to: CGPoint(x: 920, y: -120))
+        path.addLine(to: CGPoint(x: 40, y: -120))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 178, y: -200))
+        path.addLine(to: CGPoint(x: 782, y: -200))
+        path.addLine(to: CGPoint(x: 480, y: -720))
+        path.addLine(to: CGPoint(x: 178, y: -200))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 508.5, y: -251.5))
+        path.addQuadCurve(to: CGPoint(x: 520, y: -280), control: CGPoint(x: 520, y: -263))
+        path.addQuadCurve(to: CGPoint(x: 508.5, y: -308.5), control: CGPoint(x: 520, y: -297))
+        path.addQuadCurve(to: CGPoint(x: 480, y: -320), control: CGPoint(x: 497, y: -320))
+        path.addQuadCurve(to: CGPoint(x: 451.5, y: -308.5), control: CGPoint(x: 463, y: -320))
+        path.addQuadCurve(to: CGPoint(x: 440, y: -280), control: CGPoint(x: 440, y: -297))
+        path.addQuadCurve(to: CGPoint(x: 451.5, y: -251.5), control: CGPoint(x: 440, y: -263))
+        path.addQuadCurve(to: CGPoint(x: 480, y: -240), control: CGPoint(x: 463, y: -240))
+        path.addQuadCurve(to: CGPoint(x: 508.5, y: -251.5), control: CGPoint(x: 497, y: -240))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 440, y: -360))
+        path.addLine(to: CGPoint(x: 520, y: -360))
+        path.addLine(to: CGPoint(x: 520, y: -560))
+        path.addLine(to: CGPoint(x: 440, y: -560))
+        path.addLine(to: CGPoint(x: 440, y: -360))
+        path.closeSubpath()
+        path.move(to: CGPoint(x: 480, y: -460))
+        path.closeSubpath()
       }
     ]
   )

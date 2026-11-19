@@ -10,10 +10,19 @@ public struct UseSmileIDSampleVerificationDetailsState: Equatable {
   public var showProbes: Bool
   /// True until the store first reports: a cold link lands before the rows do.
   public var pending: Bool
+  /// The row the run that landed here with no job failed with; nil for any other visit.
+  public var landedFailure: UseSmileIDSampleErrorResolution?
+  /// That run's product, named over its banner.
+  public var landedProduct: UseSmileIDSampleProduct?
 
-  /// The row is known not to exist, rather than not loaded yet.
+  /// The failure the screen states, if any.
+  var failure: UseSmileIDSampleErrorResolution? {
+    useSmileIDSampleDetailsFailure(job: job, landedRun: landedFailure)
+  }
+
+  /// The row is known not to exist, rather than not loaded yet, and no failed run explains it.
   var missing: Bool {
-    job == nil && !pending
+    job == nil && !pending && failure == nil
   }
 
   public init(
@@ -21,13 +30,17 @@ public struct UseSmileIDSampleVerificationDetailsState: Equatable {
     job: UseSmileIDSampleJob? = nil,
     result: UseSmileIDSampleResult = UseSmileIDSampleFlowResult().snapshot,
     showProbes: Bool = true,
-    pending: Bool = false
+    pending: Bool = false,
+    landedFailure: UseSmileIDSampleErrorResolution? = nil,
+    landedProduct: UseSmileIDSampleProduct? = nil
   ) {
     self.jobId = jobId
     self.job = job
     self.result = result
     self.showProbes = showProbes
     self.pending = pending
+    self.landedFailure = landedFailure
+    self.landedProduct = landedProduct
   }
 }
 
@@ -40,6 +53,7 @@ public struct VerificationDetailsScreen: View {
   private let onDelete: () -> Void
   private let onCopy: (String, String) -> Void
   private let onRefresh: () async -> Void
+  private let onErrorAction: (UseSmileIDSampleErrorAction) -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
   @Environment(\.sizeCategory) private var sizeCategory
@@ -51,7 +65,8 @@ public struct VerificationDetailsScreen: View {
     onDelete: @escaping () -> Void,
     onCopy: @escaping (String, String) -> Void,
     // Always wired, never conditionally hidden: a refresh that cannot succeed says why instead.
-    onRefresh: @escaping () async -> Void = {}
+    onRefresh: @escaping () async -> Void = {},
+    onErrorAction: @escaping (UseSmileIDSampleErrorAction) -> Void = { _ in }
   ) {
     self.state = state
     _resultExpanded = resultExpanded
@@ -59,6 +74,7 @@ public struct VerificationDetailsScreen: View {
     self.onDelete = onDelete
     self.onCopy = onCopy
     self.onRefresh = onRefresh
+    self.onErrorAction = onErrorAction
   }
 
   public var body: some View {
@@ -70,7 +86,11 @@ public struct VerificationDetailsScreen: View {
         VStack(spacing: SmileSpacing.spacingSm) {
           if let job = state.job {
             heading(job)
+            if let failure = state.failure { banner(failure, onStoredJob: true) }
             details(job)
+          } else if let failure = state.failure {
+            if let product = state.landedProduct { title(product.label) }
+            banner(failure, onStoredJob: false)
           } else if state.missing {
             UseSmileIDSampleEmptyState(
               text: UseSmileIDSampleStrings.detailsMissingTitle,
@@ -131,6 +151,26 @@ public struct VerificationDetailsScreen: View {
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.vertical, SmileSpacing.spacingXxs)
+  }
+
+  private func title(_ text: String) -> some View {
+    UseSmileIDSampleText(text, style: UseSmileIDSampleTheme.type.textStyleTitle)
+      .foregroundColor(colors.textTitle)
+      .frame(maxWidth: .infinity, alignment: .leading)
+      .padding(.horizontal, SmileSpacing.spacingMd)
+      .padding(.vertical, SmileSpacing.spacingXxs)
+  }
+
+  private func banner(_ failure: UseSmileIDSampleErrorResolution, onStoredJob: Bool) -> some View {
+    UseSmileIDSampleBanner(
+      message: failure.message.text,
+      tone: failure.bannerTone,
+      actionLabel: failure.offersAction(onStoredJob: onStoredJob) ? failure.action.label : nil,
+      actionProminent: failure.action != .exit,
+      testId: UseSmileIDSampleTestIds.errorBanner,
+      actionTestId: UseSmileIDSampleTestIds.errorAction
+    ) { onErrorAction(failure.action) }
+      .padding(.horizontal, SmileSpacing.spacingMd)
   }
 
   private func details(_ job: UseSmileIDSampleJob) -> some View {

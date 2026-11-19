@@ -109,6 +109,30 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
     }
   }
 
+  /// A run whose submission the server refused, landed with no job: its message and the action that can get past it.
+  func testVerificationDetailsFailed() {
+    goldens("verification_details_failed") { failedRun(UseSmileIDSampleErrorHandling.forStatus(503)) }
+  }
+
+  /// A refusal no retry gets past: the error tone, and Close.
+  func testVerificationDetailsFailedFinal() {
+    goldens("verification_details_failed_final") { failedRun(UseSmileIDSampleErrorHandling.forStatus(403)) }
+  }
+
+  /// The release build's page: the banner alone, with no result card under it.
+  func testVerificationDetailsFailedWithoutProbes() {
+    goldens("verification_details_failed_no_probes") {
+      failedRun(UseSmileIDSampleErrorHandling.forStatus(400), showProbes: false)
+    }
+  }
+
+  /// The table's longest message, which wraps furthest beside the glyph.
+  func testVerificationDetailsFailedMaxDynamicType() {
+    assertSurvivesMaxDynamicType(growsWithContentSize: false) {
+      failedRun(UseSmileIDSampleErrorHandling.forStatus(400), height: 1400)
+    }
+  }
+
   /// A cold link lands before the store reports: the page waits rather than saying the row is missing.
   func testVerificationDetailsPending() {
     goldens("verification_details_pending") {
@@ -590,6 +614,27 @@ final class UseSmileIDSampleScreenGoldenTest: UseSmileIDSampleGoldenTest {
   private func details(_ job: UseSmileIDSampleJob, height: CGFloat = 900) -> some View {
     VerificationDetailsScreen(
       state: .init(jobId: job.id, job: job, result: UseSmileIDSampleResultFixtures.succeeded),
+      resultExpanded: .constant(true),
+      onBack: {},
+      onDelete: {},
+      onCopy: { _, _ in }
+    )
+    .frame(height: height)
+  }
+
+  private func failedRun(
+    _ failure: UseSmileIDSampleErrorResolution,
+    showProbes: Bool = true,
+    height: CGFloat = 900
+  ) -> some View {
+    VerificationDetailsScreen(
+      state: .init(
+        jobId: "unsubmitted",
+        result: UseSmileIDSampleResultFixtures.failed,
+        showProbes: showProbes,
+        landedFailure: failure,
+        landedProduct: .biometricKyc
+      ),
       resultExpanded: .constant(true),
       onBack: {},
       onDelete: {},

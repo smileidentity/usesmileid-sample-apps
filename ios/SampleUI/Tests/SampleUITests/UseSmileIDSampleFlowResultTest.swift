@@ -61,6 +61,15 @@ final class UseSmileIDSampleFlowResultTest: XCTestCase {
     XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).errorResolution, row)
   }
 
+  func testARunKeepsItsProductForTheFailureActionsAndRecreationPreservesIt() {
+    var flow = UseSmileIDSampleFlowResult()
+
+    flow.startFlow(environment: .sandbox, product: .enhancedKyc)
+
+    XCTAssertEqual(flow.product, .enhancedKyc)
+    XCTAssertEqual(UseSmileIDSampleFlowResult(saved: flow.saved).product, .enhancedKyc)
+  }
+
   func testStartingARunClearsThePreviousRow() {
     var flow = UseSmileIDSampleFlowResult()
     flow.recordResultCallback(
@@ -84,7 +93,7 @@ final class UseSmileIDSampleFlowResultTest: XCTestCase {
   }
 
   func testARowThisBuildNoLongerHasRestoresAsNone() {
-    let saved = UseSmileIDSampleFlowResult().saved.dropLast() + ["a-row-that-is-gone"]
+    let saved = UseSmileIDSampleFlowResult().saved.prefix(10) + ["a-row-that-is-gone"]
 
     XCTAssertNil(UseSmileIDSampleFlowResult(saved: Array(saved)).errorResolution)
   }
@@ -92,7 +101,7 @@ final class UseSmileIDSampleFlowResultTest: XCTestCase {
   func testAResultSavedBeforeRowsWereKeptRestoresWithNone() {
     let flow = UseSmileIDSampleFlowResult()
 
-    let restored = UseSmileIDSampleFlowResult(saved: Array(flow.saved.dropLast()))
+    let restored = UseSmileIDSampleFlowResult(saved: Array(flow.saved.prefix(10)))
 
     XCTAssertNil(restored.errorResolution)
     XCTAssertEqual(restored.snapshot, flow.snapshot)
