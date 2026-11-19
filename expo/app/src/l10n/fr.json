@@ -70,6 +70,8 @@
   "si_processing_error_unavailable": "Un problème est survenu. Contactez le support.",
   "si_processing_error_generic": "Un problème est survenu. Veuillez réessayer.",
   "si_processing_retry": "Réessayer",
+  "si_processing_retry_in": "Réessayer dans {seconds} s",
+  "si_processing_retry_in_a11y": "Réessayer, secondes restantes : {seconds}",
   "si_processing_exit": "Quitter",
   "si_accessibility_capture_progress": "Progression de la capture",
   "si_cd_captured_image": "Image capturée",

@@ -70,6 +70,8 @@
 "si_processing_error_unavailable" = "حدث خطأ ما. يرجى التواصل مع الدعم.";
 "si_processing_error_generic" = "حدث خطأ ما. يرجى المحاولة مرة أخرى.";
 "si_processing_retry" = "إعادة المحاولة";
+"si_processing_retry_in" = "إعادة المحاولة خلال {seconds} ث";
+"si_processing_retry_in_a11y" = "إعادة المحاولة، الثواني المتبقية: {seconds}";
 "si_processing_exit" = "خروج";
 "si_accessibility_capture_progress" = "تقدّم الالتقاط";
 "si_cd_captured_image" = "الصورة الملتقطة";

@@ -72,6 +72,8 @@
     <string name="si_processing_error_unavailable">משהו השתבש. פנה לתמיכה.</string>
     <string name="si_processing_error_generic">משהו השתבש. נסה שוב.</string>
     <string name="si_processing_retry">נסה שוב</string>
+    <string name="si_processing_retry_in">נסה שוב בעוד {seconds} שנ׳</string>
+    <string name="si_processing_retry_in_a11y">נסה שוב, שניות שנותרו: {seconds}</string>
     <string name="si_processing_exit">יציאה</string>
     <string name="si_accessibility_capture_progress">התקדמות הצילום</string>
     <string name="si_cd_captured_image">התמונה שצולמה</string>

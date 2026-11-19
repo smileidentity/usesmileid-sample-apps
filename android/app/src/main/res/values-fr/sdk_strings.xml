@@ -72,6 +72,8 @@
     <string name="si_processing_error_unavailable">Un problème est survenu. Contactez le support.</string>
     <string name="si_processing_error_generic">Un problème est survenu. Veuillez réessayer.</string>
     <string name="si_processing_retry">Réessayer</string>
+    <string name="si_processing_retry_in">Réessayer dans {seconds} s</string>
+    <string name="si_processing_retry_in_a11y">Réessayer, secondes restantes : {seconds}</string>
     <string name="si_processing_exit">Quitter</string>
     <string name="si_accessibility_capture_progress">Progression de la capture</string>
     <string name="si_cd_captured_image">Image capturée</string>
