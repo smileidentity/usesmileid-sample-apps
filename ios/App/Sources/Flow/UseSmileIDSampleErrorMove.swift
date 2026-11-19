@@ -23,13 +23,14 @@ func useSmileIDSampleErrorMove(
   runPartnerId: String?
 ) -> UseSmileIDSampleErrorMove {
   guard let product else { return .leave }
+  let ownPartner = runPartnerId != nil && runPartnerId == livePartnerId
   switch action {
   case .retry, .retryLater, .recapture:
     if !sessionLive { return .newToken(product, resumeAt: .flow) }
-    if let runPartnerId, runPartnerId == livePartnerId { return .runAgain(product) }
-    return .runFromStart(product)
+    return ownPartner ? .runAgain(product) : .runFromStart(product)
   case .fixInput:
-    return sessionLive ? .editIdDetails(product) : .newToken(product, resumeAt: .firstStep)
+    if !sessionLive { return .newToken(product, resumeAt: .firstStep) }
+    return ownPartner ? .editIdDetails(product) : .runFromStart(product)
   case .newSession:
     return .newToken(product, resumeAt: .flow)
   case .exit:

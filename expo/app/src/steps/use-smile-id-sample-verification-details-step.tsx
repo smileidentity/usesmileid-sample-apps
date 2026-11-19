@@ -138,8 +138,6 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
         );
         return;
       case 'editIdDetails':
-        // The details stay to be edited, but the run is now the live partner's.
-        session.recordRunPartner(live?.partnerId ?? null);
         smileIDSampleStartRun(
           engine,
           scope.entry,

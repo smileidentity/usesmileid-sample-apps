@@ -44,6 +44,13 @@ describe('smileIDSampleErrorMove', () => {
     });
   });
 
+  it('fixing the input on another partner starts from the first step with fresh forms', () => {
+    expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.FixInput, product, gate({ livePartnerId: 'partner_2' }))).toEqual({
+      kind: 'runFromStart',
+      product,
+    });
+  });
+
   it('starting again takes a new token first', () => {
     expect(smileIDSampleErrorMove(UseSmileIDSampleErrorAction.NewSession, product, gate())).toEqual({
       kind: 'newToken',

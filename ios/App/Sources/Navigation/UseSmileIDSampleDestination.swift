@@ -463,8 +463,6 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
     case let .runFromStart(product):
       app.startProductRun(engine: engine, from: entry, product: product, replace: entry.id)
     case let .editIdDetails(product):
-      // The details stay to be edited, but the run is now the live partner's.
-      app.runPartnerId = live?.partnerId
       let facts = app.runOnly(product, route: app.flowResult.route).facts
       let run = UseSmileIDSampleRunEntry(facts: facts, step: UseSmileIDSampleStep.idDetailsForm.rawValue)
       engine.startRun(from: entry, product: product, run: run, replace: entry.id)

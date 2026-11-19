@@ -97,6 +97,16 @@ void main() {
     },
   );
 
+  test(
+    'fixing the input on another partner starts from the first step with fresh forms',
+    () {
+      expect(
+        move(UseSmileIDSampleErrorAction.fixInput, livePartnerId: 'partner_2'),
+        isA<UseSmileIDSampleRunFromStart>(),
+      );
+    },
+  );
+
   test('starting again takes a new token first', () {
     expect(
       move(UseSmileIDSampleErrorAction.newSession),

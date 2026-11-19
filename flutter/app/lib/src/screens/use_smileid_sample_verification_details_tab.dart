@@ -192,10 +192,6 @@ class _UseSmileIDSampleVerificationDetailsTabState
       case UseSmileIDSampleEditIdDetails(
         :final UseSmileIDSampleProduct product,
       ):
-        // The details stay to be edited, but the run is now the live partner's.
-        ref
-            .read(useSmileIDSampleRunPartnerProvider.notifier)
-            .record(live?.partnerId);
         await engine.startRun(
           widget.entry,
           product,

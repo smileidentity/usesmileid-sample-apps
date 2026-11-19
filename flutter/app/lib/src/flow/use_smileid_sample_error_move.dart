@@ -59,22 +59,25 @@ UseSmileIDSampleErrorMove useSmileIDSampleErrorMove(
   required String? runPartnerId,
 }) {
   if (product == null) return const UseSmileIDSampleLeave();
+  final bool ownPartner = runPartnerId != null && runPartnerId == livePartnerId;
   return switch (action) {
     UseSmileIDSampleErrorAction.retry ||
     UseSmileIDSampleErrorAction.retryLater ||
     UseSmileIDSampleErrorAction.recapture =>
       !sessionLive
           ? UseSmileIDSampleNewToken(product, UseSmileIDSampleResumePoint.flow)
-          : runPartnerId != null && runPartnerId == livePartnerId
+          : ownPartner
           ? UseSmileIDSampleRunAgain(product)
           : UseSmileIDSampleRunFromStart(product),
     UseSmileIDSampleErrorAction.fixInput =>
-      sessionLive
-          ? UseSmileIDSampleEditIdDetails(product)
-          : UseSmileIDSampleNewToken(
+      !sessionLive
+          ? UseSmileIDSampleNewToken(
               product,
               UseSmileIDSampleResumePoint.firstStep,
-            ),
+            )
+          : ownPartner
+          ? UseSmileIDSampleEditIdDetails(product)
+          : UseSmileIDSampleRunFromStart(product),
     UseSmileIDSampleErrorAction.newSession => UseSmileIDSampleNewToken(
       product,
       UseSmileIDSampleResumePoint.flow,

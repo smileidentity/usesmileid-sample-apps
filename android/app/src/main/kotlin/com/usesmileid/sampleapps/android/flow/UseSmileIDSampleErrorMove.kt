@@ -31,21 +31,21 @@ internal fun errorMove(
     runPartnerId: String?,
 ): UseSmileIDSampleErrorMove {
     if (product == null) return UseSmileIDSampleErrorMove.Leave
+    val ownPartner = runPartnerId != null && runPartnerId == livePartnerId
     return when (action) {
         UseSmileIDSampleErrorAction.Retry,
         UseSmileIDSampleErrorAction.RetryLater,
         UseSmileIDSampleErrorAction.Recapture,
         -> when {
             !sessionLive -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow)
-            runPartnerId != null && runPartnerId == livePartnerId -> UseSmileIDSampleErrorMove.RunAgain(product)
+            ownPartner -> UseSmileIDSampleErrorMove.RunAgain(product)
             else -> UseSmileIDSampleErrorMove.RunFromStart(product)
         }
-        UseSmileIDSampleErrorAction.FixInput ->
-            if (sessionLive) {
-                UseSmileIDSampleErrorMove.EditIdDetails(product)
-            } else {
-                UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep)
-            }
+        UseSmileIDSampleErrorAction.FixInput -> when {
+            !sessionLive -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.FirstStep)
+            ownPartner -> UseSmileIDSampleErrorMove.EditIdDetails(product)
+            else -> UseSmileIDSampleErrorMove.RunFromStart(product)
+        }
         UseSmileIDSampleErrorAction.NewSession -> UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow)
         UseSmileIDSampleErrorAction.Exit -> UseSmileIDSampleErrorMove.Leave
     }

@@ -30,6 +30,10 @@ final class UseSmileIDSampleErrorMoveTest: XCTestCase {
     XCTAssertEqual(move(.fixInput, sessionLive: false), .newToken(.biometricKyc, resumeAt: .firstStep))
   }
 
+  func testFixingTheInputOnAnotherPartnerStartsFromTheFirstStepWithFreshForms() {
+    XCTAssertEqual(move(.fixInput, livePartnerId: "partner_2"), .runFromStart(.biometricKyc))
+  }
+
   func testStartingAgainTakesANewTokenFirst() {
     XCTAssertEqual(move(.newSession), .newToken(.biometricKyc, resumeAt: .flow))
   }

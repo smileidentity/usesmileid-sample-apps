@@ -31,16 +31,16 @@ export const smileIDSampleErrorMove = (
   gate: UseSmileIDSampleErrorGate,
 ): UseSmileIDSampleErrorMove => {
   if (product === null) return { kind: 'leave' };
+  const ownPartner = gate.runPartnerId !== null && gate.runPartnerId === gate.livePartnerId;
   switch (action) {
     case UseSmileIDSampleErrorAction.Retry:
     case UseSmileIDSampleErrorAction.RetryLater:
     case UseSmileIDSampleErrorAction.Recapture:
       if (!gate.sessionLive) return { kind: 'newToken', product, resumeAt: 'flow' };
-      return gate.runPartnerId !== null && gate.runPartnerId === gate.livePartnerId
-        ? { kind: 'runAgain', product }
-        : { kind: 'runFromStart', product };
+      return ownPartner ? { kind: 'runAgain', product } : { kind: 'runFromStart', product };
     case UseSmileIDSampleErrorAction.FixInput:
-      return gate.sessionLive ? { kind: 'editIdDetails', product } : { kind: 'newToken', product, resumeAt: 'firstStep' };
+      if (!gate.sessionLive) return { kind: 'newToken', product, resumeAt: 'firstStep' };
+      return ownPartner ? { kind: 'editIdDetails', product } : { kind: 'runFromStart', product };
     case UseSmileIDSampleErrorAction.NewSession:
       return { kind: 'newToken', product, resumeAt: 'flow' };
     case UseSmileIDSampleErrorAction.Exit:

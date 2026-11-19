@@ -44,6 +44,14 @@ class UseSmileIDSampleErrorMoveTest {
     }
 
     @Test
+    fun fixing_the_input_on_another_partner_starts_from_the_first_step_with_fresh_forms() {
+        assertEquals(
+            UseSmileIDSampleErrorMove.RunFromStart(product),
+            move(UseSmileIDSampleErrorAction.FixInput, livePartnerId = "partner_2"),
+        )
+    }
+
+    @Test
     fun starting_again_takes_a_new_token_first() {
         assertEquals(UseSmileIDSampleErrorMove.NewToken(product, UseSmileIDSampleResumePoint.Flow), move(UseSmileIDSampleErrorAction.NewSession))
     }
