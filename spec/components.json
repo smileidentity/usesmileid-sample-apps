@@ -887,8 +887,8 @@
       "tokens": [
         "color.surface-muted",
         "color.card-stroke",
-        "banner.text",
-        "banner.title",
+        "color.text.title",
+        "color.text.body",
         "text-style.overline",
         "text-style.body-strong",
         "radius.surface"

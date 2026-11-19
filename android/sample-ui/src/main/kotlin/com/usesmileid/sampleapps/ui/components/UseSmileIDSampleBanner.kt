@@ -16,9 +16,6 @@ import com.smileid.designsystem.SmileDimens
 import com.smileid.designsystem.smileCardStrokeWidth
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
-/** Which failure a banner names: warning for one trying again later can get past, error for one it can't. */
-enum class UseSmileIDSampleBannerTone { Warning, Error }
-
 /** The app's neutral banner, as the session-ended card draws it: an all-caps caption over the message. */
 @Composable
 fun UseSmileIDSampleBanner(
@@ -43,12 +40,12 @@ fun UseSmileIDSampleBanner(
             Text(
                 text = caption.toUpperCase(LocaleList.current),
                 style = UseSmileIDSampleTheme.type.textStyleOverline,
-                color = colors.banner.text,
+                color = colors.textBody,
             )
             Text(
                 text = message,
                 style = UseSmileIDSampleTheme.type.textStyleBodyStrong,
-                color = colors.banner.title,
+                color = colors.textTitle,
             )
         }
     }

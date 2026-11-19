@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.ui.state
 
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBannerTone
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorAction
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleErrorResolution
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
@@ -18,6 +17,9 @@ fun detailsFailure(job: UseSmileIDSampleJob?, landedRun: UseSmileIDSampleErrorRe
 /** What a run that landed with no job states: its row, or the submission fallback when no submission explained the failure. */
 fun landedFailure(status: UseSmileIDSampleFlowStatus, row: UseSmileIDSampleErrorResolution?): UseSmileIDSampleErrorResolution? =
     if (status == UseSmileIDSampleFlowStatus.Failed) row ?: UseSmileIDSampleErrorHandling.submissionFallback else null
+
+/** Which failure a banner names: warning for one trying again later can get past, error for one it can't. */
+enum class UseSmileIDSampleBannerTone { Warning, Error }
 
 /** Warning when trying again later can get past the failure, error when the row's own action is Close. */
 val UseSmileIDSampleErrorResolution.bannerTone: UseSmileIDSampleBannerTone

@@ -1,11 +1,5 @@
 import SwiftUI
 
-/// Which failure a banner names: warning for one trying again later can get past, error for one it can't.
-public enum UseSmileIDSampleBannerTone: Sendable {
-  case warning
-  case error
-}
-
 /// The app's neutral banner, as the session-ended card draws it: an all-caps caption over the message.
 public struct UseSmileIDSampleBanner: View {
   private let caption: String
@@ -25,10 +19,10 @@ public struct UseSmileIDSampleBanner: View {
   public var body: some View {
     VStack(alignment: .leading, spacing: SmileSpacing.spacingXxs) {
       UseSmileIDSampleText(caption.uppercased(with: locale), style: UseSmileIDSampleTheme.type.textStyleOverline)
-        .foregroundColor(colors.banner.text)
+        .foregroundColor(colors.textBody)
         .fixedSize(horizontal: false, vertical: true)
       UseSmileIDSampleText(message, style: UseSmileIDSampleTheme.type.textStyleBodyStrong)
-        .foregroundColor(colors.banner.title)
+        .foregroundColor(colors.textTitle)
         .fixedSize(horizontal: false, vertical: true)
     }
     .frame(maxWidth: .infinity, alignment: .leading)

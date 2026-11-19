@@ -38,15 +38,6 @@ type InputTokens = {
 
 type SearchTokens = InputTokens & { readonly icon: string };
 
-/// The inline banners' fill, prose and each tone's edge and glyph.
-type BannerTokens = {
-  readonly background: string;
-  readonly title: string;
-  readonly text: string;
-  readonly warningAccent: string;
-  readonly errorAccent: string;
-};
-
 /// The label/value pair on a details card.
 export type DataFieldTokens = { readonly label: string; readonly value: string };
 
@@ -106,7 +97,6 @@ export type SmileColors = {
   readonly dataField: DataFieldTokens;
   readonly filterChip: FilterChipTokens;
   readonly card: CardTokens;
-  readonly banner: BannerTokens;
   readonly offBlack: string;
   readonly navBar: string;
   readonly cardStroke: string;
@@ -204,13 +194,6 @@ type SmileColorSource = {
     readonly 'body-text': string;
   };
   readonly skeleton: { readonly bg: string; readonly highlight: string };
-  readonly banner: {
-    readonly bg: string;
-    readonly title: string;
-    readonly text: string;
-    readonly 'warning-accent': string;
-    readonly 'error-accent': string;
-  };
 };
 
 const group = (
@@ -286,13 +269,6 @@ const group = (
     border: source.card.border,
     title: source.card['title-text'],
     body: source.card['body-text'],
-  },
-  banner: {
-    background: source.banner.bg,
-    title: source.banner.title,
-    text: source.banner.text,
-    warningAccent: source.banner['warning-accent'],
-    errorAccent: source.banner['error-accent'],
   },
   offBlack,
   navBar,

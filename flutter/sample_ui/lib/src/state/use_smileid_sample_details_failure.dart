@@ -1,4 +1,3 @@
-import '../components/use_smileid_sample_banner.dart';
 import '../model/use_smileid_sample_error_resolution.dart';
 import '../model/use_smileid_sample_job.dart';
 import '../model/use_smileid_sample_result.dart';
@@ -26,6 +25,15 @@ UseSmileIDSampleErrorResolution? useSmileIDSampleLandedFailure({
 }) => status == UseSmileIDSampleFlowStatus.failed
     ? row ?? UseSmileIDSampleErrorHandling.submissionFallback
     : null;
+
+/// Which failure a banner names: warning for one trying again later can get past, error for one it can't.
+enum UseSmileIDSampleBannerTone {
+  /// Trying again later can get past it.
+  warning,
+
+  /// Trying again won't get past it.
+  error,
+}
 
 /// How a failure's banner reads.
 extension UseSmileIDSampleErrorResolutionBanner

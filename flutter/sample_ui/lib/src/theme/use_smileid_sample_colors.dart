@@ -238,14 +238,12 @@ class UseSmileIDSampleCardTokens {
 /// Colours the inline banners draw, the notices and callouts among them.
 @immutable
 class UseSmileIDSampleBannerTokens {
-  /// Takes a card's four roles and the two tone accents, resolved from the banner's own tokens.
+  /// Takes the same four roles as a card, resolved from the banner's own tokens.
   const UseSmileIDSampleBannerTokens({
     required this.background,
     required this.border,
     required this.title,
     required this.text,
-    required this.warningAccent,
-    required this.errorAccent,
   });
 
   /// The banner's fill.
@@ -259,12 +257,6 @@ class UseSmileIDSampleBannerTokens {
 
   /// The banner's prose.
   final Color text;
-
-  /// The warning tone's bar and glyph.
-  final Color warningAccent;
-
-  /// The error tone's bar and glyph.
-  final Color errorAccent;
 }
 
 /// The product and profile fills; callers pass one explicitly rather than this deciding.
@@ -614,8 +606,6 @@ abstract final class UseSmileIDSampleColorSchemes {
       border: SmileColorLight.bannerBorder,
       title: SmileColorLight.bannerTitle,
       text: SmileColorLight.bannerText,
-      warningAccent: SmileColorLight.bannerWarningAccent,
-      errorAccent: SmileColorLight.bannerErrorAccent,
     ),
     decorative: UseSmileIDSampleDecorativeTokens(
       yellow: SmileColorLight.colorDecorativeYellow,
@@ -714,8 +704,6 @@ abstract final class UseSmileIDSampleColorSchemes {
       border: SmileColorDark.bannerBorder,
       title: SmileColorDark.bannerTitle,
       text: SmileColorDark.bannerText,
-      warningAccent: SmileColorDark.bannerWarningAccent,
-      errorAccent: SmileColorDark.bannerErrorAccent,
     ),
     decorative: UseSmileIDSampleDecorativeTokens(
       yellow: SmileColorDark.colorDecorativeYellow,

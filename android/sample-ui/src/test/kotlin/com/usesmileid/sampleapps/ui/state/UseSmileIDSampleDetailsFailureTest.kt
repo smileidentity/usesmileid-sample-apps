@@ -1,6 +1,5 @@
 package com.usesmileid.sampleapps.ui.state
 
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBannerTone
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleFlowStatus
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct

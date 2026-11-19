@@ -31,10 +31,10 @@ export const UseSmileIDSampleBanner = ({ caption, message, testID, style }: Prop
         style,
       ]}
     >
-      <Text style={[theme.type.textStyleOverline, { color: theme.colors.banner.text }]}>
+      <Text style={[theme.type.textStyleOverline, { color: theme.colors.textBody }]}>
         {caption.toLocaleUpperCase()}
       </Text>
-      <Text style={[theme.type.textStyleBodyStrong, { color: theme.colors.banner.title }]}>{message}</Text>
+      <Text style={[theme.type.textStyleBodyStrong, { color: theme.colors.textTitle }]}>{message}</Text>
     </View>
   );
 };

@@ -6,15 +6,6 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 
-/// Which failure a banner names: warning for one trying again later can get past, error for one it can't.
-enum UseSmileIDSampleBannerTone {
-  /// Trying again later can get past it.
-  warning,
-
-  /// Trying again won't get past it.
-  error,
-}
-
 /// The app's neutral banner, as the session-ended card draws it: an all-caps caption over the message.
 class UseSmileIDSampleBanner extends StatelessWidget {
   /// [caption] over [message].
@@ -62,14 +53,14 @@ class UseSmileIDSampleBanner extends StatelessWidget {
                 Text(
                   caption.toUpperCase(),
                   style: UseSmileIDSampleType.textStyleOverline.copyWith(
-                    color: colors.banner.text,
+                    color: colors.textBody,
                   ),
                 ),
                 const SizedBox(height: SmileDimens.spacingXxs),
                 Text(
                   message,
                   style: UseSmileIDSampleType.textStyleBodyStrong.copyWith(
-                    color: colors.banner.title,
+                    color: colors.textTitle,
                   ),
                 ),
               ],

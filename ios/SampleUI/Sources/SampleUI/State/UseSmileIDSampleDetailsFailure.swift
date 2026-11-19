@@ -18,6 +18,12 @@ public func useSmileIDSampleLandedFailure(
   status == .failed ? row ?? UseSmileIDSampleErrorHandling.submissionFallback : nil
 }
 
+/// Which failure a banner names: warning for one trying again later can get past, error for one it can't.
+public enum UseSmileIDSampleBannerTone: Sendable {
+  case warning
+  case error
+}
+
 public extension UseSmileIDSampleErrorResolution {
   /// Warning when trying again later can get past the failure, error when the row's own action is Close.
   var bannerTone: UseSmileIDSampleBannerTone {

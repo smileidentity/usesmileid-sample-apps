@@ -21,7 +21,6 @@ import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.TrashGlyph
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBanner
-import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleBannerTone
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleDataFieldRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultCard
@@ -36,6 +35,7 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
 import com.usesmileid.sampleapps.ui.model.createdAtLabel
+import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleBannerTone
 import com.usesmileid.sampleapps.ui.state.bannerTone
 import com.usesmileid.sampleapps.ui.state.detailsFailure
 import com.usesmileid.sampleapps.ui.text
