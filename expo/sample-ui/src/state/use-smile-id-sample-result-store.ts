@@ -16,7 +16,7 @@ type State = {
   readonly result: UseSmileIDSampleResult;
   /// The row a failed submission resolved to, for the message and action the app offers; null when the failure has none. Kept beside the result, which mirrors the card's schema.
   readonly errorResolution: UseSmileIDSampleErrorResolution | null;
-  /// The product the latest run started, which a failure's action runs again.
+  /// The product the latest run started, which the failure banner names.
   readonly product: UseSmileIDSampleProduct | null;
 };
 

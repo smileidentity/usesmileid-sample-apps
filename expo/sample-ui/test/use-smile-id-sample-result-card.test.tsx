@@ -122,7 +122,7 @@ describe('a run recorder', () => {
     expect(store().result).toMatchObject({ resultCallbackCount: 1, jobStatus: 'failed', environment: 'production' });
   });
 
-  it('keeps the run product for the failure actions, apart from the card', () => {
+  it('keeps the run product for the failure banner, apart from the card', () => {
     const product = smileIDSampleProducts.find((it) => it.id === 'enhancedKyc')!;
     const recorder = smileIDSampleRunRecorder({ ...run, product });
     recorder.deliver('failed', { error: 'HTTP 503' });

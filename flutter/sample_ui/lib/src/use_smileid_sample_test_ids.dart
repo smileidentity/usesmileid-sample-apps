@@ -167,8 +167,6 @@ abstract final class UseSmileIDSampleTestIds {
   /// The failure banner: a failed run's message, or a stored job's that ended in error or block.
   static const String errorBanner = 'sample_error_banner';
 
-  /// The banner's one action.
-
   /// The profiles list.
   static const String profilesScreen = 'sample_profiles_screen';
 

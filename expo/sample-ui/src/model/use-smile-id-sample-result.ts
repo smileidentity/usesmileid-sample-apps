@@ -63,7 +63,7 @@ export type UseSmileIDSampleRunContext = {
   readonly theme: string;
   readonly route: UseSmileIDSampleFlowRoute;
   readonly environment: UseSmileIDSampleEnvironment;
-  /// The product the run started, which a failure's action runs again.
+  /// The product the run started, which the failure banner names.
   readonly product?: UseSmileIDSampleProduct;
 };
 

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
-/// The product a run keeps for its failure actions, which the card never shows.
+/// The product a run keeps for its failure banner, which the card never shows.
 void main() {
   UseSmileIDSampleResult started(UseSmileIDSampleProduct product) =>
       UseSmileIDSampleResult.idle.started(

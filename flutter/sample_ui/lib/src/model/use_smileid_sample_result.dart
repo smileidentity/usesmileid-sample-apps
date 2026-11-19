@@ -103,7 +103,7 @@ class UseSmileIDSampleResult {
   /// the failure has none. Not a card field, so [toMap] leaves it out.
   final UseSmileIDSampleErrorResolution? errorResolution;
 
-  /// The product the latest run started, which a failure's action runs again; not a card field either.
+  /// The product the latest run started, which the failure banner names; not a card field either.
   final UseSmileIDSampleProduct? product;
 
   /// The SDK version resolved at runtime, which proves which published artifact the run exercised.

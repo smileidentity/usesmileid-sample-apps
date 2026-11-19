@@ -11,7 +11,7 @@ public struct UseSmileIDSampleFlowResult: Equatable, Sendable {
   public private(set) var lastError: String?
   /// The row a failed submission resolved to, for the message and action the app offers; nil when the failure has none.
   public private(set) var errorResolution: UseSmileIDSampleErrorResolution?
-  /// The product the latest run started, which a failure's action runs again.
+  /// The product the latest run started, which the failure banner names.
   public private(set) var product: UseSmileIDSampleProduct?
   public private(set) var resultCallbackCount: Int
   public private(set) var refreshCallbackCount: Int

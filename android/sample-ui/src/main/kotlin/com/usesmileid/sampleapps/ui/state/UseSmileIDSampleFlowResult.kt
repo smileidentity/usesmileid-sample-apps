@@ -59,7 +59,7 @@ class UseSmileIDSampleFlowResult(
     var errorResolution by mutableStateOf(errorResolution)
         private set
 
-    /** The product the latest run started, which a failure's action runs again. */
+    /** The product the latest run started, which the failure banner names. */
     var product by mutableStateOf(product)
         private set
 
@@ -124,7 +124,7 @@ class UseSmileIDSampleFlowResult(
         this.errorResolution = errorResolution
     }
 
-    /** The run of [product] whose failure actions run again. */
+    /** The run of [product], which the failure banner names. */
     fun recordProduct(product: UseSmileIDSampleProduct) {
         this.product = product
     }
