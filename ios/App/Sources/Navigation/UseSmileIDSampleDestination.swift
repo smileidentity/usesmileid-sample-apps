@@ -408,6 +408,8 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
 
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var notice: UseSmileIDSampleTransientNotice?
+  /// One move per page: a second tap would act on an entry the first has already replaced.
+  @State private var acted = false
 
   var body: some View {
     VerificationDetailsScreen(
@@ -429,7 +431,11 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
         navigator.back() },
       onCopy: { label, value in copy(label, value) },
       onRefresh: { await refresh() },
-      onErrorAction: { action in run(action) }
+      onErrorAction: { action in
+        guard !acted else { return }
+        acted = true
+        run(action)
+      }
     )
     // Asked again with the list's backoff while the server still has it processing, and afresh under a new session.
     .task(id: [jobId, app.session?.id ?? ""]) {

@@ -59,6 +59,7 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
   const { show } = notice;
   /// Whether the processing row is being asked about, so its own state write cannot start a second check.
   const polling = useRef(false);
+  const acted = useRef(false);
   /// Cleared on leaving, which is what ends a check still waiting out its backoff.
   const mounted = useRef(true);
 
@@ -168,7 +169,12 @@ export const UseSmileIDSampleVerificationDetailsStep = ({ scope }: { scope: UseS
           landedFailure: landed ? smileIDSampleLandedFailure(result.jobStatus, errorResolution ?? undefined) : undefined,
           landedProduct: landed ? (runProduct ?? undefined) : undefined,
         }}
-        onErrorAction={(action) => run(action, job?.product ?? runProduct)}
+        onErrorAction={(action) => {
+          // One move per page: a second tap would act on an entry the first has already replaced.
+          if (acted.current) return;
+          acted.current = true;
+          run(action, job?.product ?? runProduct);
+        }}
         onBack={() => back()}
         onDelete={() => {
           if (job !== null) void remove([job.id]);

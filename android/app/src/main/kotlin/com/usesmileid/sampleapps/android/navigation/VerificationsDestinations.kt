@@ -158,6 +158,7 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
 
     val job = app.jobs?.firstOrNull { it.id == jobId }
     val engine = LocalUseSmileIDSampleEngine.current
+    var acted by remember(jobId) { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         VerificationDetailsContent(
@@ -187,7 +188,13 @@ internal fun VerificationDetailsScreen(scope: UseSmileIDSampleStepScope) {
             pending = app.jobs == null,
             landedFailure = landedFailure(app.flowResult.status, app.flowResult.errorResolution).takeIf { jobId == UNSUBMITTED_JOB_ID },
             landedProduct = app.flowResult.product.takeIf { jobId == UNSUBMITTED_JOB_ID },
-            onErrorAction = { action -> app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry) },
+            onErrorAction = { action ->
+                // One move per page, and none before the stored session is known: a product tap waits for it too.
+                if (!acted && (app.sessionLoaded || action == UseSmileIDSampleErrorAction.Exit)) {
+                    acted = true
+                    app.runErrorAction(action, job?.product ?: app.flowResult.product, engine, scope.entry)
+                }
+            },
         )
         // Keyed on the id, not the row, which would loop off its own write; Room's first emission is awaited so a cold link cannot skip.
         LaunchedEffect(jobId, app.session?.id) {

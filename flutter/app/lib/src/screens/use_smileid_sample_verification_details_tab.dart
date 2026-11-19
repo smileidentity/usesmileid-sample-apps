@@ -44,6 +44,8 @@ class UseSmileIDSampleVerificationDetailsTab extends ConsumerStatefulWidget {
 
 class _UseSmileIDSampleVerificationDetailsTabState
     extends ConsumerState<UseSmileIDSampleVerificationDetailsTab> {
+  bool _acted = false;
+
   /// The last refresh outcome, or a copy's confirmation while its window stands.
   String? _notice;
 
@@ -147,8 +149,12 @@ class _UseSmileIDSampleVerificationDetailsTabState
             )
           : null,
       landedProduct: landed ? run.product : null,
-      onErrorAction: (UseSmileIDSampleErrorAction action) =>
-          unawaited(_run(action, found?.product ?? run.product)),
+      onErrorAction: (UseSmileIDSampleErrorAction action) {
+        // One move per page: a second tap would act on an entry the first has already replaced.
+        if (_acted) return;
+        _acted = true;
+        unawaited(_run(action, found?.product ?? run.product));
+      },
     );
   }
 
