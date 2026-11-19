@@ -70,6 +70,8 @@
   "si_processing_error_unavailable": "משהו השתבש. פנה לתמיכה.",
   "si_processing_error_generic": "משהו השתבש. נסה שוב.",
   "si_processing_retry": "נסה שוב",
+  "si_processing_retry_in": "נסה שוב בעוד {seconds} שנ׳",
+  "si_processing_retry_in_a11y": "נסה שוב, שניות שנותרו: {seconds}",
   "si_processing_exit": "יציאה",
   "si_accessibility_capture_progress": "התקדמות הצילום",
   "si_cd_captured_image": "התמונה שצולמה",
