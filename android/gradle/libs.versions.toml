@@ -12,7 +12,7 @@ njia = "1.0.0"
 
 android-gradle-plugin = "9.5.1"
 kotlin = "2.4.21"
-ksp = "2.3.13"
+ksp = "2.3.14"
 
 androidx-activity = "1.13.0"
 # Custom Tabs for the Settings links: the page keeps the user's own browser rather than a WebView.
