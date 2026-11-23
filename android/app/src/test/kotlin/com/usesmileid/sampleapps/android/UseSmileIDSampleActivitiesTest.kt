@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLooper
 import java.util.concurrent.TimeUnit
 
-/** A Compose dispatch or frame still queued when one activity test ends doesn't stall the next test's first frame; the last test by name checks what the others leave. */
+/** Compose work one activity test leaves queued doesn't stall the next; the last test by name checks. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -71,7 +71,7 @@ class UseSmileIDSampleActivitiesTest {
         const val FRAME_MILLIS = 100L
     }
 
-    /** Queues Compose work once [UseSmileIDSampleActivities] has drained, as a store emission landing off the main thread can. */
+    /** Queues Compose work after [UseSmileIDSampleActivities] has drained. */
     private class LateDispatch : ExternalResource() {
         var dispatch = false
         var frame = false
