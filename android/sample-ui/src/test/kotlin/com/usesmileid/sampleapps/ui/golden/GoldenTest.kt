@@ -29,7 +29,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.github.takahirom.roborazzi.ThresholdValidator
 import com.github.takahirom.roborazzi.captureRoboImage
 import com.github.takahirom.roborazzi.provideRoborazziContext
 import com.smileid.designsystem.SmileDimens
@@ -47,12 +46,12 @@ import org.robolectric.annotation.GraphicsMode
 @OptIn(ExperimentalTestApi::class)
 abstract class GoldenTest {
 
-    /** [interact] runs after the first composition, for a state only a gesture, focus or a held clock reaches; [tolerance] is the share of pixels allowed to differ. */
+    /** [interact] runs after the first composition, for a state only a gesture, focus or a held clock reaches; [tolerance] is how many pixels may differ. */
     protected fun goldens(
         name: String,
         // A second window makes Roborazzi capture the whole screen, so a narrower host leaves bare window in the shot.
         fullWindow: Boolean = false,
-        tolerance: Float = 0f,
+        tolerance: Int = 0,
         interact: GoldenInteractions.() -> Unit = {},
         content: @Composable () -> Unit,
     ) {
@@ -96,13 +95,13 @@ abstract class GoldenTest {
         dark: Boolean,
         fullWindow: Boolean,
         interact: GoldenInteractions.() -> Unit,
-        tolerance: Float = 0f,
+        tolerance: Int = 0,
         content: @Composable () -> Unit,
     ) = runComposeUiTest {
         host(dark = dark, fontScale = 1f, fullWindow = fullWindow, content = content)
         GoldenInteractions(this).interact()
         val options = provideRoborazziContext().options
-        val compare = if (tolerance > 0f) options.compareOptions.copy(resultValidator = ThresholdValidator(tolerance)) else options.compareOptions
+        val compare = if (tolerance > 0) options.compareOptions.copy(resultValidator = { it.pixelDifferences <= tolerance }) else options.compareOptions
         onNodeWithTag(GOLDEN_ROOT).captureRoboImage("src/test/screenshots/$name.png", options.copy(compareOptions = compare))
     }
 
@@ -245,4 +244,4 @@ internal fun RightToLeft(content: @Composable () -> Unit) =
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl, content = content)
 
 /** Compose 1.11 and 1.13 anti-alias the scan frame's arcs differently, and an SDK repo verifies these goldens on 1.11. */
-internal const val SCAN_FRAME_TOLERANCE = 0.001f
+internal const val SCAN_FRAME_TOLERANCE = 400
