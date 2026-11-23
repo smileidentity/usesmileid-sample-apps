@@ -6,6 +6,8 @@ import android.os.SystemClock
 import android.view.Choreographer
 import androidx.compose.ui.platform.AndroidUiDispatcher
 import org.junit.rules.ExternalResource
+import org.junit.runner.Description
+import org.junit.runners.model.Statement
 import org.robolectric.Robolectric
 import org.robolectric.android.controller.ActivityController
 import org.robolectric.shadows.ShadowLooper
@@ -15,6 +17,7 @@ import kotlin.coroutines.ContinuationInterceptor
 /** Builds a test's activities, closes them when it ends, and unstalls Compose's main dispatcher before each one. */
 class UseSmileIDSampleActivities : ExternalResource() {
     private val controllers = mutableListOf<ActivityController<out Activity>>()
+    private var test: String? = null
 
     /** A controller for [type], launched with [intent] when given, that this rule closes when the test ends. */
     fun <T : Activity> build(type: Class<T>, intent: Intent? = null): ActivityController<T> {
@@ -23,17 +26,23 @@ class UseSmileIDSampleActivities : ExternalResource() {
         return controller
     }
 
+    override fun apply(base: Statement, description: Description): Statement {
+        test = description.displayName
+        return super.apply(base, description)
+    }
+
     override fun before() {
         val callback = pendingDispatch
         // Robolectric drops a dispatch that lands after the last test's drain, and the dispatcher then waits for it forever.
         runCatching { callback.doFrame(TimeUnit.MILLISECONDS.toNanos(SystemClock.uptimeMillis())) }
-            .onFailure { throw AssertionError("Compose work left by an earlier test failed when this rule ran it", it) }
+            .onFailure { throw AssertionError("Compose work left by ${previousTest ?: "an earlier test"} failed when this rule ran it", it) }
         ShadowLooper.idleMainLooper(DRAIN_MILLIS, TimeUnit.MILLISECONDS)
     }
 
     override fun after() {
         val failures = controllers.asReversed().mapNotNull { controller -> runCatching { controller.close() }.exceptionOrNull() }
         controllers.clear()
+        previousTest = test
         ShadowLooper.idleMainLooper(DRAIN_MILLIS, TimeUnit.MILLISECONDS)
         failures.firstOrNull()?.let { first ->
             failures.drop(1).forEach(first::addSuppressed)
@@ -44,6 +53,9 @@ class UseSmileIDSampleActivities : ExternalResource() {
     private companion object {
         /** Long enough for a frame a closing composition still has scheduled. */
         const val DRAIN_MILLIS = 100L
+
+        /** The last test this rule ran in this JVM. */
+        var previousTest: String? = null
 
         /** Runs every dispatch and frame the main dispatcher has pending. */
         val pendingDispatch: Choreographer.FrameCallback by lazy {
