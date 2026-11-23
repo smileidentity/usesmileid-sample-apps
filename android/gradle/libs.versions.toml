@@ -10,7 +10,7 @@ usesmileid-bridge = "12.4.0-20261112.214838-117"
 # The four apps' navigation engine, at the exact build the SDK snapshot depends on.
 njia = "1.0.0"
 
-android-gradle-plugin = "9.5.1"
+android-gradle-plugin = "9.5.2"
 kotlin = "2.4.21"
 ksp = "2.3.13"
 
