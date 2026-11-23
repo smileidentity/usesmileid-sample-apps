@@ -21,7 +21,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.shadows.ShadowLooper
 import java.util.concurrent.TimeUnit
 
-/** A Compose dispatch or frame still queued when one activity test ends doesn't stall the next test's first frame. */
+/** A Compose dispatch or frame still queued when one activity test ends doesn't stall the next test's first frame; the last test by name checks what the others leave. */
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [36])
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)

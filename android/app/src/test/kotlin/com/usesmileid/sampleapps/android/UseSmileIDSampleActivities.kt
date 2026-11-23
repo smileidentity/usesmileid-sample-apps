@@ -25,9 +25,8 @@ class UseSmileIDSampleActivities : ExternalResource() {
 
     override fun before() {
         // A store emission can dispatch off the main thread after the last test's drain; Robolectric drops it with the looper, and the dispatcher waits for it forever.
-        val dispatcher = AndroidUiDispatcher.Main[ContinuationInterceptor] as AndroidUiDispatcher
-        val pending = AndroidUiDispatcher::class.java.getDeclaredField("dispatchCallback").apply { isAccessible = true }
-        (pending.get(dispatcher) as Choreographer.FrameCallback).doFrame(TimeUnit.MILLISECONDS.toNanos(SystemClock.uptimeMillis()))
+        runCatching { pendingDispatch.doFrame(TimeUnit.MILLISECONDS.toNanos(SystemClock.uptimeMillis())) }
+            .onFailure { throw AssertionError("Compose work left by an earlier test failed when this rule ran it", it) }
         ShadowLooper.idleMainLooper(DRAIN_MILLIS, TimeUnit.MILLISECONDS)
     }
 
@@ -44,5 +43,15 @@ class UseSmileIDSampleActivities : ExternalResource() {
     private companion object {
         /** Long enough for a frame a closing composition still has scheduled. */
         const val DRAIN_MILLIS = 100L
+
+        /** The main dispatcher's own callback, which runs every dispatch and frame it has pending. */
+        val pendingDispatch: Choreographer.FrameCallback by lazy {
+            runCatching {
+                val field = AndroidUiDispatcher::class.java.getDeclaredField("dispatchCallback").apply { isAccessible = true }
+                field.get(AndroidUiDispatcher.Main[ContinuationInterceptor]) as Choreographer.FrameCallback
+            }.getOrElse {
+                throw IllegalStateException("AndroidUiDispatcher.dispatchCallback changed in this Compose version; revisit UseSmileIDSampleActivities.before()", it)
+            }
+        }
     }
 }
