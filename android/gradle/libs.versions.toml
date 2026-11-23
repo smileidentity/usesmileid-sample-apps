@@ -17,7 +17,7 @@ ksp = "2.3.14"
 androidx-activity = "1.13.0"
 # Custom Tabs for the Settings links: the page keeps the user's own browser rather than a WebView.
 androidx-browser = "1.10.0"
-androidx-compose-bom = "2026.09.00"
+androidx-compose-bom = "2026.11.01"
 androidx-core = "1.19.1"
 androidx-datastore = "1.3.0"
 androidx-room = "2.8.5"
@@ -25,7 +25,7 @@ androidx-room = "2.8.5"
 chucker = "4.4.0"
 leakcanary = "2.14"
 # Pinned to what the SDK resolves at runtime; a divergence is a finding, never something Gradle reconciles in silence.
-camerax = "1.6.1"
+camerax = "1.7.0"
 # The bundled model, never the play-services variant: the sample must run on GMS-free devices.
 mlkit-barcode = "17.3.0"
 # Pinned to the SDK's own client version so the APK carries one Retrofit and one OkHttp.

@@ -135,7 +135,7 @@
     },
     {
       "artifact": "androidx.camera.featurecombinationquery:featurecombinationquery",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -146,7 +146,7 @@
     },
     {
       "artifact": "androidx.camera.viewfinder:viewfinder-compose",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -157,7 +157,7 @@
     },
     {
       "artifact": "androidx.camera.viewfinder:viewfinder-core",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -168,7 +168,7 @@
     },
     {
       "artifact": "androidx.camera:camera-camera2-pipe",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -179,7 +179,18 @@
     },
     {
       "artifact": "androidx.camera:camera-camera2",
-      "version": "1.6.1",
+      "version": "1.7.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.camera:camera-common",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -190,7 +201,7 @@
     },
     {
       "artifact": "androidx.camera:camera-compose",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -201,7 +212,7 @@
     },
     {
       "artifact": "androidx.camera:camera-core",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -217,7 +228,7 @@
     },
     {
       "artifact": "androidx.camera:camera-lifecycle",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -228,7 +239,7 @@
     },
     {
       "artifact": "androidx.camera:camera-video",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -239,7 +250,7 @@
     },
     {
       "artifact": "androidx.camera:camera-view",
-      "version": "1.6.1",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -283,7 +294,7 @@
     },
     {
       "artifact": "androidx.compose.animation:animation-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -294,7 +305,7 @@
     },
     {
       "artifact": "androidx.compose.animation:animation-core-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -305,7 +316,7 @@
     },
     {
       "artifact": "androidx.compose.animation:animation-core",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -316,7 +327,7 @@
     },
     {
       "artifact": "androidx.compose.animation:animation-graphics-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -327,7 +338,7 @@
     },
     {
       "artifact": "androidx.compose.animation:animation-graphics",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -338,7 +349,7 @@
     },
     {
       "artifact": "androidx.compose.animation:animation",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -349,7 +360,7 @@
     },
     {
       "artifact": "androidx.compose.foundation:foundation-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -360,7 +371,7 @@
     },
     {
       "artifact": "androidx.compose.foundation:foundation-layout-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -371,7 +382,7 @@
     },
     {
       "artifact": "androidx.compose.foundation:foundation-layout",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -382,7 +393,7 @@
     },
     {
       "artifact": "androidx.compose.foundation:foundation",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -393,7 +404,29 @@
     },
     {
       "artifact": "androidx.compose.material3:material3-android",
-      "version": "1.4.0",
+      "version": "1.5.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.compose.material3:material3-ripple-android",
+      "version": "1.5.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.compose.material3:material3-ripple",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -404,7 +437,7 @@
     },
     {
       "artifact": "androidx.compose.material3:material3",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -415,7 +448,7 @@
     },
     {
       "artifact": "androidx.compose.material:material-ripple-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -426,7 +459,7 @@
     },
     {
       "artifact": "androidx.compose.material:material-ripple",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -437,7 +470,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -448,7 +481,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-annotation-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -459,7 +492,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-annotation",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -470,7 +503,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-retain-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -481,7 +514,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-retain",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -492,7 +525,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-saveable-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -503,7 +536,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime-saveable",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -514,7 +547,7 @@
     },
     {
       "artifact": "androidx.compose.runtime:runtime",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -525,7 +558,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -536,7 +569,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-geometry-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -547,7 +580,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-geometry",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -558,7 +591,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-graphics-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -569,7 +602,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-graphics",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -580,7 +613,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-text-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -591,7 +624,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-text-google-fonts",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -602,7 +635,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-text",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -613,7 +646,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-unit-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -624,7 +657,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-unit",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -635,7 +668,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-util-android",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -646,7 +679,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui-util",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -657,7 +690,7 @@
     },
     {
       "artifact": "androidx.compose.ui:ui",
-      "version": "1.12.1",
+      "version": "1.13.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -910,7 +943,7 @@
     },
     {
       "artifact": "androidx.emoji2:emoji2-views-helper",
-      "version": "1.4.0",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -921,7 +954,7 @@
     },
     {
       "artifact": "androidx.emoji2:emoji2",
-      "version": "1.4.0",
+      "version": "1.7.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -954,6 +987,28 @@
     },
     {
       "artifact": "androidx.graphics:graphics-path",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.graphics:graphics-shapes-android",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "id": "Apache-2.0",
+          "name": "The Apache Software License, Version 2.0",
+          "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+        }
+      ]
+    },
+    {
+      "artifact": "androidx.graphics:graphics-shapes",
       "version": "1.0.1",
       "licenses": [
         {
@@ -1438,7 +1493,7 @@
     },
     {
       "artifact": "androidx.savedstate:savedstate-android",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1449,7 +1504,7 @@
     },
     {
       "artifact": "androidx.savedstate:savedstate-compose-android",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1460,7 +1515,7 @@
     },
     {
       "artifact": "androidx.savedstate:savedstate-compose",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1471,7 +1526,7 @@
     },
     {
       "artifact": "androidx.savedstate:savedstate-ktx",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
@@ -1482,7 +1537,7 @@
     },
     {
       "artifact": "androidx.savedstate:savedstate",
-      "version": "1.4.0",
+      "version": "1.5.0",
       "licenses": [
         {
           "id": "Apache-2.0",
