@@ -32,10 +32,8 @@ gates its measured coverage, at 95% once the app reaches it.
 
 ### Android activity tests: stop store work outliving its test
 
-The preference store, the job store's write scope and the catalogue decoder can keep working off the main
-thread after an activity test ends, and can dispatch onto Compose after the test's drain.
-`UseSmileIDSampleActivities` runs that leftover work when the next test starts. Done when the stores
-can be cancelled at the end of a test and the rule's start-of-test step finds nothing to run.
+The stores' background work can dispatch onto Compose after an activity test's drain, so
+`UseSmileIDSampleActivities` runs it when the next test starts. Done when a test can cancel that work as it ends.
 
 ## UI and design fidelity
 
