@@ -93,7 +93,7 @@ class ScreenCompositeGoldenTest : GoldenTest() {
     fun floating_token_button() = goldens("floating_token_button") { FloatingTokenButtons() }
 
     @Test
-    fun scan_glyph() = goldens("scan_glyph") { ScanGlyphs() }
+    fun scan_glyph() = goldens("scan_glyph", tolerance = SCAN_FRAME_TOLERANCE) { ScanGlyphs() }
 
     @Test
     fun scan_sheet() = goldens("scan_sheet") { ScanSheets() }

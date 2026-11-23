@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.github.takahirom.roborazzi.captureRoboImage
+import com.github.takahirom.roborazzi.provideRoborazziContext
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Assert.assertEquals
@@ -45,16 +46,17 @@ import org.robolectric.annotation.GraphicsMode
 @OptIn(ExperimentalTestApi::class)
 abstract class GoldenTest {
 
-    /** [interact] runs after the first composition, for a state only a gesture, focus or a held clock reaches. */
+    /** [interact] runs after the first composition, for a state only a gesture, focus or a held clock reaches; [tolerance] is how many pixels may differ. */
     protected fun goldens(
         name: String,
         // A second window makes Roborazzi capture the whole screen, so a narrower host leaves bare window in the shot.
         fullWindow: Boolean = false,
+        tolerance: Int = 0,
         interact: GoldenInteractions.() -> Unit = {},
         content: @Composable () -> Unit,
     ) {
-        capture("${name}_light", dark = false, fullWindow, interact, content)
-        capture("${name}_dark", dark = true, fullWindow, interact, content)
+        capture("${name}_light", dark = false, fullWindow, interact, tolerance, content)
+        capture("${name}_dark", dark = true, fullWindow, interact, tolerance, content)
     }
 
     /** [goldens] for a sheet, drawn as njia hosts a sheet step: its panel at the bottom of the window, over the host's scrim. */
@@ -63,7 +65,7 @@ abstract class GoldenTest {
         behind: @Composable () -> Unit = {},
         interact: GoldenInteractions.() -> Unit = {},
         content: @Composable () -> Unit,
-    ) = goldens(name, fullWindow = true, interact) { SheetFrame(behind, content) }
+    ) = goldens(name, fullWindow = true, interact = interact) { SheetFrame(behind, content) }
 
     /** [sheetGoldens] for a sheet that names the device's theme. */
     protected fun sheetGoldensOnDevice(name: String, content: @Composable (deviceDark: Boolean) -> Unit) =
@@ -93,11 +95,14 @@ abstract class GoldenTest {
         dark: Boolean,
         fullWindow: Boolean,
         interact: GoldenInteractions.() -> Unit,
+        tolerance: Int = 0,
         content: @Composable () -> Unit,
     ) = runComposeUiTest {
         host(dark = dark, fontScale = 1f, fullWindow = fullWindow, content = content)
         GoldenInteractions(this).interact()
-        onNodeWithTag(GOLDEN_ROOT).captureRoboImage("src/test/screenshots/$name.png")
+        val options = provideRoborazziContext().options
+        val compare = if (tolerance > 0) options.compareOptions.copy(resultValidator = { it.pixelDifferences <= tolerance }) else options.compareOptions
+        onNodeWithTag(GOLDEN_ROOT).captureRoboImage("src/test/screenshots/$name.png", options.copy(compareOptions = compare))
     }
 
     /** Fails on truncated text or a composite wider than the viewport. Not `hasVisualOverflow`, which is also true for centred text that fits. */
@@ -237,3 +242,6 @@ private fun SemanticsNode.textOrEmpty(): String =
 @Composable
 internal fun RightToLeft(content: @Composable () -> Unit) =
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl, content = content)
+
+/** Compose 1.11 and 1.13 anti-alias the scan frame's arcs differently, and an SDK repo verifies these goldens on 1.11. */
+internal const val SCAN_FRAME_TOLERANCE = 400

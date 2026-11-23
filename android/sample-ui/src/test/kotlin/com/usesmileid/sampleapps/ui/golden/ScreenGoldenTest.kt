@@ -124,13 +124,13 @@ class ScreenGoldenTest : GoldenTest() {
     fun licenses_missing_asset() = goldens("screen_licenses_empty") { Licenses(UseSmileIDSampleLicenses()) }
 
     @Test
-    fun scan_token() = goldens("screen_scan_token") { ScanToken() }
+    fun scan_token() = goldens("screen_scan_token", tolerance = SCAN_FRAME_TOLERANCE) { ScanToken() }
 
     @Test
     fun scan_token_max_font_scale() = assertSurvivesMaxFontScale { ScanToken() }
 
     @Test
-    fun scan_token_redirected() = goldens("screen_scan_token_redirected") { ScanToken(SESSION_ENDED) }
+    fun scan_token_redirected() = goldens("screen_scan_token_redirected", tolerance = SCAN_FRAME_TOLERANCE) { ScanToken(SESSION_ENDED) }
 
     @Test
     fun scan_token_redirected_max_font_scale() = assertSurvivesMaxFontScale { ScanToken(SESSION_ENDED) }
