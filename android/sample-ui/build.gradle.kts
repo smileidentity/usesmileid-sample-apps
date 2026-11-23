@@ -13,7 +13,9 @@ android {
     namespace = "com.usesmileid.sampleapps.ui"
     // Library resources merge into eight hosts, so an unprefixed name can collide with one silently.
     resourcePrefix = "sample_"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     defaultConfig {
         minSdk = 24

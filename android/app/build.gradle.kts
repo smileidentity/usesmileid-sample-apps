@@ -19,7 +19,9 @@ plugins {
 
 android {
     namespace = "com.usesmileid.sampleapps.android"
-    compileSdk = 37
+    compileSdk {
+        version = release(37) { minorApiLevel = 1 }
+    }
 
     val uploadKeystore = file("upload.jks")
     val versionCodeProperty = findProperty("VERSION_CODE")?.toString()
