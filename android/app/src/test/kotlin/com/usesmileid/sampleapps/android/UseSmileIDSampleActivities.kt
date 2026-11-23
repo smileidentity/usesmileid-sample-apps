@@ -12,7 +12,7 @@ import org.robolectric.shadows.ShadowLooper
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.ContinuationInterceptor
 
-/** Builds a test's activities, closes them when it ends, and starts each test with Compose's main dispatcher unstalled. */
+/** Builds a test's activities, closes them when it ends, and unstalls Compose's main dispatcher before each one. */
 class UseSmileIDSampleActivities : ExternalResource() {
     private val controllers = mutableListOf<ActivityController<out Activity>>()
 
@@ -24,8 +24,9 @@ class UseSmileIDSampleActivities : ExternalResource() {
     }
 
     override fun before() {
-        // A store emission can dispatch off the main thread after the last test's drain; Robolectric drops it with the looper, and the dispatcher waits for it forever.
-        runCatching { pendingDispatch.doFrame(TimeUnit.MILLISECONDS.toNanos(SystemClock.uptimeMillis())) }
+        val callback = pendingDispatch
+        // Robolectric drops a dispatch that lands after the last test's drain, and the dispatcher then waits for it forever.
+        runCatching { callback.doFrame(TimeUnit.MILLISECONDS.toNanos(SystemClock.uptimeMillis())) }
             .onFailure { throw AssertionError("Compose work left by an earlier test failed when this rule ran it", it) }
         ShadowLooper.idleMainLooper(DRAIN_MILLIS, TimeUnit.MILLISECONDS)
     }
@@ -44,7 +45,7 @@ class UseSmileIDSampleActivities : ExternalResource() {
         /** Long enough for a frame a closing composition still has scheduled. */
         const val DRAIN_MILLIS = 100L
 
-        /** The main dispatcher's own callback, which runs every dispatch and frame it has pending. */
+        /** Runs every dispatch and frame the main dispatcher has pending. */
         val pendingDispatch: Choreographer.FrameCallback by lazy {
             runCatching {
                 val field = AndroidUiDispatcher::class.java.getDeclaredField("dispatchCallback").apply { isAccessible = true }

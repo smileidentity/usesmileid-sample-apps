@@ -30,6 +30,13 @@ Document the command per platform in `docs/` with the gate. The gate follows the
 AGENTS.md *Testing*: an app below 95% gates at its measured number. Done when every `verify.sh`
 gates its measured coverage, at 95% once the app reaches it.
 
+### Android activity tests: stop store work outliving its test
+
+The preference store, the job store's write scope and the catalogue decoder can keep working off the main
+thread after an activity test ends, and can dispatch onto Compose after the test's drain.
+`UseSmileIDSampleActivities` runs that leftover work when the next test starts. Done when the stores
+can be cancelled at the end of a test and the rule's start-of-test step finds nothing to run.
+
 ## UI and design fidelity
 
 ### Translations: a native speaker's review
