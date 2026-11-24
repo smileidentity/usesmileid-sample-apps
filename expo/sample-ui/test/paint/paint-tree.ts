@@ -12,8 +12,6 @@ export const PIXEL_RATIO = 2;
 
 /// Hosts the painter cannot draw, each drawn as a labelled box.
 const PLACEHOLDERS: Readonly<Record<string, (props: Record<string, unknown>) => string>> = {
-  RCTSwitch: (props) =>
-    `${props.value === true ? 'on' : 'off'}${props.disabled === true ? ' · disabled' : ''}`,
   ActivityIndicator: () => 'Spinner',
   Image: () => 'Image',
   // Emoji: the bundled face lacks them and a host emoji font differs per runner.
@@ -440,6 +438,34 @@ const paintTextInput = (ctx: SKRSContext2D, node: LaidOutNode, style: Style, x: 
   ctx.restore();
 };
 
+/// How much a disabled switch fades, as UIKit dims a disabled control.
+const SWITCH_DISABLED_ALPHA = 0.5;
+
+/// The gap between a switch's thumb and its track's edge.
+const SWITCH_THUMB_INSET = 2;
+
+/// A switch from the tints its host hands the native control: the track in the on or off colour, the thumb at that end.
+const paintSwitch = (ctx: SKRSContext2D, props: Record<string, unknown>, style: Style, x: number, y: number, width: number, height: number) => {
+  const on = props.value === true;
+  const track = on ? props.onTintColor : (props.tintColor ?? style.backgroundColor);
+  if (typeof track !== 'string' || typeof props.thumbTintColor !== 'string') {
+    fail('RCTSwitch', 'a switch needs string track and thumb tints to be drawn');
+  }
+  ctx.save();
+  if (props.disabled === true) ctx.globalAlpha *= SWITCH_DISABLED_ALPHA;
+  const radius = height / 2;
+  ctx.fillStyle = track as string;
+  outline(ctx, x, y, width, height, { tl: radius, tr: radius, br: radius, bl: radius });
+  ctx.fill();
+  const thumb = height / 2 - SWITCH_THUMB_INSET;
+  const centreX = on ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
+  ctx.fillStyle = props.thumbTintColor as string;
+  ctx.beginPath();
+  ctx.arc(centreX, y + height / 2, thumb, 0, 2 * Math.PI);
+  ctx.fill();
+  ctx.restore();
+};
+
 /// Every colour a stand-in is drawn in: harness ink, not the design's, so no token applies.
 const PLACEHOLDER_COLOURS = {
   ink: 'rgb(138, 138, 138)',
@@ -497,6 +523,11 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
   const draw = (target: SKRSContext2D) => {
     target.save();
     applyTransform(target, style, x, y, node, where);
+    if (node.type === 'RCTSwitch') {
+      paintSwitch(target, node.props, style, x, y, node.width, node.height);
+      target.restore();
+      return;
+    }
     const label = PLACEHOLDERS[node.type];
     if (label) {
       paintPlaceholder(target, label(node.props), x, y, node.width, node.height);
