@@ -131,6 +131,22 @@ void main() {
   );
 
   testWidgets(
+    'a status bar change with the same inset still reads it again',
+    (WidgetTester tester) async {
+      setView(tester);
+      await pumpHost(tester);
+      expect(present, isTrue);
+
+      nativeAnswer = () => false;
+      tester.view.padding = const FakeViewPadding(top: 0);
+      await tester.pumpAndSettle();
+
+      expect(present, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
     'on iOS it never asks and reports none',
     (WidgetTester tester) async {
       setView(tester);

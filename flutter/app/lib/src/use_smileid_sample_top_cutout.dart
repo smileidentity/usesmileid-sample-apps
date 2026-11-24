@@ -28,8 +28,7 @@ class _UseSmileIDSampleTopCutoutHostState
     with WidgetsBindingObserver {
   bool _native = false;
   int _request = 0;
-  Size? _size;
-  double? _top;
+  ({Size size, ViewPadding viewPadding, ViewPadding padding})? _metrics;
 
   @override
   void initState() {
@@ -52,12 +51,17 @@ class _UseSmileIDSampleTopCutoutHostState
   @override
   void didChangeMetrics() => _readIfMoved();
 
-  // Only a rotation or a status bar change can move the cutout; a keyboard animates the metrics every frame.
+  // A keyboard animates the metrics every frame and never moves the cutout, so only its changes are skipped.
   void _readIfMoved() {
     final FlutterView view = View.of(context);
-    if (view.physicalSize == _size && view.viewPadding.top == _top) return;
-    _size = view.physicalSize;
-    _top = view.viewPadding.top;
+    final ({Size size, ViewPadding viewPadding, ViewPadding padding}) metrics =
+        (
+          size: view.physicalSize,
+          viewPadding: view.viewPadding,
+          padding: view.padding,
+        );
+    if (metrics == _metrics) return;
+    _metrics = metrics;
     _read();
   }
 

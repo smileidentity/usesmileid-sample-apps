@@ -1,6 +1,7 @@
 package com.usesmileid.sample.flutter
 
 import android.os.Build
+import android.view.WindowInsets
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -16,6 +17,15 @@ class MainActivity : FlutterActivity() {
 
     private fun hasTopCutout(): Boolean {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return false
-        return (window.decorView.rootWindowInsets?.displayCutout?.safeInsetTop ?: 0) > 0
+        val insets = window.decorView.rootWindowInsets ?: return false
+        return (insets.displayCutout?.safeInsetTop ?: 0) > 0 && statusBarShown(insets)
     }
+
+    private fun statusBarShown(insets: WindowInsets): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            insets.isVisible(WindowInsets.Type.statusBars())
+        } else {
+            @Suppress("DEPRECATION")
+            insets.systemWindowInsetTop > 0
+        }
 }
