@@ -16,6 +16,8 @@ def missing(apk: str, names: list[str]) -> list[str]:
 
 
 def main(argv: list[str]) -> int:
+    if len(argv) < 2:
+        sys.exit("usage: check_apk_contains.py <apk> <name>...")
     apk, names = argv[0], argv[1:]
     absent = missing(apk, names)
     for name in absent:

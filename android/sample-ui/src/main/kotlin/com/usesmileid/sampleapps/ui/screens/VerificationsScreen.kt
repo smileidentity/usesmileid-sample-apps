@@ -167,19 +167,18 @@ fun VerificationsScreen(
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,
-                    modifier = if (offersSelect) {
-                        Modifier
-                            .testTag(UseSmileIDSampleTestIds.SELECT_TOGGLE)
-                            .clickable(role = Role.Button) { onSelectModeChange(!state.selectMode) }
-                            .minimumInteractiveComponentSize()
-                            .padding(horizontal = SmileDimens.spacingXs)
-                    } else {
-                        Modifier
-                            .alpha(0f)
-                            .clearAndSetSemantics {}
-                            .minimumInteractiveComponentSize()
-                            .padding(horizontal = SmileDimens.spacingXs)
-                    },
+                    modifier = Modifier
+                        .then(
+                            if (offersSelect) {
+                                Modifier
+                                    .testTag(UseSmileIDSampleTestIds.SELECT_TOGGLE)
+                                    .clickable(role = Role.Button) { onSelectModeChange(!state.selectMode) }
+                            } else {
+                                Modifier.alpha(0f).clearAndSetSemantics {}
+                            },
+                        )
+                        .minimumInteractiveComponentSize()
+                        .padding(horizontal = SmileDimens.spacingXs),
                 )
             }
         }

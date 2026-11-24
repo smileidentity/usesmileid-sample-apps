@@ -1,7 +1,10 @@
 package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getBoundsInRoot
+import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -31,7 +34,14 @@ class VerificationsHeaderTest {
     fun an_empty_list_offers_nothing_to_select() {
         show(jobs = emptyList())
 
-        compose.onNodeWithTag(UseSmileIDSampleTestIds.SELECT_TOGGLE).assertDoesNotExist()
+        assertNothingToSelect()
+    }
+
+    @Test
+    fun a_list_still_loading_offers_nothing_to_select() {
+        show(jobs = null)
+
+        assertNothingToSelect()
     }
 
     @Test
@@ -70,11 +80,11 @@ class VerificationsHeaderTest {
 
     private val shown = mutableStateOf<UseSmileIDSampleVerificationsState?>(null)
 
-    private fun show(jobs: List<UseSmileIDSampleJob>, selectMode: Boolean = false) {
+    private fun show(jobs: List<UseSmileIDSampleJob>?, selectMode: Boolean = false) {
         val first = shown.value == null
         shown.value = UseSmileIDSampleVerificationsState(
             jobs = jobs,
-            counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.count(f::matches) },
+            counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.orEmpty().count(f::matches) },
             selectMode = selectMode,
             todayStartMillis = startOfDayMillis(FIXED_NOW),
         )
@@ -95,6 +105,12 @@ class VerificationsHeaderTest {
             }
         }
         compose.waitForIdle()
+    }
+
+    private fun assertNothingToSelect() {
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.SELECT_TOGGLE).assertDoesNotExist()
+        compose.onNodeWithText("Select").assertDoesNotExist()
+        compose.onAllNodes(hasClickAction() and hasText("Select")).assertCountEquals(0)
     }
 
     private fun titleTop(): Dp = compose.onNodeWithText("Verifications").getBoundsInRoot().top

@@ -9,7 +9,7 @@ void main() {
 
   Future<void> show(
     WidgetTester tester, {
-    required List<UseSmileIDSampleJob> jobs,
+    required List<UseSmileIDSampleJob>? jobs,
     bool selectMode = false,
   }) async {
     tester.view
@@ -45,6 +45,14 @@ void main() {
     WidgetTester tester,
   ) async {
     await show(tester, jobs: const <UseSmileIDSampleJob>[]);
+
+    expect(selectToggle(), findsNothing);
+  });
+
+  testWidgets('a list still loading offers nothing to select', (
+    WidgetTester tester,
+  ) async {
+    await show(tester, jobs: null);
 
     expect(selectToggle(), findsNothing);
   });

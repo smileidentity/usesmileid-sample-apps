@@ -107,7 +107,7 @@ void main() {
   testWidgets(
     'inside the large-screen frame the status bar is outside, so no gap is added',
     (WidgetTester tester) async {
-      expect(await gapIn(tester, hostReads: true, framed: true), 0);
+      expect(await gapIn(tester, framed: true), 0);
       expect(await gapIn(tester, hostReads: true, framed: true), 0);
     },
     variant: _android,

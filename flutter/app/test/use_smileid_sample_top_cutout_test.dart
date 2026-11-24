@@ -16,6 +16,9 @@ const DisplayFeature _engineTopCutout = DisplayFeature(
 /// A punch-hole phone's status bar.
 const double _statusBar = 37;
 
+/// A three-button navigation bar, which the keyboard covers.
+const double _navigationBar = 48;
+
 /// The shell reads a top camera cutout natively and hands the shared screens whether they sit under it.
 void main() {
   late Object? Function() nativeAnswer;
@@ -46,8 +49,8 @@ void main() {
     tester.view
       ..devicePixelRatio = 1
       ..physicalSize = const Size(1080, 2400)
-      ..viewPadding = FakeViewPadding(top: statusBar)
-      ..padding = FakeViewPadding(top: statusBar)
+      ..viewPadding = FakeViewPadding(top: statusBar, bottom: _navigationBar)
+      ..padding = FakeViewPadding(top: statusBar, bottom: _navigationBar)
       ..displayFeatures = features;
     addTearDown(tester.view.reset);
   }
@@ -147,7 +150,7 @@ void main() {
       final int before = asked;
 
       tester.view
-        ..viewPadding = FakeViewPadding(top: _statusBar)
+        ..viewPadding = FakeViewPadding(top: _statusBar, bottom: _navigationBar)
         ..padding = FakeViewPadding(top: _statusBar)
         ..viewInsets = const FakeViewPadding(bottom: 300);
       await tester.pumpAndSettle();

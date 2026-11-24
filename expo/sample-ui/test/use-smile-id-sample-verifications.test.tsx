@@ -271,9 +271,21 @@ describe('select mode', () => {
     expect(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE)).toHaveTextContent('Cancel');
   });
 
-  it('offers no select action with nothing to select', async () => {
-    const rendered = await renderInTheme(list({ state: { jobs: [], nowMillis: NOW } }), false);
+  it.each([
+    ['nothing to select', []],
+    ['a list still loading', null],
+  ] as const)('offers no select action with %s, and the space it keeps cannot be pressed', async (_case, jobs) => {
+    const selecting: boolean[] = [];
+    const rendered = await renderInTheme(
+      list({ state: { jobs, nowMillis: NOW }, onSelectingChange: (value) => selecting.push(value) }),
+      false,
+    );
     expect(rendered.queryByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE)).toBeNull();
+    const hidden = rendered.getByText('Select', { includeHiddenElements: true });
+    expect(hidden).toBeDisabled();
+    await fireEvent.press(hidden);
+    expect(rendered.queryByText('Cancel', { includeHiddenElements: true })).toBeNull();
+    expect(selecting).not.toContain(true);
   });
 
   it('keeps the title where it was when select is hidden', async () => {
