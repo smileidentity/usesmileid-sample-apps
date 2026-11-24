@@ -1,6 +1,8 @@
 package com.usesmileid.sample.cutout
 
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewTreeObserver
 import android.view.WindowInsets
@@ -10,7 +12,11 @@ import expo.modules.kotlin.modules.ModuleDefinition
 /** Keeps whether the screen shows its status bar over a camera cutout along its top edge, which React Native's insets fold together, read on the UI thread after each layout. */
 class UseSmileIDSampleCutoutModule : Module() {
     @Volatile private var topCutout = false
+    private val main = Handler(Looper.getMainLooper())
+
+    // Touched on the main thread only.
     private var watched: View? = null
+    private var destroyed = false
     private val onLayout = ViewTreeObserver.OnGlobalLayoutListener { read() }
 
     override fun definition() = ModuleDefinition {
@@ -21,20 +27,25 @@ class UseSmileIDSampleCutoutModule : Module() {
         Function("hasTopCutout") { topCutout }
 
         // An activity already resumed when the module is created sends no foreground event.
-        OnCreate { decorView()?.let { decor -> decor.post { watch(decor) } } }
+        OnCreate { main.post { decorView()?.let(::watch) } }
 
         // React Native runs the host lifecycle on the UI thread, which owns the view tree.
         OnActivityEntersForeground { decorView()?.let(::watch) }
 
         OnActivityDestroys { unwatch() }
 
-        OnDestroy { watched?.let { decor -> decor.post { unwatch() } } }
+        OnDestroy {
+            main.post {
+                destroyed = true
+                unwatch()
+            }
+        }
     }
 
     private fun decorView(): View? = appContext.currentActivity?.window?.decorView
 
     private fun watch(decor: View) {
-        if (watched === decor) return
+        if (destroyed || watched === decor) return
         unwatch()
         watched = decor
         decor.viewTreeObserver.addOnGlobalLayoutListener(onLayout)
