@@ -3,10 +3,11 @@ package com.usesmileid.sample.cutout
 import android.os.Build
 import android.view.View
 import android.view.ViewTreeObserver
+import android.view.WindowInsets
 import expo.modules.kotlin.modules.Module
 import expo.modules.kotlin.modules.ModuleDefinition
 
-/** Keeps whether the screen has a camera cutout along its top edge, which React Native's insets fold into the status bar, read on the UI thread after each layout. */
+/** Keeps whether the screen shows its status bar over a camera cutout along its top edge, which React Native's insets fold together, read on the UI thread after each layout. */
 class UseSmileIDSampleCutoutModule : Module() {
     @Volatile private var topCutout = false
     private var watched: View? = null
@@ -19,13 +20,18 @@ class UseSmileIDSampleCutoutModule : Module() {
 
         Function("hasTopCutout") { topCutout }
 
+        // An activity already resumed when the module is created sends no foreground event.
+        OnCreate { decorView()?.let { decor -> decor.post { watch(decor) } } }
+
         // React Native runs the host lifecycle on the UI thread, which owns the view tree.
-        OnActivityEntersForeground {
-            appContext.currentActivity?.window?.decorView?.let(::watch)
-        }
+        OnActivityEntersForeground { decorView()?.let(::watch) }
 
         OnActivityDestroys { unwatch() }
+
+        OnDestroy { watched?.let { decor -> decor.post { unwatch() } } }
     }
+
+    private fun decorView(): View? = appContext.currentActivity?.window?.decorView
 
     private fun watch(decor: View) {
         if (watched === decor) return
@@ -42,9 +48,18 @@ class UseSmileIDSampleCutoutModule : Module() {
 
     private fun read() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return
-        val present = (watched?.rootWindowInsets?.displayCutout?.safeInsetTop ?: 0) > 0
+        val insets = watched?.rootWindowInsets ?: return
+        val present = (insets.displayCutout?.safeInsetTop ?: 0) > 0 && statusBarShown(insets)
         if (present == topCutout) return
         topCutout = present
         sendEvent("onTopCutoutChange", mapOf("present" to present))
     }
+
+    private fun statusBarShown(insets: WindowInsets): Boolean =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            insets.isVisible(WindowInsets.Type.statusBars())
+        } else {
+            @Suppress("DEPRECATION")
+            insets.systemWindowInsetTop > 0
+        }
 }
