@@ -1,0 +1,168 @@
+import 'dart:ui';
+
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:sample_ui/sample_ui.dart';
+import 'package:usesmileid_sample_flutter/src/use_smileid_sample_top_cutout.dart';
+
+/// A top cutout as the engine reports it, which the host leaves to the native reading.
+const DisplayFeature _engineTopCutout = DisplayFeature(
+  bounds: Rect.fromLTWH(20, 0, 30, 35),
+  type: DisplayFeatureType.cutout,
+  state: DisplayFeatureState.unknown,
+);
+
+/// The shell reads a top camera cutout natively and hands the shared screens whether they sit under it.
+void main() {
+  late Object? Function() nativeAnswer;
+  late int asked;
+
+  setUp(() {
+    nativeAnswer = () => true;
+    asked = 0;
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(useSmileIDSampleCutoutChannel, (
+          MethodCall call,
+        ) async {
+          asked++;
+          return nativeAnswer();
+        });
+  });
+
+  tearDown(() {
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(useSmileIDSampleCutoutChannel, null);
+  });
+
+  void setView(
+    WidgetTester tester, {
+    double statusBar = 37,
+    List<DisplayFeature> features = const <DisplayFeature>[],
+  }) {
+    tester.view
+      ..devicePixelRatio = 1
+      ..physicalSize = const Size(1080, 2400)
+      ..viewPadding = FakeViewPadding(top: statusBar)
+      ..padding = FakeViewPadding(top: statusBar)
+      ..displayFeatures = features;
+    addTearDown(tester.view.reset);
+  }
+
+  late bool present;
+
+  Future<void> pumpHost(WidgetTester tester) async {
+    await tester.pumpWidget(
+      UseSmileIDSampleTopCutoutHost(
+        child: Builder(
+          builder: (BuildContext context) {
+            present = UseSmileIDSampleTopCutout.maybeOf(context)!;
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets(
+    'on Android it reports a cutout the native side reads',
+    (WidgetTester tester) async {
+      setView(tester);
+      await pumpHost(tester);
+
+      expect(present, isTrue);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    "it follows the native reading where the engine's disagrees",
+    (WidgetTester tester) async {
+      nativeAnswer = () => false;
+      setView(tester, features: <DisplayFeature>[_engineTopCutout]);
+      await pumpHost(tester);
+
+      expect(present, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'without a status bar it reports none',
+    (WidgetTester tester) async {
+      setView(tester, statusBar: 0);
+      await pumpHost(tester);
+
+      expect(present, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'a rotation reads it again',
+    (WidgetTester tester) async {
+      setView(tester);
+      await pumpHost(tester);
+      expect(present, isTrue);
+
+      nativeAnswer = () => false;
+      tester.view.physicalSize = const Size(2400, 1080);
+      await tester.pumpAndSettle();
+
+      expect(present, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'a keyboard opening does not ask again',
+    (WidgetTester tester) async {
+      setView(tester);
+      await pumpHost(tester);
+      final int before = asked;
+
+      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      await tester.pumpAndSettle();
+
+      expect(asked, before);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'on iOS it never asks and reports none',
+    (WidgetTester tester) async {
+      setView(tester);
+      await pumpHost(tester);
+
+      expect(present, isFalse);
+      expect(asked, 0);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.iOS),
+  );
+
+  testWidgets(
+    'with no native side behind it, it reports none',
+    (WidgetTester tester) async {
+      nativeAnswer = () => throw MissingPluginException();
+      setView(tester);
+      await pumpHost(tester);
+
+      expect(present, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
+    'a native error leaves it reporting none',
+    (WidgetTester tester) async {
+      nativeAnswer = () => throw PlatformException(code: 'unavailable');
+      setView(tester);
+      await pumpHost(tester);
+
+      expect(present, isFalse);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+}

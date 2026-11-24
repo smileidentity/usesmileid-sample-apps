@@ -245,6 +245,7 @@
         "barHeight": "a PINNED 40 row above an 8 gap, scaled by the font scale — the same on every pushed screen. A minimum height instead let a longer title grow the bar, and the header then sat lower on some screens than others",
         "control": "40 circular, back filled dark and trailing action tonal; Scan token's torch is filled",
         "horizontalPadding": 16,
+        "statusBarGap": "spacing.sm (12) below the status bar on an Android phone with a camera cutout along its top edge, in the Android, Flutter and Expo apps alike, on this bar and on the tab screens' headers, because Android sizes the status bar flush to the cutout where an iPhone's safe area leaves about 11 below the Dynamic Island; none on a phone without a top cutout (an iPhone without a notch leaves none either), none in landscape, none with no status bar, and none inside the large-screen frame, which keeps the status bar outside it",
         "titleTruncation": "none — the title wraps; capping it ellipsised 'Enhanced Document Verification' at 2x",
         "token": "space40 for the control, space48 for the bar, spacing.md for padding",
         "trailingSlot": "a 40 box is reserved even with no action, so the centred title sits identically whether or not the screen has a trailing control",

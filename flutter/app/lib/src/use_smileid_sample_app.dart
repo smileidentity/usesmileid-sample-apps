@@ -11,6 +11,7 @@ import 'navigation/use_smileid_sample_router.dart';
 import 'state/use_smileid_sample_providers.dart';
 import 'state/use_smileid_sample_session_providers.dart';
 import 'use_smileid_sample_system_bars.dart';
+import 'use_smileid_sample_top_cutout.dart';
 
 /// The app: the shared theme, and the router that hands platform links to the njia shell.
 class UseSmileIDSampleApp extends ConsumerStatefulWidget {
@@ -119,7 +120,9 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp>
                   ? TextDirection.rtl
                   : TextDirection.ltr,
               child: UseSmileIDSampleSystemBars(
-                child: child ?? const SizedBox.shrink(),
+                child: UseSmileIDSampleTopCutoutHost(
+                  child: child ?? const SizedBox.shrink(),
+                ),
               ),
             ),
           ),

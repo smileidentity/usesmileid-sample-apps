@@ -2,6 +2,7 @@ export { UseSmileIDSampleAvatar, avatarColorForProfile } from './components/use-
 export { smileIDSampleConfirm } from './components/use-smile-id-sample-confirmation';
 export { UseSmileIDSampleButton } from './components/use-smile-id-sample-button';
 export { UseSmileIDSampleSearchField } from './components/use-smile-id-sample-search-field';
+export { UseSmileIDSampleTopCutoutContext } from './components/use-smile-id-sample-header-inset';
 export { UseSmileIDSampleSectionLabel } from './components/use-smile-id-sample-section-label';
 export { UseSmileIDSampleStatusBadge } from './components/use-smile-id-sample-status-badge';
 export { UseSmileIDSampleSwitch } from './components/use-smile-id-sample-switch';

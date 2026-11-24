@@ -44,6 +44,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFilterChip
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleJobRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionCheckbox
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwipeAction
+import com.usesmileid.sampleapps.ui.components.useSmileIDSampleHeaderContentPadding
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.groupByDay
@@ -143,7 +144,7 @@ fun VerificationsScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.VERIFICATIONS_SCREEN)
             .windowInsetsPadding(WindowInsets.statusBars),
-        contentPadding = contentPadding,
+        contentPadding = useSmileIDSampleHeaderContentPadding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
     ) {
         item {

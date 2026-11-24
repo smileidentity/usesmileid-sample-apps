@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_avatar.dart';
+import '../components/use_smileid_sample_header_inset.dart';
 import '../components/use_smileid_sample_icon.dart';
 import '../components/use_smileid_sample_product_card.dart';
 import '../components/use_smileid_sample_product_grid.dart';
@@ -89,7 +90,9 @@ class UseSmileIDSampleProductsScreen extends StatelessWidget {
       identifier: UseSmileIDSampleTestIds.productsScreen,
       child: ListView(
         padding: EdgeInsets.only(
-          top: MediaQuery.viewPaddingOf(context).top,
+          top:
+              MediaQuery.viewPaddingOf(context).top +
+              useSmileIDSampleHeaderTopGap(context),
           bottom: bottomInset,
         ),
         children: <Widget>[

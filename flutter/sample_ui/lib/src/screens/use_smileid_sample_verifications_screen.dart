@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../components/use_smileid_sample_date_group_header.dart';
 import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_filter_chip.dart';
+import '../components/use_smileid_sample_header_inset.dart';
 import '../components/use_smileid_sample_job_row.dart';
 import '../components/use_smileid_sample_selection_checkbox.dart';
 import '../components/use_smileid_sample_spaced.dart';
@@ -109,7 +110,10 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
     final Widget list = Semantics(
       identifier: UseSmileIDSampleTestIds.verificationsScreen,
       child: ListView(
-        padding: EdgeInsets.only(bottom: bottomInset),
+        padding: EdgeInsets.only(
+          top: useSmileIDSampleHeaderTopGap(context),
+          bottom: bottomInset,
+        ),
         children: useSmileIDSampleSpaced(<Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(

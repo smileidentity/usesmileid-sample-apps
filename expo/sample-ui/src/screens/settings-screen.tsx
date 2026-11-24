@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 import { smileIDSampleConfirm } from '../components/use-smile-id-sample-confirmation';
 import { ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSmileIDSampleHeaderTopInset } from '../components/use-smile-id-sample-header-inset';
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleProfileRow } from '../components/use-smile-id-sample-profile-row';
 import {
@@ -170,7 +170,7 @@ export const SettingsScreen = ({
   const strings = useSmileIDSampleStrings();
   const deviceLanguages = useSmileIDSampleDeviceLanguages();
   const theme = useSmileIDSampleTheme();
-  const insets = useSafeAreaInsets();
+  const headerTopInset = useSmileIDSampleHeaderTopInset();
   const { settings } = state;
 
   return (
@@ -178,7 +178,7 @@ export const SettingsScreen = ({
       testID={UseSmileIDSampleTestIds.SETTINGS_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }, style]}
       contentContainerStyle={{
-        paddingTop: insets.top,
+        paddingTop: headerTopInset,
         paddingBottom: bottomInset,
         rowGap: theme.dimens.spacing.xs,
       }}

@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleDateGroupHeader } from '../components/use-smile-id-sample-date-group-header';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
 import { UseSmileIDSampleFilterChip } from '../components/use-smile-id-sample-filter-chip';
+import { useSmileIDSampleHeaderTopInset } from '../components/use-smile-id-sample-header-inset';
 import { UseSmileIDSampleJobRow } from '../components/use-smile-id-sample-job-row';
 import { UseSmileIDSampleSelectionBar } from '../components/use-smile-id-sample-selection-bar';
 import { UseSmileIDSampleSelectionCheckbox } from '../components/use-smile-id-sample-selection-checkbox';
@@ -55,7 +55,7 @@ export const VerificationsScreen = ({
   const strings = useSmileIDSampleStrings();
   const language = useSmileIDSampleLanguageShown();
   const theme = useSmileIDSampleTheme();
-  const insets = useSafeAreaInsets();
+  const headerTopInset = useSmileIDSampleHeaderTopInset();
   const [filterId, setFilterId] = useState(smileIDSampleJobFilters[0]!.id);
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -120,7 +120,7 @@ export const VerificationsScreen = ({
       <ScrollView
         testID={UseSmileIDSampleTestIds.VERIFICATIONS_SCREEN}
         contentContainerStyle={{
-          paddingTop: insets.top,
+          paddingTop: headerTopInset,
           // In select mode the selection bar replaces the nav bar, so the inset does not change.
           paddingBottom: bottomInset,
           rowGap: theme.dimens.spacing.xs,

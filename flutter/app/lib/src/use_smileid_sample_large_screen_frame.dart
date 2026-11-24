@@ -76,12 +76,15 @@ class UseSmileIDSampleLargeScreenFrame extends StatelessWidget {
                 height: frame?.height ?? double.infinity,
                 child: ClipRect(
                   clipBehavior: frame != null ? Clip.hardEdge : Clip.none,
-                  child: frame == null
-                      ? MediaQuery(data: media, child: child)
-                      : MediaQuery(
-                          data: _insideFrame(media, window, padding, frame),
-                          child: child,
-                        ),
+                  child: MediaQuery(
+                    data: frame == null
+                        ? media
+                        : _insideFrame(media, window, padding, frame),
+                    child: UseSmileIDSampleLargeScreenFramed(
+                      framed: frame != null,
+                      child: child,
+                    ),
+                  ),
                 ),
               ),
             ),

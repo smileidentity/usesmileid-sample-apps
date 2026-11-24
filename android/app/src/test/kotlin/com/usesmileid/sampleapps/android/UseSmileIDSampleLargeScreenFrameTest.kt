@@ -10,6 +10,7 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import com.usesmileid.sampleapps.ui.components.LocalUseSmileIDSampleLargeScreenFramed
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import java.io.File
 import kotlinx.serialization.json.Json
@@ -88,6 +89,24 @@ class UseSmileIDSampleLargeScreenFrameTest {
         assertEquals(root, screen)
     }
 
+    @Test
+    @Config(qualifiers = "w800dp-h1280dp-mdpi")
+    fun `the screens in a large screen's frame are told the status bar is outside it`() {
+        assertEquals(true, framedSeenInside(framed = true))
+    }
+
+    @Test
+    @Config(qualifiers = "w384dp-h832dp-mdpi")
+    fun `a phone's screens are not framed`() {
+        assertEquals(false, framedSeenInside(framed = true))
+    }
+
+    @Test
+    @Config(qualifiers = "w800dp-h1280dp-mdpi")
+    fun `the full-screen SDK run is not framed`() {
+        assertEquals(false, framedSeenInside(framed = false))
+    }
+
     private fun frameIn(width: Int, height: Int): DpSize? = DpSize(width.dp, height.dp).let { largeScreenFrameSize(it, it) }
 
     /** The window's bounds and the screen's, in px, which are dp at mdpi. */
@@ -106,6 +125,21 @@ class UseSmileIDSampleLargeScreenFrameTest {
         }
         ShadowLooper.idleMainLooper()
         return root to screen
+    }
+
+    /** What a screen inside the frame reads from [LocalUseSmileIDSampleLargeScreenFramed]. */
+    private fun framedSeenInside(framed: Boolean): Boolean? {
+        var seen: Boolean? = null
+        val activity = activities.build(ComponentActivity::class.java).setup().get()
+        activity.setContent {
+            UseSmileIDSampleTheme(darkTheme = false) {
+                UseSmileIDSampleLargeScreenFrame(framed = framed, modifier = Modifier.fillMaxSize()) {
+                    seen = LocalUseSmileIDSampleLargeScreenFramed.current
+                }
+            }
+        }
+        ShadowLooper.idleMainLooper()
+        return seen
     }
 
     private fun specDir(): File = File(requireNotNull(System.getProperty("sampleapps.spec.dir")) { "sampleapps.spec.dir is not set; see app/build.gradle.kts" })
