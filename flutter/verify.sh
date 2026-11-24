@@ -81,6 +81,11 @@ if [ "$PHASE" != checks ]; then
   echo "==> release APKs, one per ABI (minified, resource-shrunk, no app-side keep rules)"
   # Bundled ML Kit ships a native library per ABI, so a single APK carries four and weighs ~117 MB.
   (cd app && flutter build apk --release --split-per-abi)
+  echo "==> the release APKs keep the native top-cutout reader"
+  python3 "$REPO_ROOT/scripts/test_check_apk_contains.py" >/dev/null 2>&1
+  for abi in arm64-v8a armeabi-v7a x86_64; do
+    python3 "$REPO_ROOT/scripts/check_apk_contains.py" "app/build/app/outputs/flutter-apk/app-$abi-release.apk" usesmileid_sample/cutout
+  done
 fi
 
 if [ "$PHASE" != android ]; then
