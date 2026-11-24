@@ -444,18 +444,34 @@ const SWITCH_DISABLED_ALPHA = 0.5;
 /// The gap between a switch's thumb and its track's edge.
 const SWITCH_THUMB_INSET = 2;
 
-/// A switch from the tints its host hands the native control: the track in the on or off colour, the thumb at that end.
-const paintSwitch = (ctx: SKRSContext2D, props: Record<string, unknown>, style: Style, x: number, y: number, width: number, height: number) => {
+/// A switch from the tints its host hands the native control: the track in the on or off colour, the thumb at that end, a disabled one faded over its view's own background.
+const paintSwitch = (
+  ctx: SKRSContext2D,
+  props: Record<string, unknown>,
+  style: Style,
+  where: string,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) => {
   const on = props.value === true;
-  const track = on ? props.onTintColor : (props.tintColor ?? style.backgroundColor);
+  const background = style.backgroundColor;
+  const track = on ? props.onTintColor : (background ?? props.tintColor);
   if (typeof track !== 'string' || typeof props.thumbTintColor !== 'string') {
-    fail('RCTSwitch', 'a switch needs string track and thumb tints to be drawn');
+    fail(where, 'a switch needs string track and thumb tints to be drawn');
   }
-  ctx.save();
-  if (props.disabled === true) ctx.globalAlpha *= SWITCH_DISABLED_ALPHA;
   const radius = height / 2;
+  const pill = { tl: radius, tr: radius, br: radius, bl: radius };
+  ctx.save();
+  if (typeof background === 'string') {
+    ctx.fillStyle = background;
+    outline(ctx, x, y, width, height, pill);
+    ctx.fill();
+  }
+  if (props.disabled === true) ctx.globalAlpha *= SWITCH_DISABLED_ALPHA;
   ctx.fillStyle = track as string;
-  outline(ctx, x, y, width, height, { tl: radius, tr: radius, br: radius, bl: radius });
+  outline(ctx, x, y, width, height, pill);
   ctx.fill();
   const thumb = height / 2 - SWITCH_THUMB_INSET;
   const centreX = on ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
@@ -524,7 +540,7 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
     target.save();
     applyTransform(target, style, x, y, node, where);
     if (node.type === 'RCTSwitch') {
-      paintSwitch(target, node.props, style, x, y, node.width, node.height);
+      paintSwitch(target, node.props, style, where, x, y, node.width, node.height);
       target.restore();
       return;
     }
