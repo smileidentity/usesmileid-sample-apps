@@ -444,12 +444,13 @@ const SWITCH_DISABLED_ALPHA = 0.5;
 /// The gap between a switch's thumb and its track's edge.
 const SWITCH_THUMB_INSET = 2;
 
-/// A switch from the tints its host hands the native control: the track in the on or off colour, the thumb at that end, a disabled one faded over its view's own background.
+/// A switch from the tints its host hands the native control: the track in the on or off colour, the thumb at that end (mirrored right to left), a disabled one faded over its view's own background.
 const paintSwitch = (
   ctx: SKRSContext2D,
   props: Record<string, unknown>,
   style: Style,
   where: string,
+  rtl: boolean,
   x: number,
   y: number,
   width: number,
@@ -480,7 +481,9 @@ const paintSwitch = (
     outline(target, x, y, width, height, pill);
     target.fill();
     const thumb = height / 2 - SWITCH_THUMB_INSET;
-    const centreX = on ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
+    // UISwitch mirrors right to left, so an on thumb sits at the leading end there.
+    const atFarEnd = on !== rtl;
+    const centreX = atFarEnd ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
     target.fillStyle = props.thumbTintColor as string;
     target.beginPath();
     target.arc(centreX, y + height / 2, thumb, 0, 2 * Math.PI);
@@ -549,12 +552,13 @@ const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y: numbe
 type Paint = { ctx: SKRSContext2D; canvasWidth: number; canvasHeight: number };
 
 /// Paints one laid-out box and its subtree.
-const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: number, path: string): void => {
+const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: number, path: string, parentRtl = false): void => {
   const { ctx } = paint;
   const where = `${path} > ${node.type}`;
   const x = parentX + node.left;
   const y = parentY + node.top;
   const style = flatten(node.props.style);
+  const rtl = style.direction === 'rtl' ? true : style.direction === 'ltr' ? false : parentRtl;
   checkStyle(style, where);
   if (style.display === 'none') return;
   if (DRAWS_NOTHING.has(node.type)) return;
@@ -565,7 +569,7 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
     target.save();
     applyTransform(target, style, x, y, node, where);
     if (node.type === 'RCTSwitch') {
-      paintSwitch(target, node.props, style, where, x, y, node.width, node.height);
+      paintSwitch(target, node.props, style, where, rtl, x, y, node.width, node.height);
       target.restore();
       return;
     }
@@ -600,7 +604,7 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
       const ordered = node.children
         .map((child, index) => ({ child, index, z: (flatten(child.props.style).zIndex as number | undefined) ?? 0 }))
         .sort((a, b) => a.z - b.z || a.index - b.index);
-      for (const { child } of ordered) paintNode({ ...paint, ctx: target }, child, x, y, where);
+      for (const { child } of ordered) paintNode({ ...paint, ctx: target }, child, x, y, where, rtl);
     } else fail(where, 'is a host type this painter neither draws nor stands in for');
     target.restore();
   };
