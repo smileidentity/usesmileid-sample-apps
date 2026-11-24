@@ -292,6 +292,8 @@ export const smileIDSampleFilterCounts = countsFor;
 /// What keeps a control's space but takes it out of sight, touch and the accessibility tree.
 const hiddenInPlace = {
   disabled: true,
+  focusable: false,
+  accessible: false,
   accessibilityElementsHidden: true,
   importantForAccessibility: 'no-hide-descendants',
 } as const;

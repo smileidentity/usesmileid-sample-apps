@@ -16737,9 +16737,9 @@ exports[`verifications dark empty 1`] = `
               "text": undefined,
             }
           }
-          accessible={true}
+          accessible={false}
           collapsable={false}
-          focusable={true}
+          focusable={false}
           importantForAccessibility="no-hide-descendants"
           onBlur={[Function]}
           onClick={[Function]}
@@ -17487,9 +17487,9 @@ exports[`verifications dark notLoaded 1`] = `
               "text": undefined,
             }
           }
-          accessible={true}
+          accessible={false}
           collapsable={false}
-          focusable={true}
+          focusable={false}
           importantForAccessibility="no-hide-descendants"
           onBlur={[Function]}
           onClick={[Function]}
@@ -23462,9 +23462,9 @@ exports[`verifications light empty 1`] = `
               "text": undefined,
             }
           }
-          accessible={true}
+          accessible={false}
           collapsable={false}
-          focusable={true}
+          focusable={false}
           importantForAccessibility="no-hide-descendants"
           onBlur={[Function]}
           onClick={[Function]}
@@ -24212,9 +24212,9 @@ exports[`verifications light notLoaded 1`] = `
               "text": undefined,
             }
           }
-          accessible={true}
+          accessible={false}
           collapsable={false}
-          focusable={true}
+          focusable={false}
           importantForAccessibility="no-hide-descendants"
           onBlur={[Function]}
           onClick={[Function]}
