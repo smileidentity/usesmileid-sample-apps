@@ -456,7 +456,13 @@ const paintSwitch = (
   height: number,
 ) => {
   const on = props.value === true;
-  const background = style.backgroundColor;
+  const background = style.backgroundColor === 'transparent' ? undefined : style.backgroundColor;
+  const bordered = ['borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'].some(
+    (side) => ((style[side] as number | undefined) ?? 0) > 0,
+  );
+  if (bordered || ((style.shadowOpacity as number | undefined) ?? 0) > 0) {
+    fail(where, 'a switch draws no border or shadow of its own');
+  }
   const track = on ? props.onTintColor : (background ?? props.tintColor);
   if (typeof track !== 'string' || typeof props.thumbTintColor !== 'string') {
     fail(where, 'a switch needs string track and thumb tints to be drawn');
@@ -485,6 +491,9 @@ const paintSwitch = (
   } else {
     // Faded as one layer, as UIKit dims a control, so the track never shows through the thumb.
     const base = ctx.getTransform();
+    if (base.b !== 0 || base.c !== 0 || base.a <= 0 || base.d <= 0) {
+      fail(where, 'a disabled switch is faded in an unrotated, unmirrored layer only');
+    }
     const left = Math.floor(base.a * x + base.e);
     const top = Math.floor(base.d * y + base.f);
     const layer = createCanvas(Math.ceil(base.a * width) + 2, Math.ceil(base.d * height) + 2);
