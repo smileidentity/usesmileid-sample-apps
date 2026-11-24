@@ -469,16 +469,32 @@ const paintSwitch = (
     outline(ctx, x, y, width, height, pill);
     ctx.fill();
   }
-  if (props.disabled === true) ctx.globalAlpha *= SWITCH_DISABLED_ALPHA;
-  ctx.fillStyle = track as string;
-  outline(ctx, x, y, width, height, pill);
-  ctx.fill();
-  const thumb = height / 2 - SWITCH_THUMB_INSET;
-  const centreX = on ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
-  ctx.fillStyle = props.thumbTintColor as string;
-  ctx.beginPath();
-  ctx.arc(centreX, y + height / 2, thumb, 0, 2 * Math.PI);
-  ctx.fill();
+  const drawControl = (target: SKRSContext2D) => {
+    target.fillStyle = track as string;
+    outline(target, x, y, width, height, pill);
+    target.fill();
+    const thumb = height / 2 - SWITCH_THUMB_INSET;
+    const centreX = on ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
+    target.fillStyle = props.thumbTintColor as string;
+    target.beginPath();
+    target.arc(centreX, y + height / 2, thumb, 0, 2 * Math.PI);
+    target.fill();
+  };
+  if (props.disabled !== true) {
+    drawControl(ctx);
+  } else {
+    // Faded as one layer, as UIKit dims a control, so the track never shows through the thumb.
+    const base = ctx.getTransform();
+    const left = Math.floor(base.a * x + base.e);
+    const top = Math.floor(base.d * y + base.f);
+    const layer = createCanvas(Math.ceil(base.a * width) + 2, Math.ceil(base.d * height) + 2);
+    const layerCtx = layer.getContext('2d');
+    layerCtx.setTransform(base.a, base.b, base.c, base.d, base.e - left, base.f - top);
+    drawControl(layerCtx);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha *= SWITCH_DISABLED_ALPHA;
+    ctx.drawImage(layer, left, top);
+  }
   ctx.restore();
 };
 
