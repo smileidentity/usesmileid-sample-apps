@@ -65,6 +65,13 @@ public struct UseSmileIDSampleVerificationsState: Equatable {
   }
 }
 
+extension UseSmileIDSampleVerificationsState {
+  /// Whether the header offers Select, or Cancel while selecting.
+  var offersSelect: Bool {
+    selectMode || !(jobs?.isEmpty ?? true)
+  }
+}
+
 /// The verifications, grouped by day. Counts come from the whole list: a dropping count proves a removal.
 public struct VerificationsScreen: View {
   private let state: UseSmileIDSampleVerificationsState
@@ -133,6 +140,9 @@ public struct VerificationsScreen: View {
       }
       .buttonStyle(.plain)
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectToggle)
+      .opacity(state.offersSelect ? 1 : 0)
+      .disabled(!state.offersSelect)
+      .accessibilityHidden(!state.offersSelect)
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.vertical, SmileSpacing.spacingXs)

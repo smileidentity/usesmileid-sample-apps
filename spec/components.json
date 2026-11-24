@@ -554,6 +554,7 @@
         "horizontalPadding": "14 in the design, spacing.sm (12) here",
         "gapLabelToCount": "6 in the design, spacing.xxs (4) here",
         "gapBetweenChips": 8,
+        "layout": "one row that scrolls sideways on every platform, never wrapping, so the header keeps its height with long translations and large text",
         "activeTreatment": "color.primary fill with on-primary label and count"
       },
       "states": [

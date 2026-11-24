@@ -92,6 +92,7 @@ void main() {
     await tester.scrollUntilVisible(
       byId(UseSmileIDSampleTestIds.jobRow(10)),
       300,
+      scrollable: find.byType(Scrollable).first,
     );
     expect(byId(UseSmileIDSampleTestIds.jobRow(10)), findsOne);
   });
@@ -118,6 +119,11 @@ void main() {
     expect(countText('all'), '11');
     expect(countText('clear'), '6');
 
+
+    await tester.ensureVisible(
+      byId(UseSmileIDSampleTestIds.filterChip('blocked')),
+    );
+
     await tester.tap(byId(UseSmileIDSampleTestIds.filterChip('blocked')));
     await tester.pumpAndSettle();
 
@@ -143,6 +149,9 @@ void main() {
       ]),
     );
     await tester.pumpAndSettle();
+    await tester.ensureVisible(
+      byId(UseSmileIDSampleTestIds.filterChip('blocked')),
+    );
     await tester.tap(byId(UseSmileIDSampleTestIds.filterChip('blocked')));
     await tester.pumpAndSettle();
 

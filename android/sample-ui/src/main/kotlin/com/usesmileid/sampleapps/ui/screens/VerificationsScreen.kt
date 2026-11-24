@@ -1,5 +1,9 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleRelativeDay
 import androidx.compose.ui.platform.LocalConfiguration
 import com.usesmileid.sampleapps.ui.label
@@ -8,8 +12,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -120,7 +122,6 @@ data class UseSmileIDSampleVerificationsState(
 )
 
 /** The verifications, grouped by day. Counts come from the whole list, because the count dropping is what proves a delete. */
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun VerificationsScreen(
     state: UseSmileIDSampleVerificationsState,
@@ -160,25 +161,35 @@ fun VerificationsScreen(
                     color = UseSmileIDSampleTheme.colors.textTitle,
                     modifier = Modifier.weight(1f),
                 )
+                val offersSelect = state.selectMode || !state.jobs.isNullOrEmpty()
                 Text(
                     text = if (state.selectMode) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,
-                    modifier = Modifier
-                        .testTag(UseSmileIDSampleTestIds.SELECT_TOGGLE)
-                        .clickable(role = Role.Button) { onSelectModeChange(!state.selectMode) }
-                        .minimumInteractiveComponentSize()
-                        .padding(horizontal = SmileDimens.spacingXs),
+                    modifier = if (offersSelect) {
+                        Modifier
+                            .testTag(UseSmileIDSampleTestIds.SELECT_TOGGLE)
+                            .clickable(role = Role.Button) { onSelectModeChange(!state.selectMode) }
+                            .minimumInteractiveComponentSize()
+                            .padding(horizontal = SmileDimens.spacingXs)
+                    } else {
+                        Modifier
+                            .alpha(0f)
+                            .clearAndSetSemantics {}
+                            .minimumInteractiveComponentSize()
+                            .padding(horizontal = SmileDimens.spacingXs)
+                    },
                 )
             }
         }
 
         item {
-            FlowRow(
-                modifier = Modifier.padding(horizontal = SmileDimens.spacingMd),
+            Row(
+                modifier = Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = SmileDimens.spacingMd),
                 horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
-                verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
             ) {
                 UseSmileIDSampleJobFilter.entries.forEach { filter ->
                     UseSmileIDSampleFilterChip(

@@ -170,6 +170,9 @@ void main() {
       job('a', UseSmileIDSampleStatus.blocked),
       job('b', UseSmileIDSampleStatus.clear),
     ]);
+    await tester.ensureVisible(
+      byId(UseSmileIDSampleTestIds.filterChip('blocked')),
+    );
     await tester.tap(byId(UseSmileIDSampleTestIds.filterChip('blocked')));
     await tester.pumpAndSettle();
     expect(
@@ -197,6 +200,9 @@ void main() {
       job('a', UseSmileIDSampleStatus.clear),
       job('b', UseSmileIDSampleStatus.clear),
     ]);
+    await tester.ensureVisible(
+      byId(UseSmileIDSampleTestIds.filterChip('clear')),
+    );
     await tester.tap(byId(UseSmileIDSampleTestIds.filterChip('clear')));
     await tester.pumpAndSettle();
     await tester.tap(byId(UseSmileIDSampleTestIds.selectToggle));

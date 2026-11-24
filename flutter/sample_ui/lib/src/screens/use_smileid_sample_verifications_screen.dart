@@ -131,30 +131,37 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                   ),
                 ),
                 if (onSelectModeChanged != null)
-                  Semantics(
-                    identifier: UseSmileIDSampleTestIds.selectToggle,
-                    button: true,
-                    child: InkWell(
-                      onTap: () => onSelectModeChanged!(!state.selectMode),
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: useSmileIDSampleTapTarget(context),
-                          minHeight: useSmileIDSampleTapTarget(context),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: SmileDimens.spacingXs,
+                  Visibility(
+                    visible:
+                        state.selectMode || (state.jobs?.isNotEmpty ?? false),
+                    maintainSize: true,
+                    maintainAnimation: true,
+                    maintainState: true,
+                    child: Semantics(
+                      identifier: UseSmileIDSampleTestIds.selectToggle,
+                      button: true,
+                      child: InkWell(
+                        onTap: () => onSelectModeChanged!(!state.selectMode),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minWidth: useSmileIDSampleTapTarget(context),
+                            minHeight: useSmileIDSampleTapTarget(context),
                           ),
-                          child: Center(
-                            widthFactor: 1,
-                            child: Text(
-                              state.selectMode
-                                  ? context.strings.commonCancel
-                                  : context.strings.verificationsSelect,
-                              softWrap: false,
-                              style: UseSmileIDSampleType.linkFont.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: colors.primary,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: SmileDimens.spacingXs,
+                            ),
+                            child: Center(
+                              widthFactor: 1,
+                              child: Text(
+                                state.selectMode
+                                    ? context.strings.commonCancel
+                                    : context.strings.verificationsSelect,
+                                softWrap: false,
+                                style: UseSmileIDSampleType.linkFont.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                  color: colors.primary,
+                                ),
                               ),
                             ),
                           ),
@@ -165,13 +172,13 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
               ],
             ),
           ),
-          Padding(
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,
             ),
-            child: Wrap(
+            child: Row(
               spacing: SmileDimens.spacingXs,
-              runSpacing: SmileDimens.spacingXs,
               children: <Widget>[
                 for (final UseSmileIDSampleJobFilter chip
                     in UseSmileIDSampleJobFilter.values)
