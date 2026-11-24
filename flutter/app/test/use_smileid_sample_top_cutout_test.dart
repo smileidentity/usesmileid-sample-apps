@@ -56,7 +56,7 @@ void main() {
       UseSmileIDSampleTopCutoutHost(
         child: Builder(
           builder: (BuildContext context) {
-            present = UseSmileIDSampleTopCutout.maybeOf(context)!;
+            present = UseSmileIDSampleTopCutout.of(context);
             return const SizedBox();
           },
         ),

@@ -1,35 +1,15 @@
-import 'dart:ui';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
 import '../tokens/smile_tokens.dart';
 
 /// The gap a header keeps below the status bar under a top camera cutout, which the bar ends flush with where an iPhone's safe area leaves room.
-double useSmileIDSampleHeaderTopGap(BuildContext context) {
-  final bool underCutout =
-      UseSmileIDSampleTopCutout.maybeOf(context) ??
-      _underTopCutoutWithoutHost(context);
-  return defaultTargetPlatform == TargetPlatform.android &&
-          underCutout &&
-          !UseSmileIDSampleLargeScreenFramed.of(context)
-      ? SmileDimens.spacingSm
-      : 0;
-}
-
-/// Whether [feature] is a camera cutout along the screen's top edge.
-bool useSmileIDSampleIsTopCutout(DisplayFeature feature) =>
-    feature.type == DisplayFeatureType.cutout &&
-    feature.bounds.top <= 0 &&
-    feature.bounds.bottom > 0;
-
-bool _underTopCutoutWithoutHost(BuildContext context) {
-  final bool topCutout = MediaQuery.displayFeaturesOf(
-    context,
-  ).any(useSmileIDSampleIsTopCutout);
-  // The view's own padding: a SafeArea above hides the inset from MediaQuery.
-  return topCutout && View.of(context).viewPadding.top > 0;
-}
+double useSmileIDSampleHeaderTopGap(BuildContext context) =>
+    defaultTargetPlatform == TargetPlatform.android &&
+        UseSmileIDSampleTopCutout.of(context) &&
+        !UseSmileIDSampleLargeScreenFramed.of(context)
+    ? SmileDimens.spacingSm
+    : 0;
 
 /// Whether a host's large-screen frame draws these screens, keeping the status bar outside it.
 class UseSmileIDSampleLargeScreenFramed extends InheritedWidget {
@@ -69,10 +49,12 @@ class UseSmileIDSampleTopCutout extends InheritedWidget {
   /// True under a top cutout with the status bar shown.
   final bool present;
 
-  /// What the nearest host read, or null without one.
-  static bool? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<UseSmileIDSampleTopCutout>()
-      ?.present;
+  /// What the nearest host read, or false without one.
+  static bool of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<UseSmileIDSampleTopCutout>()
+          ?.present ??
+      false;
 
   @override
   bool updateShouldNotify(UseSmileIDSampleTopCutout oldWidget) =>

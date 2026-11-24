@@ -119,7 +119,6 @@ void main() {
     expect(countText('all'), '11');
     expect(countText('clear'), '6');
 
-
     await tester.ensureVisible(
       byId(UseSmileIDSampleTestIds.filterChip('blocked')),
     );
