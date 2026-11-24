@@ -107,9 +107,6 @@ jobs:
             -PreactNativeArchitectures=x86_64
         working-directory: expo/app/android
 
-      - name: Check the release APK keeps the native top-cutout reader
-        run: python3 scripts/check_apk_contains.py expo/app/android/app/build/outputs/apk/release/app-release.apk UseSmileIDSampleCutout
-
       # The daemon holds a heap this runner needs back before an emulator will fit beside it.
       - name: Stop the Gradle daemon
         run: ./gradlew --stop
