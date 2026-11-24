@@ -28,7 +28,7 @@ class _UseSmileIDSampleTopCutoutHostState
     with WidgetsBindingObserver {
   bool _native = false;
   int _request = 0;
-  ({Size size, ViewPadding viewPadding, ViewPadding padding})? _metrics;
+  ({Size size, EdgeInsets viewPadding, EdgeInsets padding})? _metrics;
 
   @override
   void initState() {
@@ -54,12 +54,12 @@ class _UseSmileIDSampleTopCutoutHostState
   // A keyboard animates the metrics every frame and never moves the cutout, so only its changes are skipped.
   void _readIfMoved() {
     final FlutterView view = View.of(context);
-    final ({Size size, ViewPadding viewPadding, ViewPadding padding}) metrics =
-        (
-          size: view.physicalSize,
-          viewPadding: view.viewPadding,
-          padding: view.padding,
-        );
+    // By value: the engine's ViewPadding has no equality of its own.
+    final ({Size size, EdgeInsets viewPadding, EdgeInsets padding}) metrics = (
+      size: view.physicalSize,
+      viewPadding: EdgeInsets.fromViewPadding(view.viewPadding, 1),
+      padding: EdgeInsets.fromViewPadding(view.padding, 1),
+    );
     if (metrics == _metrics) return;
     _metrics = metrics;
     _read();

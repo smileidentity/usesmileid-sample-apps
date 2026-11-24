@@ -13,6 +13,9 @@ const DisplayFeature _engineTopCutout = DisplayFeature(
   state: DisplayFeatureState.unknown,
 );
 
+/// A punch-hole phone's status bar.
+const double _statusBar = 37;
+
 /// The shell reads a top camera cutout natively and hands the shared screens whether they sit under it.
 void main() {
   late Object? Function() nativeAnswer;
@@ -122,7 +125,10 @@ void main() {
       await pumpHost(tester);
       final int before = asked;
 
-      tester.view.viewInsets = const FakeViewPadding(bottom: 300);
+      tester.view
+        ..viewPadding = FakeViewPadding(top: _statusBar)
+        ..padding = FakeViewPadding(top: _statusBar)
+        ..viewInsets = const FakeViewPadding(bottom: 300);
       await tester.pumpAndSettle();
 
       expect(asked, before);
