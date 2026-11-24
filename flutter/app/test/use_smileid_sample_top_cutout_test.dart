@@ -116,6 +116,29 @@ void main() {
   );
 
   testWidgets(
+    'a window not ready to answer keeps the reading it had',
+    (WidgetTester tester) async {
+      nativeAnswer = () => null;
+      setView(tester);
+      await tester.pumpWidget(
+        UseSmileIDSampleTopCutoutHost(
+          initial: true,
+          child: Builder(
+            builder: (BuildContext context) {
+              present = UseSmileIDSampleTopCutout.of(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(present, isTrue);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
     'without a status bar it reports none',
     (WidgetTester tester) async {
       setView(tester, statusBar: 0);

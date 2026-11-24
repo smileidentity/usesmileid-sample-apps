@@ -10,14 +10,13 @@ const MethodChannel useSmileIDSampleCutoutChannel = MethodChannel(
   'usesmileid_sample/cutout',
 );
 
-/// Whether the Android activity reads a top camera cutout under a shown status bar, or null off Android or when it cannot answer.
+/// Whether the Android activity reads a top camera cutout under a shown status bar, or null off Android or before the window has its insets.
 Future<bool?> useSmileIDSampleReadTopCutout() async {
   if (defaultTargetPlatform != TargetPlatform.android) return null;
   try {
     return await useSmileIDSampleCutoutChannel.invokeMethod<bool>(
-          'hasTopCutout',
-        ) ??
-        false;
+      'hasTopCutout',
+    );
   } on Exception {
     // No activity behind the call, as in a widget test, or a failed read.
     return null;

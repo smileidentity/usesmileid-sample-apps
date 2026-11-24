@@ -15,9 +15,10 @@ class MainActivity : FlutterActivity() {
         }
     }
 
-    private fun hasTopCutout(): Boolean {
+    // Null before the first layout gives the window its insets, which is not the same as no cutout.
+    private fun hasTopCutout(): Boolean? {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) return false
-        val insets = window.decorView.rootWindowInsets ?: return false
+        val insets = window.decorView.rootWindowInsets ?: return null
         return (insets.displayCutout?.safeInsetTop ?: 0) > 0 && statusBarShown(insets)
     }
 
