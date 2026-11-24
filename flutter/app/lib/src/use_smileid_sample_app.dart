@@ -16,10 +16,17 @@ import 'use_smileid_sample_top_cutout.dart';
 /// The app: the shared theme, and the router that hands platform links to the njia shell.
 class UseSmileIDSampleApp extends ConsumerStatefulWidget {
   /// An app launched at [launchLink], or from the icon when it is null.
-  const UseSmileIDSampleApp({this.launchLink, super.key});
+  const UseSmileIDSampleApp({
+    this.launchLink,
+    this.topCutout = false,
+    super.key,
+  });
 
   /// The link the app launched at.
   final Uri? launchLink;
+
+  /// Whether the phone showed a top camera cutout under its status bar at launch.
+  final bool topCutout;
 
   @override
   ConsumerState<UseSmileIDSampleApp> createState() =>
@@ -121,6 +128,7 @@ class _UseSmileIDSampleAppState extends ConsumerState<UseSmileIDSampleApp>
                   : TextDirection.ltr,
               child: UseSmileIDSampleSystemBars(
                 child: UseSmileIDSampleTopCutoutHost(
+                  initial: widget.topCutout,
                   child: child ?? const SizedBox.shrink(),
                 ),
               ),

@@ -92,6 +92,27 @@ void main() {
   );
 
   testWidgets(
+    'the first frame already carries the reading taken before launch',
+    (WidgetTester tester) async {
+      setView(tester);
+      await tester.pumpWidget(
+        UseSmileIDSampleTopCutoutHost(
+          initial: true,
+          child: Builder(
+            builder: (BuildContext context) {
+              present = UseSmileIDSampleTopCutout.of(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+
+      expect(present, isTrue);
+    },
+    variant: TargetPlatformVariant.only(TargetPlatform.android),
+  );
+
+  testWidgets(
     'without a status bar it reports none',
     (WidgetTester tester) async {
       setView(tester, statusBar: 0);

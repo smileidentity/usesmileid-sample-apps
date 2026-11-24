@@ -10,13 +10,34 @@ const MethodChannel useSmileIDSampleCutoutChannel = MethodChannel(
   'usesmileid_sample/cutout',
 );
 
+/// Whether the Android activity reads a top camera cutout under a shown status bar, or null off Android or when it cannot answer.
+Future<bool?> useSmileIDSampleReadTopCutout() async {
+  if (defaultTargetPlatform != TargetPlatform.android) return null;
+  try {
+    return await useSmileIDSampleCutoutChannel.invokeMethod<bool>(
+          'hasTopCutout',
+        ) ??
+        false;
+  } on Exception {
+    // No activity behind the call, as in a widget test, or a failed read.
+    return null;
+  }
+}
+
 /// Tells the shared screens whether they sit under a top camera cutout with the status bar shown, read natively as the Android and Expo apps read it, since some phones' engines report none.
 class UseSmileIDSampleTopCutoutHost extends StatefulWidget {
-  /// Wraps [child], the app, above any SafeArea that would hide the status bar inset.
-  const UseSmileIDSampleTopCutoutHost({required this.child, super.key});
+  /// Wraps [child], the app, above any SafeArea that would hide the status bar inset, starting from [initial].
+  const UseSmileIDSampleTopCutoutHost({
+    required this.child,
+    this.initial = false,
+    super.key,
+  });
 
   /// The app.
   final Widget child;
+
+  /// The reading taken before launch, so the first frame needs no correction.
+  final bool initial;
 
   @override
   State<UseSmileIDSampleTopCutoutHost> createState() =>
@@ -33,6 +54,7 @@ class _UseSmileIDSampleTopCutoutHostState
   @override
   void initState() {
     super.initState();
+    _native = widget.initial;
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -66,20 +88,9 @@ class _UseSmileIDSampleTopCutoutHostState
   }
 
   Future<void> _read() async {
-    if (defaultTargetPlatform != TargetPlatform.android) return;
     final int request = ++_request;
-    final bool native;
-    try {
-      native =
-          await useSmileIDSampleCutoutChannel.invokeMethod<bool>(
-            'hasTopCutout',
-          ) ??
-          false;
-    } on Exception {
-      // No activity behind the host, as in a widget test, or a failed read: keep what was read before.
-      return;
-    }
-    if (mounted && request == _request && native != _native) {
+    final bool? native = await useSmileIDSampleReadTopCutout();
+    if (native != null && mounted && request == _request && native != _native) {
       setState(() => _native = native);
     }
   }
