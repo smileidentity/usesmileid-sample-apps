@@ -98,4 +98,29 @@ void main() {
     };
     expect(tops, hasLength(1));
   });
+
+  testWidgets(
+    'the chip row keeps its scroll when the header scrolls away and back',
+    (WidgetTester tester) async {
+      await show(tester, jobs: jobs);
+      tester.view.physicalSize = const Size(393, 480);
+      await tester.pumpAndSettle();
+      final Finder error = find.bySemanticsIdentifier(
+        UseSmileIDSampleTestIds.filterChip(
+          UseSmileIDSampleJobFilter.values.last.id,
+        ),
+      );
+      await tester.ensureVisible(error);
+      await tester.pumpAndSettle();
+      final double scrolledTo = tester.getRect(error).left;
+
+      final Finder list = find.byType(Scrollable).first;
+      await tester.drag(list, const Offset(0, -3000));
+      await tester.pumpAndSettle();
+      await tester.drag(list, const Offset(0, 3000));
+      await tester.pumpAndSettle();
+
+      expect(tester.getRect(error).left, scrolledTo);
+    },
+  );
 }

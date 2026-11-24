@@ -173,6 +173,7 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
             ),
           ),
           SingleChildScrollView(
+            key: const PageStorageKey<String>('verifications-filter-chips'),
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(
               horizontal: SmileDimens.spacingMd,

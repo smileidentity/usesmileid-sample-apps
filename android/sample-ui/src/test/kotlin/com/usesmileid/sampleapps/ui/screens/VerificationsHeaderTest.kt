@@ -8,6 +8,8 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.unit.Dp
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.data.UseSmileIDSampleJobStore
@@ -66,6 +68,20 @@ class VerificationsHeaderTest {
         show(jobs = emptyList())
 
         assertEquals(withRows, titleTop())
+    }
+
+    @Test
+    @Config(qualifiers = "w393dp-h480dp-xhdpi")
+    fun the_chip_row_keeps_its_scroll_when_the_header_scrolls_away_and_back() {
+        show(jobs = JOBS)
+        val error = UseSmileIDSampleTestIds.filterChip(UseSmileIDSampleJobFilter.entries.last().id)
+        compose.onNodeWithTag(error, useUnmergedTree = true).performScrollTo()
+        val scrolledTo = compose.onNodeWithTag(error, useUnmergedTree = true).getBoundsInRoot().left
+
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.VERIFICATIONS_SCREEN).performScrollToIndex(JOBS.size + 3)
+        compose.onNodeWithTag(UseSmileIDSampleTestIds.VERIFICATIONS_SCREEN).performScrollToIndex(0)
+
+        assertEquals(scrolledTo, compose.onNodeWithTag(error, useUnmergedTree = true).getBoundsInRoot().left)
     }
 
     @Test
