@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -141,7 +142,7 @@ void main() {
   });
 
   testWidgets(
-    'a switch ticks exactly once per toggle',
+    'a switch plays its platform\'s one tick per toggle',
     (WidgetTester tester) async {
       final List<Object?> ticks = _recordHaptics(tester);
       await tester.pumpWidget(
@@ -151,7 +152,12 @@ void main() {
       await tester.tap(find.byType(UseSmileIDSampleSwitch));
       await tester.pumpAndSettle();
 
-      expect(ticks, hasLength(1));
+      expect(ticks, <Object?>[
+        if (defaultTargetPlatform == TargetPlatform.iOS)
+          'HapticFeedbackType.lightImpact'
+        else
+          'HapticFeedbackType.selectionClick',
+      ]);
     },
     variant: const TargetPlatformVariant(<TargetPlatform>{
       TargetPlatform.android,

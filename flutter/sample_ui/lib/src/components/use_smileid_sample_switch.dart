@@ -31,11 +31,6 @@ class UseSmileIDSampleSwitch extends StatelessWidget {
   /// The `sample_*` id the screen supplies.
   final String? testId;
 
-  void _toggle(bool on) {
-    unawaited(useSmileIDSampleToggleTick());
-    onChanged!(on);
-  }
-
   @override
   Widget build(BuildContext context) {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
@@ -47,7 +42,14 @@ class UseSmileIDSampleSwitch extends StatelessWidget {
       identifier: testId,
       child: Switch.adaptive(
         value: value,
-        onChanged: enabled && onChanged != null ? _toggle : null,
+        onChanged: enabled && onChanged != null
+            ? (bool on) {
+                unawaited(
+                  useSmileIDSampleToggleTick(Theme.of(context).platform),
+                );
+                onChanged!(on);
+              }
+            : null,
         // UISwitch reserves no 48 target, where Compose's switch does, so only Android pads it.
         materialTapTargetSize: Theme.of(context).platform == TargetPlatform.iOS
             ? MaterialTapTargetSize.shrinkWrap

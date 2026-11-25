@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
 /// The scale a product card draws at: smaller while held, unless it is disabled or motion is reduced.
@@ -8,9 +7,9 @@ double useSmileIDSamplePressScale({
   required bool reduceMotion,
 }) => pressed && enabled && !reduceMotion ? _pressedScale : 1;
 
-/// The tick a toggle plays: iOS's light impact, which UISwitch plays, and Android's selection click.
-Future<void> useSmileIDSampleToggleTick() =>
-    defaultTargetPlatform == TargetPlatform.iOS
+/// The tick a toggle plays on [platform]: iOS's light impact, which UISwitch plays, and Android's selection click.
+Future<void> useSmileIDSampleToggleTick(TargetPlatform platform) =>
+    platform == TargetPlatform.iOS
     ? HapticFeedback.lightImpact()
     : HapticFeedback.selectionClick();
 
