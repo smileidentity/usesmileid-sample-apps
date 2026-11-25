@@ -65,7 +65,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
           .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
       )
     }
-    .buttonStyle(.plain)
+    .buttonStyle(UseSmileIDSamplePressScaleStyle())
     .disabled(!enabled)
     .useSmileIDSampleTestId(testId)
   }

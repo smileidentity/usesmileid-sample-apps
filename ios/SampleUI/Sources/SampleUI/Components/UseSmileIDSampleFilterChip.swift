@@ -30,7 +30,9 @@ public struct UseSmileIDSampleFilterChip: View {
   }
 
   public var body: some View {
-    Button(action: onTap) {
+    Button {
+      UseSmileIDSampleSelectionTick.pick(alreadySelected: selected, action: onTap)
+    } label: {
       HStack(spacing: SmileSpacing.spacingXxs) {
         UseSmileIDSampleText(label, style: chipStyle)
           .foregroundColor(selected ? colors.onPrimary : colors.filterChip.label)
