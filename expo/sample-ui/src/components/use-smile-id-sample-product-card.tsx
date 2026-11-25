@@ -3,7 +3,11 @@ import { Animated, PixelRatio, Pressable, StyleSheet, Text, View, type StyleProp
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
-import { smileIDSamplePressScale, useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
+import {
+  smileIDSamplePressOpacity,
+  smileIDSamplePressScale,
+  useSmileIDSampleReducedMotion,
+} from './use-smile-id-sample-press-feedback';
 import {
   smileCardFamilyWeight,
   smileCardStrokeWidth,
@@ -62,12 +66,15 @@ export const UseSmileIDSampleProductCard = ({
   const minHeight = theme.dimens.space[64] * 2 + theme.dimens.space[20];
   const reduceMotion = useSmileIDSampleReducedMotion();
   const [scale] = useState(() => new Animated.Value(1));
-  const pressTo = (pressed: boolean) =>
+  const [held, setHeld] = useState(false);
+  const pressTo = (pressed: boolean) => {
+    setHeld(pressed);
     Animated.timing(scale, {
       toValue: smileIDSamplePressScale(pressed, enabled, reduceMotion),
       duration: PRESS_MS,
       useNativeDriver: true,
     }).start();
+  };
 
   return (
     <AnimatedPressable
@@ -80,7 +87,7 @@ export const UseSmileIDSampleProductCard = ({
       onPressOut={() => pressTo(false)}
       style={[
         styles.card,
-        { transform: [{ scale }] },
+        { transform: [{ scale }], opacity: smileIDSamplePressOpacity(held, enabled, reduceMotion) },
         {
           minHeight,
           borderRadius: theme.shapes.card,

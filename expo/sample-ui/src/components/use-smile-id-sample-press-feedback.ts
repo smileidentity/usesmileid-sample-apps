@@ -59,4 +59,9 @@ const subscribe = (listener: () => void) => {
 export const useSmileIDSampleReducedMotion = (): boolean =>
   useSyncExternalStore(subscribe, () => reducedMotion !== false);
 
+/// The opacity a held card draws at when reduced motion stops the scale, so a press still shows.
+export const smileIDSamplePressOpacity = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>
+  pressed && enabled && reduceMotion ? REDUCED_MOTION_PRESSED_OPACITY : 1;
+
 const PRESSED_SCALE = 0.97;
+const REDUCED_MOTION_PRESSED_OPACITY = 0.7;

@@ -5,6 +5,7 @@ import { AccessibilityInfo, Animated } from 'react-native';
 import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
 import {
   UseSmileIDSampleHapticsContext,
+  smileIDSamplePressOpacity,
   smileIDSamplePressScale,
   useSmileIDSampleReducedMotion,
   type UseSmileIDSampleHaptics,
@@ -56,6 +57,12 @@ describe('a product card press', () => {
 
   it('leaves a card at full size under reduced motion', () => {
     expect(smileIDSamplePressScale(true, true, true)).toBe(1);
+  });
+
+  it('dims a held card under reduced motion instead of shrinking it', () => {
+    expect(smileIDSamplePressOpacity(true, true, true)).toBe(0.7);
+    expect(smileIDSamplePressOpacity(true, true, false)).toBe(1);
+    expect(smileIDSamplePressOpacity(false, true, true)).toBe(1);
   });
 
   it('animates the card down while held and back on release', async () => {
