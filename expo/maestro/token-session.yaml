@@ -5,9 +5,13 @@ appId: ${APP_ID}
 
 # Only clearing the app's data removes the stored session.
 - clearState
-- stopApp
-- openLink: "usesmileid-sample-expo://?noticeWindow=60&catalogue=fixture"
-- runFlow: subflows/warm-start.yaml
+# Retried: Android can kill the process this link starts while it still tears down the cleared one (./README.md "Traps").
+- retry:
+    maxRetries: 1
+    commands:
+      - stopApp
+      - openLink: "usesmileid-sample-expo://?noticeWindow=60&catalogue=fixture"
+      - runFlow: subflows/warm-start.yaml
 
 # No session: a product tap opens the scanner, and the scan resumes at the product's first step.
 - tapOn:
