@@ -153,9 +153,11 @@ if runs native; then
     fi
   done
   (cd app/android && ./gradlew assembleRelease)
-  echo "==> the release APK keeps the native top-cutout reader"
+  echo "==> the release APK keeps and registers the native top-cutout reader"
   python3 "$REPO_ROOT/scripts/test_check_apk_contains.py"
+  python3 "$REPO_ROOT/scripts/test_check_expo_module_registered.py"
   python3 "$REPO_ROOT/scripts/check_apk_contains.py" app/android/app/build/outputs/apk/release/app-release.apk UseSmileIDSampleCutout
+  python3 "$REPO_ROOT/scripts/check_expo_module_registered.py" app com.usesmileid.sample.cutout.UseSmileIDSampleCutoutModule
 fi
 
 echo "OK"
