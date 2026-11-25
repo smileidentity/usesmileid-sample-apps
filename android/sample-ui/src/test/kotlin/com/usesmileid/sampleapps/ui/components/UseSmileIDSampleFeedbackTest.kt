@@ -1,5 +1,8 @@
 package com.usesmileid.sampleapps.ui.components
 
+import android.content.Context
+import android.provider.Settings
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.hapticfeedback.HapticFeedback
@@ -14,10 +17,12 @@ import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
+import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
+import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
 @RunWith(RobolectricTestRunner::class)
@@ -86,6 +91,30 @@ class UseSmileIDSampleFeedbackTest {
 
         assertEquals(rest * 0.97f, held, 1f)
         assertEquals(rest, released, 0.5f)
+    }
+
+    @Test
+    fun `a grid of cards watches the animation setting through one observer`() = runComposeUiTest {
+        setContent {
+            UseSmileIDSampleTheme {
+                Column {
+                    repeat(3) { index ->
+                        UseSmileIDSampleProductCard(
+                            title = "Document",
+                            family = "Verification",
+                            onClick = {},
+                            hue = requireNotNull(smileProductHues[UseSmileIDSampleProduct.DocumentVerification.id]),
+                            testId = "$CARD$index",
+                        )
+                    }
+                }
+            }
+        }
+        waitForIdle()
+
+        val resolver = ApplicationProvider.getApplicationContext<Context>().contentResolver
+        val observers = shadowOf(resolver).getContentObservers(Settings.Global.getUriFor(Settings.Global.ANIMATOR_DURATION_SCALE))
+        assertEquals(1, observers.size)
     }
 
     @Test
