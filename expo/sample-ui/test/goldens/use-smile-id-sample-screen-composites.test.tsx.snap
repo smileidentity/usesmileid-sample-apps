@@ -4453,19 +4453,20 @@ exports[`ProductCard dark auth 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#2d3748",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#2d3748",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <RNSVGSvgView
@@ -4961,19 +4962,20 @@ exports[`ProductCard dark disabled 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#2d3748",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#2d3748",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <View
@@ -5238,19 +5240,20 @@ exports[`ProductCard dark enhancedDocument 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#2d3748",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#2d3748",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <RNSVGSvgView
@@ -5700,19 +5703,20 @@ exports[`ProductCard dark registration 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#2d3748",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#2d3748",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <RNSVGSvgView
@@ -6208,19 +6212,20 @@ exports[`ProductCard light auth 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#eaecf0",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#eaecf0",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <RNSVGSvgView
@@ -6716,19 +6721,20 @@ exports[`ProductCard light disabled 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#eaecf0",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#eaecf0",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <View
@@ -6993,19 +6999,20 @@ exports[`ProductCard light enhancedDocument 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#eaecf0",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#eaecf0",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <RNSVGSvgView
@@ -7455,19 +7462,20 @@ exports[`ProductCard light registration 1`] = `
   onResponderTerminationRequest={[Function]}
   onStartShouldSetResponder={[Function]}
   style={
-    [
-      {
-        "overflow": "hidden",
-        "width": "100%",
-      },
-      {
-        "borderColor": "#eaecf0",
-        "borderRadius": 16,
-        "borderWidth": 0.5,
-        "minHeight": 148,
-      },
-      undefined,
-    ]
+    {
+      "borderColor": "#eaecf0",
+      "borderRadius": 16,
+      "borderWidth": 0.5,
+      "minHeight": 148,
+      "opacity": 1,
+      "overflow": "hidden",
+      "transform": [
+        {
+          "scale": 1,
+        },
+      ],
+      "width": "100%",
+    }
   }
 >
   <RNSVGSvgView
@@ -7995,19 +8003,20 @@ exports[`ProductGrid dark evenCount 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-              "minHeight": 148,
-            },
-            undefined,
-          ]
+          {
+            "borderColor": "#2d3748",
+            "borderRadius": 16,
+            "borderWidth": 0.5,
+            "minHeight": 148,
+            "opacity": 1,
+            "overflow": "hidden",
+            "transform": [
+              {
+                "scale": 1,
+              },
+            ],
+            "width": "100%",
+          }
         }
       >
         <RNSVGSvgView
@@ -8508,19 +8517,20 @@ exports[`ProductGrid dark evenCount 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-              "minHeight": 148,
-            },
-            undefined,
-          ]
+          {
+            "borderColor": "#2d3748",
+            "borderRadius": 16,
+            "borderWidth": 0.5,
+            "minHeight": 148,
+            "opacity": 1,
+            "overflow": "hidden",
+            "transform": [
+              {
+                "scale": 1,
+              },
+            ],
+            "width": "100%",
+          }
         }
       >
         <RNSVGSvgView
@@ -9051,19 +9061,20 @@ exports[`ProductGrid dark oddCount 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "borderColor": "#2d3748",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-              "minHeight": 148,
-            },
-            undefined,
-          ]
+          {
+            "borderColor": "#2d3748",
+            "borderRadius": 16,
+            "borderWidth": 0.5,
+            "minHeight": 148,
+            "opacity": 1,
+            "overflow": "hidden",
+            "transform": [
+              {
+                "scale": 1,
+              },
+            ],
+            "width": "100%",
+          }
         }
       >
         <RNSVGSvgView
@@ -9601,19 +9612,20 @@ exports[`ProductGrid light evenCount 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-              "minHeight": 148,
-            },
-            undefined,
-          ]
+          {
+            "borderColor": "#eaecf0",
+            "borderRadius": 16,
+            "borderWidth": 0.5,
+            "minHeight": 148,
+            "opacity": 1,
+            "overflow": "hidden",
+            "transform": [
+              {
+                "scale": 1,
+              },
+            ],
+            "width": "100%",
+          }
         }
       >
         <RNSVGSvgView
@@ -10114,19 +10126,20 @@ exports[`ProductGrid light evenCount 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-              "minHeight": 148,
-            },
-            undefined,
-          ]
+          {
+            "borderColor": "#eaecf0",
+            "borderRadius": 16,
+            "borderWidth": 0.5,
+            "minHeight": 148,
+            "opacity": 1,
+            "overflow": "hidden",
+            "transform": [
+              {
+                "scale": 1,
+              },
+            ],
+            "width": "100%",
+          }
         }
       >
         <RNSVGSvgView
@@ -10657,19 +10670,20 @@ exports[`ProductGrid light oddCount 1`] = `
         onResponderTerminationRequest={[Function]}
         onStartShouldSetResponder={[Function]}
         style={
-          [
-            {
-              "overflow": "hidden",
-              "width": "100%",
-            },
-            {
-              "borderColor": "#eaecf0",
-              "borderRadius": 16,
-              "borderWidth": 0.5,
-              "minHeight": 148,
-            },
-            undefined,
-          ]
+          {
+            "borderColor": "#eaecf0",
+            "borderRadius": 16,
+            "borderWidth": 0.5,
+            "minHeight": 148,
+            "opacity": 1,
+            "overflow": "hidden",
+            "transform": [
+              {
+                "scale": 1,
+              },
+            ],
+            "width": "100%",
+          }
         }
       >
         <RNSVGSvgView

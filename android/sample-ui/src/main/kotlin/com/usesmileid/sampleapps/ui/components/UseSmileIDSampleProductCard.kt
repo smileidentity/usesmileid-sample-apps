@@ -1,7 +1,11 @@
 package com.usesmileid.sampleapps.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +21,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +29,7 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalDensity
@@ -37,6 +43,7 @@ import androidx.compose.ui.unit.sp
 import com.smileid.designsystem.SMILE_CARD_FAMILY_WEIGHT
 import com.smileid.designsystem.SmileColorLight
 import com.smileid.designsystem.SmileDimens
+import com.smileid.designsystem.SmileMotion
 import com.smileid.designsystem.SmileProductHue
 import com.smileid.designsystem.SMILE_SECTION_HEADER_WEIGHT
 import com.smileid.designsystem.smileCardStrokeWidth
@@ -74,10 +81,22 @@ fun UseSmileIDSampleProductCard(
     // ink for the end of the gradient it covers: the ghost the first stop, the go pill the last.
     val ghostInk = remember(hue) { hue.from.inkOn() }
     val goScrim = if (enabled) remember(hue) { hue.gradientEnd().inkOn() } else colors.textMuted
+    val interaction = remember { MutableInteractionSource() }
+    val pressed by interaction.collectIsPressedAsState()
+    val scale by animateFloatAsState(
+        targetValue = useSmileIDSamplePressScale(pressed, enabled, useSmileIDSampleReducedMotion()),
+        animationSpec = tween(SmileMotion.durationFast.inWholeMilliseconds.toInt()),
+        label = "productCardPress",
+    )
     Surface(
         onClick = onClick,
         enabled = enabled,
+        interactionSource = interaction,
         modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
             .fillMaxWidth()
             .defaultMinSize(minHeight = CARD_MIN_HEIGHT)
             .tagged(testId),

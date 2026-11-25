@@ -1719,19 +1719,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -2233,19 +2234,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -2805,19 +2807,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -3273,19 +3276,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -3756,19 +3760,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -4208,19 +4213,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -4737,19 +4743,20 @@ exports[`products dark default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -5596,19 +5603,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -6110,19 +6118,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -6682,19 +6691,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -7150,19 +7160,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -7633,19 +7644,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -8085,19 +8097,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -8614,19 +8627,20 @@ exports[`products dark tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -9515,19 +9529,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -10029,19 +10044,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -10601,19 +10617,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -11069,19 +11086,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -11552,19 +11570,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -12004,19 +12023,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -12533,19 +12553,20 @@ exports[`products dark tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -13434,19 +13455,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -13948,19 +13970,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -14520,19 +14543,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -14988,19 +15012,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -15471,19 +15496,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -15923,19 +15949,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -16452,19 +16479,20 @@ exports[`products dark tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#2d3748",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#2d3748",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -17166,19 +17194,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -17680,19 +17709,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -18252,19 +18282,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -18720,19 +18751,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -19203,19 +19235,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -19655,19 +19688,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -20184,19 +20218,20 @@ exports[`products light default 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -21043,19 +21078,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -21557,19 +21593,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -22129,19 +22166,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -22597,19 +22635,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -23080,19 +23119,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -23532,19 +23572,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -24061,19 +24102,20 @@ exports[`products light tokenExpired 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -24962,19 +25004,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -25476,19 +25519,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -26048,19 +26092,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -26516,19 +26561,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -26999,19 +27045,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -27451,19 +27498,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -27980,19 +28028,20 @@ exports[`products light tokenLinked 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >
@@ -28881,19 +28930,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieEnrollment"
             >
@@ -29395,19 +29445,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_smartSelfieAuth"
             >
@@ -29967,19 +30018,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_documentVerification"
             >
@@ -30435,19 +30487,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedDocumentVerification"
             >
@@ -30918,19 +30971,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_residencyDocumentVerification"
             >
@@ -31370,19 +31424,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_biometricKyc"
             >
@@ -31899,19 +31954,20 @@ exports[`products light tokenLinkedLate 1`] = `
               onResponderTerminationRequest={[Function]}
               onStartShouldSetResponder={[Function]}
               style={
-                [
-                  {
-                    "overflow": "hidden",
-                    "width": "100%",
-                  },
-                  {
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 16,
-                    "borderWidth": 0.5,
-                    "minHeight": 148,
-                  },
-                  undefined,
-                ]
+                {
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 16,
+                  "borderWidth": 0.5,
+                  "minHeight": 148,
+                  "opacity": 1,
+                  "overflow": "hidden",
+                  "transform": [
+                    {
+                      "scale": 1,
+                    },
+                  ],
+                  "width": "100%",
+                }
               }
               testID="sample_product_card_enhancedKyc"
             >

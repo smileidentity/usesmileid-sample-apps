@@ -13,9 +13,13 @@ appId: ${APP_ID}
 # Launch arguments arrive as a LINK on this platform — see ./README.md "Traps".
 
 - clearState
-- stopApp
-- openLink: "usesmileid-sample-expo://?probes=true&catalogue=fixture"
-- runFlow: subflows/warm-start.yaml
+# Retried: Android can kill the process this link starts while it still tears down the cleared one (./README.md "Traps").
+- retry:
+    maxRetries: 1
+    commands:
+      - stopApp
+      - openLink: "usesmileid-sample-expo://?probes=true&catalogue=fixture"
+      - runFlow: subflows/warm-start.yaml
 - runFlow: subflows/link-session.yaml
 
 # --- consent off: the run is refused, and the reason is on screen ---------------------------------

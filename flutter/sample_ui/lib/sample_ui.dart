@@ -18,6 +18,7 @@ export 'src/components/use_smileid_sample_job_row.dart';
 export 'src/components/use_smileid_sample_key_value_edit_row.dart';
 export 'src/components/use_smileid_sample_nav_bar.dart';
 export 'src/components/use_smileid_sample_option_row.dart';
+export 'src/components/use_smileid_sample_press_feedback.dart';
 export 'src/components/use_smileid_sample_product_card.dart';
 export 'src/components/use_smileid_sample_product_grid.dart';
 export 'src/components/use_smileid_sample_profile_row.dart';

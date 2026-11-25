@@ -1,5 +1,7 @@
 package com.usesmileid.sampleapps.ui.components
 
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.annotation.StringRes
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleStrings
@@ -71,6 +73,7 @@ fun UseSmileIDSampleNavBar(
     modifier: Modifier = Modifier,
     sessionProgress: Float? = null,
 ) {
+    val haptics = LocalHapticFeedback.current
     Row(
         // Edge to edge, so without its own inset the bar sits under the system navigation bar.
         modifier = modifier
@@ -94,7 +97,10 @@ fun UseSmileIDSampleNavBar(
                     NavBarTab(
                         item = item,
                         selected = item == selected,
-                        onClick = { onSelect(item) },
+                        onClick = {
+                            if (item != selected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                            onSelect(item)
+                        },
                         modifier = Modifier.weight(1f),
                     )
                 }
