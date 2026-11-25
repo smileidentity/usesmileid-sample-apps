@@ -7,7 +7,6 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -40,6 +39,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 
 /** Skeleton rows show only after [DELAY_MILLIS], so a fast answer never flashes, then for at least [MIN_SHOWN_MILLIS]. */
 class UseSmileIDSampleSkeletonGate(private val scope: CoroutineScope, private val now: () -> Long) {
@@ -88,11 +89,11 @@ fun UseSmileIDSampleSkeletonRows(
     testId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val fill = if (reducedMotion()) {
-        colors.skeleton
+    val fill: () -> Color = if (reducedMotion()) {
+        { colors.skeleton }
     } else {
         val pulse = rememberInfiniteTransition(label = "skeleton")
-        val color by pulse.animateColor(
+        val color = pulse.animateColor(
             initialValue = colors.skeleton,
             targetValue = colors.skeletonHighlight,
             animationSpec = infiniteRepeatable(
@@ -101,7 +102,8 @@ fun UseSmileIDSampleSkeletonRows(
             ),
             label = "skeletonFill",
         )
-        color
+        val pulseFill: () -> Color = { color.value }
+        pulseFill
     }
     Column(
         modifier = modifier
@@ -115,7 +117,7 @@ fun UseSmileIDSampleSkeletonRows(
 }
 
 @Composable
-private fun SkeletonRow(width: Float, fill: Color, leadingCircle: Boolean) {
+private fun SkeletonRow(width: Float, fill: () -> Color, leadingCircle: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,12 +126,13 @@ private fun SkeletonRow(width: Float, fill: Color, leadingCircle: Boolean) {
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (leadingCircle) Box(Modifier.size(FLAG_CIRCLE).background(fill, CircleShape))
+        if (leadingCircle) Box(Modifier.size(FLAG_CIRCLE).clip(CircleShape).drawBehind { drawRect(fill()) })
         Box(
             Modifier
                 .fillMaxWidth(width)
                 .height(LABEL_BAR)
-                .background(fill, RoundedCornerShape(SmileDimens.radiusField)),
+                .clip(RoundedCornerShape(SmileDimens.radiusField))
+                .drawBehind { drawRect(fill()) },
         )
     }
 }
