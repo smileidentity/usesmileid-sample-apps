@@ -37,7 +37,7 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
   }
 
   public var body: some View {
-    Button(action: action) {
+    styled(Button(action: action) {
       VStack(alignment: .leading, spacing: SmileSpacing.spacingLg) {
         UseSmileIDSampleIcon(icon, tint: hue.cardIcon, size: SmileSpacing.sizeIconMd)
           .frame(width: tileSize, height: tileSize)
@@ -64,10 +64,19 @@ public struct UseSmileIDSampleProductCard<Ghost: View>: View {
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.card, style: .continuous)
           .strokeBorder(colors.cardStroke, lineWidth: smileCardStrokeWidth)
       )
-    }
-    .buttonStyle(UseSmileIDSamplePressScaleStyle())
+    })
     .disabled(!enabled)
     .useSmileIDSampleTestId(testId)
+  }
+
+  /// A disabled card keeps the plain style's fade; only a card that can be pressed shrinks.
+  @ViewBuilder
+  private func styled(_ button: some View) -> some View {
+    if enabled {
+      button.buttonStyle(UseSmileIDSamplePressScaleStyle())
+    } else {
+      button.buttonStyle(.plain)
+    }
   }
 
   /// One text node with two runs, not two stacked `Text`s, which drift apart at large sizes.
