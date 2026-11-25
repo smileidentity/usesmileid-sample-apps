@@ -1,7 +1,6 @@
 package com.usesmileid.sampleapps.ui.components
 
 import android.os.SystemClock
-import android.provider.Settings
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
@@ -27,7 +26,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -87,7 +85,7 @@ fun UseSmileIDSampleSkeletonRows(
     testId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val fill: () -> Color = if (reducedMotion()) {
+    val fill: () -> Color = if (useSmileIDSampleReducedMotion()) {
         { colors.skeleton }
     } else {
         val pulse = rememberInfiniteTransition(label = "skeleton")
@@ -130,15 +128,6 @@ private fun SkeletonRow(width: Float, fill: () -> Color, leadingCircle: Boolean)
                 .height(LABEL_BAR)
                 .drawBehind { drawRoundRect(fill(), cornerRadius = CornerRadius(SmileDimens.radiusField.toPx())) },
         )
-    }
-}
-
-/** The system's "remove animations" switch, which is Android's reduced-motion signal. */
-@Composable
-private fun reducedMotion(): Boolean {
-    val resolver = LocalContext.current.contentResolver
-    return remember(resolver) {
-        Settings.Global.getFloat(resolver, Settings.Global.ANIMATOR_DURATION_SCALE, 1f) == 0f
     }
 }
 

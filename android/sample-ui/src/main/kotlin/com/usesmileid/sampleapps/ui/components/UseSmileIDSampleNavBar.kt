@@ -25,6 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -71,6 +73,7 @@ fun UseSmileIDSampleNavBar(
     modifier: Modifier = Modifier,
     sessionProgress: Float? = null,
 ) {
+    val haptics = LocalHapticFeedback.current
     Row(
         // Edge to edge, so without its own inset the bar sits under the system navigation bar.
         modifier = modifier
@@ -94,7 +97,10 @@ fun UseSmileIDSampleNavBar(
                     NavBarTab(
                         item = item,
                         selected = item == selected,
-                        onClick = { onSelect(item) },
+                        onClick = {
+                            if (item != selected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                            onSelect(item)
+                        },
                         modifier = Modifier.weight(1f),
                     )
                 }
