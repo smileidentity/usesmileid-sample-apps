@@ -18,12 +18,14 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePressScale(pressed: true, enabled: true, reduceMotion: true), 1)
   }
 
+  @MainActor
   func testPickingSomethingNewTicksThenActs() {
     var events: [String] = []
     UseSmileIDSampleSelectionTick.pick(alreadySelected: false, tick: { events.append("tick") }) { events.append("act") }
     XCTAssertEqual(events, ["tick", "act"])
   }
 
+  @MainActor
   func testPickingWhatIsAlreadySelectedOnlyActs() {
     var events: [String] = []
     UseSmileIDSampleSelectionTick.pick(alreadySelected: true, tick: { events.append("tick") }) { events.append("act") }
