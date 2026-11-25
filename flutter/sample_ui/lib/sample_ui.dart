@@ -12,6 +12,7 @@ export 'src/components/use_smileid_sample_empty_state.dart';
 export 'src/components/use_smileid_sample_filter_chip.dart';
 export 'src/components/use_smileid_sample_floating_token_button.dart';
 export 'src/components/use_smileid_sample_glyphs.dart';
+export 'src/components/use_smileid_sample_header_inset.dart';
 export 'src/components/use_smileid_sample_icon.dart';
 export 'src/components/use_smileid_sample_job_row.dart';
 export 'src/components/use_smileid_sample_key_value_edit_row.dart';

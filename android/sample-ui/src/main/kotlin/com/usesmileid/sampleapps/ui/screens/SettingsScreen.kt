@@ -36,6 +36,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionSurface
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSettingRowChevron
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSwitch
+import com.usesmileid.sampleapps.ui.components.useSmileIDSampleHeaderContentPadding
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSetting
 import com.usesmileid.sampleapps.ui.state.UseSmileIDSampleSettings
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
@@ -103,7 +104,7 @@ fun SettingsScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.SETTINGS_SCREEN)
             .windowInsetsPadding(WindowInsets.statusBars),
-        contentPadding = contentPadding,
+        contentPadding = useSmileIDSampleHeaderContentPadding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingXs),
     ) {
         item {

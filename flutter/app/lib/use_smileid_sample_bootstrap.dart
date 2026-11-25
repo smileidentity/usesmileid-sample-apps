@@ -15,6 +15,7 @@ import 'src/state/use_smileid_sample_session_providers.dart';
 import 'src/use_smileid_sample_app.dart';
 import 'src/use_smileid_sample_launch.dart';
 import 'src/use_smileid_sample_shell_extension.dart';
+import 'src/use_smileid_sample_top_cutout.dart';
 
 export 'src/use_smileid_sample_shell_extension.dart'
     show UseSmileIDSampleShellExtension;
@@ -87,10 +88,11 @@ Future<void> useSmileIDSampleBootstrap({
       },
     ).listen();
   }
+  final bool topCutout = await useSmileIDSampleReadTopCutout() ?? false;
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: UseSmileIDSampleApp(launchLink: launch.link),
+      child: UseSmileIDSampleApp(launchLink: launch.link, topCutout: topCutout),
     ),
   );
 }

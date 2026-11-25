@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_confirm_dialog.dart';
+import '../components/use_smileid_sample_header_inset.dart';
 import '../components/use_smileid_sample_icon.dart';
 import '../components/use_smileid_sample_profile_row.dart';
 import '../components/use_smileid_sample_section_label.dart';
@@ -206,7 +207,10 @@ class UseSmileIDSampleSettingsScreen extends StatelessWidget {
     return Semantics(
       identifier: UseSmileIDSampleTestIds.settingsScreen,
       child: ListView(
-        padding: EdgeInsets.only(bottom: bottomInset),
+        padding: EdgeInsets.only(
+          top: useSmileIDSampleHeaderTopGap(context),
+          bottom: bottomInset,
+        ),
         children: useSmileIDSampleSpaced(<Widget>[
           Padding(
             padding: const EdgeInsets.symmetric(

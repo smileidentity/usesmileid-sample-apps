@@ -6,6 +6,7 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_tokens.dart';
 import '../use_smileid_sample_strings_scope.dart';
 import 'use_smileid_sample_glyphs.dart';
+import 'use_smileid_sample_header_inset.dart';
 
 /// Which of the three treatments an app-bar control takes.
 enum UseSmileIDSampleTopAppBarEmphasis {
@@ -59,7 +60,9 @@ class UseSmileIDSampleTopAppBar extends StatelessWidget {
       identifier: testId,
       child: Padding(
         padding: EdgeInsets.only(
-          top: MediaQuery.viewPaddingOf(context).top,
+          top:
+              MediaQuery.viewPaddingOf(context).top +
+              useSmileIDSampleHeaderTopGap(context),
           left: SmileDimens.spacingMd,
           right: SmileDimens.spacingMd,
           bottom: SmileDimens.spacingXs,

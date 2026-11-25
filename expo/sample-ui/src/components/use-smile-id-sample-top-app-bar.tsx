@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { PixelRatio, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { useSmileIDSampleHeaderTopInset } from './use-smile-id-sample-header-inset';
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import type { UseSmileIDSampleTopAppBarEmphasis } from '../model/use-smile-id-sample-app-bar-emphasis';
 import { atSize } from '../theme/smile-type';
@@ -77,7 +77,7 @@ export const UseSmileIDSampleTopAppBar = ({
 }: Props) => {
   const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
-  const insets = useSafeAreaInsets();
+  const headerTopInset = useSmileIDSampleHeaderTopInset();
   const rowHeight = HEADER_ROW_HEIGHT * Math.max(1, PixelRatio.getFontScale());
 
   return (
@@ -86,7 +86,7 @@ export const UseSmileIDSampleTopAppBar = ({
       style={[
         styles.bar,
         {
-          paddingTop: insets.top,
+          paddingTop: headerTopInset,
           paddingHorizontal: theme.dimens.spacing.md,
           paddingBottom: theme.dimens.spacing.xs,
           columnGap: theme.dimens.spacing.xs,

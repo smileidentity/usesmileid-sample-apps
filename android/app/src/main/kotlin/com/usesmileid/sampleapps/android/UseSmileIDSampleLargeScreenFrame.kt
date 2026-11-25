@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.min
+import com.usesmileid.sampleapps.ui.components.LocalUseSmileIDSampleLargeScreenFramed
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The largest Android phone's frame the app's own screens draw in on a large screen, from `spec/large-screen-frame.json`. */
@@ -49,7 +51,9 @@ internal fun UseSmileIDSampleLargeScreenFrame(framed: Boolean, modifier: Modifie
             // Measured inside the inset padding, which skips insets a host already took.
             BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 val frame = if (large) largeScreenFrameSize(window, DpSize(maxWidth, maxHeight)) else null
-                Box(if (frame == null) Modifier.fillMaxSize() else Modifier.size(frame).clipToBounds()) { content() }
+                Box(if (frame == null) Modifier.fillMaxSize() else Modifier.size(frame).clipToBounds()) {
+                    CompositionLocalProvider(LocalUseSmileIDSampleLargeScreenFramed provides (frame != null), content = content)
+                }
             }
         }
     }

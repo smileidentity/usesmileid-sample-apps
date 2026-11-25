@@ -1,7 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleAvatar } from '../components/use-smile-id-sample-avatar';
+import { useSmileIDSampleHeaderTopInset } from '../components/use-smile-id-sample-header-inset';
 import { UseSmileIDSampleIcon } from '../components/use-smile-id-sample-icon';
 import { UseSmileIDSampleProductCard } from '../components/use-smile-id-sample-product-card';
 import { UseSmileIDSampleProductGrid } from '../components/use-smile-id-sample-product-grid';
@@ -73,7 +73,7 @@ export const ProductsScreen = ({
 }: Props) => {
   const strings = useSmileIDSampleStrings();
   const theme = useSmileIDSampleTheme();
-  const insets = useSafeAreaInsets();
+  const headerTopInset = useSmileIDSampleHeaderTopInset();
   const sections = Object.keys(UseSmileIDSampleProductSection) as UseSmileIDSampleProductSectionKey[];
 
   return (
@@ -81,7 +81,7 @@ export const ProductsScreen = ({
       testID={UseSmileIDSampleTestIds.PRODUCTS_SCREEN}
       style={[styles.screen, { backgroundColor: theme.colors.background }, style]}
       contentContainerStyle={{
-        paddingTop: insets.top,
+        paddingTop: headerTopInset,
         paddingBottom: bottomInset,
         rowGap: theme.dimens.spacing.sm,
       }}

@@ -15,6 +15,7 @@ final class UseSmileIDSampleVerificationsUITests: XCTestCase {
     XCTAssertTrue(element("sample_nav_settings").waitForExistence(timeout: 10))
     element("sample_nav_verifications").tap()
     XCTAssertTrue(element("sample_verifications_screen").waitForExistence(timeout: 10))
+    XCTAssertTrue(element("sample_select_toggle").waitForExistence(timeout: 10))
   }
 
   func testTheListCarriesTheSeededRowsAndTheDesignsCounts() {

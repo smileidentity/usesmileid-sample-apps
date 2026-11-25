@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleDateGroupHeader } from '../components/use-smile-id-sample-date-group-header';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
 import { UseSmileIDSampleFilterChip } from '../components/use-smile-id-sample-filter-chip';
+import { useSmileIDSampleHeaderTopInset } from '../components/use-smile-id-sample-header-inset';
 import { UseSmileIDSampleJobRow } from '../components/use-smile-id-sample-job-row';
 import { UseSmileIDSampleSelectionBar } from '../components/use-smile-id-sample-selection-bar';
 import { UseSmileIDSampleSelectionCheckbox } from '../components/use-smile-id-sample-selection-checkbox';
@@ -55,7 +55,7 @@ export const VerificationsScreen = ({
   const strings = useSmileIDSampleStrings();
   const language = useSmileIDSampleLanguageShown();
   const theme = useSmileIDSampleTheme();
-  const insets = useSafeAreaInsets();
+  const headerTopInset = useSmileIDSampleHeaderTopInset();
   const [filterId, setFilterId] = useState(smileIDSampleJobFilters[0]!.id);
   const [selecting, setSelecting] = useState(false);
   const [selected, setSelected] = useState<readonly string[]>([]);
@@ -76,6 +76,8 @@ export const VerificationsScreen = ({
   useEffect(() => () => reportSelecting.current?.(false), []);
 
   const jobs = state.jobs;
+  const offersSelect = selecting || (jobs ?? []).length > 0;
+  const selectToggleStyle = [styles.selectToggle, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }];
   const filter =
     smileIDSampleJobFilters.find((entry) => entry.id === filterId) ?? smileIDSampleJobFilters[0]!;
 
@@ -120,7 +122,7 @@ export const VerificationsScreen = ({
       <ScrollView
         testID={UseSmileIDSampleTestIds.VERIFICATIONS_SCREEN}
         contentContainerStyle={{
-          paddingTop: insets.top,
+          paddingTop: headerTopInset,
           // In select mode the selection bar replaces the nav bar, so the inset does not change.
           paddingBottom: bottomInset,
           rowGap: theme.dimens.spacing.xs,
@@ -135,21 +137,19 @@ export const VerificationsScreen = ({
           <Text style={[theme.type.textStyleHeadingPage, styles.title, { color: theme.colors.textTitle }]}>
             {strings.verificationsTitle}
           </Text>
-          {(jobs ?? []).length > 0 ? (
-            <Pressable
-              testID={UseSmileIDSampleTestIds.SELECT_TOGGLE}
-              accessibilityRole="button"
-              onPress={() => {
-                setSelecting((current) => !current);
-                setSelected([]);
-              }}
-              style={[styles.selectToggle, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }]}
-            >
-              <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
-                {selecting ? strings.commonCancel : strings.verificationsSelect}
-              </Text>
-            </Pressable>
-          ) : null}
+          <Pressable
+            accessibilityRole="button"
+            {...(offersSelect ? { testID: UseSmileIDSampleTestIds.SELECT_TOGGLE } : hiddenInPlace)}
+            onPress={() => {
+              setSelecting((current) => !current);
+              setSelected([]);
+            }}
+            style={offersSelect ? selectToggleStyle : [...selectToggleStyle, styles.hidden]}
+          >
+            <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
+              {selecting ? strings.commonCancel : strings.verificationsSelect}
+            </Text>
+          </Pressable>
         </View>
 
         <ScrollView
@@ -289,7 +289,17 @@ const countsFor = (jobs: readonly UseSmileIDSampleJob[]): Readonly<Record<string
 /// Exported for the screen's own tests, which assert the counts the delete flow keys off.
 export const smileIDSampleFilterCounts = countsFor;
 
+/// What keeps a control's space but takes it out of sight, touch and the accessibility tree.
+const hiddenInPlace = {
+  disabled: true,
+  focusable: false,
+  accessible: false,
+  accessibilityElementsHidden: true,
+  importantForAccessibility: 'no-hide-descendants',
+} as const;
+
 const styles = StyleSheet.create({
+  hidden: { opacity: 0 },
   screen: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   selectToggle: { alignItems: 'center', justifyContent: 'center' },

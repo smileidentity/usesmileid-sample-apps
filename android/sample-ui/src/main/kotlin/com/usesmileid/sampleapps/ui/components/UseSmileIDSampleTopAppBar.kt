@@ -45,6 +45,7 @@ fun UseSmileIDSampleTopAppBar(
         modifier = modifier
             .fillMaxWidth()
             .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(top = useSmileIDSampleHeaderTopGap())
             .padding(horizontal = SmileDimens.spacingMd)
             .defaultMinSize(minHeight = HEADER_ROW_HEIGHT * LocalDensity.current.fontScale.coerceAtLeast(1f))
             .padding(bottom = SmileDimens.spacingXs)

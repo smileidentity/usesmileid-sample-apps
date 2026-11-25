@@ -17,6 +17,8 @@ import {
   smileIDSampleFilterCounts,
 } from '../src/screens/verifications-screen';
 import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
+import { layoutTree, type LaidOutNode } from './layout/layout-tree';
+import { loadLayoutEngine, renderForLayout } from './layout/render-for-layout';
 import { renderInTheme, schemes } from './render-in-theme';
 import { expectGoldens } from './paint/pixel-golden';
 
@@ -269,9 +271,34 @@ describe('select mode', () => {
     expect(rendered.getByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE)).toHaveTextContent('Cancel');
   });
 
-  it('offers no select action with nothing to select', async () => {
-    const rendered = await renderInTheme(list({ state: { jobs: [], nowMillis: NOW } }), false);
+  it.each([
+    ['nothing to select', []],
+    ['a list still loading', null],
+  ] as const)('offers no select action with %s, and the space it keeps cannot be pressed', async (_case, jobs) => {
+    const selecting: boolean[] = [];
+    const rendered = await renderInTheme(
+      list({ state: { jobs, nowMillis: NOW }, onSelectingChange: (value) => selecting.push(value) }),
+      false,
+    );
     expect(rendered.queryByTestId(UseSmileIDSampleTestIds.SELECT_TOGGLE)).toBeNull();
+    const hidden = rendered.getByText('Select', { includeHiddenElements: true });
+    expect(hidden).toBeDisabled();
+    await fireEvent.press(hidden);
+    expect(rendered.queryByText('Cancel', { includeHiddenElements: true })).toBeNull();
+    expect(selecting).not.toContain(true);
+  });
+
+  it('keeps the title where it was when select is hidden', async () => {
+    await loadLayoutEngine();
+    const titleTop = async (jobs: typeof fixtures) => {
+      const laidOut = layoutTree(await renderForLayout(list({ state: { jobs, nowMillis: NOW } })), { width: 393 });
+      const find = (node: LaidOutNode, top: number): number | undefined =>
+        node.text === 'Verifications'
+          ? top + node.top
+          : node.children.map((child) => find(child, top + node.top)).find((found) => found !== undefined);
+      return find(laidOut, 0);
+    };
+    expect(await titleTop([])).toBe(await titleTop(fixtures));
   });
 });
 

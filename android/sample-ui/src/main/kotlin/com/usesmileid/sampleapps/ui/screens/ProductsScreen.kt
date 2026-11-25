@@ -43,6 +43,7 @@ import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleResultLine
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSectionHeader
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionCard
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSessionEndedBanner
+import com.usesmileid.sampleapps.ui.components.useSmileIDSampleHeaderContentPadding
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProductSection
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleResult
@@ -75,7 +76,7 @@ fun ProductsScreen(
             .fillMaxSize()
             .testTag(UseSmileIDSampleTestIds.PRODUCTS_SCREEN)
             .windowInsetsPadding(WindowInsets.statusBars),
-        contentPadding = contentPadding,
+        contentPadding = useSmileIDSampleHeaderContentPadding(contentPadding),
         verticalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
     ) {
         item {

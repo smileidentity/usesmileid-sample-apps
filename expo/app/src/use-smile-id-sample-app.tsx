@@ -35,6 +35,7 @@ import { smileIDSampleSecureProfilesStorage } from './use-smile-id-sample-secure
 import { smileIDSampleSecureSessionStorage } from './use-smile-id-sample-secure-session-storage';
 import { UseSmileIDSampleSelectModeProvider } from './use-smile-id-sample-select-mode';
 import { linkLaunchSession } from './use-smile-id-sample-shell-extension';
+import { UseSmileIDSampleTopCutoutProvider } from './use-smile-id-sample-top-cutout';
 
 /// Re-sends both bar styles, past the navigation-bar module's cache.
 const reassertSystemBars = (dark: boolean) => {
@@ -148,9 +149,11 @@ export const UseSmileIDSampleApp = () => {
             <StatusBar style={dark ? 'light' : 'dark'} />
             {/* Names the button colour, as StatusBar does, despite the type's doc saying the bar's. */}
             <NavigationBar style={dark ? 'light' : 'dark'} />
-            <UseSmileIDSampleSelectModeProvider>
-              <UseSmileIDSampleShell args={args} />
-            </UseSmileIDSampleSelectModeProvider>
+            <UseSmileIDSampleTopCutoutProvider>
+              <UseSmileIDSampleSelectModeProvider>
+                <UseSmileIDSampleShell args={args} />
+              </UseSmileIDSampleSelectModeProvider>
+            </UseSmileIDSampleTopCutoutProvider>
           </UseSmileIDSampleNoticeWindowProvider>
         </UseSmileIDSampleThemeProvider>
       </UseSmileIDSampleStringsProvider>
