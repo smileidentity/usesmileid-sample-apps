@@ -24,7 +24,7 @@ const composeSwitch = (node: HostNode | HostNode[] | string | null): HostNode | 
   return (node.children ?? []).map(composeSwitch).find(Boolean);
 };
 
-const toggleTo = async (checked: boolean, enabled = true) => {
+const toggleTo = async (checked: boolean) => {
   const played: string[] = [];
   const haptics: UseSmileIDSampleHaptics = {
     selection: () => played.push('selection'),
@@ -32,7 +32,7 @@ const toggleTo = async (checked: boolean, enabled = true) => {
   };
   const rendered = await renderInTheme(
     <UseSmileIDSampleHapticsContext.Provider value={haptics}>
-      <UseSmileIDSampleSwitch checked={!checked} onCheckedChange={() => {}} enabled={enabled} />
+      <UseSmileIDSampleSwitch checked={!checked} onCheckedChange={() => {}} />
     </UseSmileIDSampleHapticsContext.Provider>,
     false,
   );

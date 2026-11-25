@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { AccessibilityInfo, Animated, StyleSheet, View } from 'react-native';
+import { Animated, StyleSheet, View } from 'react-native';
 
+import { useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
 import { tokens } from '../tokens';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -57,32 +58,30 @@ export const UseSmileIDSampleSkeletonRows = ({ announcement, leadingCircle = fal
   const theme = useSmileIDSampleTheme();
   const [pulse] = useState(() => new Animated.Value(0));
 
+  const reduced = useSmileIDSampleReducedMotion();
+
   useEffect(() => {
-    let loop: Animated.CompositeAnimation | undefined;
-    let cancelled = false;
-    void AccessibilityInfo.isReduceMotionEnabled().then((reduced) => {
-      if (cancelled || reduced) return;
-      loop = Animated.loop(
-        Animated.sequence([
-          Animated.timing(pulse, {
-            toValue: 1,
-            duration: PULSE_MS,
-            useNativeDriver: false,
-          }),
-          Animated.timing(pulse, {
-            toValue: 0,
-            duration: PULSE_MS,
-            useNativeDriver: false,
-          }),
-        ]),
-      );
-      loop.start();
-    });
-    return () => {
-      cancelled = true;
-      loop?.stop();
-    };
-  }, [pulse]);
+    if (reduced) {
+      pulse.setValue(0);
+      return undefined;
+    }
+    const loop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(pulse, {
+          toValue: 1,
+          duration: PULSE_MS,
+          useNativeDriver: false,
+        }),
+        Animated.timing(pulse, {
+          toValue: 0,
+          duration: PULSE_MS,
+          useNativeDriver: false,
+        }),
+      ]),
+    );
+    loop.start();
+    return () => loop.stop();
+  }, [pulse, reduced]);
 
   const fill = pulse.interpolate({
     inputRange: [0, 1],

@@ -1,6 +1,6 @@
 import { act, fireEvent } from '@testing-library/react-native';
 import type { ReactElement } from 'react';
-import { Animated } from 'react-native';
+import { AccessibilityInfo, Animated } from 'react-native';
 
 import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
 import {
@@ -30,6 +30,16 @@ const withHaptics = (haptics: UseSmileIDSampleHaptics, element: ReactElement) =>
 
 const noop = () => {};
 
+const card = (testID: string) => (
+  <UseSmileIDSampleProductCard
+    title="Document"
+    family="Verification"
+    hue={smileIDSampleProductHue(smileIDSampleProducts[0]!)}
+    onPress={noop}
+    testID={testID}
+  />
+);
+
 describe('a product card press', () => {
   it('shrinks a held card to 0.97', () => {
     expect(smileIDSamplePressScale(true, true, false)).toBe(0.97);
@@ -49,27 +59,38 @@ describe('a product card press', () => {
 
   it('animates the card down while held and back on release', async () => {
     const timing = jest.spyOn(Animated, 'timing');
-    const screen = await renderInTheme(
-      <UseSmileIDSampleProductCard
-        title="Document"
-        family="Verification"
-        hue={smileIDSampleProductHue(smileIDSampleProducts[0]!)}
-        onPress={noop}
-        testID="card"
-      />,
-      false,
-    );
-    const targets = () => timing.mock.calls.map(([, config]) => config.toValue);
+    try {
+      const screen = await renderInTheme(card('card'), false);
 
-    await act(async () => {
-      fireEvent(screen.getByTestId('card'), 'pressIn');
-    });
-    await act(async () => {
-      fireEvent(screen.getByTestId('card'), 'pressOut');
-    });
+      await act(async () => {
+        fireEvent(screen.getByTestId('card'), 'pressIn');
+      });
+      await act(async () => {
+        fireEvent(screen.getByTestId('card'), 'pressOut');
+      });
 
-    expect(targets()).toEqual([0.97, 1]);
-    timing.mockRestore();
+      expect(timing.mock.calls.map(([, config]) => config.toValue)).toEqual([0.97, 1]);
+    } finally {
+      timing.mockRestore();
+    }
+  });
+
+  it('asks the platform about reduced motion once for a whole grid', async () => {
+    const listen = jest.spyOn(AccessibilityInfo, 'addEventListener');
+    try {
+      await renderInTheme(
+        <>
+          {card('first')}
+          {card('second')}
+          {card('third')}
+        </>,
+        false,
+      );
+
+      expect(listen.mock.calls.filter(([event]) => event === 'reduceMotionChanged')).toHaveLength(1);
+    } finally {
+      listen.mockRestore();
+    }
   });
 });
 

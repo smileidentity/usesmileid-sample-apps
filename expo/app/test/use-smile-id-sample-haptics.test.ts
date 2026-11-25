@@ -35,4 +35,10 @@ describe('on iOS', () => {
     expect(Haptics.selectionAsync).toHaveBeenCalledTimes(1);
     expect(Haptics.performAndroidHapticsAsync).not.toHaveBeenCalled();
   });
+
+  it('plays nothing for a toggle, which UISwitch already ticks', () => {
+    haptics.toggle(true);
+    expect(Haptics.impactAsync).not.toHaveBeenCalled();
+    expect(Haptics.selectionAsync).not.toHaveBeenCalled();
+  });
 });

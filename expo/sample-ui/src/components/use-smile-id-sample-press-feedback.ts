@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useSyncExternalStore } from 'react';
 import { AccessibilityInfo } from 'react-native';
 
 /// The ticks the sample plays, which the app supplies because sample-ui ships no native code.
@@ -17,21 +17,42 @@ export const UseSmileIDSampleHapticsContext = createContext<UseSmileIDSampleHapt
 export const smileIDSamplePressScale = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>
   pressed && enabled && !reduceMotion ? PRESSED_SCALE : 1;
 
-/// Whether the platform asks for reduced motion, kept current while the screen is up.
-export const useSmileIDSampleReducedMotion = (): boolean => {
-  const [reduced, setReduced] = useState(false);
-  useEffect(() => {
+/// Reduced motion as last read; null until the platform answers, which every reader treats as reduced.
+let reducedMotion: boolean | null = null;
+const listeners = new Set<() => void>();
+let stopWatching: (() => void) | null = null;
+
+const publish = (value: boolean) => {
+  reducedMotion = value;
+  listeners.forEach((listener) => listener());
+};
+
+/// One platform query and one listener however many components read it, dropped with the last reader.
+const subscribe = (listener: () => void) => {
+  listeners.add(listener);
+  if (stopWatching === null) {
     let live = true;
     void AccessibilityInfo.isReduceMotionEnabled().then((value) => {
-      if (live) setReduced(value);
+      if (live) publish(value);
     });
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', setReduced);
-    return () => {
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', publish);
+    stopWatching = () => {
       live = false;
       subscription.remove();
     };
-  }, []);
-  return reduced;
+  }
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0) {
+      stopWatching?.();
+      stopWatching = null;
+      reducedMotion = null;
+    }
+  };
 };
+
+/// Whether the platform asks for reduced motion, kept current while the screen is up.
+export const useSmileIDSampleReducedMotion = (): boolean =>
+  useSyncExternalStore(subscribe, () => reducedMotion !== false);
 
 const PRESSED_SCALE = 0.97;

@@ -5,7 +5,7 @@ const quietly = (played: Promise<void>) => {
   played.catch(() => undefined);
 };
 
-/// The ticks sample-ui asks for, played through expo-haptics on [os] with the types the native apps use.
+/// The ticks sample-ui asks for, played through expo-haptics on [os]; iOS's toggle is silent because UISwitch ticks itself.
 export const smileIDSampleHapticsFor = (os: string): UseSmileIDSampleHaptics =>
   os === 'android'
     ? {
@@ -15,5 +15,5 @@ export const smileIDSampleHapticsFor = (os: string): UseSmileIDSampleHaptics =>
       }
     : {
         selection: () => quietly(Haptics.selectionAsync()),
-        toggle: () => quietly(Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)),
+        toggle: () => {},
       };
