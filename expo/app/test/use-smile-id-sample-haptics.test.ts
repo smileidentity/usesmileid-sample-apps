@@ -7,13 +7,20 @@ jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(async () => undefined),
   performAndroidHapticsAsync: jest.fn(async () => undefined),
   ImpactFeedbackStyle: { Light: 'light' },
-  AndroidHaptics: { Segment_Tick: 'segment-tick', Toggle_On: 'toggle-on', Toggle_Off: 'toggle-off' },
+  AndroidHaptics: {
+    Segment_Tick: 'segment-tick',
+    Toggle_On: 'toggle-on',
+    Toggle_Off: 'toggle-off',
+    Clock_Tick: 'clock-tick',
+    Virtual_Key: 'virtual-key',
+    Virtual_Key_Release: 'virtual-key-release',
+  },
 }));
 
 beforeEach(() => jest.clearAllMocks());
 
-describe('on Android', () => {
-  const haptics = smileIDSampleHapticsFor('android');
+describe('on Android 14 and later', () => {
+  const haptics = smileIDSampleHapticsFor('android', 34);
 
   it('plays a segment tick for a selection, as the Compose app does', () => {
     haptics.selection();
@@ -27,8 +34,23 @@ describe('on Android', () => {
   });
 });
 
+describe('before Android 14, which lacks the segment and toggle constants', () => {
+  const haptics = smileIDSampleHapticsFor('android', 33);
+
+  it('plays a clock tick for a selection, as Compose falls back to', () => {
+    haptics.selection();
+    expect(Haptics.performAndroidHapticsAsync).toHaveBeenCalledWith('clock-tick');
+  });
+
+  it('plays a virtual key press and release for a switch, as Compose falls back to', () => {
+    haptics.toggle(true);
+    haptics.toggle(false);
+    expect(jest.mocked(Haptics.performAndroidHapticsAsync).mock.calls).toEqual([['virtual-key'], ['virtual-key-release']]);
+  });
+});
+
 describe('on iOS', () => {
-  const haptics = smileIDSampleHapticsFor('ios');
+  const haptics = smileIDSampleHapticsFor('ios', 0);
 
   it("plays UIKit's selection feedback for a selection", () => {
     haptics.selection();

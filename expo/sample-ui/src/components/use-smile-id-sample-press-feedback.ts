@@ -17,7 +17,7 @@ export const UseSmileIDSampleHapticsContext = createContext<UseSmileIDSampleHapt
 export const smileIDSamplePressScale = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>
   pressed && enabled && !reduceMotion ? PRESSED_SCALE : 1;
 
-/// Reduced motion as last read; null until the platform answers, which every reader treats as reduced.
+/// Reduced motion as last read; null only before the platform's first answer, which readers treat as reduced.
 let reducedMotion: boolean | null = null;
 const listeners = new Set<() => void>();
 let stopWatching: (() => void) | null = null;
@@ -50,7 +50,6 @@ const subscribe = (listener: () => void) => {
     if (listeners.size === 0) {
       stopWatching?.();
       stopWatching = null;
-      reducedMotion = null;
     }
   };
 };

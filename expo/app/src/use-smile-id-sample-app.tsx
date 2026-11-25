@@ -46,7 +46,7 @@ const reassertSystemBars = (dark: boolean) => {
   NavigationBar.setStyle(dark ? 'light' : 'dark');
 };
 
-const haptics = smileIDSampleHapticsFor(Platform.OS);
+const haptics = smileIDSampleHapticsFor(Platform.OS, Number(Platform.Version));
 
 /// The app's root: settings, session and launch arguments load, then njia's shell draws `spec/njia-graph.json`.
 export const UseSmileIDSampleApp = () => {
