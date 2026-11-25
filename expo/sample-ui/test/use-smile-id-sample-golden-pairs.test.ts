@@ -166,10 +166,6 @@ describe('two states in one scheme', () => {
 
 /// Light and dark pictures that match although their trees differ.
 const identicalInPixelsOnPurpose: Record<string, string> = {
-  'Switch/on': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
-  'Switch/off': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
-  'Switch/disabled_on': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
-  'Switch/disabled_off': 'the native switch is drawn as a placeholder, so its tint never reaches the picture',
 };
 
 /// Two states whose pictures match although their trees differ.

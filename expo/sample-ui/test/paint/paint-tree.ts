@@ -12,8 +12,6 @@ export const PIXEL_RATIO = 2;
 
 /// Hosts the painter cannot draw, each drawn as a labelled box.
 const PLACEHOLDERS: Readonly<Record<string, (props: Record<string, unknown>) => string>> = {
-  RCTSwitch: (props) =>
-    `${props.value === true ? 'on' : 'off'}${props.disabled === true ? ' · disabled' : ''}`,
   ActivityIndicator: () => 'Spinner',
   Image: () => 'Image',
   // Emoji: the bundled face lacks them and a host emoji font differs per runner.
@@ -440,6 +438,78 @@ const paintTextInput = (ctx: SKRSContext2D, node: LaidOutNode, style: Style, x: 
   ctx.restore();
 };
 
+/// How much a disabled switch fades, as UIKit dims a disabled control.
+const SWITCH_DISABLED_ALPHA = 0.5;
+
+/// The gap between a switch's thumb and its track's edge.
+const SWITCH_THUMB_INSET = 2;
+
+/// A switch from the tints its host hands the native control: the track in the on or off colour, the thumb at that end (mirrored right to left), a disabled one faded over its view's own background.
+const paintSwitch = (
+  ctx: SKRSContext2D,
+  props: Record<string, unknown>,
+  style: Style,
+  where: string,
+  rtl: boolean,
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+) => {
+  const on = props.value === true;
+  const background = style.backgroundColor === 'transparent' ? undefined : style.backgroundColor;
+  const bordered = ['borderWidth', 'borderTopWidth', 'borderRightWidth', 'borderBottomWidth', 'borderLeftWidth'].some(
+    (side) => ((style[side] as number | undefined) ?? 0) > 0,
+  );
+  if (bordered || ((style.shadowOpacity as number | undefined) ?? 0) > 0) {
+    fail(where, 'a switch draws no border or shadow of its own');
+  }
+  const track = on ? props.onTintColor : (background ?? props.tintColor);
+  if (typeof track !== 'string' || typeof props.thumbTintColor !== 'string') {
+    fail(where, 'a switch needs string track and thumb tints to be drawn');
+  }
+  const radius = height / 2;
+  const pill = { tl: radius, tr: radius, br: radius, bl: radius };
+  ctx.save();
+  if (typeof background === 'string') {
+    ctx.fillStyle = background;
+    outline(ctx, x, y, width, height, pill);
+    ctx.fill();
+  }
+  const drawControl = (target: SKRSContext2D) => {
+    target.fillStyle = track as string;
+    outline(target, x, y, width, height, pill);
+    target.fill();
+    const thumb = height / 2 - SWITCH_THUMB_INSET;
+    // UISwitch mirrors right to left, so an on thumb sits at the leading end there.
+    const atFarEnd = on !== rtl;
+    const centreX = atFarEnd ? x + width - SWITCH_THUMB_INSET - thumb : x + SWITCH_THUMB_INSET + thumb;
+    target.fillStyle = props.thumbTintColor as string;
+    target.beginPath();
+    target.arc(centreX, y + height / 2, thumb, 0, 2 * Math.PI);
+    target.fill();
+  };
+  if (props.disabled !== true) {
+    drawControl(ctx);
+  } else {
+    // Faded as one layer, as UIKit dims a control, so the track never shows through the thumb.
+    const base = ctx.getTransform();
+    if (base.b !== 0 || base.c !== 0 || base.a <= 0 || base.d <= 0) {
+      fail(where, 'a disabled switch is faded in an unrotated, unmirrored layer only');
+    }
+    const left = Math.floor(base.a * x + base.e);
+    const top = Math.floor(base.d * y + base.f);
+    const layer = createCanvas(Math.ceil(base.a * width) + 2, Math.ceil(base.d * height) + 2);
+    const layerCtx = layer.getContext('2d');
+    layerCtx.setTransform(base.a, base.b, base.c, base.d, base.e - left, base.f - top);
+    drawControl(layerCtx);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.globalAlpha *= SWITCH_DISABLED_ALPHA;
+    ctx.drawImage(layer, left, top);
+  }
+  ctx.restore();
+};
+
 /// Every colour a stand-in is drawn in: harness ink, not the design's, so no token applies.
 const PLACEHOLDER_COLOURS = {
   ink: 'rgb(138, 138, 138)',
@@ -482,12 +552,13 @@ const paintPlaceholder = (ctx: SKRSContext2D, label: string, x: number, y: numbe
 type Paint = { ctx: SKRSContext2D; canvasWidth: number; canvasHeight: number };
 
 /// Paints one laid-out box and its subtree.
-const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: number, path: string): void => {
+const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: number, path: string, parentRtl = false): void => {
   const { ctx } = paint;
   const where = `${path} > ${node.type}`;
   const x = parentX + node.left;
   const y = parentY + node.top;
   const style = flatten(node.props.style);
+  const rtl = style.direction === 'rtl' ? true : style.direction === 'ltr' ? false : parentRtl;
   checkStyle(style, where);
   if (style.display === 'none') return;
   if (DRAWS_NOTHING.has(node.type)) return;
@@ -497,6 +568,11 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
   const draw = (target: SKRSContext2D) => {
     target.save();
     applyTransform(target, style, x, y, node, where);
+    if (node.type === 'RCTSwitch') {
+      paintSwitch(target, node.props, style, where, rtl, x, y, node.width, node.height);
+      target.restore();
+      return;
+    }
     const label = PLACEHOLDERS[node.type];
     if (label) {
       paintPlaceholder(target, label(node.props), x, y, node.width, node.height);
@@ -528,7 +604,7 @@ const paintNode = (paint: Paint, node: LaidOutNode, parentX: number, parentY: nu
       const ordered = node.children
         .map((child, index) => ({ child, index, z: (flatten(child.props.style).zIndex as number | undefined) ?? 0 }))
         .sort((a, b) => a.z - b.z || a.index - b.index);
-      for (const { child } of ordered) paintNode({ ...paint, ctx: target }, child, x, y, where);
+      for (const { child } of ordered) paintNode({ ...paint, ctx: target }, child, x, y, where, rtl);
     } else fail(where, 'is a host type this painter neither draws nor stands in for');
     target.restore();
   };
