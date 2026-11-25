@@ -32,10 +32,14 @@ const subscribe = (listener: () => void) => {
   listeners.add(listener);
   if (stopWatching === null) {
     let live = true;
+    let changed = false;
     void AccessibilityInfo.isReduceMotionEnabled().then((value) => {
-      if (live) publish(value);
+      if (live && !changed) publish(value);
     });
-    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', publish);
+    const subscription = AccessibilityInfo.addEventListener('reduceMotionChanged', (value) => {
+      changed = true;
+      publish(value);
+    });
     stopWatching = () => {
       live = false;
       subscription.remove();

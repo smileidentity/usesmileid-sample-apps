@@ -6,6 +6,7 @@ import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sampl
 import {
   UseSmileIDSampleHapticsContext,
   smileIDSamplePressScale,
+  useSmileIDSampleReducedMotion,
   type UseSmileIDSampleHaptics,
 } from '../src/components/use-smile-id-sample-press-feedback';
 import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
@@ -89,6 +90,36 @@ describe('a product card press', () => {
 
       expect(listen.mock.calls.filter(([event]) => event === 'reduceMotionChanged')).toHaveLength(1);
     } finally {
+      listen.mockRestore();
+    }
+  });
+});
+
+describe('the reduced-motion reading', () => {
+  it('keeps a change that lands before the first answer', async () => {
+    let answer: (value: boolean) => void = noop;
+    let change: (value: boolean) => void = noop;
+    const ask = jest
+      .spyOn(AccessibilityInfo, 'isReduceMotionEnabled')
+      .mockReturnValue(new Promise<boolean>((resolve) => (answer = resolve)));
+    const listen = jest.spyOn(AccessibilityInfo, 'addEventListener').mockImplementation((_event, handler) => {
+      change = handler as (value: boolean) => void;
+      return { remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>;
+    });
+    try {
+      const seen: boolean[] = [];
+      const Probe = () => {
+        seen.push(useSmileIDSampleReducedMotion());
+        return null;
+      };
+      await renderInTheme(<Probe />, false);
+
+      await act(async () => change(false));
+      await act(async () => answer(true));
+
+      expect(seen.at(-1)).toBe(false);
+    } finally {
+      ask.mockRestore();
       listen.mockRestore();
     }
   });
