@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +24,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -39,8 +39,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 
 /** Skeleton rows show only after [DELAY_MILLIS], so a fast answer never flashes, then for at least [MIN_SHOWN_MILLIS]. */
 class UseSmileIDSampleSkeletonGate(private val scope: CoroutineScope, private val now: () -> Long) {
@@ -102,8 +100,7 @@ fun UseSmileIDSampleSkeletonRows(
             ),
             label = "skeletonFill",
         )
-        val pulseFill: () -> Color = { color.value }
-        pulseFill
+        color::value
     }
     Column(
         modifier = modifier
@@ -126,13 +123,12 @@ private fun SkeletonRow(width: Float, fill: () -> Color, leadingCircle: Boolean)
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (leadingCircle) Box(Modifier.size(FLAG_CIRCLE).clip(CircleShape).drawBehind { drawRect(fill()) })
+        if (leadingCircle) Box(Modifier.size(FLAG_CIRCLE).drawBehind { drawCircle(fill()) })
         Box(
             Modifier
                 .fillMaxWidth(width)
                 .height(LABEL_BAR)
-                .clip(RoundedCornerShape(SmileDimens.radiusField))
-                .drawBehind { drawRect(fill()) },
+                .drawBehind { drawRoundRect(fill(), cornerRadius = CornerRadius(SmileDimens.radiusField.toPx())) },
         )
     }
 }
