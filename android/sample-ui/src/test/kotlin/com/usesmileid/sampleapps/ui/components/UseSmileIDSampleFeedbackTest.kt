@@ -8,8 +8,11 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.v2.runComposeUiTest
+import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
+import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -54,6 +57,35 @@ class UseSmileIDSampleFeedbackTest {
     @Test
     fun `a card does not shrink when the system removes animations`() {
         assertEquals(1f, useSmileIDSamplePressScale(pressed = true, enabled = true, reduceMotion = true))
+    }
+
+    @Test
+    fun `a card shrinks while held and grows back on release`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        setContent {
+            UseSmileIDSampleTheme {
+                UseSmileIDSampleProductCard(
+                    title = "Document",
+                    family = "Verification",
+                    onClick = {},
+                    hue = requireNotNull(smileProductHues[UseSmileIDSampleProduct.DocumentVerification.id]),
+                    testId = CARD,
+                )
+            }
+        }
+        mainClock.advanceTimeBy(1_000)
+        val rest = onNodeWithTag(CARD).fetchSemanticsNode().boundsInRoot.width
+
+        onNodeWithTag(CARD).performTouchInput { down(center) }
+        mainClock.advanceTimeBy(1_000)
+        val held = onNodeWithTag(CARD).fetchSemanticsNode().boundsInRoot.width
+
+        onNodeWithTag(CARD).performTouchInput { up() }
+        mainClock.advanceTimeBy(1_000)
+        val released = onNodeWithTag(CARD).fetchSemanticsNode().boundsInRoot.width
+
+        assertEquals(rest * 0.97f, held, 1f)
+        assertEquals(rest, released, 0.5f)
     }
 
     @Test
@@ -155,6 +187,7 @@ class UseSmileIDSampleFeedbackTest {
     }
 
     private companion object {
+        const val CARD = "card"
         const val CHIP = "chip"
         const val SWITCH = "switch"
     }
