@@ -7,7 +7,6 @@ import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,8 +15,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,6 +24,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -88,11 +87,11 @@ fun UseSmileIDSampleSkeletonRows(
     testId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val fill = if (reducedMotion()) {
-        colors.skeleton
+    val fill: () -> Color = if (reducedMotion()) {
+        { colors.skeleton }
     } else {
         val pulse = rememberInfiniteTransition(label = "skeleton")
-        val color by pulse.animateColor(
+        val color = pulse.animateColor(
             initialValue = colors.skeleton,
             targetValue = colors.skeletonHighlight,
             animationSpec = infiniteRepeatable(
@@ -101,7 +100,7 @@ fun UseSmileIDSampleSkeletonRows(
             ),
             label = "skeletonFill",
         )
-        color
+        color::value
     }
     Column(
         modifier = modifier
@@ -115,7 +114,7 @@ fun UseSmileIDSampleSkeletonRows(
 }
 
 @Composable
-private fun SkeletonRow(width: Float, fill: Color, leadingCircle: Boolean) {
+private fun SkeletonRow(width: Float, fill: () -> Color, leadingCircle: Boolean) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -124,12 +123,12 @@ private fun SkeletonRow(width: Float, fill: Color, leadingCircle: Boolean) {
         horizontalArrangement = Arrangement.spacedBy(SmileDimens.spacingSm),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        if (leadingCircle) Box(Modifier.size(FLAG_CIRCLE).background(fill, CircleShape))
+        if (leadingCircle) Box(Modifier.size(FLAG_CIRCLE).drawBehind { drawCircle(fill()) })
         Box(
             Modifier
                 .fillMaxWidth(width)
                 .height(LABEL_BAR)
-                .background(fill, RoundedCornerShape(SmileDimens.radiusField)),
+                .drawBehind { drawRoundRect(fill(), cornerRadius = CornerRadius(SmileDimens.radiusField.toPx())) },
         )
     }
 }
