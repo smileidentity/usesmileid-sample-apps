@@ -9,6 +9,7 @@ import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
 import 'use_smileid_sample_glyphs.dart';
+import 'use_smileid_sample_press_feedback.dart';
 
 /// A product tile: a gradient in the product's hue, a hairline stroke, its icon as a watermark.
 class UseSmileIDSampleProductCard extends StatelessWidget {
@@ -68,74 +69,78 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
         ? _inkOn(_gradientEnd(hue))
         : colors.textMuted;
 
-    return Semantics(
-      identifier: testId,
-      button: true,
+    return _PressScaled(
       enabled: enabled,
-      child: Material(
-        color: Colors.transparent,
-        shape: RoundedRectangleBorder(
-          borderRadius: UseSmileIDSampleShapes.card,
-          side: BorderSide(
-            color: colors.cardStroke,
-            width: smileCardStrokeWidth,
+      builder: (ValueChanged<bool> onHighlightChanged) => Semantics(
+        identifier: testId,
+        button: true,
+        enabled: enabled,
+        child: Material(
+          color: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: UseSmileIDSampleShapes.card,
+            side: BorderSide(
+              color: colors.cardStroke,
+              width: smileCardStrokeWidth,
+            ),
           ),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: Ink(
-          decoration: BoxDecoration(
-            gradient: enabled ? _fill(hue) : null,
-            color: enabled ? null : colors.surfaceMuted,
-          ),
-          child: InkWell(
-            onTap: enabled ? onTap : null,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: _cardMinHeight),
-              child: Stack(
-                children: <Widget>[
-                  if (ghost != null)
-                    Positioned(
-                      top: -SmileDimens.spacingXs,
-                      right: -SmileDimens.spacingMd,
-                      child: ghost!(ghostInk.withValues(alpha: _ghostAlpha)),
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(SmileDimens.spacingMd),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          width: SmileDimens.space40,
-                          height: SmileDimens.space40,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: tile,
-                            borderRadius: UseSmileIDSampleShapes.tile,
-                          ),
-                          child: icon == null
-                              ? UseSmileIDSampleGlyphs.productMark(
-                                  hue.cardIcon ?? hue.icon,
-                                )
-                              : icon!(hue.cardIcon),
-                        ),
-                        const SizedBox(height: SmileDimens.spacingLg),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            Expanded(
-                              child: _CardLabel(
-                                title: title,
-                                family: family,
-                                color: content,
-                              ),
+          clipBehavior: Clip.antiAlias,
+          child: Ink(
+            decoration: BoxDecoration(
+              gradient: enabled ? _fill(hue) : null,
+              color: enabled ? null : colors.surfaceMuted,
+            ),
+            child: InkWell(
+              onTap: enabled ? onTap : null,
+              onHighlightChanged: onHighlightChanged,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(minHeight: _cardMinHeight),
+                child: Stack(
+                  children: <Widget>[
+                    if (ghost != null)
+                      Positioned(
+                        top: -SmileDimens.spacingXs,
+                        right: -SmileDimens.spacingMd,
+                        child: ghost!(ghostInk.withValues(alpha: _ghostAlpha)),
+                      ),
+                    Padding(
+                      padding: const EdgeInsets.all(SmileDimens.spacingMd),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Container(
+                            width: SmileDimens.space40,
+                            height: SmileDimens.space40,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: tile,
+                              borderRadius: UseSmileIDSampleShapes.tile,
                             ),
-                            _GoAffordance(tint: content, scrim: goScrim),
-                          ],
-                        ),
-                      ],
+                            child: icon == null
+                                ? UseSmileIDSampleGlyphs.productMark(
+                                    hue.cardIcon ?? hue.icon,
+                                  )
+                                : icon!(hue.cardIcon),
+                          ),
+                          const SizedBox(height: SmileDimens.spacingLg),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: <Widget>[
+                              Expanded(
+                                child: _CardLabel(
+                                  title: title,
+                                  family: family,
+                                  color: content,
+                                ),
+                              ),
+                              _GoAffordance(tint: content, scrim: goScrim),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -143,6 +148,37 @@ class UseSmileIDSampleProductCard extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Shrinks its child while the ink inside reports a press, back to full size on release or cancel.
+class _PressScaled extends StatefulWidget {
+  const _PressScaled({required this.enabled, required this.builder});
+
+  final bool enabled;
+
+  final Widget Function(ValueChanged<bool> onHighlightChanged) builder;
+
+  @override
+  State<_PressScaled> createState() => _PressScaledState();
+}
+
+class _PressScaledState extends State<_PressScaled> {
+  bool _pressed = false;
+
+  void _onHighlightChanged(bool pressed) {
+    if (pressed != _pressed) setState(() => _pressed = pressed);
+  }
+
+  @override
+  Widget build(BuildContext context) => AnimatedScale(
+    scale: useSmileIDSamplePressScale(
+      pressed: _pressed,
+      enabled: widget.enabled,
+      reduceMotion: MediaQuery.disableAnimationsOf(context),
+    ),
+    duration: SmileMotion.durationFast,
+    child: widget.builder(_onHighlightChanged),
+  );
 }
 
 /// One text node with two runs, not two stacked widgets, which drift apart at large font scales.
