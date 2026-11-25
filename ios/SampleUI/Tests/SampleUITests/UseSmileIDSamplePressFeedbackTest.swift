@@ -18,6 +18,18 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePressScale(pressed: true, enabled: true, reduceMotion: true), 1)
   }
 
+  func testAHeldCardDimsInsteadUnderReducedMotion() {
+    XCTAssertEqual(useSmileIDSamplePressOpacity(pressed: true, enabled: true, reduceMotion: true), 0.7)
+  }
+
+  func testAHeldCardDoesNotDimWhenItCanShrink() {
+    XCTAssertEqual(useSmileIDSamplePressOpacity(pressed: true, enabled: true, reduceMotion: false), 1)
+  }
+
+  func testACardAtRestDoesNotDim() {
+    XCTAssertEqual(useSmileIDSamplePressOpacity(pressed: false, enabled: true, reduceMotion: true), 1)
+  }
+
   @MainActor
   func testPickingSomethingNewTicksThenActs() {
     var events: [String] = []
