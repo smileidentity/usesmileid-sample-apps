@@ -1,5 +1,6 @@
 import {
   SMILE_ID_SAMPLE_NOTICE_WINDOW_MS,
+  UseSmileIDSampleHapticsContext,
   UseSmileIDSampleNoticeWindowProvider,
   UseSmileIDSampleStringsProvider,
   UseSmileIDSampleThemeProvider,
@@ -33,6 +34,7 @@ import { useSmileIDSampleDeviceScheme } from './use-smile-id-sample-device-schem
 import { useLaunchArgsAsLaunched, useLaunchArgsLoaded, useLaunchFailure, useLaunchUrl } from './use-smile-id-sample-launch';
 import { smileIDSampleSecureProfilesStorage } from './use-smile-id-sample-secure-profiles-storage';
 import { smileIDSampleSecureSessionStorage } from './use-smile-id-sample-secure-session-storage';
+import { smileIDSampleHapticsFor } from './use-smile-id-sample-haptics';
 import { UseSmileIDSampleSelectModeProvider } from './use-smile-id-sample-select-mode';
 import { linkLaunchSession } from './use-smile-id-sample-shell-extension';
 import { UseSmileIDSampleTopCutoutProvider } from './use-smile-id-sample-top-cutout';
@@ -43,6 +45,8 @@ const reassertSystemBars = (dark: boolean) => {
   NavigationBar.setStyle(dark ? 'dark' : 'light');
   NavigationBar.setStyle(dark ? 'light' : 'dark');
 };
+
+const haptics = smileIDSampleHapticsFor(Platform.OS);
 
 /// The app's root: settings, session and launch arguments load, then njia's shell draws `spec/njia-graph.json`.
 export const UseSmileIDSampleApp = () => {
@@ -149,11 +153,13 @@ export const UseSmileIDSampleApp = () => {
             <StatusBar style={dark ? 'light' : 'dark'} />
             {/* Names the button colour, as StatusBar does, despite the type's doc saying the bar's. */}
             <NavigationBar style={dark ? 'light' : 'dark'} />
-            <UseSmileIDSampleTopCutoutProvider>
-              <UseSmileIDSampleSelectModeProvider>
-                <UseSmileIDSampleShell args={args} />
-              </UseSmileIDSampleSelectModeProvider>
-            </UseSmileIDSampleTopCutoutProvider>
+            <UseSmileIDSampleHapticsContext.Provider value={haptics}>
+              <UseSmileIDSampleTopCutoutProvider>
+                <UseSmileIDSampleSelectModeProvider>
+                  <UseSmileIDSampleShell args={args} />
+                </UseSmileIDSampleSelectModeProvider>
+              </UseSmileIDSampleTopCutoutProvider>
+            </UseSmileIDSampleHapticsContext.Provider>
           </UseSmileIDSampleNoticeWindowProvider>
         </UseSmileIDSampleThemeProvider>
       </UseSmileIDSampleStringsProvider>

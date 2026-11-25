@@ -1,8 +1,10 @@
+import { useContext } from 'react';
 import { Host, Switch } from '@expo/ui/jetpack-compose';
 import { testID as testIDModifier } from '@expo/ui/jetpack-compose/modifiers';
 import type { StyleProp, ViewStyle } from 'react-native';
 
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { UseSmileIDSampleHapticsContext } from './use-smile-id-sample-press-feedback';
 
 type Props = {
   checked: boolean;
@@ -22,13 +24,21 @@ export const UseSmileIDSampleSwitch = ({
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   const { colors } = theme;
+  const haptics = useContext(UseSmileIDSampleHapticsContext);
 
   return (
     <Host matchContents style={style}>
       <Switch
         value={checked}
         enabled={enabled}
-        onCheckedChange={onCheckedChange}
+        onCheckedChange={
+          onCheckedChange === undefined
+            ? undefined
+            : (on: boolean) => {
+                haptics.toggle(on);
+                onCheckedChange(on);
+              }
+        }
         modifiers={testID === undefined ? [] : [testIDModifier(testID)]}
         colors={{
           checkedThumbColor: colors.surface,

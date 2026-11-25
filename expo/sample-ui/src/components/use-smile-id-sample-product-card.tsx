@@ -1,8 +1,9 @@
-import type { ReactNode } from 'react';
-import { PixelRatio, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { useState, type ReactNode } from 'react';
+import { Animated, PixelRatio, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
+import { smileIDSamplePressScale, useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
 import {
   smileCardFamilyWeight,
   smileCardStrokeWidth,
@@ -11,7 +12,7 @@ import {
 } from '../smile-product-hues';
 import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { smileInkOn, smileMix, smileWithAlpha } from '../theme/smile-color-math';
-import { lightColors } from '../tokens';
+import { lightColors, tokens } from '../tokens';
 import { atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -32,6 +33,9 @@ type Props = {
   ghost?: (tint: string) => ReactNode;
   style?: StyleProp<ViewStyle>;
 };
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+const PRESS_MS = Number.parseFloat(tokens.duration.fast);
 
 /// A product tile: a gradient in the product's hue, a hairline stroke, its icon as a watermark.
 export const UseSmileIDSampleProductCard = ({
@@ -56,16 +60,27 @@ export const UseSmileIDSampleProductCard = ({
   const ghostInk = smileInkOn(hue.from);
   const goScrim = enabled ? smileIDSampleGoPillInk(hue) : theme.colors.textMuted;
   const minHeight = theme.dimens.space[64] * 2 + theme.dimens.space[20];
+  const reduceMotion = useSmileIDSampleReducedMotion();
+  const [scale] = useState(() => new Animated.Value(1));
+  const pressTo = (pressed: boolean) =>
+    Animated.timing(scale, {
+      toValue: smileIDSamplePressScale(pressed, enabled, reduceMotion),
+      duration: PRESS_MS,
+      useNativeDriver: true,
+    }).start();
 
   return (
-    <Pressable
+    <AnimatedPressable
       testID={testID}
       accessibilityRole="button"
       accessibilityState={{ disabled: !enabled }}
       disabled={!enabled}
       onPress={onPress}
+      onPressIn={() => pressTo(true)}
+      onPressOut={() => pressTo(false)}
       style={[
         styles.card,
+        { transform: [{ scale }] },
         {
           minHeight,
           borderRadius: theme.shapes.card,
@@ -116,7 +131,7 @@ export const UseSmileIDSampleProductCard = ({
           </View>
         </View>
       </View>
-    </Pressable>
+    </AnimatedPressable>
   );
 };
 

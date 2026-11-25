@@ -1,9 +1,11 @@
+import { useContext } from 'react';
 import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { smileCardStrokeWidth, smileLabelSize, smileLabelTracking } from '../smile-product-hues';
 import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { UseSmileIDSampleHapticsContext } from './use-smile-id-sample-press-feedback';
 
 const CHIP_LABEL_SIZE = 12.5;
 
@@ -28,6 +30,7 @@ export const UseSmileIDSampleFilterChip = ({
   countTestID,
   style,
 }: Props) => {
+  const haptics = useContext(UseSmileIDSampleHapticsContext);
   const theme = useSmileIDSampleTheme();
 
   return (
@@ -35,7 +38,10 @@ export const UseSmileIDSampleFilterChip = ({
       testID={testID}
       accessibilityRole="tab"
       accessibilityState={{ selected }}
-      onPress={onPress}
+      onPress={() => {
+        if (!selected) haptics.selection();
+        onPress();
+      }}
       style={[styles.target, touchTargetStyle(theme, 'height'), style]}
     >
       <View
