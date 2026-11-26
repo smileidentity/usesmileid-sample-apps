@@ -317,9 +317,11 @@ Future<void> _host(
     MediaQuery(
       // Copied onto the view's own data, not replaced: a bare MediaQueryData reports density 1 and
       // a zero-sized window, which silently rasters every baseline at the wrong scale.
-      data: MediaQueryData.fromView(
-        tester.view,
-      ).copyWith(textScaler: TextScaler.linear(textScale)),
+      // Animations off, so an entrance is captured at rest, as on a device that asks for reduced motion.
+      data: MediaQueryData.fromView(tester.view).copyWith(
+        textScaler: TextScaler.linear(textScale),
+        disableAnimations: true,
+      ),
       child: MaterialApp(
         // Keyed per scheme so the second capture builds a fresh tree. MaterialApp animates a theme
         // change, so without this the dark baseline records the light scheme mid-transition.

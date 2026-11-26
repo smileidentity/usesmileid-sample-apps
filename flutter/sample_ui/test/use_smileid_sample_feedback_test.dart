@@ -127,6 +127,81 @@ void main() {
     await tester.pumpAndSettle();
     expect(_tabLabelColor(tester), colors.primary);
   });
+
+  testWidgets('a bar rises its own height into place when it appears', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const UseSmileIDSampleRiseIn(child: SizedBox(height: 60))),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final double rising = tester
+        .widget<SlideTransition>(
+          find.descendant(
+            of: find.byType(UseSmileIDSampleRiseIn),
+            matching: find.byType(SlideTransition),
+          ),
+        )
+        .position
+        .value
+        .dy;
+    expect(rising, greaterThan(0));
+
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<SlideTransition>(
+            find.descendant(
+              of: find.byType(UseSmileIDSampleRiseIn),
+              matching: find.byType(SlideTransition),
+            ),
+          )
+          .position
+          .value
+          .dy,
+      0,
+    );
+  });
+
+  testWidgets('a bar is already in place under reduced motion', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const UseSmileIDSampleRiseIn(child: SizedBox(height: 60)),
+        reduceMotion: true,
+      ),
+    );
+
+    expect(
+      tester
+          .widget<SlideTransition>(
+            find.descendant(
+              of: find.byType(UseSmileIDSampleRiseIn),
+              matching: find.byType(SlideTransition),
+            ),
+          )
+          .position
+          .value
+          .dy,
+      0,
+    );
+  });
+
+  testWidgets('content fades in when it replaces a loading state', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const UseSmileIDSampleFadeIn(child: SizedBox(height: 60))),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(_fadeOpacity(tester), lessThan(1));
+
+    await tester.pumpAndSettle();
+    expect(_fadeOpacity(tester), 1);
+  });
 }
 
 Widget _host(Widget child, {bool reduceMotion = false}) => MaterialApp(
@@ -182,3 +257,13 @@ Color _tabLabelColor(WidgetTester tester) => tester
     )
     .style!
     .color!;
+
+double _fadeOpacity(WidgetTester tester) => tester
+    .widget<FadeTransition>(
+      find.descendant(
+        of: find.byType(UseSmileIDSampleFadeIn),
+        matching: find.byType(FadeTransition),
+      ),
+    )
+    .opacity
+    .value;

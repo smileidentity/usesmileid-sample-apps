@@ -5,6 +5,7 @@ import '../components/use_smileid_sample_data_field_row.dart';
 import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_glyphs.dart';
 import '../components/use_smileid_sample_result_card.dart';
+import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_section_label.dart';
 import '../components/use_smileid_sample_status_badge.dart';
 import '../components/use_smileid_sample_toast.dart';
@@ -153,7 +154,9 @@ class UseSmileIDSampleVerificationDetailsScreen extends StatelessWidget {
           right: SmileDimens.spacingMd,
           // Past the system bar: under edge to edge this page reaches the bottom edge.
           bottom: MediaQuery.paddingOf(context).bottom + SmileDimens.spacingMd,
-          child: UseSmileIDSampleToast(message: notice!),
+          child: UseSmileIDSampleRiseIn(
+            child: UseSmileIDSampleToast(message: notice!),
+          ),
         ),
       ],
     );

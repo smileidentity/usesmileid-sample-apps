@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../components/use_smileid_sample_avatar.dart';
 import '../components/use_smileid_sample_glyphs.dart';
 import '../components/use_smileid_sample_profile_row.dart';
+import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_toast.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';
@@ -108,12 +109,14 @@ class UseSmileIDSampleProfilesScreen extends StatelessWidget {
           left: SmileDimens.spacingMd,
           right: SmileDimens.spacingMd,
           bottom: MediaQuery.paddingOf(context).bottom + SmileDimens.spacingLg,
-          child: UseSmileIDSampleToast(
-            message: context.strings.profilesCreated(
-              profile: createdNotice ?? '',
+          child: UseSmileIDSampleRiseIn(
+            child: UseSmileIDSampleToast(
+              message: context.strings.profilesCreated(
+                profile: createdNotice ?? '',
+              ),
+              actionLabel: context.strings.profilesMakeActive,
+              onAction: onMakeCreatedActive,
             ),
-            actionLabel: context.strings.profilesMakeActive,
-            onAction: onMakeCreatedActive,
           ),
         ),
       ],

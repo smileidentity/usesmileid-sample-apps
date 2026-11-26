@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_option_row.dart';
+import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_search_field.dart';
 import '../components/use_smileid_sample_skeleton.dart';
 import '../state/use_smileid_sample_catalogue.dart';
@@ -282,7 +283,14 @@ class _UseSmileIDSampleCataloguePickerState<T>
             testId: UseSmileIDSampleTestIds.catalogueLoading,
           )
         else
-          ..._content(catalogue),
+          UseSmileIDSampleFadeIn(
+            key: ValueKey<Type>(catalogue.runtimeType),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: _content(catalogue),
+            ),
+          ),
       ],
     );
   }

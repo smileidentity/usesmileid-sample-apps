@@ -5,6 +5,7 @@ import '../components/use_smileid_sample_empty_state.dart';
 import '../components/use_smileid_sample_filter_chip.dart';
 import '../components/use_smileid_sample_header_inset.dart';
 import '../components/use_smileid_sample_job_row.dart';
+import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_selection_checkbox.dart';
 import '../components/use_smileid_sample_spaced.dart';
 import '../components/use_smileid_sample_swipe_action.dart';
@@ -131,12 +132,9 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
                   ),
                 ),
                 if (onSelectModeChanged != null)
-                  Visibility(
+                  _SelectToggleVisibility(
                     visible:
                         state.selectMode || (state.jobs?.isNotEmpty ?? false),
-                    maintainSize: true,
-                    maintainAnimation: true,
-                    maintainState: true,
                     child: Semantics(
                       identifier: UseSmileIDSampleTestIds.selectToggle,
                       button: true,
@@ -250,14 +248,16 @@ class UseSmileIDSampleVerificationsScreen extends StatelessWidget {
           left: SmileDimens.spacingMd,
           right: SmileDimens.spacingMd,
           bottom: bottomInset + SmileDimens.spacingXxs,
-          child: UseSmileIDSampleToast(
-            message: state.removedCount == 1
-                ? context.strings.verificationsHiddenOne
-                : context.strings.verificationsHiddenMany(
-                    count: state.removedCount ?? 0,
-                  ),
-            actionLabel: context.strings.commonUndo,
-            onAction: onUndo,
+          child: UseSmileIDSampleRiseIn(
+            child: UseSmileIDSampleToast(
+              message: state.removedCount == 1
+                  ? context.strings.verificationsHiddenOne
+                  : context.strings.verificationsHiddenMany(
+                      count: state.removedCount ?? 0,
+                    ),
+              actionLabel: context.strings.commonUndo,
+              onAction: onUndo,
+            ),
           ),
         ),
       ],
@@ -319,4 +319,25 @@ class _Row extends StatelessWidget {
             ),
     );
   }
+}
+
+/// Select fades in over duration-fast once there is something to pick, and takes no taps or focus while hidden.
+class _SelectToggleVisibility extends StatelessWidget {
+  const _SelectToggleVisibility({required this.visible, required this.child});
+
+  final bool visible;
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => AnimatedOpacity(
+    opacity: visible ? 1 : 0,
+    duration: MediaQuery.disableAnimationsOf(context)
+        ? Duration.zero
+        : SmileMotion.durationFast,
+    child: IgnorePointer(
+      ignoring: !visible,
+      child: ExcludeSemantics(excluding: !visible, child: child),
+    ),
+  );
 }

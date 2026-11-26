@@ -226,9 +226,11 @@ class _UseSmileIDSampleShellPage extends ConsumerWidget {
       // What publishes the bar's measured height to the body as its bottom padding.
       extendBody: showsNavBar,
       bottomNavigationBar: showsSelectionBar
-          ? UseSmileIDSampleSelectionBar(
-              selectedCount: selection.ids.length,
-              onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
+          ? UseSmileIDSampleRiseIn(
+              child: UseSmileIDSampleSelectionBar(
+                selectedCount: selection.ids.length,
+                onRemove: () => useSmileIDSampleRemoveJobs(ref, selection.ids),
+              ),
             )
           : showsNavBar
           ? _UseSmileIDSampleTabBar(tab: tab, scope: scope)

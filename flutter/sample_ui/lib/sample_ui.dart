@@ -23,6 +23,7 @@ export 'src/components/use_smileid_sample_product_card.dart';
 export 'src/components/use_smileid_sample_product_grid.dart';
 export 'src/components/use_smileid_sample_profile_row.dart';
 export 'src/components/use_smileid_sample_result_card.dart';
+export 'src/components/use_smileid_sample_rise_in.dart';
 export 'src/components/use_smileid_sample_scan_glyph.dart';
 export 'src/components/use_smileid_sample_scan_sheet.dart';
 export 'src/components/use_smileid_sample_scan_status.dart';
