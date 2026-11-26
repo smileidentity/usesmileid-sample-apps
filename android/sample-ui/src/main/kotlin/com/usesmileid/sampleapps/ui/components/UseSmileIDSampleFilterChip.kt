@@ -13,7 +13,6 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -45,7 +44,7 @@ fun UseSmileIDSampleFilterChip(
         color = useSmileIDSampleSelectionColor(if (selected) colors.primary else colors.filterChip.background, "chipFill"),
         border = BorderStroke(
             smileCardStrokeWidth,
-            useSmileIDSampleSelectionColor(if (selected) Color.Transparent else colors.cardStroke, "chipStroke"),
+            useSmileIDSampleSelectionColor(if (selected) colors.cardStroke.copy(alpha = 0f) else colors.cardStroke, "chipStroke"),
         ),
     ) {
         Row(

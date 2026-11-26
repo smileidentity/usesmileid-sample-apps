@@ -5,6 +5,7 @@ import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout'
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { smileIDSampleSelectionColor, useSmileIDSampleSelectionProgress } from './use-smile-id-sample-selection-blend';
+import { smileWithAlpha } from '../theme/smile-color-math';
 
 const CHIP_LABEL_SIZE = 12.5;
 
@@ -47,7 +48,7 @@ export const UseSmileIDSampleFilterChip = ({
             borderRadius: theme.dimens.radius.chip,
             backgroundColor: smileIDSampleSelectionColor(picked, theme.colors.filterChip.background, theme.colors.primary),
             borderWidth: smileCardStrokeWidth,
-            borderColor: smileIDSampleSelectionColor(picked, theme.colors.cardStroke, 'transparent'),
+            borderColor: smileIDSampleSelectionColor(picked, theme.colors.cardStroke, smileWithAlpha(theme.colors.cardStroke, 0)),
             minHeight: theme.dimens.space[32],
             paddingHorizontal: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
             paddingVertical: insetForBorder(theme.dimens.spacing.xs, smileCardStrokeWidth),

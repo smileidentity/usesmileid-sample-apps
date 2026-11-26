@@ -11570,7 +11570,7 @@ exports[`verifications dark default 1`] = `
                 {
                   "alignItems": "center",
                   "backgroundColor": "rgba(77, 136, 255, 1)",
-                  "borderColor": "rgba(0, 0, 0, 0)",
+                  "borderColor": "rgba(45, 55, 72, 0)",
                   "borderRadius": 999,
                   "borderWidth": 0.5,
                   "columnGap": 4,
@@ -16817,7 +16817,7 @@ exports[`verifications dark empty 1`] = `
                 {
                   "alignItems": "center",
                   "backgroundColor": "rgba(77, 136, 255, 1)",
-                  "borderColor": "rgba(0, 0, 0, 0)",
+                  "borderColor": "rgba(45, 55, 72, 0)",
                   "borderRadius": 999,
                   "borderWidth": 0.5,
                   "columnGap": 4,
@@ -17523,7 +17523,7 @@ exports[`verifications dark notLoaded 1`] = `
                 {
                   "alignItems": "center",
                   "backgroundColor": "rgba(77, 136, 255, 1)",
-                  "borderColor": "rgba(0, 0, 0, 0)",
+                  "borderColor": "rgba(45, 55, 72, 0)",
                   "borderRadius": 999,
                   "borderWidth": 0.5,
                   "columnGap": 4,
@@ -18166,7 +18166,7 @@ exports[`verifications light default 1`] = `
                 {
                   "alignItems": "center",
                   "backgroundColor": "rgba(21, 31, 114, 1)",
-                  "borderColor": "rgba(0, 0, 0, 0)",
+                  "borderColor": "rgba(234, 236, 240, 0)",
                   "borderRadius": 999,
                   "borderWidth": 0.5,
                   "columnGap": 4,
@@ -23413,7 +23413,7 @@ exports[`verifications light empty 1`] = `
                 {
                   "alignItems": "center",
                   "backgroundColor": "rgba(21, 31, 114, 1)",
-                  "borderColor": "rgba(0, 0, 0, 0)",
+                  "borderColor": "rgba(234, 236, 240, 0)",
                   "borderRadius": 999,
                   "borderWidth": 0.5,
                   "columnGap": 4,
@@ -24119,7 +24119,7 @@ exports[`verifications light notLoaded 1`] = `
                 {
                   "alignItems": "center",
                   "backgroundColor": "rgba(21, 31, 114, 1)",
-                  "borderColor": "rgba(0, 0, 0, 0)",
+                  "borderColor": "rgba(234, 236, 240, 0)",
                   "borderRadius": 999,
                   "borderWidth": 0.5,
                   "columnGap": 4,

@@ -953,7 +953,7 @@ exports[`FilterChip dark active 1`] = `
       {
         "alignItems": "center",
         "backgroundColor": "rgba(77, 136, 255, 1)",
-        "borderColor": "rgba(0, 0, 0, 0)",
+        "borderColor": "rgba(45, 55, 72, 0)",
         "borderRadius": 999,
         "borderWidth": 0.5,
         "columnGap": 4,
@@ -1248,7 +1248,7 @@ exports[`FilterChip light active 1`] = `
       {
         "alignItems": "center",
         "backgroundColor": "rgba(21, 31, 114, 1)",
-        "borderColor": "rgba(0, 0, 0, 0)",
+        "borderColor": "rgba(234, 236, 240, 0)",
         "borderRadius": 999,
         "borderWidth": 0.5,
         "columnGap": 4,
