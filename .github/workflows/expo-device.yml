@@ -11,6 +11,10 @@ on:
     paths:
       - 'expo/**'
       - 'spec/**'
+      - 'scripts/check_apk_contains.py'
+      - 'scripts/check_expo_module_registered.py'
+      - 'scripts/test_check_apk_contains.py'
+      - 'scripts/test_check_expo_module_registered.py'
       - '.github/workflows/expo-device.yml'
   push:
     branches: [main]
@@ -106,6 +110,14 @@ jobs:
           ./gradlew :app:createBundleReleaseJsAndAssets --rerun :app:assembleRelease \
             -PreactNativeArchitectures=x86_64
         working-directory: expo/app/android
+
+      # An unregistered or missing cutout module fails silently, leaving the header without its gap; the same checks as verify.sh native.
+      - name: Check the release keeps and registers the native top-cutout reader
+        run: |
+          python3 scripts/test_check_apk_contains.py
+          python3 scripts/test_check_expo_module_registered.py
+          python3 scripts/check_apk_contains.py expo/app/android/app/build/outputs/apk/release/app-release.apk UseSmileIDSampleCutout
+          python3 scripts/check_expo_module_registered.py expo/app com.usesmileid.sample.cutout.UseSmileIDSampleCutoutModule
 
       # The daemon holds a heap this runner needs back before an emulator will fit beside it.
       - name: Stop the Gradle daemon
