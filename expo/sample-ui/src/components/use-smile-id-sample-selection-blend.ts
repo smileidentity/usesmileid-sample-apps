@@ -8,6 +8,8 @@ export const useSmileIDSampleSelectionProgress = (selected: boolean): { progress
   const reduced = useSmileIDSampleReducedMotion();
   const [progress] = useState(() => new Animated.Value(selected ? 1 : 0));
   const [settled, setSettled] = useState(selected);
+  // Settled during render, as React advises for state derived from props: no animation will report it.
+  if (reduced && settled !== selected) setSettled(selected);
   const last = useRef(selected);
   useEffect(() => {
     const target = selected ? 1 : 0;

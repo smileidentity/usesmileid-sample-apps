@@ -9,6 +9,7 @@ import {
   useSmileIDSampleReducedMotion,
 } from '../src/components/use-smile-id-sample-press-feedback';
 import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
+import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
 import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
 import {
   UseSmileIDSampleFadeIn,
@@ -276,5 +277,37 @@ describe('a fade on change', () => {
       listen.mockRestore();
       timing.mockRestore();
     }
+  });
+});
+
+describe('a tab changed under reduced motion', () => {
+  it('draws one mark per tab once reduced motion turns off', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    let pickTab = noop;
+    let allowMotion = noop;
+    const Host = () => {
+      const [reduced, setReduced] = useState<boolean | undefined>(true);
+      const [tab, setTab] = useState('products');
+      pickTab = () => setTab('verifications');
+      allowMotion = () => setReduced(false);
+      return (
+        <UseSmileIDSampleReducedMotionOverride.Provider value={reduced}>
+          <UseSmileIDSampleNavBar selectedId={tab} onSelect={noop} onTokenPress={noop} />
+        </UseSmileIDSampleReducedMotionOverride.Provider>
+      );
+    };
+    const screen = await renderLive(<Host />, false);
+    await act(async () => {
+      pickTab();
+    });
+    await act(async () => {
+      allowMotion();
+    });
+
+    expect((JSON.stringify(screen.toJSON()).match(/RNSVGSvgView/g) ?? []).length).toBe(4);
+    jest.restoreAllMocks();
   });
 });
