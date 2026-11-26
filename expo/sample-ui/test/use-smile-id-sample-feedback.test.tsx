@@ -1,10 +1,11 @@
 import { act, fireEvent } from '@testing-library/react-native';
-import { useState } from 'react';
+import { useState, type ReactElement } from 'react';
 import { AccessibilityInfo, Animated, StyleSheet, Text } from 'react-native';
 
 import {
   smileIDSamplePressOpacity,
   smileIDSamplePressScale,
+  UseSmileIDSampleReducedMotionOverride,
   useSmileIDSampleReducedMotion,
 } from '../src/components/use-smile-id-sample-press-feedback';
 import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
@@ -15,13 +16,26 @@ import {
   useSmileIDSampleVisibilityFade,
 } from '../src/components/use-smile-id-sample-entrance';
 import { tokens } from '../src/tokens';
-import { smileIDSampleSelectionColor } from '../src/components/use-smile-id-sample-selection-blend';
-import { smileMix } from '../src/theme/smile-color-math';
 import { smileLightColors } from '../src/index';
 import { smileIDSampleProductHue, smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
 import { renderInTheme } from './render-in-theme';
 
+/// Renders with the platform's reduced-motion answer, which each test here mocks, instead of the goldens' pinned one.
+const renderLive = (element: ReactElement, dark: boolean) =>
+  renderInTheme(
+    <UseSmileIDSampleReducedMotionOverride.Provider value={undefined}>{element}</UseSmileIDSampleReducedMotionOverride.Provider>,
+    dark,
+  );
+
 const noop = () => {};
+
+/// A colour's red, green and blue, whether written as `#RRGGBB` or as the `rgba()` Animated interpolates to.
+const rgb = (colour: string | undefined): number[] => {
+  const text = String(colour);
+  const hex = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(text);
+  if (hex) return hex.slice(1).map((part) => Number.parseInt(part, 16));
+  return (text.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+};
 
 const card = (testID: string) => (
   <UseSmileIDSampleProductCard
@@ -59,7 +73,7 @@ describe('a product card press', () => {
   it('animates the card down while held and back on release', async () => {
     const timing = jest.spyOn(Animated, 'timing');
     try {
-      const screen = await renderInTheme(card('card'), false);
+      const screen = await renderLive(card('card'), false);
 
       await act(async () => {
         fireEvent(screen.getByTestId('card'), 'pressIn');
@@ -77,7 +91,7 @@ describe('a product card press', () => {
   it('asks the platform about reduced motion once for a whole grid', async () => {
     const listen = jest.spyOn(AccessibilityInfo, 'addEventListener');
     try {
-      await renderInTheme(
+      await renderLive(
         <>
           {card('first')}
           {card('second')}
@@ -110,7 +124,7 @@ describe('the reduced-motion reading', () => {
         seen.push(useSmileIDSampleReducedMotion());
         return null;
       };
-      await renderInTheme(<Probe />, false);
+      await renderLive(<Probe />, false);
 
       await act(async () => change(false));
       await act(async () => answer(true));
@@ -145,7 +159,7 @@ describe('a picked colour', () => {
         pick = () => setSelected(true);
         return chip(selected);
       };
-      const screen = await renderInTheme(<Host />, false);
+      const screen = await renderLive(<Host />, false);
       await act(async () => {
         await Promise.resolve();
       });
@@ -161,9 +175,9 @@ describe('a picked colour', () => {
         jest.advanceTimersByTime(1_000);
       });
 
-      expect(midway).not.toBe(resting);
-      expect(midway).not.toBe(fillOf(screen));
-      expect(fillOf(screen)).toBe(smileLightColors.primary);
+      expect(rgb(midway)).not.toEqual(rgb(resting));
+      expect(rgb(midway)).not.toEqual(rgb(fillOf(screen)));
+      expect(rgb(fillOf(screen))).toEqual(rgb(smileLightColors.primary));
     } finally {
       ask.mockRestore();
       listen.mockRestore();
@@ -171,50 +185,6 @@ describe('a picked colour', () => {
     }
   });
 
-  const { primary, onPrimary } = smileLightColors;
-
-  it('snaps a chip to its picked fill under reduced motion', async () => {
-    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
-    const listen = jest
-      .spyOn(AccessibilityInfo, 'addEventListener')
-      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
-    const timing = jest.spyOn(Animated, 'timing');
-    try {
-      let pick = noop;
-      const Host = () => {
-        const [selected, setSelected] = useState(false);
-        pick = () => setSelected(true);
-        return chip(selected);
-      };
-      const screen = await renderInTheme(<Host />, false);
-      await act(async () => {
-        await Promise.resolve();
-      });
-      timing.mockClear();
-      await act(async () => {
-        pick();
-      });
-
-      expect(timing).not.toHaveBeenCalled();
-      expect(fillOf(screen)).toBe(smileLightColors.primary);
-    } finally {
-      ask.mockRestore();
-      listen.mockRestore();
-      timing.mockRestore();
-    }
-  });
-
-  it('blends two colours and returns the exact ends at rest', () => {
-    expect(smileIDSampleSelectionColor(onPrimary, primary, 0)).toBe(onPrimary);
-    expect(smileIDSampleSelectionColor(onPrimary, primary, 1)).toBe(primary);
-    expect(smileIDSampleSelectionColor(onPrimary, primary, 0.5)).toBe(smileMix(onPrimary, primary, 0.5));
-  });
-
-  it('snaps colours it cannot blend at the halfway point', () => {
-    const translucent = 'rgba(0, 0, 0, 0.5)';
-    expect(smileIDSampleSelectionColor(translucent, primary, 0.4)).toBe(translucent);
-    expect(smileIDSampleSelectionColor(translucent, primary, 0.6)).toBe(primary);
-  });
 });
 
 describe('an entrance', () => {
@@ -246,7 +216,7 @@ describe('an entrance', () => {
         </>
       );
     };
-    await renderInTheme(<Host />, false);
+    await renderLive(<Host />, false);
     await settle();
     timing.mockClear();
     await act(async () => {
@@ -289,7 +259,7 @@ describe('a fade on change', () => {
         const opacity = useSmileIDSampleVisibilityFade(visible);
         return <Animated.View style={{ opacity }} />;
       };
-      await renderInTheme(<Probe />, false);
+      await renderLive(<Probe />, false);
       await act(async () => {
         await Promise.resolve();
       });

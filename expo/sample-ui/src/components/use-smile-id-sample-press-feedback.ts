@@ -1,4 +1,4 @@
-import { useSyncExternalStore } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
 import { AccessibilityInfo } from 'react-native';
 
 import { tokens } from '../tokens';
@@ -47,9 +47,15 @@ const subscribe = (listener: () => void) => {
   };
 };
 
+/// A fixed reduced-motion answer that wins over the platform's, as goldens use to record every motion at rest.
+export const UseSmileIDSampleReducedMotionOverride = createContext<boolean | undefined>(undefined);
+
 /// Whether the platform asks for reduced motion, kept current while the screen is up.
-export const useSmileIDSampleReducedMotion = (): boolean =>
-  useSyncExternalStore(subscribe, () => reducedMotion !== false);
+export const useSmileIDSampleReducedMotion = (): boolean => {
+  const forced = useContext(UseSmileIDSampleReducedMotionOverride);
+  const read = useSyncExternalStore(subscribe, () => reducedMotion !== false);
+  return forced ?? read;
+};
 
 /// The opacity a held card draws at when reduced motion stops the scale, so a press still shows.
 export const smileIDSamplePressOpacity = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>

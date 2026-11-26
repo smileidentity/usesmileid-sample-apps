@@ -1,10 +1,10 @@
-import { Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Pressable, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 
 import { smileCardStrokeWidth, smileLabelSize, smileLabelTracking } from '../smile-product-hues';
 import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
-import { smileIDSampleSelectionColor, useSmileIDSampleSelectionBlend } from './use-smile-id-sample-selection-blend';
+import { smileIDSampleSelectionColor, useSmileIDSampleSelectionProgress } from './use-smile-id-sample-selection-blend';
 
 const CHIP_LABEL_SIZE = 12.5;
 
@@ -30,7 +30,7 @@ export const UseSmileIDSampleFilterChip = ({
   style,
 }: Props) => {
   const theme = useSmileIDSampleTheme();
-  const picked = useSmileIDSampleSelectionBlend(selected);
+  const { progress: picked } = useSmileIDSampleSelectionProgress(selected);
 
   return (
     <Pressable
@@ -40,12 +40,12 @@ export const UseSmileIDSampleFilterChip = ({
       onPress={onPress}
       style={[styles.target, touchTargetStyle(theme, 'height'), style]}
     >
-      <View
+      <Animated.View
         style={[
           styles.chip,
           {
             borderRadius: theme.dimens.radius.chip,
-            backgroundColor: smileIDSampleSelectionColor(theme.colors.filterChip.background, theme.colors.primary, picked),
+            backgroundColor: smileIDSampleSelectionColor(picked, theme.colors.filterChip.background, theme.colors.primary),
             borderWidth: selected ? 0 : smileCardStrokeWidth,
             borderColor: selected ? 'transparent' : theme.colors.cardStroke,
             minHeight: theme.dimens.space[32],
@@ -55,30 +55,30 @@ export const UseSmileIDSampleFilterChip = ({
           },
         ]}
       >
-        <Text
+        <Animated.Text
           style={[
             atSize(atWeight(theme.type.filterChipFont, 700), CHIP_LABEL_SIZE),
-            { color: smileIDSampleSelectionColor(theme.colors.filterChip.label, theme.colors.onPrimary, picked) },
+            { color: smileIDSampleSelectionColor(picked, theme.colors.filterChip.label, theme.colors.onPrimary) },
           ]}
         >
           {label}
-        </Text>
+        </Animated.Text>
         {count === null ? null : (
-          <Text
+          <Animated.Text
             testID={countTestID}
             // The design file's muted grey, deliberately not filter.chip-value's blue.
             style={[
               atSize(theme.type.textStyleOverline, smileLabelSize),
               {
                 letterSpacing: smileLabelTracking,
-                color: smileIDSampleSelectionColor(theme.colors.textMuted, theme.colors.onPrimary, picked),
+                color: smileIDSampleSelectionColor(picked, theme.colors.textMuted, theme.colors.onPrimary),
               },
             ]}
           >
             {count}
-          </Text>
+          </Animated.Text>
         )}
-      </View>
+      </Animated.View>
     </Pressable>
   );
 };

@@ -3,6 +3,7 @@ import type { ReactElement } from 'react';
 import { PixelRatio, View } from 'react-native';
 import { SafeAreaProvider, type Metrics } from 'react-native-safe-area-context';
 
+import { UseSmileIDSampleReducedMotionOverride } from '../src/components/use-smile-id-sample-press-feedback';
 import { UseSmileIDSampleThemeProvider } from '../src/theme/use-smile-id-sample-theme';
 import { UseSmileIDSampleStringsProvider } from '../src/use-smile-id-sample-strings-context';
 
@@ -49,7 +50,10 @@ export const renderInTheme = (
   const pinned: Metrics = insets ? { ...metrics, insets: { ...metrics.insets, ...insets } } : metrics;
   return render(
     <SafeAreaProvider initialMetrics={pinned}>
-      <UseSmileIDSampleThemeProvider dark={dark}>{element}</UseSmileIDSampleThemeProvider>
+      <UseSmileIDSampleThemeProvider dark={dark}>
+        {/* Motion off, so an entrance is recorded at rest whatever ran before, as Flutter's harness does. */}
+        <UseSmileIDSampleReducedMotionOverride.Provider value>{element}</UseSmileIDSampleReducedMotionOverride.Provider>
+      </UseSmileIDSampleThemeProvider>
     </SafeAreaProvider>,
   );
 };

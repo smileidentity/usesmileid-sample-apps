@@ -64,10 +64,7 @@ export const useSmileIDSampleVisibilityFade = (visible: boolean): Animated.Value
     }
     const run = Animated.timing(opacity, { toValue: target, duration: SMILE_DURATION_FAST_MS, useNativeDriver: true });
     run.start();
-    return () => {
-      run.stop();
-      opacity.setValue(target);
-    };
+    return () => run.stop();
   }, [visible, reduced, opacity]);
   return opacity;
 };

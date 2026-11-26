@@ -948,60 +948,50 @@ exports[`FilterChip dark active 1`] = `
   }
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#4d88ff",
-          "borderColor": "transparent",
-          "borderRadius": 999,
-          "borderWidth": 0,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 12,
-          "paddingVertical": 8,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(77, 136, 255, 1)",
+        "borderColor": "transparent",
+        "borderRadius": 999,
+        "borderWidth": 0,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 12,
+        "paddingVertical": 8,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#ffffff",
-          },
-        ]
+        {
+          "color": "rgba(255, 255, 255, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       All
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#ffffff",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(255, 255, 255, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       11
@@ -1056,60 +1046,50 @@ exports[`FilterChip dark default 1`] = `
   }
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#272a35",
-          "borderColor": "#2d3748",
-          "borderRadius": 999,
-          "borderWidth": 0.5,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 11.5,
-          "paddingVertical": 7.5,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(39, 42, 53, 1)",
+        "borderColor": "#2d3748",
+        "borderRadius": 999,
+        "borderWidth": 0.5,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 11.5,
+        "paddingVertical": 7.5,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#c2c5cb",
-          },
-        ]
+        {
+          "color": "rgba(194, 197, 203, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       Clear
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#848282",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(132, 130, 130, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       6
@@ -1165,60 +1145,50 @@ exports[`FilterChip dark pressed 1`] = `
   testID="golden_chip"
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#272a35",
-          "borderColor": "#2d3748",
-          "borderRadius": 999,
-          "borderWidth": 0.5,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 11.5,
-          "paddingVertical": 7.5,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(39, 42, 53, 1)",
+        "borderColor": "#2d3748",
+        "borderRadius": 999,
+        "borderWidth": 0.5,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 11.5,
+        "paddingVertical": 7.5,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#c2c5cb",
-          },
-        ]
+        {
+          "color": "rgba(194, 197, 203, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       Attention
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#848282",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(132, 130, 130, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       2
@@ -1273,60 +1243,50 @@ exports[`FilterChip light active 1`] = `
   }
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#151f72",
-          "borderColor": "transparent",
-          "borderRadius": 999,
-          "borderWidth": 0,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 12,
-          "paddingVertical": 8,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(21, 31, 114, 1)",
+        "borderColor": "transparent",
+        "borderRadius": 999,
+        "borderWidth": 0,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 12,
+        "paddingVertical": 8,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#ffffff",
-          },
-        ]
+        {
+          "color": "rgba(255, 255, 255, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       All
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#ffffff",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(255, 255, 255, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       11
@@ -1381,60 +1341,50 @@ exports[`FilterChip light default 1`] = `
   }
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#ffffff",
-          "borderColor": "#eaecf0",
-          "borderRadius": 999,
-          "borderWidth": 0.5,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 11.5,
-          "paddingVertical": 7.5,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(255, 255, 255, 1)",
+        "borderColor": "#eaecf0",
+        "borderRadius": 999,
+        "borderWidth": 0.5,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 11.5,
+        "paddingVertical": 7.5,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#5e646e",
-          },
-        ]
+        {
+          "color": "rgba(94, 100, 110, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       Clear
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#848282",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(132, 130, 130, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       6
@@ -1490,60 +1440,50 @@ exports[`FilterChip light pressed 1`] = `
   testID="golden_chip"
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#ffffff",
-          "borderColor": "#eaecf0",
-          "borderRadius": 999,
-          "borderWidth": 0.5,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 11.5,
-          "paddingVertical": 7.5,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(255, 255, 255, 1)",
+        "borderColor": "#eaecf0",
+        "borderRadius": 999,
+        "borderWidth": 0.5,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 11.5,
+        "paddingVertical": 7.5,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#5e646e",
-          },
-        ]
+        {
+          "color": "rgba(94, 100, 110, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       Attention
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#848282",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(132, 130, 130, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       2

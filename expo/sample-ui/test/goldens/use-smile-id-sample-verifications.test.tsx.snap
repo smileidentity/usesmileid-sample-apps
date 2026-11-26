@@ -11565,60 +11565,50 @@ exports[`verifications dark default 1`] = `
             testID="sample_filter_chip_all"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#4d88ff",
-                    "borderColor": "transparent",
-                    "borderRadius": 999,
-                    "borderWidth": 0,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(77, 136, 255, 1)",
+                  "borderColor": "transparent",
+                  "borderRadius": 999,
+                  "borderWidth": 0,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 12,
+                  "paddingVertical": 8,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#ffffff",
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 All
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#ffffff",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_all"
               >
@@ -11672,60 +11662,50 @@ exports[`verifications dark default 1`] = `
             testID="sample_filter_chip_clear"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Clear
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_clear"
               >
@@ -11779,60 +11759,50 @@ exports[`verifications dark default 1`] = `
             testID="sample_filter_chip_attention"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Attention
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_attention"
               >
@@ -11886,60 +11856,50 @@ exports[`verifications dark default 1`] = `
             testID="sample_filter_chip_blocked"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Blocked
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_blocked"
               >
@@ -11993,60 +11953,50 @@ exports[`verifications dark default 1`] = `
             testID="sample_filter_chip_error"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Error
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_error"
               >
@@ -16862,60 +16812,50 @@ exports[`verifications dark empty 1`] = `
             testID="sample_filter_chip_all"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#4d88ff",
-                    "borderColor": "transparent",
-                    "borderRadius": 999,
-                    "borderWidth": 0,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(77, 136, 255, 1)",
+                  "borderColor": "transparent",
+                  "borderRadius": 999,
+                  "borderWidth": 0,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 12,
+                  "paddingVertical": 8,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#ffffff",
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 All
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#ffffff",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_all"
               >
@@ -16969,60 +16909,50 @@ exports[`verifications dark empty 1`] = `
             testID="sample_filter_chip_clear"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Clear
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_clear"
               >
@@ -17076,60 +17006,50 @@ exports[`verifications dark empty 1`] = `
             testID="sample_filter_chip_attention"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Attention
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_attention"
               >
@@ -17183,60 +17103,50 @@ exports[`verifications dark empty 1`] = `
             testID="sample_filter_chip_blocked"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Blocked
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_blocked"
               >
@@ -17290,60 +17200,50 @@ exports[`verifications dark empty 1`] = `
             testID="sample_filter_chip_error"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Error
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_error"
               >
@@ -17618,60 +17518,50 @@ exports[`verifications dark notLoaded 1`] = `
             testID="sample_filter_chip_all"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#4d88ff",
-                    "borderColor": "transparent",
-                    "borderRadius": 999,
-                    "borderWidth": 0,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(77, 136, 255, 1)",
+                  "borderColor": "transparent",
+                  "borderRadius": 999,
+                  "borderWidth": 0,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 12,
+                  "paddingVertical": 8,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#ffffff",
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 All
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#ffffff",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_all"
               >
@@ -17725,60 +17615,50 @@ exports[`verifications dark notLoaded 1`] = `
             testID="sample_filter_chip_clear"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Clear
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_clear"
               >
@@ -17832,60 +17712,50 @@ exports[`verifications dark notLoaded 1`] = `
             testID="sample_filter_chip_attention"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Attention
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_attention"
               >
@@ -17939,60 +17809,50 @@ exports[`verifications dark notLoaded 1`] = `
             testID="sample_filter_chip_blocked"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Blocked
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_blocked"
               >
@@ -18046,60 +17906,50 @@ exports[`verifications dark notLoaded 1`] = `
             testID="sample_filter_chip_error"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#272a35",
-                    "borderColor": "#2d3748",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(39, 42, 53, 1)",
+                  "borderColor": "#2d3748",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#c2c5cb",
-                    },
-                  ]
+                  {
+                    "color": "rgba(194, 197, 203, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Error
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_error"
               >
@@ -18311,60 +18161,50 @@ exports[`verifications light default 1`] = `
             testID="sample_filter_chip_all"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#151f72",
-                    "borderColor": "transparent",
-                    "borderRadius": 999,
-                    "borderWidth": 0,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(21, 31, 114, 1)",
+                  "borderColor": "transparent",
+                  "borderRadius": 999,
+                  "borderWidth": 0,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 12,
+                  "paddingVertical": 8,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#ffffff",
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 All
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#ffffff",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_all"
               >
@@ -18418,60 +18258,50 @@ exports[`verifications light default 1`] = `
             testID="sample_filter_chip_clear"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Clear
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_clear"
               >
@@ -18525,60 +18355,50 @@ exports[`verifications light default 1`] = `
             testID="sample_filter_chip_attention"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Attention
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_attention"
               >
@@ -18632,60 +18452,50 @@ exports[`verifications light default 1`] = `
             testID="sample_filter_chip_blocked"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Blocked
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_blocked"
               >
@@ -18739,60 +18549,50 @@ exports[`verifications light default 1`] = `
             testID="sample_filter_chip_error"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Error
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_error"
               >
@@ -18835,7 +18635,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={2}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -18967,7 +18767,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={1}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19258,7 +19058,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={4}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -19390,7 +19190,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={3}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19681,7 +19481,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={6}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -19813,7 +19613,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={5}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20113,7 +19913,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={8}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20245,7 +20045,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={7}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20513,7 +20313,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={10}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20645,7 +20445,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={9}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20905,7 +20705,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={12}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21037,7 +20837,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={11}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21328,7 +21128,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={14}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21460,7 +21260,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={13}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21728,7 +21528,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={16}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21860,7 +21660,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={15}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22183,7 +21983,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={18}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22315,7 +22115,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={17}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22606,7 +22406,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={20}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22738,7 +22538,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={19}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -23006,7 +22806,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={22}
+          handlerTag={-1}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -23138,7 +22938,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={21}
+            handlerTag={-1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -23608,60 +23408,50 @@ exports[`verifications light empty 1`] = `
             testID="sample_filter_chip_all"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#151f72",
-                    "borderColor": "transparent",
-                    "borderRadius": 999,
-                    "borderWidth": 0,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(21, 31, 114, 1)",
+                  "borderColor": "transparent",
+                  "borderRadius": 999,
+                  "borderWidth": 0,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 12,
+                  "paddingVertical": 8,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#ffffff",
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 All
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#ffffff",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_all"
               >
@@ -23715,60 +23505,50 @@ exports[`verifications light empty 1`] = `
             testID="sample_filter_chip_clear"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Clear
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_clear"
               >
@@ -23822,60 +23602,50 @@ exports[`verifications light empty 1`] = `
             testID="sample_filter_chip_attention"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Attention
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_attention"
               >
@@ -23929,60 +23699,50 @@ exports[`verifications light empty 1`] = `
             testID="sample_filter_chip_blocked"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Blocked
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_blocked"
               >
@@ -24036,60 +23796,50 @@ exports[`verifications light empty 1`] = `
             testID="sample_filter_chip_error"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Error
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_error"
               >
@@ -24364,60 +24114,50 @@ exports[`verifications light notLoaded 1`] = `
             testID="sample_filter_chip_all"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#151f72",
-                    "borderColor": "transparent",
-                    "borderRadius": 999,
-                    "borderWidth": 0,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(21, 31, 114, 1)",
+                  "borderColor": "transparent",
+                  "borderRadius": 999,
+                  "borderWidth": 0,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 12,
+                  "paddingVertical": 8,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#ffffff",
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 All
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#ffffff",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(255, 255, 255, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_all"
               >
@@ -24471,60 +24211,50 @@ exports[`verifications light notLoaded 1`] = `
             testID="sample_filter_chip_clear"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Clear
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_clear"
               >
@@ -24578,60 +24308,50 @@ exports[`verifications light notLoaded 1`] = `
             testID="sample_filter_chip_attention"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Attention
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_attention"
               >
@@ -24685,60 +24405,50 @@ exports[`verifications light notLoaded 1`] = `
             testID="sample_filter_chip_blocked"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Blocked
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_blocked"
               >
@@ -24792,60 +24502,50 @@ exports[`verifications light notLoaded 1`] = `
             testID="sample_filter_chip_error"
           >
             <View
+              collapsable={false}
               style={
-                [
-                  {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                  },
-                  {
-                    "backgroundColor": "#ffffff",
-                    "borderColor": "#eaecf0",
-                    "borderRadius": 999,
-                    "borderWidth": 0.5,
-                    "columnGap": 4,
-                    "minHeight": 32,
-                    "paddingHorizontal": 11.5,
-                    "paddingVertical": 7.5,
-                  },
-                ]
+                {
+                  "alignItems": "center",
+                  "backgroundColor": "rgba(255, 255, 255, 1)",
+                  "borderColor": "#eaecf0",
+                  "borderRadius": 999,
+                  "borderWidth": 0.5,
+                  "columnGap": 4,
+                  "flexDirection": "row",
+                  "minHeight": 32,
+                  "paddingHorizontal": 11.5,
+                  "paddingVertical": 7.5,
+                }
               }
             >
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 12.5,
-                      "letterSpacing": 0,
-                      "lineHeight": 20,
-                      "marginBottom": -1.862499999999999,
-                      "marginTop": -1.862499999999999,
-                    },
-                    {
-                      "color": "#5e646e",
-                    },
-                  ]
+                  {
+                    "color": "rgba(94, 100, 110, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 12.5,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -1.862499999999999,
+                    "marginTop": -1.862499999999999,
+                  }
                 }
               >
                 Error
               </Text>
               <Text
+                collapsable={false}
                 style={
-                  [
-                    {
-                      "fontFamily": "DMSans-Bold",
-                      "fontSize": 11,
-                      "letterSpacing": 0,
-                      "lineHeight": 16,
-                      "marginBottom": -0.8389999999999995,
-                      "marginTop": -0.8389999999999995,
-                    },
-                    {
-                      "color": "#848282",
-                      "letterSpacing": 0.88,
-                    },
-                  ]
+                  {
+                    "color": "rgba(132, 130, 130, 1)",
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 11,
+                    "letterSpacing": 0.88,
+                    "lineHeight": 16,
+                    "marginBottom": -0.8389999999999995,
+                    "marginTop": -0.8389999999999995,
+                  }
                 }
                 testID="sample_filter_count_error"
               >
