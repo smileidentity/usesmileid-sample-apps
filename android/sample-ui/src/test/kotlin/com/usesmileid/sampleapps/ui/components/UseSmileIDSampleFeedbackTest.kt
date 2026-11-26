@@ -2,20 +2,27 @@ package com.usesmileid.sampleapps.ui.components
 
 import android.content.Context
 import android.provider.Settings
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.toPixelMap
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
@@ -163,6 +170,64 @@ class UseSmileIDSampleFeedbackTest {
         assertTrue(picked.toArgb() in settled)
     }
 
+    @Test
+    fun `a bar rises into place when it appears`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var shown by mutableStateOf(false)
+        setContent {
+            UseSmileIDSampleTheme {
+                Box(Modifier.size(300.dp)) {
+                    if (shown) {
+                        UseSmileIDSampleRiseIn(modifier = Modifier.align(Alignment.BottomCenter)) {
+                            Box(Modifier.size(width = 200.dp, height = 60.dp).testTag(BAR))
+                        }
+                    }
+                }
+            }
+        }
+        mainClock.advanceTimeBy(1_000)
+
+        shown = true
+        Snapshot.sendApplyNotifications()
+        mainClock.advanceTimeBy(48)
+        val rising = onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top
+        mainClock.advanceTimeBy(1_000)
+        val settled = onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top
+
+        assertTrue("still rising at $rising, settles at $settled", rising > settled)
+    }
+
+    @Test
+    fun `content fades in when it replaces a loading state`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var shown by mutableStateOf(false)
+        setContent {
+            UseSmileIDSampleTheme {
+                if (shown) {
+                    UseSmileIDSampleFadeIn {
+                        Box(Modifier.size(40.dp).background(Color.Black).testTag(BAR))
+                    }
+                }
+            }
+        }
+        mainClock.advanceTimeBy(1_000)
+
+        shown = true
+        Snapshot.sendApplyNotifications()
+        mainClock.advanceTimeBy(48)
+        val midway = centre(BAR)
+        mainClock.advanceTimeBy(1_000)
+        val settled = centre(BAR)
+
+        assertNotEquals(Color.Black.toArgb(), midway)
+        assertEquals(Color.Black.toArgb(), settled)
+    }
+
+    private fun ComposeUiTest.centre(tag: String): Int {
+        val map = onNodeWithTag(tag).captureToImage().toPixelMap()
+        return map[map.width / 2, map.height / 2].toArgb()
+    }
+
     private fun ComposeUiTest.fill(): Int {
         val map = onNodeWithTag(CHIP).captureToImage().toPixelMap()
         return map[(map.width * 0.12f).toInt(), map.height / 2].toArgb()
@@ -171,5 +236,6 @@ class UseSmileIDSampleFeedbackTest {
     private companion object {
         const val CARD = "card"
         const val CHIP = "chip"
+        const val BAR = "bar"
     }
 }

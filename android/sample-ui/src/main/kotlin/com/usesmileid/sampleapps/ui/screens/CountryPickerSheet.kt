@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import com.smileid.designsystem.SmileDimens
 import com.usesmileid.sampleapps.ui.UseSmileIDSampleTestIds
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleEmptyState
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFadeIn
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleFullHeightBottomSheet
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleOptionRow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSearchField
@@ -98,14 +99,16 @@ internal fun <T> CataloguePicker(
         )
         // The first 300 ms draw nothing, so a fast answer never flashes a skeleton.
         loading -> Unit
-        catalogue is UseSmileIDSampleCatalogue.Failed -> UseSmileIDSampleEmptyState(
-            text = failedLabel,
-            supportingText = stringResource(catalogue.advice.text),
-            testId = UseSmileIDSampleTestIds.CATALOGUE_ERROR,
-            onRetry = onRetry,
-            retryTestId = UseSmileIDSampleTestIds.CATALOGUE_RETRY,
-        )
-        catalogue is UseSmileIDSampleCatalogue.Ready -> {
+        catalogue is UseSmileIDSampleCatalogue.Failed -> UseSmileIDSampleFadeIn {
+            UseSmileIDSampleEmptyState(
+                text = failedLabel,
+                supportingText = stringResource(catalogue.advice.text),
+                testId = UseSmileIDSampleTestIds.CATALOGUE_ERROR,
+                onRetry = onRetry,
+                retryTestId = UseSmileIDSampleTestIds.CATALOGUE_RETRY,
+            )
+        }
+        catalogue is UseSmileIDSampleCatalogue.Ready -> UseSmileIDSampleFadeIn {
             val matches = catalogue.items.filter { label(it).contains(query.trim(), ignoreCase = true) }
             if (matches.isEmpty()) {
                 UseSmileIDSampleEmptyState(text = emptyLabel, testId = emptyTestId)

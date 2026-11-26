@@ -1,9 +1,12 @@
 package com.usesmileid.sampleapps.ui.screens
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import com.smileid.designsystem.SmileMotion
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleRelativeDay
 import androidx.compose.ui.platform.LocalConfiguration
 import com.usesmileid.sampleapps.ui.label
@@ -162,6 +165,11 @@ fun VerificationsScreen(
                     modifier = Modifier.weight(1f),
                 )
                 val offersSelect = state.selectMode || !state.jobs.isNullOrEmpty()
+                val selectAlpha by animateFloatAsState(
+                    targetValue = if (offersSelect) 1f else 0f,
+                    animationSpec = tween(SmileMotion.durationFast.inWholeMilliseconds.toInt()),
+                    label = "selectToggle",
+                )
                 Text(
                     text = if (state.selectMode) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
@@ -174,9 +182,10 @@ fun VerificationsScreen(
                                     .testTag(UseSmileIDSampleTestIds.SELECT_TOGGLE)
                                     .clickable(role = Role.Button) { onSelectModeChange(!state.selectMode) }
                             } else {
-                                Modifier.alpha(0f).clearAndSetSemantics {}
+                                Modifier.clearAndSetSemantics {}
                             },
                         )
+                        .graphicsLayer { alpha = selectAlpha }
                         .minimumInteractiveComponentSize()
                         .padding(horizontal = SmileDimens.spacingXs),
                 )

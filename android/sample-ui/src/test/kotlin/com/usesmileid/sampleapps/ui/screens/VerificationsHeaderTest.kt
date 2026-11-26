@@ -1,7 +1,11 @@
 package com.usesmileid.sampleapps.ui.screens
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
@@ -17,7 +21,9 @@ import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJob
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleJobFilter
 import com.usesmileid.sampleapps.ui.model.startOfDayMillis
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
+import com.usesmileid.sampleapps.ui.theme.lightColors
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -71,6 +77,21 @@ class VerificationsHeaderTest {
     }
 
     @Test
+    fun select_fades_in_when_the_first_rows_land() {
+        show(jobs = emptyList())
+        compose.mainClock.autoAdvance = false
+
+        shown.value = stateOf(JOBS, selectMode = false)
+        Snapshot.sendApplyNotifications()
+        compose.mainClock.advanceTimeBy(80)
+        val midway = selectInk()
+        compose.mainClock.advanceTimeBy(1_000)
+        val settled = selectInk()
+
+        assertTrue("Select drew $midway full-ink pixels midway and $settled settled", midway < settled)
+    }
+
+    @Test
     @Config(qualifiers = "w393dp-h480dp-xhdpi")
     fun the_chip_row_keeps_its_scroll_when_the_header_scrolls_away_and_back() {
         show(jobs = JOBS)
@@ -98,12 +119,7 @@ class VerificationsHeaderTest {
 
     private fun show(jobs: List<UseSmileIDSampleJob>?, selectMode: Boolean = false) {
         val first = shown.value == null
-        shown.value = UseSmileIDSampleVerificationsState(
-            jobs = jobs,
-            counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.orEmpty().count(f::matches) },
-            selectMode = selectMode,
-            todayStartMillis = startOfDayMillis(FIXED_NOW),
-        )
+        shown.value = stateOf(jobs, selectMode)
         if (first) {
             compose.setContent {
                 UseSmileIDSampleTheme(darkTheme = false) {
@@ -121,6 +137,19 @@ class VerificationsHeaderTest {
             }
         }
         compose.waitForIdle()
+    }
+
+    private fun stateOf(jobs: List<UseSmileIDSampleJob>?, selectMode: Boolean) = UseSmileIDSampleVerificationsState(
+        jobs = jobs,
+        counts = UseSmileIDSampleJobFilter.entries.associateWith { f -> jobs.orEmpty().count(f::matches) },
+        selectMode = selectMode,
+        todayStartMillis = startOfDayMillis(FIXED_NOW),
+    )
+
+    private fun selectInk(): Int {
+        val ink = lightColors.primary.toArgb()
+        val map = compose.onNodeWithTag(UseSmileIDSampleTestIds.SELECT_TOGGLE).captureToImage().toPixelMap()
+        return (0 until map.width).sumOf { x -> (0 until map.height).count { y -> map[x, y].toArgb() == ink } }
     }
 
     private fun assertNothingToSelect() {
