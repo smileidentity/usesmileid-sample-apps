@@ -30,3 +30,20 @@ struct UseSmileIDSamplePressScaleStyle: ButtonStyle {
 func useSmileIDSampleSelectionAnimation(reduceMotion: Bool) -> Animation? {
   reduceMotion ? nil : .easeOut(duration: SmileMotion.durationFast)
 }
+
+/// How a bar rises into place, matching the Android toast's entrance, or not at all under Reduce Motion.
+public func useSmileIDSampleRiseAnimation(reduceMotion: Bool) -> Animation? {
+  reduceMotion ? nil : .timingCurve(0.4, 0, 0.2, 1, duration: 0.22)
+}
+
+public extension AnyTransition {
+  /// Rises from the bottom edge and fades in on insertion; leaves at once.
+  static var useSmileIDSampleRiseIn: AnyTransition {
+    .asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .identity)
+  }
+
+  /// Fades in on insertion; leaves at once.
+  static var useSmileIDSampleFadeIn: AnyTransition {
+    .asymmetric(insertion: .opacity, removal: .identity)
+  }
+}

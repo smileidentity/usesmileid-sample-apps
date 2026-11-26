@@ -38,4 +38,12 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
   func testAPickedColourSnapsUnderReducedMotion() {
     XCTAssertNil(useSmileIDSampleSelectionAnimation(reduceMotion: true))
   }
+
+  func testABarRisesOverTheToastEntrance() {
+    XCTAssertEqual(useSmileIDSampleRiseAnimation(reduceMotion: false), .timingCurve(0.4, 0, 0.2, 1, duration: 0.22))
+  }
+
+  func testABarIsInPlaceAtOnceUnderReducedMotion() {
+    XCTAssertNil(useSmileIDSampleRiseAnimation(reduceMotion: true))
+  }
 }

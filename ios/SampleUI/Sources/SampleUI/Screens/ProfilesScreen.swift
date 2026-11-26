@@ -27,6 +27,7 @@ public struct ProfilesScreen: View {
   private let onNoticeDismiss: () -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   public init(
     state: UseSmileIDSampleProfilesState,
@@ -72,13 +73,16 @@ public struct ProfilesScreen: View {
     .background(colors.background)
     // The host already insets a pushed route past the system bar; insetting again lifts it into the list.
     .overlay(alignment: .bottom) {
-      UseSmileIDSampleTransientNoticeHost(
-        notice: state.notice,
-        onAction: onNoticeAction,
-        onDismiss: onNoticeDismiss
-      )
-      .padding(.horizontal, SmileSpacing.spacingMd)
-      .padding(.vertical, SmileSpacing.spacingLg)
+      ZStack {
+        UseSmileIDSampleTransientNoticeHost(
+          notice: state.notice,
+          onAction: onNoticeAction,
+          onDismiss: onNoticeDismiss
+        )
+        .padding(.horizontal, SmileSpacing.spacingMd)
+        .padding(.vertical, SmileSpacing.spacingLg)
+      }
+      .animation(useSmileIDSampleRiseAnimation(reduceMotion: reduceMotion), value: state.notice)
     }
   }
 

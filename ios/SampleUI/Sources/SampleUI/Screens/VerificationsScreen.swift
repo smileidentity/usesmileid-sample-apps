@@ -82,6 +82,7 @@ public struct VerificationsScreen: View {
   private let onRemove: (Set<String>) -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   public init(
     state: UseSmileIDSampleVerificationsState,
@@ -141,6 +142,7 @@ public struct VerificationsScreen: View {
       .buttonStyle(.plain)
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectToggle)
       .opacity(state.offersSelect ? 1 : 0)
+      .animation(useSmileIDSampleSelectionAnimation(reduceMotion: reduceMotion), value: state.offersSelect)
       .disabled(!state.offersSelect)
       .accessibilityHidden(!state.offersSelect)
     }
