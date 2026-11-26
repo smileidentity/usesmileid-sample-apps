@@ -12,6 +12,7 @@ import '../use_smileid_sample_strings.dart';
 import '../use_smileid_sample_strings_scope.dart';
 import '../use_smileid_sample_test_ids.dart';
 import 'use_smileid_sample_icon.dart';
+import 'use_smileid_sample_selection_blend.dart';
 
 /// The three destinations the nav bar switches between. The token affordance is not one of them.
 enum UseSmileIDSampleNavItem {
@@ -258,8 +259,6 @@ class _NavBarTab extends StatelessWidget {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
-    // Unselected takes the warm Off_black, not muted text, which is what the frame draws.
-    final Color tint = selected ? colors.primary : colors.foreground;
     return Semantics(
       identifier: item.testId,
       selected: selected,
@@ -267,26 +266,37 @@ class _NavBarTab extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         customBorder: const StadiumBorder(),
-        child: Padding(
-          padding: const EdgeInsets.all(SmileDimens.spacingXs),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              UseSmileIDSampleIcon(
-                asset: item.icon,
-                tint: tint,
-                size: _tabIconSize,
+        child: UseSmileIDSampleSelectionBlend(
+          selected: selected,
+          builder: (BuildContext context, double picked) {
+            // Unselected takes the warm Off_black, not muted text, which is what the frame draws.
+            final Color tint = Color.lerp(
+              colors.foreground,
+              colors.primary,
+              picked,
+            )!;
+            return Padding(
+              padding: const EdgeInsets.all(SmileDimens.spacingXs),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  UseSmileIDSampleIcon(
+                    asset: item.icon,
+                    tint: tint,
+                    size: _tabIconSize,
+                  ),
+                  const SizedBox(height: SmileDimens.spacingXxs),
+                  Text(
+                    item.label(context.strings),
+                    textAlign: TextAlign.center,
+                    style: UseSmileIDSampleType.textStyleOverline.copyWith(
+                      color: tint,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: SmileDimens.spacingXxs),
-              Text(
-                item.label(context.strings),
-                textAlign: TextAlign.center,
-                style: UseSmileIDSampleType.textStyleOverline.copyWith(
-                  color: tint,
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );

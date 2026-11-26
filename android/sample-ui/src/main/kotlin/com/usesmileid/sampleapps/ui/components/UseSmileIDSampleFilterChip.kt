@@ -41,7 +41,7 @@ fun UseSmileIDSampleFilterChip(
             .selectable(selected = selected, role = Role.Tab, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusChip),
-        color = if (selected) colors.primary else colors.filterChip.background,
+        color = useSmileIDSampleSelectionColor(if (selected) colors.primary else colors.filterChip.background, "chipFill"),
         border = if (selected) null else BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
     ) {
         Row(
@@ -57,7 +57,7 @@ fun UseSmileIDSampleFilterChip(
                     fontSize = CHIP_LABEL_SIZE,
                     fontWeight = FontWeight.Bold,
                 ),
-                color = if (selected) colors.onPrimary else colors.filterChip.label,
+                color = useSmileIDSampleSelectionColor(if (selected) colors.onPrimary else colors.filterChip.label, "chipLabel"),
             )
             if (count != null) Text(
                 text = count.toString(),
@@ -66,7 +66,7 @@ fun UseSmileIDSampleFilterChip(
                     letterSpacing = smileLabelTracking,
                 ),
                 // The design file's muted grey, deliberately not filter-chip.value's blue.
-                color = if (selected) colors.onPrimary else colors.textMuted,
+                color = useSmileIDSampleSelectionColor(if (selected) colors.onPrimary else colors.textMuted, "chipCount"),
                 modifier = Modifier.tagged(countTestId),
             )
         }

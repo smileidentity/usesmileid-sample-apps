@@ -1,4 +1,5 @@
 @testable import SampleUI
+import SwiftUI
 import XCTest
 
 final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
@@ -28,5 +29,13 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
 
   func testACardAtRestDoesNotDim() {
     XCTAssertEqual(useSmileIDSamplePressOpacity(pressed: false, enabled: true, reduceMotion: true), 1)
+  }
+
+  func testAPickedColourEasesOverTheFastDuration() {
+    XCTAssertEqual(useSmileIDSampleSelectionAnimation(reduceMotion: false), .easeOut(duration: SmileMotion.durationFast))
+  }
+
+  func testAPickedColourSnapsUnderReducedMotion() {
+    XCTAssertNil(useSmileIDSampleSelectionAnimation(reduceMotion: true))
   }
 }

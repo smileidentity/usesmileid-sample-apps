@@ -11,6 +11,7 @@ public struct UseSmileIDSampleFilterChip: View {
 
   @ScaledMetric(relativeTo: .body) private var minHeight: CGFloat = SmileSpacing.space32
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   public init(
     label: String,
@@ -55,6 +56,7 @@ public struct UseSmileIDSampleFilterChip: View {
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.chip, style: .continuous)
           .strokeBorder(selected ? .clear : colors.cardStroke, lineWidth: smileCardStrokeWidth)
       )
+      .animation(useSmileIDSampleSelectionAnimation(reduceMotion: reduceMotion), value: selected)
       // Laid out at the touch target, as Compose lays out its minimum interactive size.
       .frame(minHeight: SmileSpacing.sizeControlMd)
       .contentShape(Rectangle())

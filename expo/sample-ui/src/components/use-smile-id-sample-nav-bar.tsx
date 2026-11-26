@@ -8,6 +8,7 @@ import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
+import { smileIDSampleSelectionColor, useSmileIDSampleSelectionBlend } from './use-smile-id-sample-selection-blend';
 
 const TAB_ICON_SIZE = 21;
 const TOKEN_SIZE = 58;
@@ -94,7 +95,7 @@ const NavBarTab = ({
   const theme = useSmileIDSampleTheme();
   const strings = useSmileIDSampleStrings();
   // Unselected takes the warm strong foreground, not color.text.muted.
-  const tint = selected ? theme.colors.primary : theme.colors.offBlack;
+  const tint = smileIDSampleSelectionColor(theme.colors.offBlack, theme.colors.primary, useSmileIDSampleSelectionBlend(selected));
 
   return (
     <Pressable

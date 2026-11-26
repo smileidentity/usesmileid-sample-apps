@@ -1,12 +1,17 @@
 import { act, fireEvent } from '@testing-library/react-native';
-import { AccessibilityInfo, Animated } from 'react-native';
+import { useState } from 'react';
+import { AccessibilityInfo, Animated, StyleSheet } from 'react-native';
 
 import {
   smileIDSamplePressOpacity,
   smileIDSamplePressScale,
   useSmileIDSampleReducedMotion,
 } from '../src/components/use-smile-id-sample-press-feedback';
+import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
 import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
+import { smileIDSampleSelectionColor } from '../src/components/use-smile-id-sample-selection-blend';
+import { smileMix } from '../src/theme/smile-color-math';
+import { smileLightColors } from '../src/index';
 import { smileIDSampleProductHue, smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
 import { renderInTheme } from './render-in-theme';
 
@@ -109,5 +114,68 @@ describe('the reduced-motion reading', () => {
       ask.mockRestore();
       listen.mockRestore();
     }
+  });
+});
+
+describe('a picked colour', () => {
+  const chip = (selected: boolean) => (
+    <UseSmileIDSampleFilterChip label="Clear" count={2} selected={selected} onPress={noop} testID="chip" />
+  );
+  const fillOf = (screen: Awaited<ReturnType<typeof renderInTheme>>) => {
+    const pill = screen.getByTestId('chip').children[0] as unknown as { props: { style: unknown } };
+    return (StyleSheet.flatten(pill.props.style as never) as { backgroundColor?: string }).backgroundColor;
+  };
+
+  it('eases a chip into its picked fill instead of snapping', async () => {
+    jest.useFakeTimers();
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    try {
+      let pick = noop;
+      const Host = () => {
+        const [selected, setSelected] = useState(false);
+        pick = () => setSelected(true);
+        return chip(selected);
+      };
+      const screen = await renderInTheme(<Host />, false);
+      await act(async () => {
+        await Promise.resolve();
+      });
+      const resting = fillOf(screen);
+      await act(async () => {
+        pick();
+      });
+      await act(async () => {
+        jest.advanceTimersByTime(100);
+      });
+      const midway = fillOf(screen);
+      await act(async () => {
+        jest.advanceTimersByTime(1_000);
+      });
+
+      expect(midway).not.toBe(resting);
+      expect(midway).not.toBe(fillOf(screen));
+      expect(fillOf(screen)).toBe(smileLightColors.primary);
+    } finally {
+      ask.mockRestore();
+      listen.mockRestore();
+      jest.useRealTimers();
+    }
+  });
+
+  const { primary, onPrimary } = smileLightColors;
+
+  it('blends two colours and returns the exact ends at rest', () => {
+    expect(smileIDSampleSelectionColor(onPrimary, primary, 0)).toBe(onPrimary);
+    expect(smileIDSampleSelectionColor(onPrimary, primary, 1)).toBe(primary);
+    expect(smileIDSampleSelectionColor(onPrimary, primary, 0.5)).toBe(smileMix(onPrimary, primary, 0.5));
+  });
+
+  it('snaps colours it cannot blend at the halfway point', () => {
+    const translucent = 'rgba(0, 0, 0, 0.5)';
+    expect(smileIDSampleSelectionColor(translucent, primary, 0.4)).toBe(translucent);
+    expect(smileIDSampleSelectionColor(translucent, primary, 0.6)).toBe(primary);
   });
 });

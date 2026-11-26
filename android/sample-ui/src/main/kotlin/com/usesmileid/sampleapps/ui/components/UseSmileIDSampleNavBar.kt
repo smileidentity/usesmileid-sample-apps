@@ -186,7 +186,10 @@ private fun NavBarTab(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val tint = if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.foreground
+    val tint = useSmileIDSampleSelectionColor(
+        if (selected) UseSmileIDSampleTheme.colors.primary else UseSmileIDSampleTheme.colors.foreground,
+        "tabTint",
+    )
     Column(
         modifier = modifier
             .testTag(item.testId)

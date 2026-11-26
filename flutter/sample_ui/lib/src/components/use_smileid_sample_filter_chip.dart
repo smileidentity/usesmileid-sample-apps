@@ -6,6 +6,7 @@ import '../theme/use_smileid_sample_theme.dart';
 import '../theme/use_smileid_sample_typography.dart';
 import '../tokens/smile_product_hues.dart';
 import '../tokens/smile_tokens.dart';
+import 'use_smileid_sample_selection_blend.dart';
 
 /// A status filter with its live count, the count a node of its own because it is what a delete
 /// is asserted on — "the count dropped" proves the delete, not the toast.
@@ -45,7 +46,6 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
     final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
       context,
     );
-    final Color content = selected ? colors.onPrimary : colors.filterChip.label;
     // The pill stays the design's size; the platform minimum is added around it and taps too.
     return Semantics(
       identifier: testId,
@@ -61,15 +61,19 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
           child: Align(
             widthFactor: 1,
             heightFactor: 1,
-            child: _pill(colors, content),
+            child: UseSmileIDSampleSelectionBlend(
+              selected: selected,
+              builder: (BuildContext context, double picked) =>
+                  _pill(colors, picked),
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _pill(UseSmileIDSampleColors colors, Color content) => Material(
-    color: selected ? colors.primary : colors.filterChip.background,
+  Widget _pill(UseSmileIDSampleColors colors, double picked) => Material(
+    color: Color.lerp(colors.filterChip.background, colors.primary, picked),
     // A stadium, not a 999 radius: radius.chip is the design's way of saying fully rounded.
     shape: StadiumBorder(
       side: selected
@@ -94,7 +98,11 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
                 style: UseSmileIDSampleType.filterChipFont.copyWith(
                   fontSize: _labelSize,
                   fontWeight: FontWeight.w700,
-                  color: content,
+                  color: Color.lerp(
+                    colors.filterChip.label,
+                    colors.onPrimary,
+                    picked,
+                  ),
                 ),
               ),
               if (count != null) const SizedBox(width: SmileDimens.spacingXxs),
@@ -108,7 +116,11 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
                           UseSmileIDSampleType.textStyleOverline,
                           // The design file's muted grey, deliberately not filter-chip.value's blue.
                         ).copyWith(
-                          color: selected ? colors.onPrimary : colors.textMuted,
+                          color: Color.lerp(
+                            colors.textMuted,
+                            colors.onPrimary,
+                            picked,
+                          ),
                         ),
                   ),
                 ),

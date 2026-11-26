@@ -76,10 +76,65 @@ void main() {
 
     expect(tester.widget<AnimatedScale>(find.byType(AnimatedScale)).scale, 1);
   });
+
+  testWidgets('a chip eases into its picked colour instead of snapping', (
+    WidgetTester tester,
+  ) async {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      await _contextOf(tester),
+    );
+    await tester.pumpWidget(_host(_chip(selected: false)));
+    await tester.pumpWidget(_host(_chip(selected: true)));
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final Color midway = _pillColor(tester);
+    expect(midway, isNot(colors.primary));
+    expect(midway, isNot(colors.filterChip.background));
+
+    await tester.pumpAndSettle();
+    expect(_pillColor(tester), colors.primary);
+  });
+
+  testWidgets('a chip snaps when the platform asks for reduced motion', (
+    WidgetTester tester,
+  ) async {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      await _contextOf(tester),
+    );
+    await tester.pumpWidget(_host(_chip(selected: false), reduceMotion: true));
+    await tester.pumpWidget(_host(_chip(selected: true), reduceMotion: true));
+    await tester.pump();
+
+    expect(_pillColor(tester), colors.primary);
+  });
+
+  testWidgets('a tab eases into its picked tint instead of snapping', (
+    WidgetTester tester,
+  ) async {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      await _contextOf(tester),
+    );
+    await tester.pumpWidget(_host(_navBar(UseSmileIDSampleNavItem.products)));
+    await tester.pumpWidget(
+      _host(_navBar(UseSmileIDSampleNavItem.verifications)),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final Color midway = _tabLabelColor(tester);
+    expect(midway, isNot(colors.primary));
+    expect(midway, isNot(colors.foreground));
+
+    await tester.pumpAndSettle();
+    expect(_tabLabelColor(tester), colors.primary);
+  });
 }
 
-Widget _host(Widget child) => MaterialApp(
+Widget _host(Widget child, {bool reduceMotion = false}) => MaterialApp(
   theme: UseSmileIDSampleTheme.light(),
+  builder: (BuildContext context, Widget? app) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(disableAnimations: reduceMotion),
+    child: app!,
+  ),
   home: UseSmileIDSampleStringsScope(
     language: UseSmileIDSampleLanguage.en,
     deviceLanguages: const <String>[],
@@ -88,3 +143,42 @@ Widget _host(Widget child) => MaterialApp(
     ),
   ),
 );
+
+Future<BuildContext> _contextOf(WidgetTester tester) async {
+  await tester.pumpWidget(_host(const SizedBox()));
+  return tester.element(find.byType(SizedBox).last);
+}
+
+Widget _chip({required bool selected}) => UseSmileIDSampleFilterChip(
+  label: 'Clear',
+  count: 2,
+  selected: selected,
+  onTap: () {},
+);
+
+Widget _navBar(UseSmileIDSampleNavItem selected) => UseSmileIDSampleNavBar(
+  selected: selected,
+  onSelect: (_) {},
+  onTokenTap: () {},
+);
+
+Color _pillColor(WidgetTester tester) => tester
+    .widget<Material>(
+      find.descendant(
+        of: find.byType(UseSmileIDSampleFilterChip),
+        matching: find.byType(Material),
+      ),
+    )
+    .color!;
+
+Color _tabLabelColor(WidgetTester tester) => tester
+    .widget<Text>(
+      find.descendant(
+        of: find.bySemanticsIdentifier(
+          UseSmileIDSampleTestIds.navVerifications,
+        ),
+        matching: find.byType(Text),
+      ),
+    )
+    .style!
+    .color!;

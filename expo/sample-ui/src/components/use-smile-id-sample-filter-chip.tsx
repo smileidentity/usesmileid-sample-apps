@@ -4,6 +4,7 @@ import { smileCardStrokeWidth, smileLabelSize, smileLabelTracking } from '../smi
 import { insetForBorder, touchTargetStyle } from '../theme/smile-compose-layout';
 import { atSize, atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
+import { smileIDSampleSelectionColor, useSmileIDSampleSelectionBlend } from './use-smile-id-sample-selection-blend';
 
 const CHIP_LABEL_SIZE = 12.5;
 
@@ -29,6 +30,7 @@ export const UseSmileIDSampleFilterChip = ({
   style,
 }: Props) => {
   const theme = useSmileIDSampleTheme();
+  const picked = useSmileIDSampleSelectionBlend(selected);
 
   return (
     <Pressable
@@ -43,7 +45,7 @@ export const UseSmileIDSampleFilterChip = ({
           styles.chip,
           {
             borderRadius: theme.dimens.radius.chip,
-            backgroundColor: selected ? theme.colors.primary : theme.colors.filterChip.background,
+            backgroundColor: smileIDSampleSelectionColor(theme.colors.filterChip.background, theme.colors.primary, picked),
             borderWidth: selected ? 0 : smileCardStrokeWidth,
             borderColor: selected ? 'transparent' : theme.colors.cardStroke,
             minHeight: theme.dimens.space[32],
@@ -56,7 +58,7 @@ export const UseSmileIDSampleFilterChip = ({
         <Text
           style={[
             atSize(atWeight(theme.type.filterChipFont, 700), CHIP_LABEL_SIZE),
-            { color: selected ? theme.colors.onPrimary : theme.colors.filterChip.label },
+            { color: smileIDSampleSelectionColor(theme.colors.filterChip.label, theme.colors.onPrimary, picked) },
           ]}
         >
           {label}
@@ -69,7 +71,7 @@ export const UseSmileIDSampleFilterChip = ({
               atSize(theme.type.textStyleOverline, smileLabelSize),
               {
                 letterSpacing: smileLabelTracking,
-                color: selected ? theme.colors.onPrimary : theme.colors.textMuted,
+                color: smileIDSampleSelectionColor(theme.colors.textMuted, theme.colors.onPrimary, picked),
               },
             ]}
           >

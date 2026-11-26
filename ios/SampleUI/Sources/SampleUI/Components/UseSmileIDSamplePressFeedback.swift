@@ -25,3 +25,8 @@ struct UseSmileIDSamplePressScaleStyle: ButtonStyle {
       .animation(.easeOut(duration: SmileMotion.durationFast), value: configuration.isPressed)
   }
 }
+
+/// How a chip or tab eases into its picked colours: over duration-fast, or not at all under Reduce Motion.
+func useSmileIDSampleSelectionAnimation(reduceMotion: Bool) -> Animation? {
+  reduceMotion ? nil : .easeOut(duration: SmileMotion.durationFast)
+}
