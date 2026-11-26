@@ -9,27 +9,32 @@ const FAST_OUT_SLOW_IN = Easing.bezier(0.4, 0, 0.2, 1);
 
 type Props = { children: ReactNode; style?: StyleProp<ViewStyle> };
 
-/// Runs [progress] from 0 to 1 once on mount, unless reduced motion was asked for or not yet known then.
-const useEntrance = (duration: number) => {
+/// Runs [progress] from 0 to 1 once [ready], unless reduced motion was asked for or not yet known at mount.
+const useEntrance = (duration: number, ready: boolean) => {
   const reduced = useSmileIDSampleReducedMotion();
   const [animates] = useState(!reduced);
   const [progress] = useState(() => new Animated.Value(animates ? 0 : 1));
   useEffect(() => {
-    if (!animates) return undefined;
+    if (!animates || !ready) return undefined;
     const run = Animated.timing(progress, { toValue: 1, duration, easing: FAST_OUT_SLOW_IN, useNativeDriver: true });
     run.start();
     return () => run.stop();
-  }, [animates, duration, progress]);
+  }, [animates, ready, duration, progress]);
   return progress;
 };
 
 /// Content that rises its own height into place, fading in, when it first appears; the toast's own entrance.
 export const UseSmileIDSampleRiseIn = ({ children, style }: Props) => {
-  const progress = useEntrance(RISE_MS);
+  // The rise waits for its first layout, as before it the height it rises by is unknown.
+  const [measured, setMeasured] = useState(false);
+  const progress = useEntrance(RISE_MS, measured);
   const [height] = useState(() => new Animated.Value(0));
   return (
     <Animated.View
-      onLayout={(event) => height.setValue(event.nativeEvent.layout.height)}
+      onLayout={(event) => {
+        height.setValue(event.nativeEvent.layout.height);
+        setMeasured(true);
+      }}
       style={[
         style,
         {
@@ -45,7 +50,7 @@ export const UseSmileIDSampleRiseIn = ({ children, style }: Props) => {
 
 /// Content that fades in over duration-fast when it first appears, as a list does when it replaces its loading state.
 export const UseSmileIDSampleFadeIn = ({ children, style }: Props) => {
-  const progress = useEntrance(SMILE_DURATION_FAST_MS);
+  const progress = useEntrance(SMILE_DURATION_FAST_MS, true);
   return <Animated.View style={[style, { opacity: progress }]}>{children}</Animated.View>;
 };
 

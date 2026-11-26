@@ -195,7 +195,7 @@ describe('an entrance', () => {
     });
   };
 
-  const mountLater = async (child: React.ReactElement, reduced: boolean) => {
+  const mountLater = async (child: React.ReactElement, reduced: boolean, layOut?: string) => {
     const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(reduced);
     const listen = jest
       .spyOn(AccessibilityInfo, 'addEventListener')
@@ -217,31 +217,39 @@ describe('an entrance', () => {
         </>
       );
     };
-    await renderLive(<Host />, false);
+    const screen = await renderLive(<Host />, false);
     await settle();
     timing.mockClear();
     await act(async () => {
       show();
     });
-    const durations = timing.mock.calls.map(([, config]) => config.duration);
+    const durations = (): unknown[] => timing.mock.calls.map(([, config]) => config.duration);
+    const beforeLayout = durations();
+    if (layOut !== undefined) {
+      await act(async () => {
+        fireEvent(screen.getByText(layOut), 'layout', { nativeEvent: { layout: { x: 0, y: 0, width: 200, height: 60 } } });
+      });
+    }
+    const afterLayout = durations();
     ask.mockRestore();
     listen.mockRestore();
     timing.mockRestore();
-    return durations;
+    return { beforeLayout, afterLayout };
   };
 
-  it('rises a bar in over the toast entrance', async () => {
-    expect(await mountLater(<UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>, false)).toEqual([220]);
+  it('waits for its height, then rises a bar in over the toast entrance', async () => {
+    const bar = <UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>;
+    expect(await mountLater(bar, false, 'bar')).toEqual({ beforeLayout: [], afterLayout: [220] });
   });
 
   it('puts a bar straight in place under reduced motion', async () => {
-    expect(await mountLater(<UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>, true)).toEqual([]);
+    const bar = <UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>;
+    expect((await mountLater(bar, true, 'bar')).afterLayout).toEqual([]);
   });
 
   it('fades content in over the fast duration', async () => {
-    expect(await mountLater(<UseSmileIDSampleFadeIn><Text>rows</Text></UseSmileIDSampleFadeIn>, false)).toEqual([
-      Number.parseFloat(tokens.duration.fast),
-    ]);
+    const rows = <UseSmileIDSampleFadeIn><Text>rows</Text></UseSmileIDSampleFadeIn>;
+    expect((await mountLater(rows, false)).afterLayout).toEqual([Number.parseFloat(tokens.duration.fast)]);
   });
 });
 
