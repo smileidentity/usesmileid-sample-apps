@@ -22977,14 +22977,14 @@ exports[`genericDocumentSheet dark default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(77, 136, 255, 1)",
-                    "borderColor": "transparent",
+                    "borderColor": "rgba(0, 0, 0, 0)",
                     "borderRadius": 999,
-                    "borderWidth": 0,
+                    "borderWidth": 0.5,
                     "columnGap": 4,
                     "flexDirection": "row",
                     "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
+                    "paddingHorizontal": 11.5,
+                    "paddingVertical": 7.5,
                   }
                 }
               >
@@ -23057,7 +23057,7 @@ exports[`genericDocumentSheet dark default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(39, 42, 53, 1)",
-                    "borderColor": "#2d3748",
+                    "borderColor": "rgba(45, 55, 72, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -23173,14 +23173,14 @@ exports[`genericDocumentSheet dark default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(77, 136, 255, 1)",
-                    "borderColor": "transparent",
+                    "borderColor": "rgba(0, 0, 0, 0)",
                     "borderRadius": 999,
-                    "borderWidth": 0,
+                    "borderWidth": 0.5,
                     "columnGap": 4,
                     "flexDirection": "row",
                     "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
+                    "paddingHorizontal": 11.5,
+                    "paddingVertical": 7.5,
                   }
                 }
               >
@@ -23253,7 +23253,7 @@ exports[`genericDocumentSheet dark default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(39, 42, 53, 1)",
-                    "borderColor": "#2d3748",
+                    "borderColor": "rgba(45, 55, 72, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -23333,7 +23333,7 @@ exports[`genericDocumentSheet dark default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(39, 42, 53, 1)",
-                    "borderColor": "#2d3748",
+                    "borderColor": "rgba(45, 55, 72, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -23413,7 +23413,7 @@ exports[`genericDocumentSheet dark default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(39, 42, 53, 1)",
-                    "borderColor": "#2d3748",
+                    "borderColor": "rgba(45, 55, 72, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -23888,14 +23888,14 @@ exports[`genericDocumentSheet light default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(21, 31, 114, 1)",
-                    "borderColor": "transparent",
+                    "borderColor": "rgba(0, 0, 0, 0)",
                     "borderRadius": 999,
-                    "borderWidth": 0,
+                    "borderWidth": 0.5,
                     "columnGap": 4,
                     "flexDirection": "row",
                     "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
+                    "paddingHorizontal": 11.5,
+                    "paddingVertical": 7.5,
                   }
                 }
               >
@@ -23968,7 +23968,7 @@ exports[`genericDocumentSheet light default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(255, 255, 255, 1)",
-                    "borderColor": "#eaecf0",
+                    "borderColor": "rgba(234, 236, 240, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -24084,14 +24084,14 @@ exports[`genericDocumentSheet light default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(21, 31, 114, 1)",
-                    "borderColor": "transparent",
+                    "borderColor": "rgba(0, 0, 0, 0)",
                     "borderRadius": 999,
-                    "borderWidth": 0,
+                    "borderWidth": 0.5,
                     "columnGap": 4,
                     "flexDirection": "row",
                     "minHeight": 32,
-                    "paddingHorizontal": 12,
-                    "paddingVertical": 8,
+                    "paddingHorizontal": 11.5,
+                    "paddingVertical": 7.5,
                   }
                 }
               >
@@ -24164,7 +24164,7 @@ exports[`genericDocumentSheet light default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(255, 255, 255, 1)",
-                    "borderColor": "#eaecf0",
+                    "borderColor": "rgba(234, 236, 240, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -24244,7 +24244,7 @@ exports[`genericDocumentSheet light default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(255, 255, 255, 1)",
-                    "borderColor": "#eaecf0",
+                    "borderColor": "rgba(234, 236, 240, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,
@@ -24324,7 +24324,7 @@ exports[`genericDocumentSheet light default 1`] = `
                   {
                     "alignItems": "center",
                     "backgroundColor": "rgba(255, 255, 255, 1)",
-                    "borderColor": "#eaecf0",
+                    "borderColor": "rgba(234, 236, 240, 1)",
                     "borderRadius": 999,
                     "borderWidth": 0.5,
                     "columnGap": 4,

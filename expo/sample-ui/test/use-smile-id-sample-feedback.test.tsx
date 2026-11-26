@@ -147,12 +147,12 @@ describe('a picked colour', () => {
     return (StyleSheet.flatten(pill.props.style as never) as { backgroundColor?: string }).backgroundColor;
   };
 
-  it('eases a chip into its picked fill instead of snapping', async () => {
-    jest.useFakeTimers();
-    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
+  const pickWith = async (reduced: boolean) => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(reduced);
     const listen = jest
       .spyOn(AccessibilityInfo, 'addEventListener')
       .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
     try {
       let pick = noop;
       const Host = () => {
@@ -164,26 +164,29 @@ describe('a picked colour', () => {
       await act(async () => {
         await Promise.resolve();
       });
-      const resting = fillOf(screen);
+      timing.mockClear();
       await act(async () => {
         pick();
       });
-      await act(async () => {
-        jest.advanceTimersByTime(100);
-      });
-      const midway = fillOf(screen);
-      await act(async () => {
-        jest.advanceTimersByTime(1_000);
-      });
-
-      expect(rgb(midway)).not.toEqual(rgb(resting));
-      expect(rgb(midway)).not.toEqual(rgb(fillOf(screen)));
-      expect(rgb(fillOf(screen))).toEqual(rgb(smileLightColors.primary));
+      return {
+        runs: timing.mock.calls.map(([, config]) => [config.toValue, config.duration, config.useNativeDriver]),
+        fill: fillOf(screen),
+      };
     } finally {
       ask.mockRestore();
       listen.mockRestore();
-      jest.useRealTimers();
+      timing.mockRestore();
     }
+  };
+
+  it('eases a chip into its picked fill on the native driver instead of snapping', async () => {
+    expect((await pickWith(false)).runs).toEqual([[1, Number.parseFloat(tokens.duration.fast), true]]);
+  });
+
+  it('snaps a chip to its picked fill under reduced motion', async () => {
+    const { runs, fill } = await pickWith(true);
+    expect(runs).toEqual([]);
+    expect(rgb(fill)).toEqual(rgb(smileLightColors.primary));
   });
 
 });

@@ -76,9 +76,14 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
     color: Color.lerp(colors.filterChip.background, colors.primary, picked),
     // A stadium, not a 999 radius: radius.chip is the design's way of saying fully rounded.
     shape: StadiumBorder(
-      side: selected
-          ? BorderSide.none
-          : BorderSide(color: colors.cardStroke, width: smileCardStrokeWidth),
+      side: BorderSide(
+        color: Color.lerp(
+          colors.cardStroke,
+          colors.cardStroke.withAlpha(0),
+          picked,
+        )!,
+        width: smileCardStrokeWidth,
+      ),
     ),
     child: InkWell(
       onTap: onTap,

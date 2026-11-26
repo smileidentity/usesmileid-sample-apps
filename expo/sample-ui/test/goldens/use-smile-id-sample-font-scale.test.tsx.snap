@@ -406,7 +406,7 @@ exports[`at the largest content size, dark filter_chip 1`] = `
       {
         "alignItems": "center",
         "backgroundColor": "rgba(39, 42, 53, 1)",
-        "borderColor": "#2d3748",
+        "borderColor": "rgba(45, 55, 72, 1)",
         "borderRadius": 999,
         "borderWidth": 0.5,
         "columnGap": 4,
@@ -1696,7 +1696,7 @@ exports[`at the largest content size, light filter_chip 1`] = `
       {
         "alignItems": "center",
         "backgroundColor": "rgba(255, 255, 255, 1)",
-        "borderColor": "#eaecf0",
+        "borderColor": "rgba(234, 236, 240, 1)",
         "borderRadius": 999,
         "borderWidth": 0.5,
         "columnGap": 4,

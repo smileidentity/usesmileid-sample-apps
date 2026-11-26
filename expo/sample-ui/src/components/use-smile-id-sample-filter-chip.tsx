@@ -46,11 +46,11 @@ export const UseSmileIDSampleFilterChip = ({
           {
             borderRadius: theme.dimens.radius.chip,
             backgroundColor: smileIDSampleSelectionColor(picked, theme.colors.filterChip.background, theme.colors.primary),
-            borderWidth: selected ? 0 : smileCardStrokeWidth,
-            borderColor: selected ? 'transparent' : theme.colors.cardStroke,
+            borderWidth: smileCardStrokeWidth,
+            borderColor: smileIDSampleSelectionColor(picked, theme.colors.cardStroke, 'transparent'),
             minHeight: theme.dimens.space[32],
-            paddingHorizontal: insetForBorder(theme.dimens.spacing.sm, selected ? 0 : smileCardStrokeWidth),
-            paddingVertical: insetForBorder(theme.dimens.spacing.xs, selected ? 0 : smileCardStrokeWidth),
+            paddingHorizontal: insetForBorder(theme.dimens.spacing.sm, smileCardStrokeWidth),
+            paddingVertical: insetForBorder(theme.dimens.spacing.xs, smileCardStrokeWidth),
             columnGap: theme.dimens.spacing.xxs,
           },
         ]}
