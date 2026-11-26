@@ -1,6 +1,6 @@
 import { act, fireEvent } from '@testing-library/react-native';
 import { useState } from 'react';
-import { AccessibilityInfo, Animated, StyleSheet } from 'react-native';
+import { AccessibilityInfo, Animated, StyleSheet, Text } from 'react-native';
 
 import {
   smileIDSamplePressOpacity,
@@ -9,6 +9,12 @@ import {
 } from '../src/components/use-smile-id-sample-press-feedback';
 import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
 import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
+import {
+  UseSmileIDSampleFadeIn,
+  UseSmileIDSampleRiseIn,
+  useSmileIDSampleVisibilityFade,
+} from '../src/components/use-smile-id-sample-rise-in';
+import { tokens } from '../src/tokens';
 import { smileIDSampleSelectionColor } from '../src/components/use-smile-id-sample-selection-blend';
 import { smileMix } from '../src/theme/smile-color-math';
 import { smileLightColors } from '../src/index';
@@ -177,5 +183,97 @@ describe('a picked colour', () => {
     const translucent = 'rgba(0, 0, 0, 0.5)';
     expect(smileIDSampleSelectionColor(translucent, primary, 0.4)).toBe(translucent);
     expect(smileIDSampleSelectionColor(translucent, primary, 0.6)).toBe(primary);
+  });
+});
+
+describe('an entrance', () => {
+  const settle = async () => {
+    await act(async () => {
+      await Promise.resolve();
+    });
+  };
+
+  const mountLater = async (child: React.ReactElement, reduced: boolean) => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(reduced);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
+    let show = noop;
+    const Host = () => {
+      const [shown, setShown] = useState(false);
+      show = () => setShown(true);
+      return (
+        <>
+          <UseSmileIDSampleProductCard
+            title="Document"
+            family="Verification"
+            hue={smileIDSampleProductHue(smileIDSampleProducts[0]!)}
+            onPress={noop}
+          />
+          {shown ? child : null}
+        </>
+      );
+    };
+    await renderInTheme(<Host />, false);
+    await settle();
+    timing.mockClear();
+    await act(async () => {
+      show();
+    });
+    const durations = timing.mock.calls.map(([, config]) => config.duration);
+    ask.mockRestore();
+    listen.mockRestore();
+    timing.mockRestore();
+    return durations;
+  };
+
+  it('rises a bar in over the toast entrance', async () => {
+    expect(await mountLater(<UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>, false)).toEqual([220]);
+  });
+
+  it('puts a bar straight in place under reduced motion', async () => {
+    expect(await mountLater(<UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>, true)).toEqual([]);
+  });
+
+  it('fades content in over the fast duration', async () => {
+    expect(await mountLater(<UseSmileIDSampleFadeIn><Text>rows</Text></UseSmileIDSampleFadeIn>, false)).toEqual([
+      Number.parseFloat(tokens.duration.fast),
+    ]);
+  });
+});
+
+describe('a fade on change', () => {
+  it('fades Select in when there is something to pick', async () => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
+    try {
+      let reveal = noop;
+      const Probe = () => {
+        const [visible, setVisible] = useState(false);
+        reveal = () => setVisible(true);
+        const opacity = useSmileIDSampleVisibilityFade(visible);
+        return <Animated.View style={{ opacity }} />;
+      };
+      await renderInTheme(<Probe />, false);
+      await act(async () => {
+        await Promise.resolve();
+      });
+      timing.mockClear();
+      await act(async () => {
+        reveal();
+      });
+
+      expect(timing.mock.calls.map(([, config]) => [config.toValue, config.duration])).toEqual([
+        [1, Number.parseFloat(tokens.duration.fast)],
+      ]);
+    } finally {
+      ask.mockRestore();
+      listen.mockRestore();
+      timing.mockRestore();
+    }
   });
 });

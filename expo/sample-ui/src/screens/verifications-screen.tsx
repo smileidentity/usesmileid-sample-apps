@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Pressable, ScrollView, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleDateGroupHeader } from '../components/use-smile-id-sample-date-group-header';
 import { UseSmileIDSampleEmptyState } from '../components/use-smile-id-sample-empty-state';
@@ -25,6 +25,7 @@ import {
 import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { useSmileIDSampleLanguageShown, useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
+import { UseSmileIDSampleRiseIn, useSmileIDSampleVisibilityFade } from '../components/use-smile-id-sample-rise-in';
 
 /// What the list renders. `jobs` is null until the store's first read: not loaded is not empty.
 export type UseSmileIDSampleVerificationsState = {
@@ -77,6 +78,7 @@ export const VerificationsScreen = ({
 
   const jobs = state.jobs;
   const offersSelect = selecting || (jobs ?? []).length > 0;
+  const selectOpacity = useSmileIDSampleVisibilityFade(offersSelect);
   const selectToggleStyle = [styles.selectToggle, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }];
   const filter =
     smileIDSampleJobFilters.find((entry) => entry.id === filterId) ?? smileIDSampleJobFilters[0]!;
@@ -137,19 +139,21 @@ export const VerificationsScreen = ({
           <Text style={[theme.type.textStyleHeadingPage, styles.title, { color: theme.colors.textTitle }]}>
             {strings.verificationsTitle}
           </Text>
-          <Pressable
-            accessibilityRole="button"
-            {...(offersSelect ? { testID: UseSmileIDSampleTestIds.SELECT_TOGGLE } : hiddenInPlace)}
-            onPress={() => {
-              setSelecting((current) => !current);
-              setSelected([]);
-            }}
-            style={offersSelect ? selectToggleStyle : [...selectToggleStyle, styles.hidden]}
-          >
-            <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
-              {selecting ? strings.commonCancel : strings.verificationsSelect}
-            </Text>
-          </Pressable>
+          <Animated.View style={{ opacity: selectOpacity }}>
+            <Pressable
+              accessibilityRole="button"
+              {...(offersSelect ? { testID: UseSmileIDSampleTestIds.SELECT_TOGGLE } : hiddenInPlace)}
+              onPress={() => {
+                setSelecting((current) => !current);
+                setSelected([]);
+              }}
+              style={selectToggleStyle}
+            >
+              <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
+                {selecting ? strings.commonCancel : strings.verificationsSelect}
+              </Text>
+            </Pressable>
+          </Animated.View>
         </View>
 
         <ScrollView
@@ -219,10 +223,9 @@ export const VerificationsScreen = ({
       </ScrollView>
 
       {selecting ? (
-        <UseSmileIDSampleSelectionBar
-          selectedCount={selected.length}
-          onRemove={() => removeRows(selected)}
-        />
+        <UseSmileIDSampleRiseIn>
+          <UseSmileIDSampleSelectionBar selectedCount={selected.length} onRemove={() => removeRows(selected)} />
+        </UseSmileIDSampleRiseIn>
       ) : null}
     </View>
   );
@@ -299,7 +302,6 @@ const hiddenInPlace = {
 } as const;
 
 const styles = StyleSheet.create({
-  hidden: { opacity: 0 },
   screen: { flex: 1 },
   header: { alignItems: 'center', flexDirection: 'row', width: '100%' },
   selectToggle: { alignItems: 'center', justifyContent: 'center' },

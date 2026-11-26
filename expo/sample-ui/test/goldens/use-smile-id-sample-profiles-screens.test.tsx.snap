@@ -11949,122 +11949,67 @@ exports[`profiles dark created 1`] = `
     }
   >
     <View
+      collapsable={false}
+      onLayout={[Function]}
       style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "flexWrap": "wrap",
-            "width": "100%",
-          },
-          {
-            "elevation": 12,
-            "shadowColor": "#00000026",
-            "shadowOffset": {
-              "height": 4,
-              "width": 0,
+        {
+          "opacity": 0,
+          "transform": [
+            {
+              "translateY": 0,
             },
-            "shadowOpacity": 1,
-            "shadowRadius": 12,
-          },
-          {
-            "backgroundColor": "#f2f2f2",
-            "borderRadius": 12,
-            "columnGap": 12,
-            "minHeight": 46,
-            "paddingHorizontal": 16,
-            "paddingVertical": 13,
-            "rowGap": 4,
-          },
-          undefined,
-        ]
+          ],
+        }
       }
-      testID="sample_toast"
     >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 13.5,
-              "letterSpacing": 0,
-              "lineHeight": 20,
-              "marginBottom": -1.2114999999999991,
-              "marginTop": -1.2114999999999991,
-            },
-            {
-              "flexBasis": "auto",
-              "flexGrow": 1,
-              "flexShrink": 1,
-            },
-            {
-              "color": "#1a1c23",
-            },
-          ]
-        }
-      >
-        Sahara Pay created
-      </Text>
       <View
-        accessibilityRole="button"
-        accessibilityState={
-          {
-            "busy": undefined,
-            "checked": undefined,
-            "disabled": undefined,
-            "expanded": undefined,
-            "selected": undefined,
-          }
-        }
-        accessibilityValue={
-          {
-            "max": undefined,
-            "min": undefined,
-            "now": undefined,
-            "text": undefined,
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
           [
             {
               "alignItems": "center",
-              "justifyContent": "center",
+              "flexDirection": "row",
+              "flexWrap": "wrap",
+              "width": "100%",
             },
             {
-              "minWidth": 44,
-              "paddingHorizontal": 8,
+              "elevation": 12,
+              "shadowColor": "#00000026",
+              "shadowOffset": {
+                "height": 4,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 12,
             },
+            {
+              "backgroundColor": "#f2f2f2",
+              "borderRadius": 12,
+              "columnGap": 12,
+              "minHeight": 46,
+              "paddingHorizontal": 16,
+              "paddingVertical": 13,
+              "rowGap": 4,
+            },
+            undefined,
           ]
         }
-        testID="sample_toast_undo"
+        testID="sample_toast"
       >
         <Text
-          numberOfLines={1}
           style={
             [
               {
-                "fontFamily": "DMSans-SemiBold",
-                "fontSize": 14,
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13.5,
                 "letterSpacing": 0,
                 "lineHeight": 20,
-                "marginBottom": -0.8859999999999992,
-                "marginTop": -0.8859999999999992,
+                "marginBottom": -1.2114999999999991,
+                "marginTop": -1.2114999999999991,
               },
               {
-                "textAlign": "center",
-                "textDecorationLine": "underline",
+                "flexBasis": "auto",
+                "flexGrow": 1,
+                "flexShrink": 1,
               },
               {
                 "color": "#1a1c23",
@@ -12072,8 +12017,78 @@ exports[`profiles dark created 1`] = `
             ]
           }
         >
-          Make active
+          Sahara Pay created
         </Text>
+        <View
+          accessibilityRole="button"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            [
+              {
+                "alignItems": "center",
+                "justifyContent": "center",
+              },
+              {
+                "minWidth": 44,
+                "paddingHorizontal": 8,
+              },
+            ]
+          }
+          testID="sample_toast_undo"
+        >
+          <Text
+            numberOfLines={1}
+            style={
+              [
+                {
+                  "fontFamily": "DMSans-SemiBold",
+                  "fontSize": 14,
+                  "letterSpacing": 0,
+                  "lineHeight": 20,
+                  "marginBottom": -0.8859999999999992,
+                  "marginTop": -0.8859999999999992,
+                },
+                {
+                  "textAlign": "center",
+                  "textDecorationLine": "underline",
+                },
+                {
+                  "color": "#1a1c23",
+                },
+              ]
+            }
+          >
+            Make active
+          </Text>
+        </View>
       </View>
     </View>
   </View>
@@ -14390,122 +14405,67 @@ exports[`profiles light created 1`] = `
     }
   >
     <View
+      collapsable={false}
+      onLayout={[Function]}
       style={
-        [
-          {
-            "alignItems": "center",
-            "flexDirection": "row",
-            "flexWrap": "wrap",
-            "width": "100%",
-          },
-          {
-            "elevation": 12,
-            "shadowColor": "#00000026",
-            "shadowOffset": {
-              "height": 4,
-              "width": 0,
+        {
+          "opacity": 1,
+          "transform": [
+            {
+              "translateY": 0,
             },
-            "shadowOpacity": 1,
-            "shadowRadius": 12,
-          },
-          {
-            "backgroundColor": "#21232c",
-            "borderRadius": 12,
-            "columnGap": 12,
-            "minHeight": 46,
-            "paddingHorizontal": 16,
-            "paddingVertical": 13,
-            "rowGap": 4,
-          },
-          undefined,
-        ]
+          ],
+        }
       }
-      testID="sample_toast"
     >
-      <Text
-        style={
-          [
-            {
-              "fontFamily": "DMSans-Medium",
-              "fontSize": 13.5,
-              "letterSpacing": 0,
-              "lineHeight": 20,
-              "marginBottom": -1.2114999999999991,
-              "marginTop": -1.2114999999999991,
-            },
-            {
-              "flexBasis": "auto",
-              "flexGrow": 1,
-              "flexShrink": 1,
-            },
-            {
-              "color": "#f9fafb",
-            },
-          ]
-        }
-      >
-        Sahara Pay created
-      </Text>
       <View
-        accessibilityRole="button"
-        accessibilityState={
-          {
-            "busy": undefined,
-            "checked": undefined,
-            "disabled": undefined,
-            "expanded": undefined,
-            "selected": undefined,
-          }
-        }
-        accessibilityValue={
-          {
-            "max": undefined,
-            "min": undefined,
-            "now": undefined,
-            "text": undefined,
-          }
-        }
-        accessible={true}
-        collapsable={false}
-        focusable={true}
-        onBlur={[Function]}
-        onClick={[Function]}
-        onFocus={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
         style={
           [
             {
               "alignItems": "center",
-              "justifyContent": "center",
+              "flexDirection": "row",
+              "flexWrap": "wrap",
+              "width": "100%",
             },
             {
-              "minWidth": 44,
-              "paddingHorizontal": 8,
+              "elevation": 12,
+              "shadowColor": "#00000026",
+              "shadowOffset": {
+                "height": 4,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 12,
             },
+            {
+              "backgroundColor": "#21232c",
+              "borderRadius": 12,
+              "columnGap": 12,
+              "minHeight": 46,
+              "paddingHorizontal": 16,
+              "paddingVertical": 13,
+              "rowGap": 4,
+            },
+            undefined,
           ]
         }
-        testID="sample_toast_undo"
+        testID="sample_toast"
       >
         <Text
-          numberOfLines={1}
           style={
             [
               {
-                "fontFamily": "DMSans-SemiBold",
-                "fontSize": 14,
+                "fontFamily": "DMSans-Medium",
+                "fontSize": 13.5,
                 "letterSpacing": 0,
                 "lineHeight": 20,
-                "marginBottom": -0.8859999999999992,
-                "marginTop": -0.8859999999999992,
+                "marginBottom": -1.2114999999999991,
+                "marginTop": -1.2114999999999991,
               },
               {
-                "textAlign": "center",
-                "textDecorationLine": "underline",
+                "flexBasis": "auto",
+                "flexGrow": 1,
+                "flexShrink": 1,
               },
               {
                 "color": "#f9fafb",
@@ -14513,8 +14473,78 @@ exports[`profiles light created 1`] = `
             ]
           }
         >
-          Make active
+          Sahara Pay created
         </Text>
+        <View
+          accessibilityRole="button"
+          accessibilityState={
+            {
+              "busy": undefined,
+              "checked": undefined,
+              "disabled": undefined,
+              "expanded": undefined,
+              "selected": undefined,
+            }
+          }
+          accessibilityValue={
+            {
+              "max": undefined,
+              "min": undefined,
+              "now": undefined,
+              "text": undefined,
+            }
+          }
+          accessible={true}
+          collapsable={false}
+          focusable={true}
+          onBlur={[Function]}
+          onClick={[Function]}
+          onFocus={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            [
+              {
+                "alignItems": "center",
+                "justifyContent": "center",
+              },
+              {
+                "minWidth": 44,
+                "paddingHorizontal": 8,
+              },
+            ]
+          }
+          testID="sample_toast_undo"
+        >
+          <Text
+            numberOfLines={1}
+            style={
+              [
+                {
+                  "fontFamily": "DMSans-SemiBold",
+                  "fontSize": 14,
+                  "letterSpacing": 0,
+                  "lineHeight": 20,
+                  "marginBottom": -0.8859999999999992,
+                  "marginTop": -0.8859999999999992,
+                },
+                {
+                  "textAlign": "center",
+                  "textDecorationLine": "underline",
+                },
+                {
+                  "color": "#f9fafb",
+                },
+              ]
+            }
+          >
+            Make active
+          </Text>
+        </View>
       </View>
     </View>
   </View>

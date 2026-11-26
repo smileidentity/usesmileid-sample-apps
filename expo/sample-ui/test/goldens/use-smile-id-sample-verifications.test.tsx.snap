@@ -11431,72 +11431,81 @@ exports[`verifications dark default 1`] = `
           Verifications
         </Text>
         <View
-          accessibilityRole="button"
-          accessibilityState={
-            {
-              "busy": undefined,
-              "checked": undefined,
-              "disabled": undefined,
-              "expanded": undefined,
-              "selected": undefined,
-            }
-          }
-          accessibilityValue={
-            {
-              "max": undefined,
-              "min": undefined,
-              "now": undefined,
-              "text": undefined,
-            }
-          }
-          accessible={true}
           collapsable={false}
-          focusable={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
           style={
-            [
-              {
-                "alignItems": "center",
-                "justifyContent": "center",
-              },
-              {
-                "minHeight": 44,
-                "minWidth": 44,
-              },
-              {
-                "paddingHorizontal": 8,
-              },
-            ]
+            {
+              "opacity": 1,
+            }
           }
-          testID="sample_select_toggle"
         >
-          <Text
+          <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
-                  "fontFamily": "DMSans-Bold",
-                  "fontSize": 14,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "marginBottom": -0.8859999999999992,
-                  "marginTop": -0.8859999999999992,
+                  "alignItems": "center",
+                  "justifyContent": "center",
                 },
                 {
-                  "color": "#4d88ff",
+                  "minHeight": 44,
+                  "minWidth": 44,
+                },
+                {
+                  "paddingHorizontal": 8,
                 },
               ]
             }
+            testID="sample_select_toggle"
           >
-            Select
-          </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#4d88ff",
+                  },
+                ]
+              }
+            >
+              Select
+            </Text>
+          </View>
         </View>
       </View>
       <RCTScrollView
@@ -16718,76 +16727,82 @@ exports[`verifications dark empty 1`] = `
           Verifications
         </Text>
         <View
-          accessibilityElementsHidden={true}
-          accessibilityRole="button"
-          accessibilityState={
-            {
-              "busy": undefined,
-              "checked": undefined,
-              "disabled": true,
-              "expanded": undefined,
-              "selected": undefined,
-            }
-          }
-          accessibilityValue={
-            {
-              "max": undefined,
-              "min": undefined,
-              "now": undefined,
-              "text": undefined,
-            }
-          }
-          accessible={false}
           collapsable={false}
-          focusable={false}
-          importantForAccessibility="no-hide-descendants"
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
           style={
-            [
-              {
-                "alignItems": "center",
-                "justifyContent": "center",
-              },
-              {
-                "minHeight": 44,
-                "minWidth": 44,
-              },
-              {
-                "paddingHorizontal": 8,
-              },
-              {
-                "opacity": 0,
-              },
-            ]
+            {
+              "opacity": 0,
+            }
           }
         >
-          <Text
+          <View
+            accessibilityElementsHidden={true}
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": true,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={false}
+            collapsable={false}
+            focusable={false}
+            importantForAccessibility="no-hide-descendants"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
-                  "fontFamily": "DMSans-Bold",
-                  "fontSize": 14,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "marginBottom": -0.8859999999999992,
-                  "marginTop": -0.8859999999999992,
+                  "alignItems": "center",
+                  "justifyContent": "center",
                 },
                 {
-                  "color": "#4d88ff",
+                  "minHeight": 44,
+                  "minWidth": 44,
+                },
+                {
+                  "paddingHorizontal": 8,
                 },
               ]
             }
           >
-            Select
-          </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#4d88ff",
+                  },
+                ]
+              }
+            >
+              Select
+            </Text>
+          </View>
         </View>
       </View>
       <RCTScrollView
@@ -17468,76 +17483,82 @@ exports[`verifications dark notLoaded 1`] = `
           Verifications
         </Text>
         <View
-          accessibilityElementsHidden={true}
-          accessibilityRole="button"
-          accessibilityState={
-            {
-              "busy": undefined,
-              "checked": undefined,
-              "disabled": true,
-              "expanded": undefined,
-              "selected": undefined,
-            }
-          }
-          accessibilityValue={
-            {
-              "max": undefined,
-              "min": undefined,
-              "now": undefined,
-              "text": undefined,
-            }
-          }
-          accessible={false}
           collapsable={false}
-          focusable={false}
-          importantForAccessibility="no-hide-descendants"
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
           style={
-            [
-              {
-                "alignItems": "center",
-                "justifyContent": "center",
-              },
-              {
-                "minHeight": 44,
-                "minWidth": 44,
-              },
-              {
-                "paddingHorizontal": 8,
-              },
-              {
-                "opacity": 0,
-              },
-            ]
+            {
+              "opacity": 0,
+            }
           }
         >
-          <Text
+          <View
+            accessibilityElementsHidden={true}
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": true,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={false}
+            collapsable={false}
+            focusable={false}
+            importantForAccessibility="no-hide-descendants"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
-                  "fontFamily": "DMSans-Bold",
-                  "fontSize": 14,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "marginBottom": -0.8859999999999992,
-                  "marginTop": -0.8859999999999992,
+                  "alignItems": "center",
+                  "justifyContent": "center",
                 },
                 {
-                  "color": "#4d88ff",
+                  "minHeight": 44,
+                  "minWidth": 44,
+                },
+                {
+                  "paddingHorizontal": 8,
                 },
               ]
             }
           >
-            Select
-          </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#4d88ff",
+                  },
+                ]
+              }
+            >
+              Select
+            </Text>
+          </View>
         </View>
       </View>
       <RCTScrollView
@@ -18156,72 +18177,81 @@ exports[`verifications light default 1`] = `
           Verifications
         </Text>
         <View
-          accessibilityRole="button"
-          accessibilityState={
-            {
-              "busy": undefined,
-              "checked": undefined,
-              "disabled": undefined,
-              "expanded": undefined,
-              "selected": undefined,
-            }
-          }
-          accessibilityValue={
-            {
-              "max": undefined,
-              "min": undefined,
-              "now": undefined,
-              "text": undefined,
-            }
-          }
-          accessible={true}
           collapsable={false}
-          focusable={true}
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
           style={
-            [
-              {
-                "alignItems": "center",
-                "justifyContent": "center",
-              },
-              {
-                "minHeight": 44,
-                "minWidth": 44,
-              },
-              {
-                "paddingHorizontal": 8,
-              },
-            ]
+            {
+              "opacity": 1,
+            }
           }
-          testID="sample_select_toggle"
         >
-          <Text
+          <View
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": undefined,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={true}
+            collapsable={false}
+            focusable={true}
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
-                  "fontFamily": "DMSans-Bold",
-                  "fontSize": 14,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "marginBottom": -0.8859999999999992,
-                  "marginTop": -0.8859999999999992,
+                  "alignItems": "center",
+                  "justifyContent": "center",
                 },
                 {
-                  "color": "#151f72",
+                  "minHeight": 44,
+                  "minWidth": 44,
+                },
+                {
+                  "paddingHorizontal": 8,
                 },
               ]
             }
+            testID="sample_select_toggle"
           >
-            Select
-          </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#151f72",
+                  },
+                ]
+              }
+            >
+              Select
+            </Text>
+          </View>
         </View>
       </View>
       <RCTScrollView
@@ -18805,7 +18835,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={2}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -18937,7 +18967,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19228,7 +19258,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={4}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -19360,7 +19390,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={3}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19651,7 +19681,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={6}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -19783,7 +19813,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={5}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20083,7 +20113,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={8}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20215,7 +20245,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={7}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20483,7 +20513,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={10}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20615,7 +20645,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={9}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20875,7 +20905,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={12}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21007,7 +21037,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={11}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21298,7 +21328,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={14}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21430,7 +21460,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={13}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21698,7 +21728,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={16}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21830,7 +21860,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={15}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22153,7 +22183,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={18}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22285,7 +22315,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={17}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22576,7 +22606,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={20}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22708,7 +22738,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={19}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22976,7 +23006,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={22}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -23108,7 +23138,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={21}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -23443,76 +23473,82 @@ exports[`verifications light empty 1`] = `
           Verifications
         </Text>
         <View
-          accessibilityElementsHidden={true}
-          accessibilityRole="button"
-          accessibilityState={
-            {
-              "busy": undefined,
-              "checked": undefined,
-              "disabled": true,
-              "expanded": undefined,
-              "selected": undefined,
-            }
-          }
-          accessibilityValue={
-            {
-              "max": undefined,
-              "min": undefined,
-              "now": undefined,
-              "text": undefined,
-            }
-          }
-          accessible={false}
           collapsable={false}
-          focusable={false}
-          importantForAccessibility="no-hide-descendants"
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
           style={
-            [
-              {
-                "alignItems": "center",
-                "justifyContent": "center",
-              },
-              {
-                "minHeight": 44,
-                "minWidth": 44,
-              },
-              {
-                "paddingHorizontal": 8,
-              },
-              {
-                "opacity": 0,
-              },
-            ]
+            {
+              "opacity": 0,
+            }
           }
         >
-          <Text
+          <View
+            accessibilityElementsHidden={true}
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": true,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={false}
+            collapsable={false}
+            focusable={false}
+            importantForAccessibility="no-hide-descendants"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
-                  "fontFamily": "DMSans-Bold",
-                  "fontSize": 14,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "marginBottom": -0.8859999999999992,
-                  "marginTop": -0.8859999999999992,
+                  "alignItems": "center",
+                  "justifyContent": "center",
                 },
                 {
-                  "color": "#151f72",
+                  "minHeight": 44,
+                  "minWidth": 44,
+                },
+                {
+                  "paddingHorizontal": 8,
                 },
               ]
             }
           >
-            Select
-          </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#151f72",
+                  },
+                ]
+              }
+            >
+              Select
+            </Text>
+          </View>
         </View>
       </View>
       <RCTScrollView
@@ -24193,76 +24229,82 @@ exports[`verifications light notLoaded 1`] = `
           Verifications
         </Text>
         <View
-          accessibilityElementsHidden={true}
-          accessibilityRole="button"
-          accessibilityState={
-            {
-              "busy": undefined,
-              "checked": undefined,
-              "disabled": true,
-              "expanded": undefined,
-              "selected": undefined,
-            }
-          }
-          accessibilityValue={
-            {
-              "max": undefined,
-              "min": undefined,
-              "now": undefined,
-              "text": undefined,
-            }
-          }
-          accessible={false}
           collapsable={false}
-          focusable={false}
-          importantForAccessibility="no-hide-descendants"
-          onBlur={[Function]}
-          onClick={[Function]}
-          onFocus={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
           style={
-            [
-              {
-                "alignItems": "center",
-                "justifyContent": "center",
-              },
-              {
-                "minHeight": 44,
-                "minWidth": 44,
-              },
-              {
-                "paddingHorizontal": 8,
-              },
-              {
-                "opacity": 0,
-              },
-            ]
+            {
+              "opacity": 0,
+            }
           }
         >
-          <Text
+          <View
+            accessibilityElementsHidden={true}
+            accessibilityRole="button"
+            accessibilityState={
+              {
+                "busy": undefined,
+                "checked": undefined,
+                "disabled": true,
+                "expanded": undefined,
+                "selected": undefined,
+              }
+            }
+            accessibilityValue={
+              {
+                "max": undefined,
+                "min": undefined,
+                "now": undefined,
+                "text": undefined,
+              }
+            }
+            accessible={false}
+            collapsable={false}
+            focusable={false}
+            importantForAccessibility="no-hide-descendants"
+            onBlur={[Function]}
+            onClick={[Function]}
+            onFocus={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
             style={
               [
                 {
-                  "fontFamily": "DMSans-Bold",
-                  "fontSize": 14,
-                  "letterSpacing": 0,
-                  "lineHeight": 20,
-                  "marginBottom": -0.8859999999999992,
-                  "marginTop": -0.8859999999999992,
+                  "alignItems": "center",
+                  "justifyContent": "center",
                 },
                 {
-                  "color": "#151f72",
+                  "minHeight": 44,
+                  "minWidth": 44,
+                },
+                {
+                  "paddingHorizontal": 8,
                 },
               ]
             }
           >
-            Select
-          </Text>
+            <Text
+              style={
+                [
+                  {
+                    "fontFamily": "DMSans-Bold",
+                    "fontSize": 14,
+                    "letterSpacing": 0,
+                    "lineHeight": 20,
+                    "marginBottom": -0.8859999999999992,
+                    "marginTop": -0.8859999999999992,
+                  },
+                  {
+                    "color": "#151f72",
+                  },
+                ]
+              }
+            >
+              Select
+            </Text>
+          </View>
         </View>
       </View>
       <RCTScrollView
