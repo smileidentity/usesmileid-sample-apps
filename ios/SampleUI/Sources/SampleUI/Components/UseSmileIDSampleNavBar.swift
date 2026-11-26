@@ -95,9 +95,7 @@ public struct UseSmileIDSampleNavBar: View {
 
   private func tab(_ item: UseSmileIDSampleNavItem) -> some View {
     let tint = item == selected ? colors.primary : colors.foreground
-    return Button {
-      UseSmileIDSampleSelectionTick.pick(alreadySelected: item == selected) { onSelect(item) }
-    } label: {
+    return Button { onSelect(item) } label: {
       VStack(spacing: SmileSpacing.spacingXxs) {
         UseSmileIDSampleIcon(item.icon, tint: tint, size: Self.tabIconSize)
         UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.textStyleOverline)

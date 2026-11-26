@@ -1,17 +1,5 @@
-import { createContext, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 import { AccessibilityInfo } from 'react-native';
-
-/// The ticks the sample plays, which the app supplies because sample-ui ships no native code.
-export type UseSmileIDSampleHaptics = {
-  selection: () => void;
-  toggle: (on: boolean) => void;
-};
-
-/// Silent until the app provides its haptics.
-export const UseSmileIDSampleHapticsContext = createContext<UseSmileIDSampleHaptics>({
-  selection: () => {},
-  toggle: () => {},
-});
 
 /// The scale a product card draws at: smaller while held, unless it is disabled or motion is reduced.
 export const smileIDSamplePressScale = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>

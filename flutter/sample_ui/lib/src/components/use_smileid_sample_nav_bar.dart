@@ -1,8 +1,6 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
@@ -104,12 +102,7 @@ class UseSmileIDSampleNavBar extends StatelessWidget {
                         child: _NavBarTab(
                           item: item,
                           selected: item == selected,
-                          onTap: () {
-                            if (item != selected) {
-                              unawaited(HapticFeedback.selectionClick());
-                            }
-                            onSelect(item);
-                          },
+                          onTap: () => onSelect(item),
                         ),
                       ),
                   ],

@@ -13,8 +13,6 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -37,14 +35,10 @@ fun UseSmileIDSampleFilterChip(
     countTestId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val haptics = LocalHapticFeedback.current
     Surface(
         modifier = modifier
             .minimumInteractiveComponentSize()
-            .selectable(selected = selected, role = Role.Tab) {
-                if (!selected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                onClick()
-            }
+            .selectable(selected = selected, role = Role.Tab, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusChip),
         color = if (selected) colors.primary else colors.filterChip.background,

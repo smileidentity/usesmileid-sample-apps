@@ -1,7 +1,4 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_label_type.dart';
@@ -56,7 +53,7 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
       button: true,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: _pick,
+        onTap: onTap,
         child: ConstrainedBox(
           constraints: BoxConstraints(
             minHeight: useSmileIDSampleTapTarget(context),
@@ -71,11 +68,6 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
     );
   }
 
-  void _pick() {
-    if (!selected) unawaited(HapticFeedback.selectionClick());
-    onTap();
-  }
-
   Widget _pill(UseSmileIDSampleColors colors, Color content) => Material(
     color: selected ? colors.primary : colors.filterChip.background,
     // A stadium, not a 999 radius: radius.chip is the design's way of saying fully rounded.
@@ -85,7 +77,7 @@ class UseSmileIDSampleFilterChip extends StatelessWidget {
           : BorderSide(color: colors.cardStroke, width: smileCardStrokeWidth),
     ),
     child: InkWell(
-      onTap: _pick,
+      onTap: onTap,
       customBorder: const StadiumBorder(),
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: SmileDimens.space32),

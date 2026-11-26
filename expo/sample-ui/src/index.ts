@@ -139,11 +139,7 @@ export type { CardTokens, DataFieldTokens, FilterChipTokens } from './theme/smil
 
 export { UseSmileIDSampleFloatingTokenButton } from './components/use-smile-id-sample-floating-token-button';
 export { UseSmileIDSampleNavBar } from './components/use-smile-id-sample-nav-bar';
-export {
-  UseSmileIDSampleHapticsContext,
-  smileIDSamplePressScale,
-  type UseSmileIDSampleHaptics,
-} from './components/use-smile-id-sample-press-feedback';
+export { smileIDSamplePressScale } from './components/use-smile-id-sample-press-feedback';
 export { UseSmileIDSampleProductCard } from './components/use-smile-id-sample-product-card';
 export { UseSmileIDSampleProductGrid } from './components/use-smile-id-sample-product-grid';
 export { UseSmileIDSampleScanGlyph } from './components/use-smile-id-sample-scan-glyph';

@@ -25,20 +25,3 @@ struct UseSmileIDSamplePressScaleStyle: ButtonStyle {
       .animation(.easeOut(duration: SmileMotion.durationFast), value: configuration.isPressed)
   }
 }
-
-/// A selection tick for a chip or tab: played only when the tap picks something new.
-@MainActor
-enum UseSmileIDSampleSelectionTick {
-  /// Plays [tick] unless [alreadySelected], then runs [action].
-  static func pick(alreadySelected: Bool, tick: @MainActor () -> Void = play, action: () -> Void) {
-    if !alreadySelected {
-      tick()
-    }
-    action()
-  }
-
-  /// UIKit's selection feedback, the tick a picker plays.
-  static func play() {
-    UISelectionFeedbackGenerator().selectionChanged()
-  }
-}
