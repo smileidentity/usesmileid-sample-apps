@@ -13,7 +13,7 @@ import {
   UseSmileIDSampleFadeIn,
   UseSmileIDSampleRiseIn,
   useSmileIDSampleVisibilityFade,
-} from '../src/components/use-smile-id-sample-rise-in';
+} from '../src/components/use-smile-id-sample-entrance';
 import { tokens } from '../src/tokens';
 import { smileIDSampleSelectionColor } from '../src/components/use-smile-id-sample-selection-blend';
 import { smileMix } from '../src/theme/smile-color-math';
@@ -172,6 +172,37 @@ describe('a picked colour', () => {
   });
 
   const { primary, onPrimary } = smileLightColors;
+
+  it('snaps a chip to its picked fill under reduced motion', async () => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
+    try {
+      let pick = noop;
+      const Host = () => {
+        const [selected, setSelected] = useState(false);
+        pick = () => setSelected(true);
+        return chip(selected);
+      };
+      const screen = await renderInTheme(<Host />, false);
+      await act(async () => {
+        await Promise.resolve();
+      });
+      timing.mockClear();
+      await act(async () => {
+        pick();
+      });
+
+      expect(timing).not.toHaveBeenCalled();
+      expect(fillOf(screen)).toBe(smileLightColors.primary);
+    } finally {
+      ask.mockRestore();
+      listen.mockRestore();
+      timing.mockRestore();
+    }
+  });
 
   it('blends two colours and returns the exact ends at rest', () => {
     expect(smileIDSampleSelectionColor(onPrimary, primary, 0)).toBe(onPrimary);

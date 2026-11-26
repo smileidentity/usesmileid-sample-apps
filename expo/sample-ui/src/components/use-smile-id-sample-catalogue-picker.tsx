@@ -11,7 +11,7 @@ import {
 import { smileIDSampleOptionMatches } from '../state/use-smile-id-sample-id-details';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
-import { UseSmileIDSampleFadeIn } from './use-smile-id-sample-rise-in';
+import { UseSmileIDSampleFadeIn } from './use-smile-id-sample-entrance';
 
 type Props<T> = {
   catalogue: UseSmileIDSampleCatalogue<T>;

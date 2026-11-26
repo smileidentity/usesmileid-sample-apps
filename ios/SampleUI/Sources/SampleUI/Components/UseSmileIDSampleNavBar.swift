@@ -103,7 +103,7 @@ public struct UseSmileIDSampleNavBar: View {
           .foregroundColor(tint)
           .multilineTextAlignment(.center)
       }
-      .animation(useSmileIDSampleSelectionAnimation(reduceMotion: reduceMotion), value: item == selected)
+      .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: item == selected)
       // Padded, not floored at `sizeControlMd`: 44 is shorter than the content, so it shrank the pill.
       .padding(SmileSpacing.spacingXs)
       .frame(maxWidth: .infinity)

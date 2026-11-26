@@ -142,7 +142,7 @@ public struct VerificationsScreen: View {
       .buttonStyle(.plain)
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectToggle)
       .opacity(state.offersSelect ? 1 : 0)
-      .animation(useSmileIDSampleSelectionAnimation(reduceMotion: reduceMotion), value: state.offersSelect)
+      .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: state.offersSelect)
       .disabled(!state.offersSelect)
       .accessibilityHidden(!state.offersSelect)
     }

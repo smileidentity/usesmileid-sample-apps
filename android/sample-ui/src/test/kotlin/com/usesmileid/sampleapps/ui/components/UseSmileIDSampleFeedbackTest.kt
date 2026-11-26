@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performTouchInput
@@ -162,9 +163,9 @@ class UseSmileIDSampleFeedbackTest {
         tab = UseSmileIDSampleNavItem.Verifications
         Snapshot.sendApplyNotifications()
         mainClock.advanceTimeBy(100)
-        val midway = node.captureToImage().toPixelMap().let { map -> (0 until map.width).flatMap { x -> (0 until map.height).map { y -> map[x, y].toArgb() } }.toSet() }
+        val midway = colours(node)
         mainClock.advanceTimeBy(1_000)
-        val settled = node.captureToImage().toPixelMap().let { map -> (0 until map.width).flatMap { x -> (0 until map.height).map { y -> map[x, y].toArgb() } }.toSet() }
+        val settled = colours(node)
 
         assertFalse(picked.toArgb() in midway)
         assertTrue(picked.toArgb() in settled)
@@ -198,6 +199,30 @@ class UseSmileIDSampleFeedbackTest {
     }
 
     @Test
+    fun `a bar is in place at once when the system removes animations`() = runComposeUiTest {
+        Settings.Global.putFloat(
+            ApplicationProvider.getApplicationContext<Context>().contentResolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE,
+            0f,
+        )
+        mainClock.autoAdvance = false
+        setContent {
+            UseSmileIDSampleTheme {
+                Box(Modifier.size(300.dp)) {
+                    UseSmileIDSampleRiseIn(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        Box(Modifier.size(width = 200.dp, height = 60.dp).testTag(BAR))
+                    }
+                }
+            }
+        }
+        mainClock.advanceTimeByFrame()
+        val first = onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top
+        mainClock.advanceTimeBy(1_000)
+
+        assertEquals(onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top, first)
+    }
+
+    @Test
     fun `content fades in when it replaces a loading state`() = runComposeUiTest {
         mainClock.autoAdvance = false
         var shown by mutableStateOf(false)
@@ -226,6 +251,11 @@ class UseSmileIDSampleFeedbackTest {
     private fun ComposeUiTest.centre(tag: String): Int {
         val map = onNodeWithTag(tag).captureToImage().toPixelMap()
         return map[map.width / 2, map.height / 2].toArgb()
+    }
+
+    private fun colours(node: SemanticsNodeInteraction): Set<Int> {
+        val map = node.captureToImage().toPixelMap()
+        return (0 until map.width).flatMap { x -> (0 until map.height).map { y -> map[x, y].toArgb() } }.toSet()
     }
 
     private fun ComposeUiTest.fill(): Int {

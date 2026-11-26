@@ -1,11 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Animated } from 'react-native';
 
-import { useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
+import { SMILE_DURATION_FAST_MS, useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
 import { smileMix } from '../theme/smile-color-math';
-import { tokens } from '../tokens';
 
-const FAST_MS = Number.parseFloat(tokens.duration.fast);
 const HEX = /^#[0-9a-fA-F]{6}$/;
 
 /// Blends an unpicked colour toward a picked one, returning each exactly at rest and snapping halfway when either is not `#RRGGBB`.
@@ -27,13 +25,16 @@ export const useSmileIDSampleSelectionBlend = (selected: boolean): number => {
     return () => value.removeListener(id);
   }, [value]);
 
+  const last = useRef(selected);
   useEffect(() => {
     const target = selected ? 1 : 0;
-    if (reduced) {
+    const changed = selected !== last.current;
+    last.current = selected;
+    if (reduced || !changed) {
       value.setValue(target);
       return undefined;
     }
-    const run = Animated.timing(value, { toValue: target, duration: FAST_MS, useNativeDriver: false });
+    const run = Animated.timing(value, { toValue: target, duration: SMILE_DURATION_FAST_MS, useNativeDriver: false });
     run.start();
     return () => run.stop();
   }, [selected, reduced, value]);

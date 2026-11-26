@@ -37,7 +37,8 @@ private object ReducedMotionWatch {
     private var observer: ContentObserver? = null
     private var watched: ContentResolver? = null
 
-    fun state(resolver: ContentResolver): State<Boolean> = mutable(resolver)
+    /** The shared reading, refreshed for each new reader because it may have gone stale while nothing watched. */
+    fun state(resolver: ContentResolver): State<Boolean> = mutable(resolver).also { it.value = read(resolver) }
 
     fun attach(resolver: ContentResolver) {
         readers++

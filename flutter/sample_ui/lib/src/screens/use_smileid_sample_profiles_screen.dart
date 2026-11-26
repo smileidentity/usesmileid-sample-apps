@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_avatar.dart';
+import '../components/use_smileid_sample_entrance.dart';
 import '../components/use_smileid_sample_glyphs.dart';
 import '../components/use_smileid_sample_profile_row.dart';
-import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_setting_row.dart';
 import '../components/use_smileid_sample_toast.dart';
 import '../components/use_smileid_sample_top_app_bar.dart';

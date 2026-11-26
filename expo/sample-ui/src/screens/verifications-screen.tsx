@@ -25,7 +25,7 @@ import {
 import { touchTargetStyle } from '../theme/smile-compose-layout';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { useSmileIDSampleLanguageShown, useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
-import { UseSmileIDSampleRiseIn, useSmileIDSampleVisibilityFade } from '../components/use-smile-id-sample-rise-in';
+import { UseSmileIDSampleRiseIn, useSmileIDSampleVisibilityFade } from '../components/use-smile-id-sample-entrance';
 
 /// What the list renders. `jobs` is null until the store's first read: not loaded is not empty.
 export type UseSmileIDSampleVerificationsState = {

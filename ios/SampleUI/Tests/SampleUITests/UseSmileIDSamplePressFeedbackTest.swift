@@ -31,12 +31,12 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePressOpacity(pressed: false, enabled: true, reduceMotion: true), 1)
   }
 
-  func testAPickedColourEasesOverTheFastDuration() {
-    XCTAssertEqual(useSmileIDSampleSelectionAnimation(reduceMotion: false), .easeOut(duration: SmileMotion.durationFast))
+  func testASmallChangeEasesOverTheFastDuration() {
+    XCTAssertEqual(useSmileIDSampleFastAnimation(reduceMotion: false), .easeOut(duration: SmileMotion.durationFast))
   }
 
-  func testAPickedColourSnapsUnderReducedMotion() {
-    XCTAssertNil(useSmileIDSampleSelectionAnimation(reduceMotion: true))
+  func testASmallChangeSnapsUnderReducedMotion() {
+    XCTAssertNil(useSmileIDSampleFastAnimation(reduceMotion: true))
   }
 
   func testABarRisesOverTheToastEntrance() {

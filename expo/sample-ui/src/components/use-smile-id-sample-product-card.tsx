@@ -4,6 +4,7 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
 import {
+  SMILE_DURATION_FAST_MS,
   smileIDSamplePressOpacity,
   smileIDSamplePressScale,
   useSmileIDSampleReducedMotion,
@@ -16,7 +17,7 @@ import {
 } from '../smile-product-hues';
 import { smileStrokeOverlap } from '../theme/smile-compose-layout';
 import { smileInkOn, smileMix, smileWithAlpha } from '../theme/smile-color-math';
-import { lightColors, tokens } from '../tokens';
+import { lightColors } from '../tokens';
 import { atWeight } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 
@@ -39,7 +40,6 @@ type Props = {
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-const PRESS_MS = Number.parseFloat(tokens.duration.fast);
 
 /// A product tile: a gradient in the product's hue, a hairline stroke, its icon as a watermark.
 export const UseSmileIDSampleProductCard = ({
@@ -71,7 +71,7 @@ export const UseSmileIDSampleProductCard = ({
     setHeld(pressed);
     Animated.timing(scale, {
       toValue: smileIDSamplePressScale(pressed, enabled, reduceMotion),
-      duration: PRESS_MS,
+      duration: SMILE_DURATION_FAST_MS,
       useNativeDriver: true,
     }).start();
   };

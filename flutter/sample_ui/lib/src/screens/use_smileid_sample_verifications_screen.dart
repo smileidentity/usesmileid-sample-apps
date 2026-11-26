@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_date_group_header.dart';
 import '../components/use_smileid_sample_empty_state.dart';
+import '../components/use_smileid_sample_entrance.dart';
 import '../components/use_smileid_sample_filter_chip.dart';
 import '../components/use_smileid_sample_header_inset.dart';
 import '../components/use_smileid_sample_job_row.dart';
-import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_selection_checkbox.dart';
 import '../components/use_smileid_sample_spaced.dart';
 import '../components/use_smileid_sample_swipe_action.dart';
@@ -335,9 +335,12 @@ class _SelectToggleVisibility extends StatelessWidget {
     duration: MediaQuery.disableAnimationsOf(context)
         ? Duration.zero
         : SmileMotion.durationFast,
-    child: IgnorePointer(
-      ignoring: !visible,
-      child: ExcludeSemantics(excluding: !visible, child: child),
+    child: ExcludeFocus(
+      excluding: !visible,
+      child: IgnorePointer(
+        ignoring: !visible,
+        child: ExcludeSemantics(excluding: !visible, child: child),
+      ),
     ),
   );
 }

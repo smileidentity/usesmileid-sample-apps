@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../components/use_smileid_sample_empty_state.dart';
+import '../components/use_smileid_sample_entrance.dart';
 import '../components/use_smileid_sample_option_row.dart';
-import '../components/use_smileid_sample_rise_in.dart';
 import '../components/use_smileid_sample_search_field.dart';
 import '../components/use_smileid_sample_skeleton.dart';
 import '../state/use_smileid_sample_catalogue.dart';

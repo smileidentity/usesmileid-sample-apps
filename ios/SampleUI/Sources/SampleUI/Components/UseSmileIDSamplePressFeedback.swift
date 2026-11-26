@@ -26,8 +26,8 @@ struct UseSmileIDSamplePressScaleStyle: ButtonStyle {
   }
 }
 
-/// How a chip or tab eases into its picked colours: over duration-fast, or not at all under Reduce Motion.
-func useSmileIDSampleSelectionAnimation(reduceMotion: Bool) -> Animation? {
+/// The short ease every small change here uses: duration-fast, or none under Reduce Motion.
+func useSmileIDSampleFastAnimation(reduceMotion: Bool) -> Animation? {
   reduceMotion ? nil : .easeOut(duration: SmileMotion.durationFast)
 }
 

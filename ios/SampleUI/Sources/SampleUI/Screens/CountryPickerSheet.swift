@@ -93,7 +93,7 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
         .id(contentPhase)
         .transition(.useSmileIDSampleFadeIn)
     }
-    .animation(useSmileIDSampleSelectionAnimation(reduceMotion: reduceMotion), value: contentPhase)
+    .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: contentPhase)
     .onAppear { gate.loading(catalogue.isLoading) }
     .onChange(of: catalogue.isLoading) { gate.loading($0) }
   }
@@ -135,16 +135,20 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
   }
 
   /// Which of skeleton, nothing yet, failure, list or empty is showing, so a change fades the new one in.
-  private var contentPhase: String {
+  private var contentPhase: ContentPhase {
     if showsSkeleton {
-      return "skeleton"
+      return .skeleton
     }
     switch catalogue {
-    case .loading: return "loading"
-    case .failed: return "failed"
-    case .ready: return "ready"
-    case .empty: return "empty"
+    case .loading: return .loading
+    case .failed: return .failed
+    case .ready: return .ready
+    case .empty: return .empty
     }
+  }
+
+  private enum ContentPhase: Hashable {
+    case skeleton, loading, failed, ready, empty
   }
 
   private var isReady: Bool {

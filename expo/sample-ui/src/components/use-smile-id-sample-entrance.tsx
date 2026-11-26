@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Animated, Easing, type StyleProp, type ViewStyle } from 'react-native';
 
-import { useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
-import { tokens } from '../tokens';
+import { SMILE_DURATION_FAST_MS, useSmileIDSampleReducedMotion } from './use-smile-id-sample-press-feedback';
 
 const RISE_MS = 220;
 const FADE_SHARE_OF_RISE = 160 / 220;
-const FAST_MS = Number.parseFloat(tokens.duration.fast);
 const FAST_OUT_SLOW_IN = Easing.bezier(0.4, 0, 0.2, 1);
 
 type Props = { children: ReactNode; style?: StyleProp<ViewStyle> };
@@ -47,7 +45,7 @@ export const UseSmileIDSampleRiseIn = ({ children, style }: Props) => {
 
 /// Content that fades in over duration-fast when it first appears, as a list does when it replaces its loading state.
 export const UseSmileIDSampleFadeIn = ({ children, style }: Props) => {
-  const progress = useEntrance(FAST_MS);
+  const progress = useEntrance(SMILE_DURATION_FAST_MS);
   return <Animated.View style={[style, { opacity: progress }]}>{children}</Animated.View>;
 };
 
@@ -57,15 +55,19 @@ export const useSmileIDSampleVisibilityFade = (visible: boolean): Animated.Value
   const [opacity] = useState(() => new Animated.Value(visible ? 1 : 0));
   const shown = useRef(visible);
   useEffect(() => {
-    if (visible === shown.current) return undefined;
+    const target = visible ? 1 : 0;
+    const changed = visible !== shown.current;
     shown.current = visible;
-    if (reduced) {
-      opacity.setValue(visible ? 1 : 0);
+    if (reduced || !changed) {
+      opacity.setValue(target);
       return undefined;
     }
-    const run = Animated.timing(opacity, { toValue: visible ? 1 : 0, duration: FAST_MS, useNativeDriver: true });
+    const run = Animated.timing(opacity, { toValue: target, duration: SMILE_DURATION_FAST_MS, useNativeDriver: true });
     run.start();
-    return () => run.stop();
+    return () => {
+      run.stop();
+      opacity.setValue(target);
+    };
   }, [visible, reduced, opacity]);
   return opacity;
 };

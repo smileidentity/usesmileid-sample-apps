@@ -56,7 +56,7 @@ public struct UseSmileIDSampleFilterChip: View {
         RoundedRectangle(cornerRadius: UseSmileIDSampleShapes.chip, style: .continuous)
           .strokeBorder(selected ? .clear : colors.cardStroke, lineWidth: smileCardStrokeWidth)
       )
-      .animation(useSmileIDSampleSelectionAnimation(reduceMotion: reduceMotion), value: selected)
+      .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: selected)
       // Laid out at the touch target, as Compose lays out its minimum interactive size.
       .frame(minHeight: SmileSpacing.sizeControlMd)
       .contentShape(Rectangle())

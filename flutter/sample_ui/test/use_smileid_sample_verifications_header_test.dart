@@ -57,6 +57,56 @@ void main() {
     expect(selectToggle(), findsNothing);
   });
 
+  testWidgets('a hidden select takes no keyboard focus', (
+    WidgetTester tester,
+  ) async {
+    await show(tester, jobs: const <UseSmileIDSampleJob>[]);
+
+    final Iterable<ExcludeFocus> guards = tester.widgetList<ExcludeFocus>(
+      find.ancestor(
+        of: find.text('Select'),
+        matching: find.byType(ExcludeFocus),
+      ),
+    );
+    expect(guards.any((ExcludeFocus guard) => guard.excluding), isTrue);
+  });
+
+  testWidgets('select fades in when the first rows land', (
+    WidgetTester tester,
+  ) async {
+    await show(tester, jobs: const <UseSmileIDSampleJob>[]);
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UseSmileIDSampleTheme.light(),
+        home: Scaffold(
+          body: UseSmileIDSampleVerificationsScreen(
+            state: UseSmileIDSampleVerificationsState(
+              jobs: jobs,
+              nowMillis: now,
+            ),
+            onFilterChanged: (_) {},
+            onSelectModeChanged: (_) {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final double midway = tester
+        .widget<FadeTransition>(
+          find
+              .ancestor(
+                of: find.text('Select'),
+                matching: find.byType(FadeTransition),
+              )
+              .first,
+        )
+        .opacity
+        .value;
+    expect(midway, greaterThan(0));
+    expect(midway, lessThan(1));
+  });
+
   testWidgets('a list with rows offers select', (WidgetTester tester) async {
     await show(tester, jobs: jobs);
 

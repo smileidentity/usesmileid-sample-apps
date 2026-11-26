@@ -31,9 +31,7 @@ fun UseSmileIDSampleRiseIn(modifier: Modifier = Modifier, content: @Composable (
 }
 
 private suspend fun launchRise(rise: Animatable<Float, *>, fade: Animatable<Float, *>) = coroutineScope {
-    launch { rise.animateTo(1f, tween(RISE_MS, easing = FastOutSlowInEasing)) }
-    launch { fade.animateTo(1f, tween(FADE_MS, easing = FastOutSlowInEasing)) }
+    launch { rise.animateTo(1f, tween(OVERLAY_SLIDE_MS, easing = FastOutSlowInEasing)) }
+    launch { fade.animateTo(1f, tween(OVERLAY_FADE_MS, easing = FastOutSlowInEasing)) }
 }
 
-private const val RISE_MS = 220
-private const val FADE_MS = 160

@@ -1,6 +1,11 @@
 import { useSyncExternalStore } from 'react';
 import { AccessibilityInfo } from 'react-native';
 
+import { tokens } from '../tokens';
+
+/// motion.duration-fast in milliseconds, the length of every small transition here.
+export const SMILE_DURATION_FAST_MS = Number.parseFloat(tokens.duration.fast);
+
 /// The scale a product card draws at: smaller while held, unless it is disabled or motion is reduced.
 export const smileIDSamplePressScale = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>
   pressed && enabled && !reduceMotion ? PRESSED_SCALE : 1;

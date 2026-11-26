@@ -121,10 +121,12 @@ internal fun <T> CataloguePicker(
                 }
             }
         }
-        else -> UseSmileIDSampleEmptyState(
-            text = nothingToList.first,
-            supportingText = nothingToList.second,
-            testId = emptyTestId,
-        )
+        else -> UseSmileIDSampleFadeIn {
+            UseSmileIDSampleEmptyState(
+                text = nothingToList.first,
+                supportingText = nothingToList.second,
+                testId = emptyTestId,
+            )
+        }
     }
 }
