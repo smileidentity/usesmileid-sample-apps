@@ -170,8 +170,10 @@ fun VerificationsScreen(
                     animationSpec = tween(SmileMotion.durationFast.inWholeMilliseconds.toInt()),
                     label = "selectToggle",
                 )
+                val showsCancel = remember { booleanArrayOf(state.selectMode) }
+                showsCancel[0] = selectToggleShowsCancel(offersSelect, state.selectMode, showsCancel[0])
                 Text(
-                    text = if (state.selectMode) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
+                    text = if (showsCancel[0]) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,
@@ -302,3 +304,7 @@ private fun JobListRow(
         }
     }
 }
+
+/** Whether Select reads Cancel: it follows select mode while offered, and keeps its last word while it fades out. */
+internal fun selectToggleShowsCancel(offersSelect: Boolean, selectMode: Boolean, showedCancel: Boolean): Boolean =
+    if (offersSelect) selectMode else showedCancel

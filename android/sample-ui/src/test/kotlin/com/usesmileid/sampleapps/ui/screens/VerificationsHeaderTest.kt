@@ -92,6 +92,17 @@ class VerificationsHeaderTest {
     }
 
     @Test
+    fun the_toggle_keeps_cancel_while_it_fades_out_after_select_mode_ends() {
+        assertTrue(selectToggleShowsCancel(offersSelect = false, selectMode = false, showedCancel = true))
+    }
+
+    @Test
+    fun the_toggle_follows_select_mode_while_it_is_offered() {
+        assertEquals(false, selectToggleShowsCancel(offersSelect = true, selectMode = false, showedCancel = true))
+        assertTrue(selectToggleShowsCancel(offersSelect = true, selectMode = true, showedCancel = false))
+    }
+
+    @Test
     @Config(qualifiers = "w393dp-h480dp-xhdpi")
     fun the_chip_row_keeps_its_scroll_when_the_header_scrolls_away_and_back() {
         show(jobs = JOBS)

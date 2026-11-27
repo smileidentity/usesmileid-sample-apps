@@ -46,4 +46,13 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
   func testABarIsInPlaceAtOnceUnderReducedMotion() {
     XCTAssertNil(useSmileIDSampleRiseAnimation(reduceMotion: true))
   }
+
+  func testSelectKeepsCancelWhileItFadesOutAfterSelectModeEnds() {
+    XCTAssertTrue(useSmileIDSampleSelectToggleShowsCancel(offersSelect: false, selecting: false, showedCancel: true))
+  }
+
+  func testSelectFollowsSelectModeWhileOffered() {
+    XCTAssertFalse(useSmileIDSampleSelectToggleShowsCancel(offersSelect: true, selecting: false, showedCancel: true))
+    XCTAssertTrue(useSmileIDSampleSelectToggleShowsCancel(offersSelect: true, selecting: true, showedCancel: false))
+  }
 }

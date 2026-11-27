@@ -107,6 +107,32 @@ void main() {
     expect(midway, lessThan(1));
   });
 
+  testWidgets(
+    'cancel fades out as cancel when select mode ends on an empty list',
+    (WidgetTester tester) async {
+      await show(tester, jobs: const <UseSmileIDSampleJob>[], selectMode: true);
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: UseSmileIDSampleTheme.light(),
+          home: Scaffold(
+            body: UseSmileIDSampleVerificationsScreen(
+              state: UseSmileIDSampleVerificationsState(
+                jobs: const <UseSmileIDSampleJob>[],
+                nowMillis: now,
+              ),
+              onFilterChanged: (_) {},
+              onSelectModeChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 50));
+
+      expect(find.text('Cancel'), findsOneWidget);
+      expect(find.text('Select'), findsNothing);
+    },
+  );
+
   testWidgets('a list with rows offers select', (WidgetTester tester) async {
     await show(tester, jobs: jobs);
 

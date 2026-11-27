@@ -16,6 +16,7 @@ import {
   UseSmileIDSampleRiseIn,
   useSmileIDSampleVisibilityFade,
 } from '../src/components/use-smile-id-sample-entrance';
+import { smileIDSampleSelectToggleShowsCancel } from '../src/screens/verifications-screen';
 import { tokens } from '../src/tokens';
 import { smileLightColors } from '../src/index';
 import { smileIDSampleProductHue, smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
@@ -320,5 +321,16 @@ describe('a tab changed under reduced motion', () => {
 
     expect((JSON.stringify(screen.toJSON()).match(/RNSVGSvgView/g) ?? []).length).toBe(4);
     jest.restoreAllMocks();
+  });
+});
+
+describe('the Select toggle label', () => {
+  it('keeps Cancel while it fades out after select mode ends', () => {
+    expect(smileIDSampleSelectToggleShowsCancel(false, false, true)).toBe(true);
+  });
+
+  it('follows select mode while it is offered', () => {
+    expect(smileIDSampleSelectToggleShowsCancel(true, false, true)).toBe(false);
+    expect(smileIDSampleSelectToggleShowsCancel(true, true, false)).toBe(true);
   });
 });

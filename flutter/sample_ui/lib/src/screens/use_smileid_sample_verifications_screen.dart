@@ -321,8 +321,8 @@ class _Row extends StatelessWidget {
   }
 }
 
-/// Select fades in over duration-fast once there is something to pick, and takes no taps or focus while hidden.
-class _SelectToggleVisibility extends StatelessWidget {
+/// Select fades in over duration-fast once there is something to pick, takes no taps or focus while hidden, and fades out showing what it last showed.
+class _SelectToggleVisibility extends StatefulWidget {
   const _SelectToggleVisibility({required this.visible, required this.child});
 
   final bool visible;
@@ -330,17 +330,34 @@ class _SelectToggleVisibility extends StatelessWidget {
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => AnimatedOpacity(
-    opacity: visible ? 1 : 0,
-    duration: MediaQuery.disableAnimationsOf(context)
-        ? Duration.zero
-        : SmileMotion.durationFast,
-    child: ExcludeFocus(
-      excluding: !visible,
-      child: IgnorePointer(
-        ignoring: !visible,
-        child: ExcludeSemantics(excluding: !visible, child: child),
+  State<_SelectToggleVisibility> createState() =>
+      _SelectToggleVisibilityState();
+}
+
+class _SelectToggleVisibilityState extends State<_SelectToggleVisibility> {
+  Widget? _lastShown;
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.visible) {
+      _lastShown = widget.child;
+    }
+    final bool visible = widget.visible;
+    return AnimatedOpacity(
+      opacity: visible ? 1 : 0,
+      duration: MediaQuery.disableAnimationsOf(context)
+          ? Duration.zero
+          : SmileMotion.durationFast,
+      child: ExcludeFocus(
+        excluding: !visible,
+        child: IgnorePointer(
+          ignoring: !visible,
+          child: ExcludeSemantics(
+            excluding: !visible,
+            child: _lastShown ?? widget.child,
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

@@ -79,6 +79,9 @@ export const VerificationsScreen = ({
   const jobs = state.jobs;
   const offersSelect = selecting || (jobs ?? []).length > 0;
   const selectOpacity = useSmileIDSampleVisibilityFade(offersSelect);
+  const [showsCancel, setShowsCancel] = useState(selecting);
+  const nextShowsCancel = smileIDSampleSelectToggleShowsCancel(offersSelect, selecting, showsCancel);
+  if (nextShowsCancel !== showsCancel) setShowsCancel(nextShowsCancel);
   const selectToggleStyle = [styles.selectToggle, touchTargetStyle(theme), { paddingHorizontal: theme.dimens.spacing.xs }];
   const filter =
     smileIDSampleJobFilters.find((entry) => entry.id === filterId) ?? smileIDSampleJobFilters[0]!;
@@ -150,7 +153,7 @@ export const VerificationsScreen = ({
               style={selectToggleStyle}
             >
               <Text style={[theme.type.textStyleButtonSm, { color: theme.colors.primary }]}>
-                {selecting ? strings.commonCancel : strings.verificationsSelect}
+                {nextShowsCancel ? strings.commonCancel : strings.verificationsSelect}
               </Text>
             </Pressable>
           </Animated.View>
@@ -230,6 +233,10 @@ export const VerificationsScreen = ({
     </View>
   );
 };
+
+/// Whether Select reads Cancel: it follows select mode while offered, and keeps its last word while it fades out.
+export const smileIDSampleSelectToggleShowsCancel = (offersSelect: boolean, selecting: boolean, showedCancel: boolean) =>
+  offersSelect ? selecting : showedCancel;
 
 const JobEntry = ({
   job,
