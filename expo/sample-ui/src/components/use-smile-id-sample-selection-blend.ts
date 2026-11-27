@@ -7,9 +7,14 @@ import { SMILE_DURATION_FAST_MS, useSmileIDSampleReducedMotion } from './use-smi
 export const useSmileIDSampleSelectionProgress = (selected: boolean): { progress: Animated.Value; moving: boolean } => {
   const reduced = useSmileIDSampleReducedMotion();
   const [progress] = useState(() => new Animated.Value(selected ? 1 : 0));
-  const [settled, setSettled] = useState(selected);
-  // Settled during render, as React advises for state derived from props: no animation will report it.
-  if (reduced && settled !== selected) setSettled(selected);
+  // Derived during render, as React advises: easing from the change of [selected] until an ease finishes.
+  const [prevSelected, setPrevSelected] = useState(selected);
+  const [easing, setEasing] = useState(false);
+  if (selected !== prevSelected) {
+    setPrevSelected(selected);
+    setEasing(!reduced);
+  }
+  if (reduced && easing) setEasing(false);
   const last = useRef(selected);
   useEffect(() => {
     const target = selected ? 1 : 0;
@@ -21,11 +26,11 @@ export const useSmileIDSampleSelectionProgress = (selected: boolean): { progress
     }
     const run = Animated.timing(progress, { toValue: target, duration: SMILE_DURATION_FAST_MS, useNativeDriver: false });
     run.start(({ finished }) => {
-      if (finished) setSettled(selected);
+      if (finished) setEasing(false);
     });
     return () => run.stop();
   }, [selected, reduced, progress]);
-  return { progress, moving: !reduced && selected !== settled };
+  return { progress, moving: easing };
 };
 
 /// A colour that follows [progress] from [from] to [to], interpolated by Animated rather than re-rendered; JS-driven, as Android ignores a native-driven text colour.
