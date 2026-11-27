@@ -18635,7 +18635,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={2}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -18767,7 +18767,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={1}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19058,7 +19058,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={4}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -19190,7 +19190,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={3}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19481,7 +19481,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={6}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -19613,7 +19613,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={5}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -19913,7 +19913,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={8}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20045,7 +20045,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={7}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20313,7 +20313,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={10}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20445,7 +20445,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={9}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -20705,7 +20705,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={12}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -20837,7 +20837,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={11}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21128,7 +21128,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={14}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21260,7 +21260,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={13}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21528,7 +21528,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={16}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -21660,7 +21660,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={15}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -21983,7 +21983,7 @@ exports[`verifications light default 1`] = `
         </Text>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={18}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22115,7 +22115,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={17}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22406,7 +22406,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={20}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22538,7 +22538,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={19}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
@@ -22806,7 +22806,7 @@ exports[`verifications light default 1`] = `
         </View>
         <View
           collapsable={false}
-          handlerTag={-1}
+          handlerTag={22}
           handlerType="PanGestureHandler"
           onGestureHandlerEvent={[Function]}
           onGestureHandlerStateChange={[Function]}
@@ -22938,7 +22938,7 @@ exports[`verifications light default 1`] = `
           <View
             collapsable={false}
             enabled={false}
-            handlerTag={-1}
+            handlerTag={21}
             handlerType="TapGestureHandler"
             onGestureHandlerEvent={[Function]}
             onGestureHandlerStateChange={[Function]}
