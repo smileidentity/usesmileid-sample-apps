@@ -11,6 +11,7 @@ import {
 import { smileIDSampleOptionMatches } from '../state/use-smile-id-sample-id-details';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
 import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
+import { UseSmileIDSampleFadeIn } from './use-smile-id-sample-entrance';
 
 type Props<T> = {
   catalogue: UseSmileIDSampleCatalogue<T>;
@@ -82,20 +83,24 @@ export const UseSmileIDSampleCataloguePicker = <T,>({
       return (
         <>
           {search}
-          <UseSmileIDSampleEmptyState
-            text={failedLabel}
-            supportingText={smileIDSampleCatalogueAdviceText(catalogue.advice ?? smileIDSampleCatalogueDefaultAdvice, strings)}
-            testID={UseSmileIDSampleTestIds.CATALOGUE_ERROR}
-            onRetry={onRetry}
-            retryTestID={UseSmileIDSampleTestIds.CATALOGUE_RETRY}
-          />
+          <UseSmileIDSampleFadeIn key="failed">
+            <UseSmileIDSampleEmptyState
+              text={failedLabel}
+              supportingText={smileIDSampleCatalogueAdviceText(catalogue.advice ?? smileIDSampleCatalogueDefaultAdvice, strings)}
+              testID={UseSmileIDSampleTestIds.CATALOGUE_ERROR}
+              onRetry={onRetry}
+              retryTestID={UseSmileIDSampleTestIds.CATALOGUE_RETRY}
+            />
+          </UseSmileIDSampleFadeIn>
         </>
       );
     case 'empty':
       return (
         <>
           {search}
-          <UseSmileIDSampleEmptyState text={nothingToList[0]} supportingText={nothingToList[1]} testID={emptyTestID} />
+          <UseSmileIDSampleFadeIn key="empty">
+            <UseSmileIDSampleEmptyState text={nothingToList[0]} supportingText={nothingToList[1]} testID={emptyTestID} />
+          </UseSmileIDSampleFadeIn>
         </>
       );
     case 'ready': {
@@ -103,13 +108,15 @@ export const UseSmileIDSampleCataloguePicker = <T,>({
       return (
         <>
           {search}
-          <UseSmileIDSamplePickerList
-            empty={matches.length === 0}
-            emptyLabel={emptyLabel(query)}
-            emptyTestID={emptyTestID}
-          >
-            {matches.map(row)}
-          </UseSmileIDSamplePickerList>
+          <UseSmileIDSampleFadeIn key="ready">
+            <UseSmileIDSamplePickerList
+              empty={matches.length === 0}
+              emptyLabel={emptyLabel(query)}
+              emptyTestID={emptyTestID}
+            >
+              {matches.map(row)}
+            </UseSmileIDSamplePickerList>
+          </UseSmileIDSampleFadeIn>
         </>
       );
     }

@@ -4,8 +4,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 
 /** The platform switch styled from semantic tokens — deliberately not hand-drawn, since the design system has no switch contract (spec/components.json → Switch). */
@@ -18,15 +16,9 @@ fun UseSmileIDSampleSwitch(
     testId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val haptics = LocalHapticFeedback.current
     Switch(
         checked = checked,
-        onCheckedChange = onCheckedChange?.let { change ->
-            { on ->
-                haptics.performHapticFeedback(if (on) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
-                change(on)
-            }
-        },
+        onCheckedChange = onCheckedChange,
         enabled = enabled,
         modifier = modifier.tagged(testId),
         colors = SwitchDefaults.colors(

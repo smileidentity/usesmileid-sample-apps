@@ -49,6 +49,8 @@ public struct UseSmileIDSampleTransientNoticeHost: View {
         guard !Task.isCancelled else { return }
         onDismiss()
       }
+      // Rises in when the caller animates the change, as the shell and screens do.
+      .transition(.useSmileIDSampleRiseIn)
     }
   }
 }

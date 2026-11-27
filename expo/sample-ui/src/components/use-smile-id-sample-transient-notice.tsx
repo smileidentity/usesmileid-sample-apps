@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useEffect, useState } from 'rea
 import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 
 import { UseSmileIDSampleToast } from './use-smile-id-sample-toast';
+import { UseSmileIDSampleRiseIn } from './use-smile-id-sample-entrance';
 
 /// One transient confirmation: what it says and the single action it may offer.
 export type UseSmileIDSampleTransientNotice = {
@@ -67,19 +68,21 @@ export const UseSmileIDSampleTransientNoticeHost = ({ state, style }: Props) => 
   const action = current.onAction;
   return (
     <View pointerEvents="box-none" style={[styles.host, style]}>
-      <UseSmileIDSampleToast
-        message={current.message}
-        actionLabel={current.actionLabel}
-        // Acting dismisses it, so the offer cannot be taken twice.
-        onAction={
-          action === undefined
-            ? undefined
-            : () => {
-                action();
-                dismiss();
-              }
-        }
-      />
+      <UseSmileIDSampleRiseIn key={showToken}>
+        <UseSmileIDSampleToast
+          message={current.message}
+          actionLabel={current.actionLabel}
+          // Acting dismisses it, so the offer cannot be taken twice.
+          onAction={
+            action === undefined
+              ? undefined
+              : () => {
+                  action();
+                  dismiss();
+                }
+          }
+        />
+      </UseSmileIDSampleRiseIn>
     </View>
   );
 };

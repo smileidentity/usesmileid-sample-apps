@@ -13,8 +13,6 @@ import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
@@ -37,18 +35,17 @@ fun UseSmileIDSampleFilterChip(
     countTestId: String? = null,
 ) {
     val colors = UseSmileIDSampleTheme.colors
-    val haptics = LocalHapticFeedback.current
     Surface(
         modifier = modifier
             .minimumInteractiveComponentSize()
-            .selectable(selected = selected, role = Role.Tab) {
-                if (!selected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
-                onClick()
-            }
+            .selectable(selected = selected, role = Role.Tab, onClick = onClick)
             .tagged(testId),
         shape = RoundedCornerShape(SmileDimens.radiusChip),
-        color = if (selected) colors.primary else colors.filterChip.background,
-        border = if (selected) null else BorderStroke(smileCardStrokeWidth, UseSmileIDSampleTheme.colors.cardStroke),
+        color = useSmileIDSampleSelectionColor(if (selected) colors.primary else colors.filterChip.background, "chipFill"),
+        border = BorderStroke(
+            smileCardStrokeWidth,
+            useSmileIDSampleSelectionColor(if (selected) colors.cardStroke.copy(alpha = 0f) else colors.cardStroke, "chipStroke"),
+        ),
     ) {
         Row(
             modifier = Modifier
@@ -63,7 +60,7 @@ fun UseSmileIDSampleFilterChip(
                     fontSize = CHIP_LABEL_SIZE,
                     fontWeight = FontWeight.Bold,
                 ),
-                color = if (selected) colors.onPrimary else colors.filterChip.label,
+                color = useSmileIDSampleSelectionColor(if (selected) colors.onPrimary else colors.filterChip.label, "chipLabel"),
             )
             if (count != null) Text(
                 text = count.toString(),
@@ -72,7 +69,7 @@ fun UseSmileIDSampleFilterChip(
                     letterSpacing = smileLabelTracking,
                 ),
                 // The design file's muted grey, deliberately not filter-chip.value's blue.
-                color = if (selected) colors.onPrimary else colors.textMuted,
+                color = useSmileIDSampleSelectionColor(if (selected) colors.onPrimary else colors.textMuted, "chipCount"),
                 modifier = Modifier.tagged(countTestId),
             )
         }

@@ -63,6 +63,7 @@ public struct UseSmileIDSampleNavBar: View {
 
   @ScaledMetric(relativeTo: .body) private var tokenSize: CGFloat = 58
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   public init(
     selected: UseSmileIDSampleNavItem,
@@ -95,15 +96,14 @@ public struct UseSmileIDSampleNavBar: View {
 
   private func tab(_ item: UseSmileIDSampleNavItem) -> some View {
     let tint = item == selected ? colors.primary : colors.foreground
-    return Button {
-      UseSmileIDSampleSelectionTick.pick(alreadySelected: item == selected) { onSelect(item) }
-    } label: {
+    return Button { onSelect(item) } label: {
       VStack(spacing: SmileSpacing.spacingXxs) {
         UseSmileIDSampleIcon(item.icon, tint: tint, size: Self.tabIconSize)
         UseSmileIDSampleText(item.label, style: UseSmileIDSampleTheme.type.textStyleOverline)
           .foregroundColor(tint)
           .multilineTextAlignment(.center)
       }
+      .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: item == selected)
       // Padded, not floored at `sizeControlMd`: 44 is shorter than the content, so it shrank the pill.
       .padding(SmileSpacing.spacingXs)
       .frame(maxWidth: .infinity)

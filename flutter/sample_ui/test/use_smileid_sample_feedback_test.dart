@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sample_ui/sample_ui.dart';
 
@@ -79,133 +77,139 @@ void main() {
     expect(tester.widget<AnimatedScale>(find.byType(AnimatedScale)).scale, 1);
   });
 
-  testWidgets('picking another chip ticks once', (WidgetTester tester) async {
-    final List<Object?> ticks = _recordHaptics(tester);
-    await tester.pumpWidget(
-      _host(
-        UseSmileIDSampleFilterChip(
-          label: 'Failed',
-          count: 2,
-          selected: false,
-          onTap: () {},
-        ),
-      ),
-    );
-
-    await tester.tap(find.byType(UseSmileIDSampleFilterChip));
-
-    expect(ticks, <Object?>['HapticFeedbackType.selectionClick']);
-  });
-
-  testWidgets('tapping the chip already picked does not tick', (
+  testWidgets('a chip eases into its picked colour instead of snapping', (
     WidgetTester tester,
   ) async {
-    final List<Object?> ticks = _recordHaptics(tester);
-    await tester.pumpWidget(
-      _host(
-        UseSmileIDSampleFilterChip(
-          label: 'All',
-          count: 4,
-          selected: true,
-          onTap: () {},
-        ),
-      ),
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      await _contextOf(tester),
     );
+    await tester.pumpWidget(_host(_chip(selected: false)));
+    await tester.pumpWidget(_host(_chip(selected: true)));
+    await tester.pump(const Duration(milliseconds: 100));
 
-    await tester.tap(find.byType(UseSmileIDSampleFilterChip));
+    final Color midway = _pillColor(tester);
+    expect(midway, isNot(colors.primary));
+    expect(midway, isNot(colors.filterChip.background));
 
-    expect(ticks, isEmpty);
-  });
-
-  testWidgets('moving to another tab ticks once', (WidgetTester tester) async {
-    final List<Object?> ticks = _recordHaptics(tester);
-    await tester.pumpWidget(_host(_navBar()));
-
-    await tester.tap(
-      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.navVerifications),
-    );
-
-    expect(ticks, <Object?>['HapticFeedbackType.selectionClick']);
-  });
-
-  testWidgets('tapping the tab already open does not tick', (
-    WidgetTester tester,
-  ) async {
-    final List<Object?> ticks = _recordHaptics(tester);
-    await tester.pumpWidget(_host(_navBar()));
-
-    await tester.tap(
-      find.bySemanticsIdentifier(UseSmileIDSampleTestIds.navProducts),
-    );
-
-    expect(ticks, isEmpty);
-  });
-
-  testWidgets(
-    'a switch plays its platform\'s one tick per toggle',
-    (WidgetTester tester) async {
-      final List<Object?> ticks = _recordHaptics(tester);
-      await tester.pumpWidget(
-        _host(UseSmileIDSampleSwitch(value: false, onChanged: (_) {})),
-      );
-
-      await tester.tap(find.byType(UseSmileIDSampleSwitch));
-      await tester.pumpAndSettle();
-
-      expect(ticks, <Object?>[
-        if (defaultTargetPlatform == TargetPlatform.iOS)
-          'HapticFeedbackType.lightImpact'
-        else
-          'HapticFeedbackType.selectionClick',
-      ]);
-    },
-    variant: const TargetPlatformVariant(<TargetPlatform>{
-      TargetPlatform.android,
-      TargetPlatform.iOS,
-    }),
-  );
-
-  testWidgets('a disabled switch does not tick', (WidgetTester tester) async {
-    final List<Object?> ticks = _recordHaptics(tester);
-    await tester.pumpWidget(
-      _host(
-        UseSmileIDSampleSwitch(value: false, onChanged: (_) {}, enabled: false),
-      ),
-    );
-
-    await tester.tap(find.byType(UseSmileIDSampleSwitch));
     await tester.pumpAndSettle();
+    expect(_pillColor(tester), colors.primary);
+  });
 
-    expect(ticks, isEmpty);
+  testWidgets('a chip snaps when the platform asks for reduced motion', (
+    WidgetTester tester,
+  ) async {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      await _contextOf(tester),
+    );
+    await tester.pumpWidget(_host(_chip(selected: false), reduceMotion: true));
+    await tester.pumpWidget(_host(_chip(selected: true), reduceMotion: true));
+    await tester.pump();
+
+    expect(_pillColor(tester), colors.primary);
+  });
+
+  testWidgets('a tab eases into its picked tint instead of snapping', (
+    WidgetTester tester,
+  ) async {
+    final UseSmileIDSampleColors colors = UseSmileIDSampleTheme.colorsOf(
+      await _contextOf(tester),
+    );
+    await tester.pumpWidget(_host(_navBar(UseSmileIDSampleNavItem.products)));
+    await tester.pumpWidget(
+      _host(_navBar(UseSmileIDSampleNavItem.verifications)),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+
+    final Color midway = _tabLabelColor(tester);
+    expect(midway, isNot(colors.primary));
+    expect(midway, isNot(colors.foreground));
+
+    await tester.pumpAndSettle();
+    expect(_tabLabelColor(tester), colors.primary);
+  });
+
+  testWidgets('a bar rises its own height into place when it appears', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const UseSmileIDSampleRiseIn(child: SizedBox(height: 60))),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final double rising = tester
+        .widget<SlideTransition>(
+          find.descendant(
+            of: find.byType(UseSmileIDSampleRiseIn),
+            matching: find.byType(SlideTransition),
+          ),
+        )
+        .position
+        .value
+        .dy;
+    expect(rising, greaterThan(0));
+
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<SlideTransition>(
+            find.descendant(
+              of: find.byType(UseSmileIDSampleRiseIn),
+              matching: find.byType(SlideTransition),
+            ),
+          )
+          .position
+          .value
+          .dy,
+      0,
+    );
+  });
+
+  testWidgets('a bar is already in place under reduced motion', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(
+        const UseSmileIDSampleRiseIn(child: SizedBox(height: 60)),
+        reduceMotion: true,
+      ),
+    );
+
+    expect(
+      tester
+          .widget<SlideTransition>(
+            find.descendant(
+              of: find.byType(UseSmileIDSampleRiseIn),
+              matching: find.byType(SlideTransition),
+            ),
+          )
+          .position
+          .value
+          .dy,
+      0,
+    );
+  });
+
+  testWidgets('content fades in when it replaces a loading state', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _host(const UseSmileIDSampleFadeIn(child: SizedBox(height: 60))),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(_fadeOpacity(tester), lessThan(1));
+
+    await tester.pumpAndSettle();
+    expect(_fadeOpacity(tester), 1);
   });
 }
 
-List<Object?> _recordHaptics(WidgetTester tester) {
-  final List<Object?> ticks = <Object?>[];
-  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-    SystemChannels.platform,
-    (MethodCall call) async {
-      if (call.method == 'HapticFeedback.vibrate') ticks.add(call.arguments);
-      return null;
-    },
-  );
-  addTearDown(
-    () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
-      SystemChannels.platform,
-      null,
-    ),
-  );
-  return ticks;
-}
-
-Widget _navBar() => UseSmileIDSampleNavBar(
-  selected: UseSmileIDSampleNavItem.products,
-  onSelect: (_) {},
-  onTokenTap: () {},
-);
-
-Widget _host(Widget child) => MaterialApp(
+Widget _host(Widget child, {bool reduceMotion = false}) => MaterialApp(
   theme: UseSmileIDSampleTheme.light(),
+  builder: (BuildContext context, Widget? app) => MediaQuery(
+    data: MediaQuery.of(context).copyWith(disableAnimations: reduceMotion),
+    child: app!,
+  ),
   home: UseSmileIDSampleStringsScope(
     language: UseSmileIDSampleLanguage.en,
     deviceLanguages: const <String>[],
@@ -214,3 +218,52 @@ Widget _host(Widget child) => MaterialApp(
     ),
   ),
 );
+
+Future<BuildContext> _contextOf(WidgetTester tester) async {
+  await tester.pumpWidget(_host(const SizedBox()));
+  return tester.element(find.byType(SizedBox).last);
+}
+
+Widget _chip({required bool selected}) => UseSmileIDSampleFilterChip(
+  label: 'Clear',
+  count: 2,
+  selected: selected,
+  onTap: () {},
+);
+
+Widget _navBar(UseSmileIDSampleNavItem selected) => UseSmileIDSampleNavBar(
+  selected: selected,
+  onSelect: (_) {},
+  onTokenTap: () {},
+);
+
+Color _pillColor(WidgetTester tester) => tester
+    .widget<Material>(
+      find.descendant(
+        of: find.byType(UseSmileIDSampleFilterChip),
+        matching: find.byType(Material),
+      ),
+    )
+    .color!;
+
+Color _tabLabelColor(WidgetTester tester) => tester
+    .widget<Text>(
+      find.descendant(
+        of: find.bySemanticsIdentifier(
+          UseSmileIDSampleTestIds.navVerifications,
+        ),
+        matching: find.byType(Text),
+      ),
+    )
+    .style!
+    .color!;
+
+double _fadeOpacity(WidgetTester tester) => tester
+    .widget<FadeTransition>(
+      find.descendant(
+        of: find.byType(UseSmileIDSampleFadeIn),
+        matching: find.byType(FadeTransition),
+      ),
+    )
+    .opacity
+    .value;

@@ -448,23 +448,18 @@ exports[`NavBar dark products 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#4d88ff",
-            },
-          ]
+          {
+            "color": "rgba(77, 136, 255, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Products
@@ -599,23 +594,18 @@ exports[`NavBar dark products 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#f9f0e7",
-            },
-          ]
+          {
+            "color": "rgba(249, 240, 231, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Verifications
@@ -750,23 +740,18 @@ exports[`NavBar dark products 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#f9f0e7",
-            },
-          ]
+          {
+            "color": "rgba(249, 240, 231, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Settings
@@ -1098,23 +1083,18 @@ exports[`NavBar dark settings 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#f9f0e7",
-            },
-          ]
+          {
+            "color": "rgba(249, 240, 231, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Products
@@ -1249,23 +1229,18 @@ exports[`NavBar dark settings 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#f9f0e7",
-            },
-          ]
+          {
+            "color": "rgba(249, 240, 231, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Verifications
@@ -1400,23 +1375,18 @@ exports[`NavBar dark settings 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#4d88ff",
-            },
-          ]
+          {
+            "color": "rgba(77, 136, 255, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Settings
@@ -1748,23 +1718,18 @@ exports[`NavBar dark withSessionRing 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#4d88ff",
-            },
-          ]
+          {
+            "color": "rgba(77, 136, 255, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Products
@@ -1899,23 +1864,18 @@ exports[`NavBar dark withSessionRing 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#f9f0e7",
-            },
-          ]
+          {
+            "color": "rgba(249, 240, 231, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Verifications
@@ -2050,23 +2010,18 @@ exports[`NavBar dark withSessionRing 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#f9f0e7",
-            },
-          ]
+          {
+            "color": "rgba(249, 240, 231, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Settings
@@ -2510,23 +2465,18 @@ exports[`NavBar light products 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#151f72",
-            },
-          ]
+          {
+            "color": "rgba(21, 31, 114, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Products
@@ -2661,23 +2611,18 @@ exports[`NavBar light products 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#2d2b2a",
-            },
-          ]
+          {
+            "color": "rgba(45, 43, 42, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Verifications
@@ -2812,23 +2757,18 @@ exports[`NavBar light products 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#2d2b2a",
-            },
-          ]
+          {
+            "color": "rgba(45, 43, 42, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Settings
@@ -3160,23 +3100,18 @@ exports[`NavBar light settings 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#2d2b2a",
-            },
-          ]
+          {
+            "color": "rgba(45, 43, 42, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Products
@@ -3311,23 +3246,18 @@ exports[`NavBar light settings 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#2d2b2a",
-            },
-          ]
+          {
+            "color": "rgba(45, 43, 42, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Verifications
@@ -3462,23 +3392,18 @@ exports[`NavBar light settings 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#151f72",
-            },
-          ]
+          {
+            "color": "rgba(21, 31, 114, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Settings
@@ -3810,23 +3735,18 @@ exports[`NavBar light withSessionRing 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#151f72",
-            },
-          ]
+          {
+            "color": "rgba(21, 31, 114, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Products
@@ -3961,23 +3881,18 @@ exports[`NavBar light withSessionRing 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#2d2b2a",
-            },
-          ]
+          {
+            "color": "rgba(45, 43, 42, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Verifications
@@ -4112,23 +4027,18 @@ exports[`NavBar light withSessionRing 1`] = `
         </RNSVGGroup>
       </RNSVGSvgView>
       <Text
+        collapsable={false}
         style={
-          [
-            {
-              "fontFamily": "DMSans-Bold",
-              "fontSize": 10,
-              "letterSpacing": 0,
-              "lineHeight": 16,
-              "marginBottom": -1.4900000000000002,
-              "marginTop": -1.4900000000000002,
-            },
-            {
-              "textAlign": "center",
-            },
-            {
-              "color": "#2d2b2a",
-            },
-          ]
+          {
+            "color": "rgba(45, 43, 42, 1)",
+            "fontFamily": "DMSans-Bold",
+            "fontSize": 10,
+            "letterSpacing": 0,
+            "lineHeight": 16,
+            "marginBottom": -1.4900000000000002,
+            "marginTop": -1.4900000000000002,
+            "textAlign": "center",
+          }
         }
       >
         Settings

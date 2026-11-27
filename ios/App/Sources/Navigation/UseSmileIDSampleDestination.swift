@@ -423,6 +423,7 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
 
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @State private var notice: UseSmileIDSampleTransientNotice?
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
     VerificationDetailsScreen(
@@ -454,9 +455,12 @@ private struct UseSmileIDSampleVerificationDetailsHost: View {
       notice = UseSmileIDSampleTransientNotice(message: label(outcome), showing: UUID())
     }
     .overlay(alignment: .bottom) {
-      UseSmileIDSampleTransientNoticeHost(notice: notice, onDismiss: { notice = nil })
-        .padding(.horizontal, SmileSpacing.spacingMd)
-        .padding(.vertical, SmileSpacing.spacingLg)
+      ZStack {
+        UseSmileIDSampleTransientNoticeHost(notice: notice, onDismiss: { notice = nil })
+          .padding(.horizontal, SmileSpacing.spacingMd)
+          .padding(.vertical, SmileSpacing.spacingLg)
+      }
+      .animation(useSmileIDSampleRiseAnimation(reduceMotion: reduceMotion), value: notice)
     }
   }
 

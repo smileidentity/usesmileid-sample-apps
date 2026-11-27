@@ -163,6 +163,7 @@ private struct UseSmileIDSampleBottomChrome: View {
   @EnvironmentObject private var navigation: UseSmileIDSampleNavigationModel
   @EnvironmentObject private var app: UseSmileIDSampleAppState
   @EnvironmentObject private var chrome: UseSmileIDSampleChrome
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   var body: some View {
     VStack(spacing: SmileSpacing.spacingXs) {
@@ -177,6 +178,7 @@ private struct UseSmileIDSampleBottomChrome: View {
           selectedCount: app.verifications.selected.count,
           onRemove: { app.removeJobs(app.verifications.selected) }
         )
+        .transition(.useSmileIDSampleRiseIn)
       } else {
         // The design's floating pill; re-selecting the showing tab pops it to its root, as the platform does.
         UseSmileIDSampleNavBar(
@@ -185,8 +187,11 @@ private struct UseSmileIDSampleBottomChrome: View {
           onSelect: { navigation.engine.select($0.step.rawValue) },
           onToken: { navigator.go(.scanToken) }
         )
+        .transition(.identity)
       }
     }
+    .animation(useSmileIDSampleRiseAnimation(reduceMotion: reduceMotion), value: chrome.removalNotice)
+    .animation(useSmileIDSampleRiseAnimation(reduceMotion: reduceMotion), value: app.verifications.selectMode)
   }
 }
 

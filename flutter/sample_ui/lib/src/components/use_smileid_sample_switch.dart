@@ -1,11 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
 import '../theme/use_smileid_sample_colors.dart';
 import '../theme/use_smileid_sample_theme.dart';
 import '../tokens/smile_tokens.dart';
-import 'use_smileid_sample_press_feedback.dart';
 
 /// The platform switch styled from semantic tokens — deliberately not hand-drawn, since the design
 /// system has no switch contract (spec/components.json → Switch).
@@ -42,14 +39,7 @@ class UseSmileIDSampleSwitch extends StatelessWidget {
       identifier: testId,
       child: Switch.adaptive(
         value: value,
-        onChanged: enabled && onChanged != null
-            ? (bool on) {
-                unawaited(
-                  useSmileIDSampleToggleTick(Theme.of(context).platform),
-                );
-                onChanged!(on);
-              }
-            : null,
+        onChanged: enabled ? onChanged : null,
         // UISwitch reserves no 48 target, where Compose's switch does, so only Android pads it.
         materialTapTargetSize: Theme.of(context).platform == TargetPlatform.iOS
             ? MaterialTapTargetSize.shrinkWrap

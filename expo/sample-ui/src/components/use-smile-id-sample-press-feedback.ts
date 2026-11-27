@@ -1,17 +1,10 @@
-import { createContext, useSyncExternalStore } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
 import { AccessibilityInfo } from 'react-native';
 
-/// The ticks the sample plays, which the app supplies because sample-ui ships no native code.
-export type UseSmileIDSampleHaptics = {
-  selection: () => void;
-  toggle: (on: boolean) => void;
-};
+import { tokens } from '../tokens';
 
-/// Silent until the app provides its haptics.
-export const UseSmileIDSampleHapticsContext = createContext<UseSmileIDSampleHaptics>({
-  selection: () => {},
-  toggle: () => {},
-});
+/// motion.duration-fast in milliseconds, the length of every small transition here.
+export const SMILE_DURATION_FAST_MS = Number.parseFloat(tokens.duration.fast);
 
 /// The scale a product card draws at: smaller while held, unless it is disabled or motion is reduced.
 export const smileIDSamplePressScale = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>
@@ -54,9 +47,15 @@ const subscribe = (listener: () => void) => {
   };
 };
 
+/// A fixed reduced-motion answer that wins over the platform's, as goldens use to record every motion at rest.
+export const UseSmileIDSampleReducedMotionOverride = createContext<boolean | undefined>(undefined);
+
 /// Whether the platform asks for reduced motion, kept current while the screen is up.
-export const useSmileIDSampleReducedMotion = (): boolean =>
-  useSyncExternalStore(subscribe, () => reducedMotion !== false);
+export const useSmileIDSampleReducedMotion = (): boolean => {
+  const forced = useContext(UseSmileIDSampleReducedMotionOverride);
+  const read = useSyncExternalStore(subscribe, () => reducedMotion !== false);
+  return forced ?? read;
+};
 
 /// The opacity a held card draws at when reduced motion stops the scale, so a press still shows.
 export const smileIDSamplePressOpacity = (pressed: boolean, enabled: boolean, reduceMotion: boolean): number =>

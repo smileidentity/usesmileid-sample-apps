@@ -1,4 +1,5 @@
 @testable import SampleUI
+import SwiftUI
 import XCTest
 
 final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
@@ -30,17 +31,28 @@ final class UseSmileIDSamplePressFeedbackTest: XCTestCase {
     XCTAssertEqual(useSmileIDSamplePressOpacity(pressed: false, enabled: true, reduceMotion: true), 1)
   }
 
-  @MainActor
-  func testPickingSomethingNewTicksThenActs() {
-    var events: [String] = []
-    UseSmileIDSampleSelectionTick.pick(alreadySelected: false, tick: { events.append("tick") }) { events.append("act") }
-    XCTAssertEqual(events, ["tick", "act"])
+  func testASmallChangeEasesOverTheFastDuration() {
+    XCTAssertEqual(useSmileIDSampleFastAnimation(reduceMotion: false), .easeOut(duration: SmileMotion.durationFast))
   }
 
-  @MainActor
-  func testPickingWhatIsAlreadySelectedOnlyActs() {
-    var events: [String] = []
-    UseSmileIDSampleSelectionTick.pick(alreadySelected: true, tick: { events.append("tick") }) { events.append("act") }
-    XCTAssertEqual(events, ["act"])
+  func testASmallChangeSnapsUnderReducedMotion() {
+    XCTAssertNil(useSmileIDSampleFastAnimation(reduceMotion: true))
+  }
+
+  func testABarRisesOverTheToastEntrance() {
+    XCTAssertEqual(useSmileIDSampleRiseAnimation(reduceMotion: false), .timingCurve(0.4, 0, 0.2, 1, duration: 0.22))
+  }
+
+  func testABarIsInPlaceAtOnceUnderReducedMotion() {
+    XCTAssertNil(useSmileIDSampleRiseAnimation(reduceMotion: true))
+  }
+
+  func testSelectKeepsCancelWhileItFadesOutAfterSelectModeEnds() {
+    XCTAssertTrue(useSmileIDSampleSelectToggleShowsCancel(offersSelect: false, selecting: false, showedCancel: true))
+  }
+
+  func testSelectFollowsSelectModeWhileOffered() {
+    XCTAssertFalse(useSmileIDSampleSelectToggleShowsCancel(offersSelect: true, selecting: false, showedCancel: true))
+    XCTAssertTrue(useSmileIDSampleSelectToggleShowsCancel(offersSelect: true, selecting: true, showedCancel: false))
   }
 }

@@ -9,6 +9,7 @@ export 'src/components/use_smileid_sample_confirm_dialog.dart';
 export 'src/components/use_smileid_sample_data_field_row.dart';
 export 'src/components/use_smileid_sample_date_group_header.dart';
 export 'src/components/use_smileid_sample_empty_state.dart';
+export 'src/components/use_smileid_sample_entrance.dart';
 export 'src/components/use_smileid_sample_filter_chip.dart';
 export 'src/components/use_smileid_sample_floating_token_button.dart';
 export 'src/components/use_smileid_sample_glyphs.dart';

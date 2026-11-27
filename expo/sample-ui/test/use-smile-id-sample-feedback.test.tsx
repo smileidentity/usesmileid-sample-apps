@@ -1,36 +1,43 @@
 import { act, fireEvent } from '@testing-library/react-native';
-import type { ReactElement } from 'react';
-import { AccessibilityInfo, Animated } from 'react-native';
+import { useState, type ReactElement } from 'react';
+import { AccessibilityInfo, Animated, StyleSheet, Text } from 'react-native';
 
-import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
 import {
-  UseSmileIDSampleHapticsContext,
   smileIDSamplePressOpacity,
   smileIDSamplePressScale,
+  UseSmileIDSampleReducedMotionOverride,
   useSmileIDSampleReducedMotion,
-  type UseSmileIDSampleHaptics,
 } from '../src/components/use-smile-id-sample-press-feedback';
+import { UseSmileIDSampleFilterChip } from '../src/components/use-smile-id-sample-filter-chip';
 import { UseSmileIDSampleNavBar } from '../src/components/use-smile-id-sample-nav-bar';
 import { UseSmileIDSampleProductCard } from '../src/components/use-smile-id-sample-product-card';
-import { UseSmileIDSampleSwitch } from '../src/components/use-smile-id-sample-switch';
+import {
+  UseSmileIDSampleFadeIn,
+  UseSmileIDSampleRiseIn,
+  useSmileIDSampleVisibilityFade,
+} from '../src/components/use-smile-id-sample-entrance';
+import { smileIDSampleSelectToggleShowsCancel } from '../src/screens/verifications-screen';
+import { tokens } from '../src/tokens';
+import { smileLightColors } from '../src/index';
 import { smileIDSampleProductHue, smileIDSampleProducts } from '../src/model/use-smile-id-sample-product';
-import { UseSmileIDSampleTestIds } from '../src/use-smile-id-sample-test-ids';
 import { renderInTheme } from './render-in-theme';
 
-const recorder = () => {
-  const played: string[] = [];
-  const haptics: UseSmileIDSampleHaptics = {
-    selection: () => played.push('selection'),
-    toggle: (on) => played.push(on ? 'toggle-on' : 'toggle-off'),
-  };
-  return { played, haptics };
-};
-
-const withHaptics = (haptics: UseSmileIDSampleHaptics, element: ReactElement) => (
-  <UseSmileIDSampleHapticsContext.Provider value={haptics}>{element}</UseSmileIDSampleHapticsContext.Provider>
-);
+/// Renders with the platform's reduced-motion answer, which each test here mocks, instead of the goldens' pinned one.
+const renderLive = (element: ReactElement, dark: boolean) =>
+  renderInTheme(
+    <UseSmileIDSampleReducedMotionOverride.Provider value={undefined}>{element}</UseSmileIDSampleReducedMotionOverride.Provider>,
+    dark,
+  );
 
 const noop = () => {};
+
+/// A colour's red, green and blue, whether written as `#RRGGBB` or as the `rgba()` Animated interpolates to.
+const rgb = (colour: string | undefined): number[] => {
+  const text = String(colour);
+  const hex = /^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(text);
+  if (hex) return hex.slice(1).map((part) => Number.parseInt(part, 16));
+  return (text.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+};
 
 const card = (testID: string) => (
   <UseSmileIDSampleProductCard
@@ -68,7 +75,7 @@ describe('a product card press', () => {
   it('animates the card down while held and back on release', async () => {
     const timing = jest.spyOn(Animated, 'timing');
     try {
-      const screen = await renderInTheme(card('card'), false);
+      const screen = await renderLive(card('card'), false);
 
       await act(async () => {
         fireEvent(screen.getByTestId('card'), 'pressIn');
@@ -86,7 +93,7 @@ describe('a product card press', () => {
   it('asks the platform about reduced motion once for a whole grid', async () => {
     const listen = jest.spyOn(AccessibilityInfo, 'addEventListener');
     try {
-      await renderInTheme(
+      await renderLive(
         <>
           {card('first')}
           {card('second')}
@@ -119,7 +126,7 @@ describe('the reduced-motion reading', () => {
         seen.push(useSmileIDSampleReducedMotion());
         return null;
       };
-      await renderInTheme(<Probe />, false);
+      await renderLive(<Probe />, false);
 
       await act(async () => change(false));
       await act(async () => answer(true));
@@ -132,64 +139,198 @@ describe('the reduced-motion reading', () => {
   });
 });
 
-describe('a selection tick', () => {
-  it('plays once when another chip is picked', async () => {
-    const { played, haptics } = recorder();
-    const screen = await renderInTheme(
-      withHaptics(haptics, <UseSmileIDSampleFilterChip label="Failed" count={2} selected={false} onPress={noop} testID="chip" />),
-      false,
-    );
+describe('a picked colour', () => {
+  const chip = (selected: boolean) => (
+    <UseSmileIDSampleFilterChip label="Clear" count={2} selected={selected} onPress={noop} testID="chip" />
+  );
+  const fillOf = (screen: Awaited<ReturnType<typeof renderInTheme>>) => {
+    const pill = screen.getByTestId('chip').children[0] as unknown as { props: { style: unknown } };
+    return (StyleSheet.flatten(pill.props.style as never) as { backgroundColor?: string }).backgroundColor;
+  };
 
-    await fireEvent.press(screen.getByTestId('chip'));
+  const pickWith = async (reduced: boolean) => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(reduced);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
+    try {
+      let pick = noop;
+      const Host = () => {
+        const [selected, setSelected] = useState(false);
+        pick = () => setSelected(true);
+        return chip(selected);
+      };
+      const screen = await renderLive(<Host />, false);
+      await act(async () => {
+        await Promise.resolve();
+      });
+      timing.mockClear();
+      await act(async () => {
+        pick();
+      });
+      return {
+        runs: timing.mock.calls.map(([, config]) => [config.toValue, config.duration, config.useNativeDriver]),
+        fill: fillOf(screen),
+      };
+    } finally {
+      ask.mockRestore();
+      listen.mockRestore();
+      timing.mockRestore();
+    }
+  };
 
-    expect(played).toEqual(['selection']);
+  it('eases a chip into its picked fill instead of snapping', async () => {
+    expect((await pickWith(false)).runs).toEqual([[1, Number.parseFloat(tokens.duration.fast), false]]);
   });
 
-  it('stays quiet when the chip already picked is tapped', async () => {
-    const { played, haptics } = recorder();
-    const screen = await renderInTheme(
-      withHaptics(haptics, <UseSmileIDSampleFilterChip label="All" count={4} selected onPress={noop} testID="chip" />),
-      false,
-    );
-
-    await fireEvent.press(screen.getByTestId('chip'));
-
-    expect(played).toEqual([]);
+  it('snaps a chip to its picked fill under reduced motion', async () => {
+    const { runs, fill } = await pickWith(true);
+    expect(runs).toEqual([]);
+    expect(rgb(fill)).toEqual(rgb(smileLightColors.primary));
   });
 
-  it('plays once when another tab is opened', async () => {
-    const { played, haptics } = recorder();
-    const screen = await renderInTheme(
-      withHaptics(haptics, <UseSmileIDSampleNavBar selectedId="products" onSelect={noop} onTokenPress={noop} />),
-      false,
-    );
+});
 
-    await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.NAV_VERIFICATIONS));
+describe('an entrance', () => {
+  const settle = async () => {
+    await act(async () => {
+      await Promise.resolve();
+    });
+  };
 
-    expect(played).toEqual(['selection']);
+  const mountLater = async (child: React.ReactElement, reduced: boolean, layOut?: string) => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(reduced);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
+    let show = noop;
+    const Host = () => {
+      const [shown, setShown] = useState(false);
+      show = () => setShown(true);
+      return (
+        <>
+          <UseSmileIDSampleProductCard
+            title="Document"
+            family="Verification"
+            hue={smileIDSampleProductHue(smileIDSampleProducts[0]!)}
+            onPress={noop}
+          />
+          {shown ? child : null}
+        </>
+      );
+    };
+    const screen = await renderLive(<Host />, false);
+    await settle();
+    timing.mockClear();
+    await act(async () => {
+      show();
+    });
+    const durations = (): unknown[] => timing.mock.calls.map(([, config]) => config.duration);
+    const beforeLayout = durations();
+    if (layOut !== undefined) {
+      await act(async () => {
+        fireEvent(screen.getByText(layOut), 'layout', { nativeEvent: { layout: { x: 0, y: 0, width: 200, height: 60 } } });
+      });
+    }
+    const afterLayout = durations();
+    ask.mockRestore();
+    listen.mockRestore();
+    timing.mockRestore();
+    return { beforeLayout, afterLayout };
+  };
+
+  it('waits for its height, then rises a bar in over the toast entrance', async () => {
+    const bar = <UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>;
+    expect(await mountLater(bar, false, 'bar')).toEqual({ beforeLayout: [], afterLayout: [220] });
   });
 
-  it('stays quiet when the open tab is tapped', async () => {
-    const { played, haptics } = recorder();
-    const screen = await renderInTheme(
-      withHaptics(haptics, <UseSmileIDSampleNavBar selectedId="products" onSelect={noop} onTokenPress={noop} />),
-      false,
-    );
-
-    await fireEvent.press(screen.getByTestId(UseSmileIDSampleTestIds.NAV_PRODUCTS));
-
-    expect(played).toEqual([]);
+  it('puts a bar straight in place under reduced motion', async () => {
+    const bar = <UseSmileIDSampleRiseIn><Text>bar</Text></UseSmileIDSampleRiseIn>;
+    expect((await mountLater(bar, true, 'bar')).afterLayout).toEqual([]);
   });
 
-  it('leaves the iOS switch to UISwitch, which ticks on its own', async () => {
-    const { played, haptics } = recorder();
-    const screen = await renderInTheme(
-      withHaptics(haptics, <UseSmileIDSampleSwitch checked={false} onCheckedChange={noop} testID="switch" />),
-      false,
-    );
+  it('fades content in over the fast duration', async () => {
+    const rows = <UseSmileIDSampleFadeIn><Text>rows</Text></UseSmileIDSampleFadeIn>;
+    expect((await mountLater(rows, false)).afterLayout).toEqual([Number.parseFloat(tokens.duration.fast)]);
+  });
+});
 
-    await fireEvent(screen.getByTestId('switch'), 'valueChange', true);
+describe('a fade on change', () => {
+  it('fades Select in when there is something to pick', async () => {
+    const ask = jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(false);
+    const listen = jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    const timing = jest.spyOn(Animated, 'timing');
+    try {
+      let reveal = noop;
+      const Probe = () => {
+        const [visible, setVisible] = useState(false);
+        reveal = () => setVisible(true);
+        const opacity = useSmileIDSampleVisibilityFade(visible);
+        return <Animated.View style={{ opacity }} />;
+      };
+      await renderLive(<Probe />, false);
+      await act(async () => {
+        await Promise.resolve();
+      });
+      timing.mockClear();
+      await act(async () => {
+        reveal();
+      });
 
-    expect(played).toEqual([]);
+      expect(timing.mock.calls.map(([, config]) => [config.toValue, config.duration])).toEqual([
+        [1, Number.parseFloat(tokens.duration.fast)],
+      ]);
+    } finally {
+      ask.mockRestore();
+      listen.mockRestore();
+      timing.mockRestore();
+    }
+  });
+});
+
+describe('a tab changed under reduced motion', () => {
+  it('draws one mark per tab once reduced motion turns off', async () => {
+    jest.spyOn(AccessibilityInfo, 'isReduceMotionEnabled').mockResolvedValue(true);
+    jest
+      .spyOn(AccessibilityInfo, 'addEventListener')
+      .mockReturnValue({ remove: noop } as ReturnType<typeof AccessibilityInfo.addEventListener>);
+    let pickTab = noop;
+    let allowMotion = noop;
+    const Host = () => {
+      const [reduced, setReduced] = useState<boolean | undefined>(true);
+      const [tab, setTab] = useState('products');
+      pickTab = () => setTab('verifications');
+      allowMotion = () => setReduced(false);
+      return (
+        <UseSmileIDSampleReducedMotionOverride.Provider value={reduced}>
+          <UseSmileIDSampleNavBar selectedId={tab} onSelect={noop} onTokenPress={noop} />
+        </UseSmileIDSampleReducedMotionOverride.Provider>
+      );
+    };
+    const screen = await renderLive(<Host />, false);
+    await act(async () => {
+      pickTab();
+    });
+    await act(async () => {
+      allowMotion();
+    });
+
+    expect((JSON.stringify(screen.toJSON()).match(/RNSVGSvgView/g) ?? []).length).toBe(4);
+    jest.restoreAllMocks();
+  });
+});
+
+describe('the Select toggle label', () => {
+  it('keeps Cancel while it fades out after select mode ends', () => {
+    expect(smileIDSampleSelectToggleShowsCancel(false, false, true)).toBe(true);
+  });
+
+  it('follows select mode while it is offered', () => {
+    expect(smileIDSampleSelectToggleShowsCancel(true, false, true)).toBe(false);
+    expect(smileIDSampleSelectToggleShowsCancel(true, true, false)).toBe(true);
   });
 });

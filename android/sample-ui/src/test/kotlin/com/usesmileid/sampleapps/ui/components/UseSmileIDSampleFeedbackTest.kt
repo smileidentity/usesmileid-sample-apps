@@ -2,47 +2,49 @@ package com.usesmileid.sampleapps.ui.components
 
 import android.content.Context
 import android.provider.Settings
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.hapticfeedback.HapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.Snapshot
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.toPixelMap
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.test.ComposeUiTest
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.onNodeWithTag
-import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.v2.runComposeUiTest
+import androidx.compose.ui.unit.dp
 import com.smileid.designsystem.smileProductHues
 import com.usesmileid.sampleapps.ui.golden.ROBOLECTRIC_SDK
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.sampleapps.ui.theme.UseSmileIDSampleTheme
 import androidx.test.core.app.ApplicationProvider
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNotEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 
 @RunWith(RobolectricTestRunner::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [ROBOLECTRIC_SDK], qualifiers = "w411dp-h891dp-xhdpi")
 @OptIn(ExperimentalTestApi::class)
 class UseSmileIDSampleFeedbackTest {
-
-    private class RecordingHaptics : HapticFeedback {
-        val played = mutableListOf<HapticFeedbackType>()
-        override fun performHapticFeedback(hapticFeedbackType: HapticFeedbackType) {
-            played += hapticFeedbackType
-        }
-    }
-
-    @Composable
-    private fun Host(haptics: HapticFeedback, content: @Composable () -> Unit) {
-        UseSmileIDSampleTheme {
-            CompositionLocalProvider(LocalHapticFeedback provides haptics, content = content)
-        }
-    }
 
     @Test
     fun `a held card shrinks by three per cent`() {
@@ -118,106 +120,152 @@ class UseSmileIDSampleFeedbackTest {
     }
 
     @Test
-    fun `picking another chip ticks once`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
+    fun `a chip eases into its picked colour instead of snapping`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var selected by mutableStateOf(false)
+        var picked = Color.Unspecified
+        var resting = Color.Unspecified
         setContent {
-            Host(haptics) {
-                UseSmileIDSampleFilterChip(label = "Failed", count = 2, selected = false, onClick = {}, testId = CHIP)
+            UseSmileIDSampleTheme {
+                picked = UseSmileIDSampleTheme.colors.primary
+                resting = UseSmileIDSampleTheme.colors.filterChip.background
+                UseSmileIDSampleFilterChip(label = "Clear", count = 2, selected = selected, onClick = {}, testId = CHIP)
             }
         }
+        mainClock.advanceTimeBy(1_000)
 
-        onNodeWithTag(CHIP).performClick()
+        selected = true
+        Snapshot.sendApplyNotifications()
+        mainClock.advanceTimeBy(100)
+        val midway = fill()
+        mainClock.advanceTimeBy(1_000)
+        val settled = fill()
 
-        assertEquals(listOf(HapticFeedbackType.SegmentTick), haptics.played)
+        assertNotEquals(resting.toArgb(), midway)
+        assertNotEquals(picked.toArgb(), midway)
+        assertEquals(picked.toArgb(), settled)
     }
 
     @Test
-    fun `tapping the chip already picked does not tick`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
+    fun `a tab eases into its picked tint instead of snapping`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var tab by mutableStateOf(UseSmileIDSampleNavItem.Products)
+        var picked = Color.Unspecified
         setContent {
-            Host(haptics) {
-                UseSmileIDSampleFilterChip(label = "All", count = 4, selected = true, onClick = {}, testId = CHIP)
+            UseSmileIDSampleTheme {
+                picked = UseSmileIDSampleTheme.colors.primary
+                UseSmileIDSampleNavBar(selected = tab, onSelect = {}, onTokenClick = {})
             }
         }
+        mainClock.advanceTimeBy(1_000)
+        val node = onNodeWithTag(UseSmileIDSampleNavItem.Verifications.testId)
 
-        onNodeWithTag(CHIP).performClick()
+        tab = UseSmileIDSampleNavItem.Verifications
+        Snapshot.sendApplyNotifications()
+        mainClock.advanceTimeBy(100)
+        val midway = colours(node)
+        mainClock.advanceTimeBy(1_000)
+        val settled = colours(node)
 
-        assertEquals(emptyList<HapticFeedbackType>(), haptics.played)
+        assertFalse(picked.toArgb() in midway)
+        assertTrue(picked.toArgb() in settled)
     }
 
     @Test
-    fun `moving to another tab ticks once`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
+    fun `a bar rises into place when it appears`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var shown by mutableStateOf(false)
         setContent {
-            Host(haptics) {
-                UseSmileIDSampleNavBar(selected = UseSmileIDSampleNavItem.Products, onSelect = {}, onTokenClick = {})
+            UseSmileIDSampleTheme {
+                Box(Modifier.size(300.dp)) {
+                    if (shown) {
+                        UseSmileIDSampleRiseIn(modifier = Modifier.align(Alignment.BottomCenter)) {
+                            Box(Modifier.size(width = 200.dp, height = 60.dp).testTag(BAR))
+                        }
+                    }
+                }
             }
         }
+        mainClock.advanceTimeBy(1_000)
 
-        onNodeWithTag(UseSmileIDSampleNavItem.Verifications.testId).performClick()
+        shown = true
+        Snapshot.sendApplyNotifications()
+        mainClock.advanceTimeBy(48)
+        val rising = onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top
+        mainClock.advanceTimeBy(1_000)
+        val settled = onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top
 
-        assertEquals(listOf(HapticFeedbackType.SegmentTick), haptics.played)
+        assertTrue("still rising at $rising, settles at $settled", rising > settled)
     }
 
     @Test
-    fun `tapping the tab already open does not tick`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
+    fun `a bar is in place at once when the system removes animations`() = runComposeUiTest {
+        Settings.Global.putFloat(
+            ApplicationProvider.getApplicationContext<Context>().contentResolver,
+            Settings.Global.ANIMATOR_DURATION_SCALE,
+            0f,
+        )
+        mainClock.autoAdvance = false
         setContent {
-            Host(haptics) {
-                UseSmileIDSampleNavBar(selected = UseSmileIDSampleNavItem.Products, onSelect = {}, onTokenClick = {})
+            UseSmileIDSampleTheme {
+                Box(Modifier.size(300.dp)) {
+                    UseSmileIDSampleRiseIn(modifier = Modifier.align(Alignment.BottomCenter)) {
+                        Box(Modifier.size(width = 200.dp, height = 60.dp).testTag(BAR))
+                    }
+                }
             }
         }
+        mainClock.advanceTimeByFrame()
+        val first = onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top
+        mainClock.advanceTimeBy(1_000)
 
-        onNodeWithTag(UseSmileIDSampleNavItem.Products.testId).performClick()
-
-        assertEquals(emptyList<HapticFeedbackType>(), haptics.played)
+        assertEquals(onNodeWithTag(BAR).fetchSemanticsNode().boundsInRoot.top, first)
     }
 
     @Test
-    fun `turning a switch on ticks on`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
+    fun `content fades in when it replaces a loading state`() = runComposeUiTest {
+        mainClock.autoAdvance = false
+        var shown by mutableStateOf(false)
         setContent {
-            Host(haptics) {
-                UseSmileIDSampleSwitch(checked = false, onCheckedChange = {}, testId = SWITCH)
+            UseSmileIDSampleTheme {
+                if (shown) {
+                    UseSmileIDSampleFadeIn {
+                        Box(Modifier.size(40.dp).background(Color.Black).testTag(BAR))
+                    }
+                }
             }
         }
+        mainClock.advanceTimeBy(1_000)
 
-        onNodeWithTag(SWITCH).performClick()
+        shown = true
+        Snapshot.sendApplyNotifications()
+        mainClock.advanceTimeBy(48)
+        val midway = centre(BAR)
+        mainClock.advanceTimeBy(1_000)
+        val settled = centre(BAR)
 
-        assertEquals(listOf(HapticFeedbackType.ToggleOn), haptics.played)
+        assertNotEquals(Color.Black.toArgb(), midway)
+        assertEquals(Color.Black.toArgb(), settled)
     }
 
-    @Test
-    fun `turning a switch off ticks off`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
-        setContent {
-            Host(haptics) {
-                UseSmileIDSampleSwitch(checked = true, onCheckedChange = {}, testId = SWITCH)
-            }
-        }
-
-        onNodeWithTag(SWITCH).performClick()
-
-        assertEquals(listOf(HapticFeedbackType.ToggleOff), haptics.played)
+    private fun ComposeUiTest.centre(tag: String): Int {
+        val map = onNodeWithTag(tag).captureToImage().toPixelMap()
+        return map[map.width / 2, map.height / 2].toArgb()
     }
 
-    @Test
-    fun `a disabled switch does not tick`() = runComposeUiTest {
-        val haptics = RecordingHaptics()
-        setContent {
-            Host(haptics) {
-                UseSmileIDSampleSwitch(checked = false, onCheckedChange = {}, enabled = false, testId = SWITCH)
-            }
-        }
+    private fun colours(node: SemanticsNodeInteraction): Set<Int> {
+        val map = node.captureToImage().toPixelMap()
+        return (0 until map.width).flatMap { x -> (0 until map.height).map { y -> map[x, y].toArgb() } }.toSet()
+    }
 
-        onNodeWithTag(SWITCH).performClick()
-
-        assertEquals(emptyList<HapticFeedbackType>(), haptics.played)
+    private fun ComposeUiTest.fill(): Int {
+        val map = onNodeWithTag(CHIP).captureToImage().toPixelMap()
+        return map[(map.width * 0.12f).toInt(), map.height / 2].toArgb()
     }
 
     private companion object {
         const val CARD = "card"
         const val CHIP = "chip"
-        const val SWITCH = "switch"
+        const val BAR = "bar"
     }
 }

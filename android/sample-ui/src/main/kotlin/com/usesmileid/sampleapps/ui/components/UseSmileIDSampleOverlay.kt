@@ -28,5 +28,8 @@ fun UseSmileIDSampleOverlay(
     }
 }
 
-private val SLIDE = tween<IntOffset>(durationMillis = 220, easing = FastOutSlowInEasing)
-private val FADE = tween<Float>(durationMillis = 160, easing = FastOutSlowInEasing)
+internal const val OVERLAY_SLIDE_MS = 220
+internal const val OVERLAY_FADE_MS = 160
+
+private val SLIDE = tween<IntOffset>(durationMillis = OVERLAY_SLIDE_MS, easing = FastOutSlowInEasing)
+private val FADE = tween<Float>(durationMillis = OVERLAY_FADE_MS, easing = FastOutSlowInEasing)

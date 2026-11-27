@@ -1,5 +1,4 @@
-import { useContext } from 'react';
-import { Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
+import { Animated, Platform, Pressable, StyleSheet, Text, View, type StyleProp, type ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { UseSmileIDSampleIcon } from './use-smile-id-sample-icon';
@@ -9,7 +8,7 @@ import { UseSmileIDSampleTestIds } from '../use-smile-id-sample-test-ids';
 import { atSize } from '../theme/smile-type';
 import { useSmileIDSampleTheme } from '../theme/use-smile-id-sample-theme';
 import { useSmileIDSampleStrings } from '../use-smile-id-sample-strings-context';
-import { UseSmileIDSampleHapticsContext } from './use-smile-id-sample-press-feedback';
+import { smileIDSampleSelectionColor, useSmileIDSampleSelectionProgress } from './use-smile-id-sample-selection-blend';
 
 const TAB_ICON_SIZE = 21;
 const TOKEN_SIZE = 58;
@@ -43,7 +42,6 @@ export const UseSmileIDSampleNavBar = ({
 }: Props) => {
   const theme = useSmileIDSampleTheme();
   const insets = useSafeAreaInsets();
-  const haptics = useContext(UseSmileIDSampleHapticsContext);
 
   return (
     <View
@@ -76,10 +74,7 @@ export const UseSmileIDSampleNavBar = ({
             key={item.id}
             item={item}
             selected={item.id === selectedId}
-            onPress={() => {
-              if (item.id !== selectedId) haptics.selection();
-              onSelect(item);
-            }}
+            onPress={() => onSelect(item)}
           />
         ))}
       </View>
@@ -99,8 +94,9 @@ const NavBarTab = ({
 }) => {
   const theme = useSmileIDSampleTheme();
   const strings = useSmileIDSampleStrings();
+  const { progress: picked, moving } = useSmileIDSampleSelectionProgress(selected);
   // Unselected takes the warm strong foreground, not color.text.muted.
-  const tint = selected ? theme.colors.primary : theme.colors.offBlack;
+  const tint = smileIDSampleSelectionColor(picked, theme.colors.offBlack, theme.colors.primary);
 
   return (
     <Pressable
@@ -110,8 +106,26 @@ const NavBarTab = ({
       onPress={onPress}
       style={[styles.tab, { padding: theme.dimens.spacing.xs, rowGap: theme.dimens.spacing.xxs }]}
     >
-      <UseSmileIDSampleIcon name={item.icon} tint={tint} size={TAB_ICON_SIZE} />
-      <Text style={[theme.type.textStyleOverline, styles.tabLabel, { color: tint }]}>{item.label(strings)}</Text>
+      {moving ? (
+        // Two tinted marks cross-fade while the tab changes, as an SVG tint takes a plain colour.
+        <View>
+          <Animated.View style={{ opacity: Animated.subtract(1, picked) }}>
+            <UseSmileIDSampleIcon name={item.icon} tint={theme.colors.offBlack} size={TAB_ICON_SIZE} />
+          </Animated.View>
+          <Animated.View style={[StyleSheet.absoluteFill, { opacity: picked }]}>
+            <UseSmileIDSampleIcon name={item.icon} tint={theme.colors.primary} size={TAB_ICON_SIZE} />
+          </Animated.View>
+        </View>
+      ) : (
+        <UseSmileIDSampleIcon
+          name={item.icon}
+          tint={selected ? theme.colors.primary : theme.colors.offBlack}
+          size={TAB_ICON_SIZE}
+        />
+      )}
+      <Animated.Text style={[theme.type.textStyleOverline, styles.tabLabel, { color: tint }]}>
+        {item.label(strings)}
+      </Animated.Text>
     </Pressable>
   );
 };

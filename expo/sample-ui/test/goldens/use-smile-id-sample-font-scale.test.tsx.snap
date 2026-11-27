@@ -401,60 +401,50 @@ exports[`at the largest content size, dark filter_chip 1`] = `
   }
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#272a35",
-          "borderColor": "#2d3748",
-          "borderRadius": 999,
-          "borderWidth": 0.5,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 11.5,
-          "paddingVertical": 7.5,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(39, 42, 53, 1)",
+        "borderColor": "rgba(45, 55, 72, 1)",
+        "borderRadius": 999,
+        "borderWidth": 0.5,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 11.5,
+        "paddingVertical": 7.5,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#c2c5cb",
-          },
-        ]
+        {
+          "color": "rgba(194, 197, 203, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       Attention
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#848282",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(132, 130, 130, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       2
@@ -1701,60 +1691,50 @@ exports[`at the largest content size, light filter_chip 1`] = `
   }
 >
   <View
+    collapsable={false}
     style={
-      [
-        {
-          "alignItems": "center",
-          "flexDirection": "row",
-        },
-        {
-          "backgroundColor": "#ffffff",
-          "borderColor": "#eaecf0",
-          "borderRadius": 999,
-          "borderWidth": 0.5,
-          "columnGap": 4,
-          "minHeight": 32,
-          "paddingHorizontal": 11.5,
-          "paddingVertical": 7.5,
-        },
-      ]
+      {
+        "alignItems": "center",
+        "backgroundColor": "rgba(255, 255, 255, 1)",
+        "borderColor": "rgba(234, 236, 240, 1)",
+        "borderRadius": 999,
+        "borderWidth": 0.5,
+        "columnGap": 4,
+        "flexDirection": "row",
+        "minHeight": 32,
+        "paddingHorizontal": 11.5,
+        "paddingVertical": 7.5,
+      }
     }
   >
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 12.5,
-            "letterSpacing": 0,
-            "lineHeight": 20,
-            "marginBottom": -1.862499999999999,
-            "marginTop": -1.862499999999999,
-          },
-          {
-            "color": "#5e646e",
-          },
-        ]
+        {
+          "color": "rgba(94, 100, 110, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 12.5,
+          "letterSpacing": 0,
+          "lineHeight": 20,
+          "marginBottom": -1.862499999999999,
+          "marginTop": -1.862499999999999,
+        }
       }
     >
       Attention
     </Text>
     <Text
+      collapsable={false}
       style={
-        [
-          {
-            "fontFamily": "DMSans-Bold",
-            "fontSize": 11,
-            "letterSpacing": 0,
-            "lineHeight": 16,
-            "marginBottom": -0.8389999999999995,
-            "marginTop": -0.8389999999999995,
-          },
-          {
-            "color": "#848282",
-            "letterSpacing": 0.88,
-          },
-        ]
+        {
+          "color": "rgba(132, 130, 130, 1)",
+          "fontFamily": "DMSans-Bold",
+          "fontSize": 11,
+          "letterSpacing": 0.88,
+          "lineHeight": 16,
+          "marginBottom": -0.8389999999999995,
+          "marginTop": -0.8389999999999995,
+        }
       }
     >
       2

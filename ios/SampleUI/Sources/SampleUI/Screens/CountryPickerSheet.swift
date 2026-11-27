@@ -75,6 +75,7 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
 
   @StateObject private var gate = UseSmileIDSampleSkeletonGate()
   @Environment(\.useSmileIDSampleSkeletonDelay) private var skeletonDelay
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
   private var showsSkeleton: Bool {
     gate.visible || (skeletonDelay == 0 && catalogue.isLoading)
@@ -89,7 +90,10 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
         enabled: isReady && !showsSkeleton
       )
       content
+        .id(contentPhase)
+        .transition(.useSmileIDSampleFadeIn)
     }
+    .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: contentPhase)
     .onAppear { gate.loading(catalogue.isLoading) }
     .onChange(of: catalogue.isLoading) { gate.loading($0) }
   }
@@ -128,6 +132,23 @@ struct UseSmileIDSampleCataloguePicker<Item: Hashable & Sendable, Row: View>: Vi
         UseSmileIDSampleEmptyState(text: nothingToList.0, supportingText: nothingToList.1, testId: emptyTestId)
       }
     }
+  }
+
+  /// Which of skeleton, nothing yet, failure, list or empty is showing, so a change fades the new one in.
+  private var contentPhase: ContentPhase {
+    if showsSkeleton {
+      return .skeleton
+    }
+    switch catalogue {
+    case .loading: return .loading
+    case .failed: return .failed
+    case .ready: return .ready
+    case .empty: return .empty
+    }
+  }
+
+  private enum ContentPhase: Hashable {
+    case skeleton, loading, failed, ready, empty
   }
 
   private var isReady: Bool {

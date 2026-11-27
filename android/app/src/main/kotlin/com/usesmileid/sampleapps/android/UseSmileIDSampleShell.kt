@@ -70,6 +70,7 @@ import com.usesmileid.sampleapps.android.navigation.useSmileIDSampleFacts
 import com.usesmileid.sampleapps.ui.components.LocalUseSmileIDSampleNoticeWindow
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavBar
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleNavItem
+import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleRiseIn
 import com.usesmileid.sampleapps.ui.components.UseSmileIDSampleSelectionBar
 import com.usesmileid.sampleapps.ui.model.UseSmileIDSampleProduct
 import com.usesmileid.njia.NjiaNavigator
@@ -111,7 +112,9 @@ fun UseSmileIDSampleShell() {
             bottomBar = {
                 // Only select mode gets the slot: the slot insets the content, and the nav bar must not.
                 chrome.selection?.let { selection ->
-                    UseSmileIDSampleSelectionBar(selectedCount = selection.count, onRemove = selection.onRemove)
+                    UseSmileIDSampleRiseIn {
+                        UseSmileIDSampleSelectionBar(selectedCount = selection.count, onRemove = selection.onRemove)
+                    }
                 }
             },
         ) { contentPadding ->

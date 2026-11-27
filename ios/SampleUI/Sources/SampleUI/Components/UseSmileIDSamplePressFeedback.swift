@@ -26,19 +26,24 @@ struct UseSmileIDSamplePressScaleStyle: ButtonStyle {
   }
 }
 
-/// A selection tick for a chip or tab: played only when the tap picks something new.
-@MainActor
-enum UseSmileIDSampleSelectionTick {
-  /// Plays [tick] unless [alreadySelected], then runs [action].
-  static func pick(alreadySelected: Bool, tick: @MainActor () -> Void = play, action: () -> Void) {
-    if !alreadySelected {
-      tick()
-    }
-    action()
+/// The short ease every small change here uses: duration-fast, or none under Reduce Motion.
+func useSmileIDSampleFastAnimation(reduceMotion: Bool) -> Animation? {
+  reduceMotion ? nil : .easeOut(duration: SmileMotion.durationFast)
+}
+
+/// How a bar rises into place, matching the Android toast's entrance, or not at all under Reduce Motion.
+public func useSmileIDSampleRiseAnimation(reduceMotion: Bool) -> Animation? {
+  reduceMotion ? nil : .timingCurve(0.4, 0, 0.2, 1, duration: 0.22)
+}
+
+public extension AnyTransition {
+  /// Rises from the bottom edge and fades in on insertion; leaves at once.
+  static var useSmileIDSampleRiseIn: AnyTransition {
+    .asymmetric(insertion: .move(edge: .bottom).combined(with: .opacity), removal: .identity)
   }
 
-  /// UIKit's selection feedback, the tick a picker plays.
-  static func play() {
-    UISelectionFeedbackGenerator().selectionChanged()
+  /// Fades in on insertion; leaves at once.
+  static var useSmileIDSampleFadeIn: AnyTransition {
+    .asymmetric(insertion: .opacity, removal: .identity)
   }
 }

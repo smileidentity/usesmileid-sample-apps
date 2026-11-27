@@ -82,6 +82,8 @@ public struct VerificationsScreen: View {
   private let onRemove: (Set<String>) -> Void
 
   @Environment(\.useSmileIDSampleColors) private var colors
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @State private var showedCancel: Bool?
 
   public init(
     state: UseSmileIDSampleVerificationsState,
@@ -129,7 +131,11 @@ public struct VerificationsScreen: View {
         .frame(maxWidth: .infinity, alignment: .leading)
       Button(action: { onSelectModeChange(!state.selectMode) }) {
         UseSmileIDSampleText(
-          state.selectMode ? UseSmileIDSampleStrings.commonCancel : UseSmileIDSampleStrings.verificationsSelect,
+          useSmileIDSampleSelectToggleShowsCancel(
+            offersSelect: state.offersSelect,
+            selecting: state.selectMode,
+            showedCancel: showedCancel ?? state.selectMode
+          ) ? UseSmileIDSampleStrings.commonCancel : UseSmileIDSampleStrings.verificationsSelect,
           style: UseSmileIDSampleTheme.type.linkFont.with(weight: 700)
         )
         .foregroundColor(colors.primary)
@@ -141,8 +147,19 @@ public struct VerificationsScreen: View {
       .buttonStyle(.plain)
       .useSmileIDSampleTestId(UseSmileIDSampleTestIds.selectToggle)
       .opacity(state.offersSelect ? 1 : 0)
+      .animation(useSmileIDSampleFastAnimation(reduceMotion: reduceMotion), value: state.offersSelect)
       .disabled(!state.offersSelect)
       .accessibilityHidden(!state.offersSelect)
+      .onChange(of: state.selectMode) { selecting in
+        if state.offersSelect {
+          showedCancel = selecting
+        }
+      }
+      .onChange(of: state.offersSelect) { offered in
+        if offered {
+          showedCancel = state.selectMode
+        }
+      }
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.vertical, SmileSpacing.spacingXs)
@@ -247,4 +264,9 @@ public struct VerificationsScreen: View {
       times = visible.timeLabels(calendar: state.calendar)
     }
   }
+}
+
+/// Whether Select reads Cancel: it follows select mode while offered, and keeps its last word while it fades out.
+func useSmileIDSampleSelectToggleShowsCancel(offersSelect: Bool, selecting: Bool, showedCancel: Bool) -> Bool {
+  offersSelect ? selecting : showedCancel
 }
