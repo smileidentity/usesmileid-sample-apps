@@ -155,6 +155,11 @@ public struct VerificationsScreen: View {
           showedCancel = selecting
         }
       }
+      .onChange(of: state.offersSelect) { offered in
+        if offered {
+          showedCancel = state.selectMode
+        }
+      }
     }
     .padding(.horizontal, SmileSpacing.spacingMd)
     .padding(.vertical, SmileSpacing.spacingXs)
