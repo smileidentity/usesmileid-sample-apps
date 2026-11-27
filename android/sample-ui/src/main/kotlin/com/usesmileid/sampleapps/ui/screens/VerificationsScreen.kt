@@ -4,6 +4,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import com.smileid.designsystem.SmileMotion
@@ -170,10 +171,11 @@ fun VerificationsScreen(
                     animationSpec = tween(SmileMotion.durationFast.inWholeMilliseconds.toInt()),
                     label = "selectToggle",
                 )
-                val showsCancel = remember { booleanArrayOf(state.selectMode) }
-                showsCancel[0] = selectToggleShowsCancel(offersSelect, state.selectMode, showsCancel[0])
+                val showedCancel = remember { mutableStateOf(state.selectMode) }
+                val showsCancel = selectToggleShowsCancel(offersSelect, state.selectMode, showedCancel.value)
+                SideEffect { showedCancel.value = showsCancel }
                 Text(
-                    text = if (showsCancel[0]) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
+                    text = if (showsCancel) UseSmileIDSampleStrings.commonCancel else UseSmileIDSampleStrings.verificationsSelect,
                     style = UseSmileIDSampleTheme.type.linkFont.copy(fontWeight = FontWeight.Bold),
                     color = UseSmileIDSampleTheme.colors.primary,
                     softWrap = false,

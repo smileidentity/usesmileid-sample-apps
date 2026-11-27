@@ -180,8 +180,8 @@ describe('a picked colour', () => {
     }
   };
 
-  it('eases a chip into its picked fill on the native driver instead of snapping', async () => {
-    expect((await pickWith(false)).runs).toEqual([[1, Number.parseFloat(tokens.duration.fast), true]]);
+  it('eases a chip into its picked fill instead of snapping', async () => {
+    expect((await pickWith(false)).runs).toEqual([[1, Number.parseFloat(tokens.duration.fast), false]]);
   });
 
   it('snaps a chip to its picked fill under reduced motion', async () => {

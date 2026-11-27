@@ -19,13 +19,15 @@ export const useSmileIDSampleSelectionProgress = (selected: boolean): { progress
       progress.setValue(target);
       return undefined;
     }
-    const run = Animated.timing(progress, { toValue: target, duration: SMILE_DURATION_FAST_MS, useNativeDriver: true });
-    run.start(() => setSettled(selected));
+    const run = Animated.timing(progress, { toValue: target, duration: SMILE_DURATION_FAST_MS, useNativeDriver: false });
+    run.start(({ finished }) => {
+      if (finished) setSettled(selected);
+    });
     return () => run.stop();
   }, [selected, reduced, progress]);
   return { progress, moving: !reduced && selected !== settled };
 };
 
-/// A colour that follows [progress] from [from] to [to], interpolated on the native driver rather than re-rendered.
+/// A colour that follows [progress] from [from] to [to], interpolated by Animated rather than re-rendered; JS-driven, as Android ignores a native-driven text colour.
 export const smileIDSampleSelectionColor = (progress: Animated.Value, from: string, to: string) =>
   progress.interpolate({ inputRange: [0, 1], outputRange: [from, to] });
